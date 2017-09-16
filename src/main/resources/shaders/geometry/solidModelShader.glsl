@@ -3,7 +3,7 @@
 layout (triangles) in;
 layout (triangle_strip, max_vertices = 3) out;
 
-in vec2 pass_textureCoord[];
+in vec2 pass_textureCoord[3];
 
 out vec4 lightFactor;
 out vec2 textureCoord;

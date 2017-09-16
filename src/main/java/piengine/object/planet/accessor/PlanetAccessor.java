@@ -1,56 +1,38 @@
 package piengine.object.planet.accessor;
 
 import piengine.core.base.api.Accessor;
+import piengine.core.base.resource.ResourceLoader;
+import piengine.object.mesh.accessor.MeshParser;
+import piengine.object.mesh.domain.ParsedMeshData;
 import piengine.object.planet.domain.PlanetData;
 import puppeteer.annotation.premade.Component;
+import puppeteer.annotation.premade.Wire;
+
+import static piengine.core.property.domain.ApplicationProperties.get;
+import static piengine.core.property.domain.PropertyKeys.MESHES_LOCATION;
 
 @Component
 public class PlanetAccessor implements Accessor<PlanetData> {
 
-    private static final float X = 0.525731112119133696f;
-    private static final float Z = 0.850650808352039932f;
+    private static final String ROOT = get(MESHES_LOCATION);
+    private static final String MESH_EXT = "obj";
 
-    private static float vertices[] = {
-            -X, 0.0f, Z,
-            X, 0.0f, Z,
-            -X, 0.0f, -Z,
-            X, 0.0f, -Z,
-            0.0f, Z, X,
-            0.0f, Z, -X,
-            0.0f, -Z, X,
-            0.0f, -Z, -X,
-            Z, X, 0.0f,
-            -Z, X, 0.0f,
-            Z, -X, 0.0f,
-            -Z, -X, 0.0f
-    };
+    private final MeshParser meshParser;
+    private final ResourceLoader loader;
 
-    private static int indices[] = {
-            1, 4, 0,
-            4, 9, 0,
-            4, 5, 9,
-            8, 5, 4,
-            1, 8, 4,
-            1, 10, 8,
-            10, 3, 8,
-            8, 3, 5,
-            3, 2, 5,
-            3, 7, 2,
-            3, 10, 7,
-            10, 6, 7,
-            6, 11, 7,
-            6, 0, 11,
-            6, 1, 0,
-            10, 1, 6,
-            11, 0, 9,
-            2, 11, 9,
-            5, 2, 9,
-            11, 2, 7
-    };
+    @Wire
+    public PlanetAccessor(final MeshParser meshParser) {
+        this.meshParser = meshParser;
+        this.loader = new ResourceLoader(ROOT, MESH_EXT);
+    }
+
 
     @Override
     public PlanetData access(final String file) {
-        return new PlanetData(vertices, indices);
+        final String meshSource = loader.load(file);
+        final ParsedMeshData parsedMeshData = meshParser.parseSource(meshSource.split("\n"));
+
+        return new PlanetData(parsedMeshData.vertices, parsedMeshData.indices);
     }
 
 }

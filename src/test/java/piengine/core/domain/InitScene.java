@@ -51,6 +51,8 @@ public class InitScene extends Scene {
         lightAsset.setPosition(5, 5, 5);
 
         inputManager.addEvent(GLFW.GLFW_KEY_ESCAPE, PRESS, windowManager::closeWindow);
+
+        renderManager.setWireFrameMode(true);
     }
 
     @Override

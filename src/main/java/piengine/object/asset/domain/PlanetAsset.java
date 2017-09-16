@@ -22,7 +22,7 @@ public class PlanetAsset extends Asset {
 
     @Override
     public void initialize() {
-        this.planet = planetManager.supply("temp", this);
+        this.planet = planetManager.supply("cube", this);
         this.planet.setRotation(0, 0, 70);
     }
 

@@ -32,6 +32,7 @@ public class PlanetRenderService extends AbstractRenderService<PlanetShader> {
 
     @Override
     public void render(final RenderContext context) {
+
         renderInterpreter.setCullFace(GL_BACK);
         renderInterpreter.setDepthTest(true);
 

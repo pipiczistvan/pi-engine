@@ -7,6 +7,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import piengine.object.mesh.accessor.MeshAccessor;
+import piengine.object.mesh.accessor.MeshParser;
 import piengine.object.mesh.domain.Mesh;
 import piengine.object.mesh.domain.MeshDao;
 import piengine.object.mesh.domain.MeshData;
@@ -24,6 +25,7 @@ public class MeshTest extends TestBase {
     private MeshManager meshManager;
     private MeshService meshService;
     private MeshAccessor meshAccessor;
+    private MeshParser meshParser;
     @Mock
     private MeshInterpreter meshInterpreter;
     @Mock
@@ -33,7 +35,8 @@ public class MeshTest extends TestBase {
     public void setUp() throws Exception {
         super.setUp();
 
-        meshAccessor = new MeshAccessor();
+        meshParser = new MeshParser();
+        meshAccessor = new MeshAccessor(meshParser);
         meshService = new MeshService(meshAccessor, meshInterpreter);
         meshManager = new MeshManager(meshService);
     }
