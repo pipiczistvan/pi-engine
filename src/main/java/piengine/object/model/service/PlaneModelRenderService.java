@@ -4,6 +4,8 @@ import piengine.object.model.domain.Model;
 import piengine.object.model.shader.PlaneModelShader;
 import piengine.visual.render.domain.RenderContext;
 import piengine.visual.render.domain.RenderType;
+import piengine.visual.render.domain.config.RenderConfig;
+import piengine.visual.render.domain.config.RenderConfigBuilder;
 import piengine.visual.render.interpreter.RenderInterpreter;
 import piengine.visual.render.service.AbstractRenderService;
 import piengine.visual.shader.service.ShaderService;
@@ -18,16 +20,14 @@ import static piengine.visual.render.domain.RenderType.RENDER_PLANE_MODEL;
 public class PlaneModelRenderService extends AbstractRenderService<PlaneModelShader> {
 
     private final TextureService textureService;
-    private final RenderInterpreter renderInterpreter;
 
     @Wire
     public PlaneModelRenderService(final ShaderService shaderService,
                                    final TextureService textureService,
                                    final RenderInterpreter renderInterpreter) {
-        super(shaderService);
+        super(shaderService, renderInterpreter);
 
         this.textureService = textureService;
-        this.renderInterpreter = renderInterpreter;
     }
 
     @Override
@@ -36,15 +36,12 @@ public class PlaneModelRenderService extends AbstractRenderService<PlaneModelSha
     }
 
     @Override
-    public void render(final RenderContext context) {
-        renderInterpreter.setCullFace(GL_NONE);
-        renderInterpreter.setDepthTest(false);
-
+    protected void render(final RenderContext context) {
         shader.start();
         textureService.bind(context.texture);
         for (Model model : context.models) {
             shader.loadModelMatrix(model.getModelMatrix());
-            renderInterpreter.render(model.mesh.dao);
+            draw(model.mesh.dao);
         }
         shader.stop();
     }
@@ -52,6 +49,14 @@ public class PlaneModelRenderService extends AbstractRenderService<PlaneModelSha
     @Override
     public RenderType getType() {
         return RENDER_PLANE_MODEL;
+    }
+
+    @Override
+    protected RenderConfig createRenderConfig() {
+        return RenderConfigBuilder.create()
+                .withDepthTest(false)
+                .withCullFace(GL_NONE)
+                .build();
     }
 
 }

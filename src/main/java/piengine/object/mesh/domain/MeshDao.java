@@ -6,9 +6,10 @@ import java.util.List;
 
 public class MeshDao implements Dao {
 
-    public final int vaoId;
-    public final List<Integer> vboIds;
-    public final int vertexCount;
+    // todo: final
+    public int vaoId;
+    public List<Integer> vboIds;
+    public int vertexCount;
 
     public MeshDao(final int vaoId, final List<Integer> vboIds, final int vertexCount) {
         this.vaoId = vaoId;

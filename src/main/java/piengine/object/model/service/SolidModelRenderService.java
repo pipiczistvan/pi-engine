@@ -4,6 +4,8 @@ import piengine.object.model.domain.Model;
 import piengine.object.model.shader.SolidModelShader;
 import piengine.visual.render.domain.RenderContext;
 import piengine.visual.render.domain.RenderType;
+import piengine.visual.render.domain.config.RenderConfig;
+import piengine.visual.render.domain.config.RenderConfigBuilder;
 import piengine.visual.render.interpreter.RenderInterpreter;
 import piengine.visual.render.service.AbstractRenderService;
 import piengine.visual.shader.service.ShaderService;
@@ -11,23 +13,20 @@ import piengine.visual.texture.service.TextureService;
 import puppeteer.annotation.premade.Component;
 import puppeteer.annotation.premade.Wire;
 
-import static org.lwjgl.opengl.GL11.GL_BACK;
 import static piengine.visual.render.domain.RenderType.RENDER_SOLID_MODEL;
 
 @Component
 public class SolidModelRenderService extends AbstractRenderService<SolidModelShader> {
 
     private final TextureService textureService;
-    private final RenderInterpreter renderInterpreter;
 
     @Wire
     public SolidModelRenderService(final ShaderService shaderService,
                                    final TextureService textureService,
                                    final RenderInterpreter renderInterpreter) {
-        super(shaderService);
+        super(shaderService, renderInterpreter);
 
         this.textureService = textureService;
-        this.renderInterpreter = renderInterpreter;
     }
 
     @Override
@@ -36,10 +35,7 @@ public class SolidModelRenderService extends AbstractRenderService<SolidModelSha
     }
 
     @Override
-    public void render(final RenderContext context) {
-        renderInterpreter.setCullFace(GL_BACK);
-        renderInterpreter.setDepthTest(true);
-
+    protected void render(final RenderContext context) {
         shader.start()
                 .loadLight(context.light)
                 .loadProjectionMatrix(context.camera.projection)
@@ -47,7 +43,7 @@ public class SolidModelRenderService extends AbstractRenderService<SolidModelSha
         textureService.bind(context.texture);
         for (Model model : context.models) {
             shader.loadModelMatrix(model.getModelMatrix());
-            renderInterpreter.render(model.mesh.dao);
+            draw(model.mesh.dao);
         }
         shader.stop();
     }
@@ -57,4 +53,9 @@ public class SolidModelRenderService extends AbstractRenderService<SolidModelSha
         return RENDER_SOLID_MODEL;
     }
 
+    @Override
+    protected RenderConfig createRenderConfig() {
+        return RenderConfigBuilder.create()
+                .build();
+    }
 }

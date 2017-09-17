@@ -2,7 +2,7 @@ package piengine.visual.writing.text.interpreter;
 
 import org.lwjgl.opengl.GL15;
 import piengine.core.base.api.Interpreter;
-import piengine.visual.writing.text.domain.TextDao;
+import piengine.object.mesh.domain.MeshDao;
 import piengine.visual.writing.text.domain.TextData;
 import puppeteer.annotation.premade.Component;
 
@@ -24,11 +24,11 @@ import static piengine.object.mesh.domain.MeshDataType.TEXTURE_COORD;
 import static piengine.object.mesh.domain.MeshDataType.VERTEX;
 
 @Component
-public class TextInterpreter implements Interpreter<TextDao, TextData> {
+public class TextInterpreter implements Interpreter<MeshDao, TextData> {
 
     @Override
-    public TextDao create(TextData textData) {
-        final TextDao dao = new TextDao(glGenVertexArrays(), new ArrayList<>(), textData.vertices.length / 2);
+    public MeshDao create(TextData textData) {
+        final MeshDao dao = new MeshDao(glGenVertexArrays(), new ArrayList<>(), textData.vertices.length / 2);
         bind(dao);
 
         dao.vboIds.add(createVbo(VERTEX.value, textData.vertices, 2));
@@ -39,10 +39,10 @@ public class TextInterpreter implements Interpreter<TextDao, TextData> {
         return dao;
     }
 
-    public void update(final TextDao dao, final TextData textData) {
+    public void update(final MeshDao dao, final TextData textData) {
         free(dao);
 
-        TextDao newDao = create(textData);
+        MeshDao newDao = create(textData);
 
         dao.vaoId = newDao.vaoId;
         dao.vboIds = newDao.vboIds;
@@ -50,12 +50,12 @@ public class TextInterpreter implements Interpreter<TextDao, TextData> {
     }
 
     @Override
-    public void free(final TextDao dao) {
+    public void free(final MeshDao dao) {
         glDeleteVertexArrays(dao.vaoId);
         dao.vboIds.forEach(GL15::glDeleteBuffers);
     }
 
-    private void bind(final TextDao dao) {
+    private void bind(final MeshDao dao) {
         glBindVertexArray(dao.vaoId);
     }
 

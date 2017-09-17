@@ -30,7 +30,7 @@ public class DoRenderFragmentHandler extends FragmentHandler<RenderType> {
                 .filter(renderService -> renderService.getType() == renderType)
                 .findFirst()
                 .orElseThrow(() -> new PIEngineException("Invalid render type %s!", renderType.name()))
-                .render(context);
+                .process(context);
 
         clearContext(context);
     }

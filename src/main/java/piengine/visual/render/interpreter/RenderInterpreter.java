@@ -1,8 +1,7 @@
 package piengine.visual.render.interpreter;
 
 import org.joml.Vector4f;
-import piengine.object.mesh.domain.MeshDao;
-import piengine.visual.writing.text.domain.TextDao;
+import piengine.object.mesh.domain.MeshDataType;
 import puppeteer.annotation.premade.Component;
 
 import static org.lwjgl.opengl.GL11.GL_BLEND;
@@ -16,7 +15,6 @@ import static org.lwjgl.opengl.GL11.GL_LINE;
 import static org.lwjgl.opengl.GL11.GL_NONE;
 import static org.lwjgl.opengl.GL11.GL_ONE_MINUS_SRC_ALPHA;
 import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
-import static org.lwjgl.opengl.GL11.GL_TRIANGLES;
 import static org.lwjgl.opengl.GL11.GL_UNSIGNED_INT;
 import static org.lwjgl.opengl.GL11.glBlendFunc;
 import static org.lwjgl.opengl.GL11.glClear;
@@ -30,8 +28,6 @@ import static org.lwjgl.opengl.GL11.glPolygonMode;
 import static org.lwjgl.opengl.GL20.glDisableVertexAttribArray;
 import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
 import static org.lwjgl.opengl.GL30.glBindVertexArray;
-import static piengine.object.mesh.domain.MeshDataType.TEXTURE_COORD;
-import static piengine.object.mesh.domain.MeshDataType.VERTEX;
 
 @Component
 public class RenderInterpreter {
@@ -44,39 +40,32 @@ public class RenderInterpreter {
         clear(GL_COLOR_BUFFER_BIT, GL_DEPTH_BUFFER_BIT);
     }
 
-    private void clear(final int... bits) {
-        int mask = 0;
-        for (int bit : bits) {
-            mask |= bit;
+    public void bindVertexArray(final int id) {
+        glBindVertexArray(id);
+    }
+
+    public void unbindVertexArray() {
+        bindVertexArray(0);
+    }
+
+    public void enableVertexAttribArray(MeshDataType... types) {
+        for (MeshDataType type : types) {
+            glEnableVertexAttribArray(type.value);
         }
-        glClear(mask);
     }
 
-    public void render(final MeshDao dao) {
-        glBindVertexArray(dao.vaoId);
-
-        glEnableVertexAttribArray(VERTEX.value);
-        glEnableVertexAttribArray(TEXTURE_COORD.value);
-
-        glDrawElements(GL_TRIANGLES, dao.vertexCount, GL_UNSIGNED_INT, 0);
-
-        glDisableVertexAttribArray(VERTEX.value);
-        glDisableVertexAttribArray(TEXTURE_COORD.value);
-
-        glBindVertexArray(0);
+    public void disableVertexAttribArray(MeshDataType... types) {
+        for (MeshDataType type : types) {
+            glDisableVertexAttribArray(type.value);
+        }
     }
 
-    public void renderText(final TextDao dao) {
-        glBindVertexArray(dao.vaoId);
+    public void drawArrays(int mode, int count) {
+        glDrawArrays(mode, 0, count);
+    }
 
-        glEnableVertexAttribArray(0);
-        glEnableVertexAttribArray(1);
-
-        glDrawArrays(GL_TRIANGLES, 0, dao.vertexCount);
-
-        glDisableVertexAttribArray(0);
-        glDisableVertexAttribArray(1);
-        glBindVertexArray(0);
+    public void drawElements(int mode, int count) {
+        glDrawElements(mode, count, GL_UNSIGNED_INT, 0);
     }
 
     public void setDepthTest(final boolean enabled) {
@@ -111,6 +100,14 @@ public class RenderInterpreter {
         } else {
             glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
         }
+    }
+
+    private void clear(final int... bits) {
+        int mask = 0;
+        for (int bit : bits) {
+            mask |= bit;
+        }
+        glClear(mask);
     }
 
 }

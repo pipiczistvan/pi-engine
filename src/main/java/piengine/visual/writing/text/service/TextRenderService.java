@@ -2,6 +2,8 @@ package piengine.visual.writing.text.service;
 
 import piengine.visual.render.domain.RenderContext;
 import piengine.visual.render.domain.RenderType;
+import piengine.visual.render.domain.config.RenderConfig;
+import piengine.visual.render.domain.config.RenderConfigBuilder;
 import piengine.visual.render.interpreter.RenderInterpreter;
 import piengine.visual.render.service.AbstractRenderService;
 import piengine.visual.shader.service.ShaderService;
@@ -12,21 +14,20 @@ import puppeteer.annotation.premade.Component;
 import puppeteer.annotation.premade.Wire;
 
 import static piengine.visual.render.domain.RenderType.RENDER_TEXT;
+import static piengine.visual.render.domain.config.RenderFunction.DRAW_ARRAYS;
 
 @Component
 public class TextRenderService extends AbstractRenderService<TextShader> {
 
     private final FontService fontService;
-    private final RenderInterpreter renderInterpreter;
 
     @Wire
     public TextRenderService(final ShaderService shaderService,
                              final FontService fontService,
                              final RenderInterpreter renderInterpreter) {
-        super(shaderService);
+        super(shaderService, renderInterpreter);
 
         this.fontService = fontService;
-        this.renderInterpreter = renderInterpreter;
     }
 
     @Override
@@ -35,25 +36,28 @@ public class TextRenderService extends AbstractRenderService<TextShader> {
     }
 
     @Override
-    public void render(final RenderContext context) {
-        renderInterpreter.setBlendTest(true);
-        renderInterpreter.setDepthTest(false);
+    protected void render(final RenderContext context) {
         shader.start();
-
         for (Text text : context.texts) {
             fontService.bind(text.font);
             shader.loadColor(text.color);
             shader.loadTranslation(text.translation);
-            renderInterpreter.renderText(text.dao);
+            draw(text.dao);
         }
-
         shader.stop();
-        renderInterpreter.setBlendTest(false);
-        renderInterpreter.setDepthTest(true);
     }
 
     @Override
     public RenderType getType() {
         return RENDER_TEXT;
+    }
+
+    @Override
+    protected RenderConfig createRenderConfig() {
+        return RenderConfigBuilder.create()
+                .withDepthTest(false)
+                .withBlendTest(true)
+                .withRenderFunction(DRAW_ARRAYS)
+                .build();
     }
 }

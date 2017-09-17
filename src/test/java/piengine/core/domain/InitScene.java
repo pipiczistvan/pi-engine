@@ -2,7 +2,6 @@ package piengine.core.domain;
 
 import org.joml.Vector2i;
 import org.joml.Vector4f;
-import org.lwjgl.glfw.GLFW;
 import piengine.core.architecture.scene.domain.Scene;
 import piengine.core.input.manager.InputManager;
 import piengine.object.asset.domain.FirstPersonCamera;
@@ -14,6 +13,7 @@ import piengine.visual.window.manager.WindowManager;
 import puppeteer.annotation.premade.Component;
 import puppeteer.annotation.premade.Wire;
 
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
 import static piengine.core.input.domain.KeyEventType.PRESS;
 import static piengine.visual.render.domain.RenderType.RENDER_PLANET;
 import static piengine.visual.render.domain.RenderType.RENDER_TEXT;
@@ -26,7 +26,6 @@ public class InitScene extends Scene {
     private final WindowManager windowManager;
 
     private FirstPersonCamera firstPersonCamera;
-    private CubeAsset cubeAsset;
     private LightAsset lightAsset;
     private PlanetAsset planetAsset;
     private TextAsset textAsset;
@@ -42,7 +41,6 @@ public class InitScene extends Scene {
     @Override
     public void initialize() {
         firstPersonCamera = createAsset(FirstPersonCamera.class);
-        cubeAsset = createAsset(CubeAsset.class);
         lightAsset = createAsset(LightAsset.class);
         planetAsset = createAsset(PlanetAsset.class);
         textAsset = createAsset(TextAsset.class);
@@ -50,9 +48,7 @@ public class InitScene extends Scene {
         firstPersonCamera.setPosition(0, 0, 5);
         lightAsset.setPosition(5, 5, 5);
 
-        inputManager.addEvent(GLFW.GLFW_KEY_ESCAPE, PRESS, windowManager::closeWindow);
-
-        renderManager.setWireFrameMode(true);
+        inputManager.addEvent(GLFW_KEY_ESCAPE, PRESS, windowManager::closeWindow);
     }
 
     @Override
