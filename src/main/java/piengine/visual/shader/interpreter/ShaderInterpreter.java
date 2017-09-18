@@ -38,6 +38,8 @@ import static org.lwjgl.opengl.GL20.glUniformMatrix4fv;
 import static org.lwjgl.opengl.GL20.glUseProgram;
 import static org.lwjgl.opengl.GL20.glValidateProgram;
 import static org.lwjgl.opengl.GL32.GL_GEOMETRY_SHADER;
+import static org.lwjgl.opengl.GL40.GL_TESS_CONTROL_SHADER;
+import static org.lwjgl.opengl.GL40.GL_TESS_EVALUATION_SHADER;
 
 @Component
 public class ShaderInterpreter implements Interpreter<ShaderDao, ShaderData> {
@@ -47,11 +49,15 @@ public class ShaderInterpreter implements Interpreter<ShaderDao, ShaderData> {
     @Override
     public ShaderDao create(final ShaderData shaderData) {
         Integer vertexShaderId = createShader(shaderData.vertexSource, GL_VERTEX_SHADER);
+        Integer tessControlShaderId = createShader(shaderData.tessControlSource, GL_TESS_CONTROL_SHADER);
+        Integer tessEvalShaderId = createShader(shaderData.tessEvalSource, GL_TESS_EVALUATION_SHADER);
         Integer geometryShaderId = createShader(shaderData.geometrySource, GL_GEOMETRY_SHADER);
         Integer fragmentShaderId = createShader(shaderData.fragmentSource, GL_FRAGMENT_SHADER);
 
         Integer programId = glCreateProgram();
         attachShader(programId, vertexShaderId);
+        attachShader(programId, tessControlShaderId);
+        attachShader(programId, tessEvalShaderId);
         attachShader(programId, geometryShaderId);
         attachShader(programId, fragmentShaderId);
 
@@ -61,7 +67,7 @@ public class ShaderInterpreter implements Interpreter<ShaderDao, ShaderData> {
         }
         glValidateProgram(programId);
 
-        return new ShaderDao(programId, vertexShaderId, geometryShaderId, fragmentShaderId);
+        return new ShaderDao(programId, vertexShaderId, tessControlShaderId, tessEvalShaderId, geometryShaderId, fragmentShaderId);
     }
 
     public void loadInt(final int location, final int value) {
@@ -106,10 +112,14 @@ public class ShaderInterpreter implements Interpreter<ShaderDao, ShaderData> {
         stopShader();
 
         detachShader(dao.programId, dao.vertexShaderId);
+        detachShader(dao.programId, dao.tessControlShaderId);
+        detachShader(dao.programId, dao.tessEvalShaderId);
         detachShader(dao.programId, dao.geometryShaderId);
         detachShader(dao.programId, dao.fragmentShaderId);
 
         deleteShader(dao.vertexShaderId);
+        deleteShader(dao.tessControlShaderId);
+        deleteShader(dao.tessEvalShaderId);
         deleteShader(dao.geometryShaderId);
         deleteShader(dao.fragmentShaderId);
 
@@ -125,7 +135,7 @@ public class ShaderInterpreter implements Interpreter<ShaderDao, ShaderData> {
         glShaderSource(shaderID, shaderSource);
         glCompileShader(shaderID);
         if (glGetShaderi(shaderID, GL_COMPILE_STATUS) == GL_FALSE) {
-            throw new PIEngineException(String.format("Could not compile shader.\n%s", glGetShaderInfoLog(shaderID, 500)));
+            throw new PIEngineException("Could not compile shader.\n%s", glGetShaderInfoLog(shaderID, 500));
         }
         return shaderID;
     }

@@ -3,7 +3,7 @@
 layout (triangles) in;
 layout (triangle_strip, max_vertices = 3) out;
 
-out vec4 lightFactor;
+out vec4 gLightFactor;
 
 uniform mat4 viewMatrix;
 uniform mat4 projectionMatrix;
@@ -28,7 +28,7 @@ void main(void) {
     float nDot1 = dot(normalVector, toLightVector);
     float brightness = max(nDot1, 0.2);
     vec3 diffuse = brightness * lightColor;
-    lightFactor = vec4(diffuse, 1.0);
+    gLightFactor = vec4(diffuse, 1.0);
 
     for(int i = 0; i < gl_in.length(); i++)
     {

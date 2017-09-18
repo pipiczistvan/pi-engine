@@ -1,9 +1,9 @@
 #version 330 core
 
-in vec4 lightFactor;
+in vec4 gLightFactor;
 
-out vec4 out_color;
+out vec4 fColor;
 
 void main(void) {
-    out_color = lightFactor;
+    fColor = gLightFactor;
 }

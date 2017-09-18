@@ -1,9 +1,9 @@
 #version 330 core
 
-layout (location = 0) in vec3 position;
+layout (location = 0) in vec3 Position;
 
-uniform mat4 modelMatrix;
+out vec3 vPosition;
 
 void main(void) {
-    gl_Position = modelMatrix * vec4(position, 1.0);
+    vPosition = Position;
 }

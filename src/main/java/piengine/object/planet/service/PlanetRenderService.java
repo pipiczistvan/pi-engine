@@ -12,6 +12,7 @@ import puppeteer.annotation.premade.Component;
 import puppeteer.annotation.premade.Wire;
 
 import static org.lwjgl.opengl.GL11.GL_NONE;
+import static org.lwjgl.opengl.GL40.GL_PATCHES;
 import static piengine.visual.render.domain.RenderType.RENDER_PLANET;
 
 @Component
@@ -47,6 +48,7 @@ public class PlanetRenderService extends AbstractRenderService<PlanetShader> {
     @Override
     protected RenderConfig createRenderConfig() {
         return RenderConfigBuilder.create()
+                .withDrawMode(GL_PATCHES)
                 .withWireFrameMode(true)
                 .withCullFace(GL_NONE)
                 .build();

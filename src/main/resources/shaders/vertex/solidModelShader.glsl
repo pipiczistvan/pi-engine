@@ -1,13 +1,13 @@
 #version 330 core
 
-layout (location = 0) in vec3 position;
-layout (location = 1) in vec2 textureCoord;
+layout (location = 0) in vec3 Position;
+layout (location = 1) in vec2 TextureCoord;
 
-out vec2 pass_textureCoord;
+out vec2 vTextureCoord;
 
 uniform mat4 modelMatrix;
 
 void main(void) {
-    gl_Position = modelMatrix * vec4(position, 1.0);
-    pass_textureCoord = textureCoord;
+    gl_Position = modelMatrix * vec4(Position, 1.0);
+    vTextureCoord = TextureCoord;
 }

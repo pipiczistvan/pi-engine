@@ -26,9 +26,11 @@ public class ShaderAccessor implements Accessor<ShaderData> {
     @Override
     public ShaderData access(String file) {
         final String vertexSource = tryToReadFile("vertex", file);
+        final String tessControlSource = tryToReadFile("tessellation/control", file);
+        final String tessEvalSource = tryToReadFile("tessellation/evaluation", file);
         final String geometrySource = tryToReadFile("geometry", file);
         final String fragmentSource = tryToReadFile("fragment", file);
-        return new ShaderData(vertexSource, geometrySource, fragmentSource);
+        return new ShaderData(vertexSource, tessControlSource, tessEvalSource, geometrySource, fragmentSource);
     }
 
     private String tryToReadFile(final String shaderType, final String shaderName) {
