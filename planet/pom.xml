@@ -9,20 +9,12 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>pi-engine-frame</artifactId>
+    <artifactId>pi-engine-planet</artifactId>
 
     <dependencies>
         <dependency>
             <groupId>istvan.pipicz.opengl</groupId>
             <artifactId>pi-engine-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>istvan.pipicz.opengl</groupId>
-            <artifactId>pi-engine-gui</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>istvan.pipicz.opengl</groupId>
-            <artifactId>pi-engine-planet</artifactId>
         </dependency>
     </dependencies>
 

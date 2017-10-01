@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>pi-engine</artifactId>
+        <groupId>istvan.pipicz.opengl</groupId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>pi-engine-parent</artifactId>
+    <packaging>pom</packaging>
+
+    <modules>
+        <module>../core</module>
+        <module>../gui</module>
+        <module>../frame</module>
+        <module>../planet</module>
+    </modules>
+
+    <properties>
+        <lwjgl.version>3.0.0b</lwjgl.version>
+        <joml.version>1.8.1</joml.version>
+        <puppeteer.version>0.0.1</puppeteer.version>
+        <super-csv.version>2.4.0</super-csv.version>
+        <junit.version>4.12</junit.version>
+        <mockito.version>1.9.5</mockito.version>
+        <hamcrest.version>1.3</hamcrest.version>
+        <piengine.version>1.0-SNAPSHOT</piengine.version>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <!-- PI engine -->
+            <dependency>
+                <groupId>istvan.pipicz.opengl</groupId>
+                <artifactId>pi-engine-core</artifactId>
+                <version>${piengine.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>istvan.pipicz.opengl</groupId>
+                <artifactId>pi-engine-gui</artifactId>
+                <version>${piengine.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>istvan.pipicz.opengl</groupId>
+                <artifactId>pi-engine-planet</artifactId>
+                <version>${piengine.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>istvan.pipicz.opengl</groupId>
+                <artifactId>pi-engine-frame</artifactId>
+                <version>${piengine.version}</version>
+            </dependency>
+            <!-- LWJGL -->
+            <dependency>
+                <groupId>org.lwjgl</groupId>
+                <artifactId>lwjgl</artifactId>
+                <version>${lwjgl.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.lwjgl</groupId>
+                <artifactId>lwjgl-platform</artifactId>
+                <version>${lwjgl.version}</version>
+                <classifier>natives-windows</classifier>
+            </dependency>
+            <dependency>
+                <groupId>org.lwjgl</groupId>
+                <artifactId>lwjgl-platform</artifactId>
+                <version>${lwjgl.version}</version>
+                <classifier>natives-osx</classifier>
+            </dependency>
+            <dependency>
+                <groupId>org.lwjgl</groupId>
+                <artifactId>lwjgl-platform</artifactId>
+                <version>${lwjgl.version}</version>
+                <classifier>natives-linux</classifier>
+            </dependency>
+            <!-- JOML (MATH LIBRARY) -->
+            <dependency>
+                <groupId>org.joml</groupId>
+                <artifactId>joml</artifactId>
+                <version>${joml.version}</version>
+            </dependency>
+            <!-- PUPPETEER -->
+            <dependency>
+                <groupId>com.github.pipiczistvan</groupId>
+                <artifactId>puppeteer</artifactId>
+                <version>${puppeteer.version}</version>
+            </dependency>
+            <!-- SUPER CSV -->
+            <dependency>
+                <groupId>net.sf.supercsv</groupId>
+                <artifactId>super-csv</artifactId>
+                <version>${super-csv.version}</version>
+            </dependency>
+            <!-- JUNIT -->
+            <dependency>
+                <groupId>junit</groupId>
+                <artifactId>junit</artifactId>
+                <version>${junit.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <!-- MOCKITO -->
+            <dependency>
+                <groupId>org.mockito</groupId>
+                <artifactId>mockito-all</artifactId>
+                <version>${mockito.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <!-- HAMCREST -->
+            <dependency>
+                <groupId>org.hamcrest</groupId>
+                <artifactId>hamcrest-all</artifactId>
+                <version>${hamcrest.version}</version>
+                <scope>test</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+</project>

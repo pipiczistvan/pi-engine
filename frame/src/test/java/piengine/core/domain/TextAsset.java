@@ -1,12 +1,12 @@
 package piengine.core.domain;
 
+import piengine.common.gui.writing.font.domain.Font;
+import piengine.common.gui.writing.text.domain.Text;
 import piengine.core.time.manager.TimeManager;
 import piengine.object.asset.domain.Asset;
 import piengine.visual.render.domain.AssetPlan;
 import piengine.visual.render.manager.RenderManager;
-import piengine.visual.writing.font.domain.Font;
 import piengine.visual.writing.font.manager.FontManager;
-import piengine.visual.writing.text.domain.Text;
 import piengine.visual.writing.text.domain.TextConfiguration;
 import piengine.visual.writing.text.manager.TextManager;
 import puppeteer.annotation.premade.Wire;

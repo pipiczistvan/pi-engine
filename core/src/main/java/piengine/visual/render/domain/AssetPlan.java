@@ -1,12 +1,12 @@
 package piengine.visual.render.domain;
 
+import piengine.common.gui.writing.text.domain.Text;
 import piengine.object.asset.domain.Asset;
 import piengine.object.model.domain.Model;
 import piengine.visual.camera.Camera;
 import piengine.visual.light.Light;
 import piengine.visual.render.domain.fragment.RenderFragment;
 import piengine.visual.texture.domain.Texture;
-import piengine.visual.writing.text.domain.Text;
 
 import java.util.Collections;
 import java.util.List;

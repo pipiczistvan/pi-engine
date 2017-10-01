@@ -1,8 +1,8 @@
 package piengine.visual.render.domain.fragment.handler;
 
+import piengine.common.gui.writing.text.domain.Text;
 import piengine.visual.render.domain.RenderContext;
 import piengine.visual.render.domain.fragment.domain.RenderFragmentType;
-import piengine.visual.writing.text.domain.Text;
 import puppeteer.annotation.premade.Component;
 
 import java.util.List;

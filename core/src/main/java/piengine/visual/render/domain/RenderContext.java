@@ -2,13 +2,13 @@ package piengine.visual.render.domain;
 
 import org.joml.Vector2i;
 import org.joml.Vector4f;
+import piengine.common.gui.writing.text.domain.Text;
+import piengine.common.planet.domain.Planet;
 import piengine.object.asset.domain.Asset;
 import piengine.object.model.domain.Model;
-import piengine.object.planet.domain.Planet;
 import piengine.visual.camera.Camera;
 import piengine.visual.light.Light;
 import piengine.visual.texture.domain.Texture;
-import piengine.visual.writing.text.domain.Text;
 
 import java.util.ArrayList;
 import java.util.List;
