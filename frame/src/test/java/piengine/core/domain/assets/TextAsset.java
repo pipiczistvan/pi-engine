@@ -1,4 +1,4 @@
-package piengine.core.domain;
+package piengine.core.domain.assets;
 
 import piengine.common.gui.writing.font.domain.Font;
 import piengine.common.gui.writing.text.domain.Text;

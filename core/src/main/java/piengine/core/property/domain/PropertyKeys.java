@@ -12,6 +12,9 @@ public class PropertyKeys {
     public static final IntegerProperty WINDOW_HEIGHT = new IntegerProperty("window.height");
     public static final BooleanProperty WINDOW_FULL_SCREEN = new BooleanProperty("window.full.screen");
     public static final IntegerProperty WINDOW_MULTI_SAMPLE_COUNT = new IntegerProperty("window.multi.sample.count");
+    public static final BooleanProperty WINDOW_CURSOR_HIDDEN = new BooleanProperty("window.cursor.hidden");
+    public static final IntegerProperty WINDOW_MAJOR_VERSION = new IntegerProperty("window.major.version");
+    public static final IntegerProperty WINDOW_MINOR_VERSION = new IntegerProperty("window.minor.version");
 
     public static final IntegerProperty TIME_FPS_CAP = new IntegerProperty("time.fps.cap");
 

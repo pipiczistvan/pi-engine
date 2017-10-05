@@ -14,6 +14,7 @@ import static org.lwjgl.glfw.GLFW.GLFW_KEY_S;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_W;
 import static piengine.core.input.domain.KeyEventType.PRESS;
 import static piengine.core.input.domain.KeyEventType.RELEASE;
+import static piengine.visual.camera.ProjectionType.PERSPECTIVE;
 import static piengine.visual.render.domain.AssetPlan.createPlan;
 
 public class FirstPersonCamera extends Asset {
@@ -30,7 +31,7 @@ public class FirstPersonCamera extends Asset {
 
         this.inputManager = inputManager;
         this.windowManager = windowManager;
-        this.camera = new MovingCamera(this);
+        this.camera = new MovingCamera(this, PERSPECTIVE);
     }
 
     @Override

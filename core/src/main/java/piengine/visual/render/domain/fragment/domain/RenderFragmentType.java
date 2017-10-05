@@ -5,6 +5,7 @@ public enum RenderFragmentType {
     SET_CLEAR_COLOR,
     SET_MODELS,
     SET_TEXTURE,
+    SET_COLOR,
     SET_CAMERA,
     SET_LIGHT,
     SET_TEXT,

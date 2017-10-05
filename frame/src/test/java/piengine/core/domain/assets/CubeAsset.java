@@ -1,5 +1,6 @@
-package piengine.core.domain;
+package piengine.core.domain.assets;
 
+import org.joml.Vector4f;
 import piengine.object.asset.domain.Asset;
 import piengine.object.asset.manager.AssetManager;
 import piengine.object.model.domain.Model;
@@ -54,7 +55,8 @@ public class CubeAsset extends Asset {
         return createPlan()
                 .withModel(cube1)
                 .withModel(cube2)
-                .withTexture(arrow);
+                .withColor(new Vector4f(0, 1, 0, 1));
+//                .withTexture(arrow);
     }
 
 }

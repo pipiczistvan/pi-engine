@@ -3,6 +3,7 @@ package piengine.visual.shader.interpreter;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
+import org.joml.Vector4f;
 import org.lwjgl.BufferUtils;
 import piengine.core.base.api.Interpreter;
 import piengine.core.base.exception.PIEngineException;
@@ -34,6 +35,7 @@ import static org.lwjgl.opengl.GL20.glUniform1f;
 import static org.lwjgl.opengl.GL20.glUniform1i;
 import static org.lwjgl.opengl.GL20.glUniform2f;
 import static org.lwjgl.opengl.GL20.glUniform3f;
+import static org.lwjgl.opengl.GL20.glUniform4f;
 import static org.lwjgl.opengl.GL20.glUniformMatrix4fv;
 import static org.lwjgl.opengl.GL20.glUseProgram;
 import static org.lwjgl.opengl.GL20.glValidateProgram;
@@ -84,6 +86,10 @@ public class ShaderInterpreter implements Interpreter<ShaderDao, ShaderData> {
 
     public void loadVector3(final int location, final Vector3f vector) {
         glUniform3f(location, vector.x, vector.y, vector.z);
+    }
+
+    public void loadVector4(final int location, final Vector4f vector) {
+        glUniform4f(location, vector.x, vector.y, vector.z, vector.w);
     }
 
     public void loadBoolean(final int location, final boolean value) {

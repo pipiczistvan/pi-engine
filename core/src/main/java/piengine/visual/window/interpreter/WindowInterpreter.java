@@ -16,6 +16,8 @@ import java.nio.IntBuffer;
 
 import static org.lwjgl.glfw.GLFW.GLFW_CONTEXT_VERSION_MAJOR;
 import static org.lwjgl.glfw.GLFW.GLFW_CONTEXT_VERSION_MINOR;
+import static org.lwjgl.glfw.GLFW.GLFW_CURSOR;
+import static org.lwjgl.glfw.GLFW.GLFW_CURSOR_HIDDEN;
 import static org.lwjgl.glfw.GLFW.GLFW_FALSE;
 import static org.lwjgl.glfw.GLFW.GLFW_HAND_CURSOR;
 import static org.lwjgl.glfw.GLFW.GLFW_OPENGL_CORE_PROFILE;
@@ -41,6 +43,7 @@ import static org.lwjgl.glfw.GLFW.glfwSetCursor;
 import static org.lwjgl.glfw.GLFW.glfwSetCursorPos;
 import static org.lwjgl.glfw.GLFW.glfwSetCursorPosCallback;
 import static org.lwjgl.glfw.GLFW.glfwSetErrorCallback;
+import static org.lwjgl.glfw.GLFW.glfwSetInputMode;
 import static org.lwjgl.glfw.GLFW.glfwSetKeyCallback;
 import static org.lwjgl.glfw.GLFW.glfwSetMouseButtonCallback;
 import static org.lwjgl.glfw.GLFW.glfwSetWindowPos;
@@ -79,10 +82,10 @@ public class WindowInterpreter {
         this.eventMap = new ListMap<>();
     }
 
-    public void createWindow(String title, int width, int height, boolean fullScreen, int multiSampleCount) {
+    public void createWindow(String title, int width, int height, boolean fullScreen, int multiSampleCount, boolean cursorHidden, int major, int minor) {
         setupGLFW();
-        setupHints(multiSampleCount);
-        setupContext(title, width, height, fullScreen);
+        setupHints(multiSampleCount, major, minor);
+        setupContext(title, width, height, fullScreen, cursorHidden);
 
         initializeWindow();
         updateWindow();
@@ -131,23 +134,23 @@ public class WindowInterpreter {
         }
     }
 
-    private void setupHints(int multiSampleCount) {
+    private void setupHints(int multiSampleCount, int major, int minor) {
         glfwDefaultWindowHints();
         glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
         glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, major);
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, minor);
         glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE);
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
         glfwWindowHint(GLFW_SAMPLES, multiSampleCount);
     }
 
-    private void setupContext(String title, int width, int height, boolean fullScreen) {
+    private void setupContext(String title, int width, int height, boolean fullScreen, boolean cursorHidden) {
         windowId = glfwCreateWindow(width, height, title, fullScreen ? glfwGetPrimaryMonitor() : NULL, NULL);
         if (windowId == NULL) {
             throw new PIEngineException("Failed to create the GLFW window");
         }
-        cursorId = glfwCreateStandardCursor(GLFW_HAND_CURSOR);;
+        cursorId = glfwCreateStandardCursor(GLFW_HAND_CURSOR);
 
         GLFWVidMode vidMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
         glfwGetFramebufferSize(windowId, frameBufferWidth, frameBufferHeight);
@@ -160,6 +163,11 @@ public class WindowInterpreter {
         windowCenter = new Vector2f(width / 2, height / 2);
 
         glfwSetCursor(windowId, cursorId);
+
+        if (cursorHidden) {
+            glfwSetInputMode(windowId, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+        }
+
         glfwSetKeyCallback(windowId, inputService.getKeyCallback());
         glfwSetMouseButtonCallback(windowId, inputService.getMouseButtonCallback());
         glfwSetCursorPosCallback(windowId, inputService.getCursorPosCallback());

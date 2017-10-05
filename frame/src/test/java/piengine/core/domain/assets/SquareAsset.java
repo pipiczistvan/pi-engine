@@ -1,4 +1,4 @@
-package piengine.core.domain;
+package piengine.core.domain.assets;
 
 import piengine.object.asset.domain.Asset;
 import piengine.object.model.domain.Model;

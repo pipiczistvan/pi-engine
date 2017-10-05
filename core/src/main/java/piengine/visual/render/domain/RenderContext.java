@@ -24,5 +24,6 @@ public class RenderContext {
     public Camera camera;
     public Light light;
     public Planet planet;
+    public Vector4f color;
 
 }

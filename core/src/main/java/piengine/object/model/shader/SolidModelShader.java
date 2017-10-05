@@ -1,6 +1,7 @@
 package piengine.object.model.shader;
 
 import org.joml.Matrix4f;
+import org.joml.Vector4f;
 import piengine.visual.light.Light;
 import piengine.visual.shader.domain.Shader;
 import piengine.visual.shader.domain.ShaderDao;
@@ -10,8 +11,11 @@ public class SolidModelShader extends Shader {
     private int location_modelMatrix;
     private int location_viewMatrix;
     private int location_projectionMatrix;
+    private int location_lightEnabled;
     private int location_lightPosition;
     private int location_lightColor;
+    private int location_color;
+    private int location_textureEnabled;
 
     public SolidModelShader(final ShaderDao dao) {
         super(dao);
@@ -22,8 +26,11 @@ public class SolidModelShader extends Shader {
         location_modelMatrix = getUniformLocation("modelMatrix");
         location_viewMatrix = getUniformLocation("viewMatrix");
         location_projectionMatrix = getUniformLocation("projectionMatrix");
+        location_lightEnabled = getUniformLocation("lightEnabled");
         location_lightPosition = getUniformLocation("lightPosition");
         location_lightColor = getUniformLocation("lightColor");
+        location_color = getUniformLocation("color");
+        location_textureEnabled = getUniformLocation("textureEnabled");
     }
 
     public SolidModelShader start() {
@@ -57,8 +64,29 @@ public class SolidModelShader extends Shader {
     }
 
     public SolidModelShader loadLight(final Light light) {
-        loadUniform(location_lightPosition, light.getPosition());
-        loadUniform(location_lightColor, light.color);
+        if (light != null) {
+            loadUniform(location_lightEnabled, true);
+            loadUniform(location_lightPosition, light.getPosition());
+            loadUniform(location_lightColor, light.color);
+        } else {
+            loadUniform(location_lightEnabled, false);
+        }
+
+        return this;
+    }
+
+    public SolidModelShader loadColor(final Vector4f color) {
+        if (color != null) {
+            loadUniform(location_color, color);
+        } else {
+            loadUniform(location_color, new Vector4f(1));
+        }
+
+        return this;
+    }
+
+    public SolidModelShader loadTextureEnabled(final boolean value) {
+        loadUniform(location_textureEnabled, value);
 
         return this;
     }

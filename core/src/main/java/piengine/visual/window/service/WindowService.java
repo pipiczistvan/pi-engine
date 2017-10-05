@@ -8,8 +8,11 @@ import puppeteer.annotation.premade.Component;
 import puppeteer.annotation.premade.Wire;
 
 import static piengine.core.property.domain.ApplicationProperties.get;
+import static piengine.core.property.domain.PropertyKeys.WINDOW_CURSOR_HIDDEN;
 import static piengine.core.property.domain.PropertyKeys.WINDOW_FULL_SCREEN;
 import static piengine.core.property.domain.PropertyKeys.WINDOW_HEIGHT;
+import static piengine.core.property.domain.PropertyKeys.WINDOW_MAJOR_VERSION;
+import static piengine.core.property.domain.PropertyKeys.WINDOW_MINOR_VERSION;
 import static piengine.core.property.domain.PropertyKeys.WINDOW_MULTI_SAMPLE_COUNT;
 import static piengine.core.property.domain.PropertyKeys.WINDOW_TITLE;
 import static piengine.core.property.domain.PropertyKeys.WINDOW_WIDTH;
@@ -30,7 +33,10 @@ public class WindowService {
                 get(WINDOW_WIDTH),
                 get(WINDOW_HEIGHT),
                 get(WINDOW_FULL_SCREEN),
-                get(WINDOW_MULTI_SAMPLE_COUNT)
+                get(WINDOW_MULTI_SAMPLE_COUNT),
+                get(WINDOW_CURSOR_HIDDEN),
+                get(WINDOW_MAJOR_VERSION),
+                get(WINDOW_MINOR_VERSION)
         );
     }
 

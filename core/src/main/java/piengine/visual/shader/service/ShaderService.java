@@ -3,6 +3,7 @@ package piengine.visual.shader.service;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
+import org.joml.Vector4f;
 import piengine.core.base.exception.PIEngineException;
 import piengine.core.base.resource.SupplierService;
 import piengine.visual.shader.accessor.ShaderAccessor;
@@ -42,6 +43,10 @@ public class ShaderService extends SupplierService<Shader, ShaderDao, ShaderData
 
     public void loadUniform(final int location, final Matrix4f value) {
         shaderInterpreter.loadMatrix4(location, value);
+    }
+
+    public void loadUniform(final int location, final Vector4f value) {
+        shaderInterpreter.loadVector4(location, value);
     }
 
     public void loadUniform(final int location, final Vector3f value) {

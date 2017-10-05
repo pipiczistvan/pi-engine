@@ -1,5 +1,6 @@
 package piengine.visual.render.domain;
 
+import org.joml.Vector4f;
 import piengine.common.gui.writing.text.domain.Text;
 import piengine.object.asset.domain.Asset;
 import piengine.object.model.domain.Model;
@@ -13,6 +14,7 @@ import java.util.List;
 
 import static piengine.visual.render.domain.fragment.domain.RenderFragmentType.SET_ASSET;
 import static piengine.visual.render.domain.fragment.domain.RenderFragmentType.SET_CAMERA;
+import static piengine.visual.render.domain.fragment.domain.RenderFragmentType.SET_COLOR;
 import static piengine.visual.render.domain.fragment.domain.RenderFragmentType.SET_LIGHT;
 import static piengine.visual.render.domain.fragment.domain.RenderFragmentType.SET_MODELS;
 import static piengine.visual.render.domain.fragment.domain.RenderFragmentType.SET_PLANET;
@@ -39,6 +41,11 @@ public class AssetPlan extends RenderPlan {
 
     public AssetPlan withTexture(final Texture texture) {
         fragments.add(new RenderFragment<>(SET_TEXTURE, texture));
+        return this;
+    }
+
+    public AssetPlan withColor(final Vector4f color) {
+        fragments.add(new RenderFragment<>(SET_COLOR, color));
         return this;
     }
 

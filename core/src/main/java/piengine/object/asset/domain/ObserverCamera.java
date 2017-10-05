@@ -11,6 +11,7 @@ import puppeteer.annotation.premade.Wire;
 import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_LEFT;
 import static piengine.core.input.domain.KeyEventType.PRESS;
 import static piengine.core.input.domain.KeyEventType.RELEASE;
+import static piengine.visual.camera.ProjectionType.ORTHOGRAPHIC;
 import static piengine.visual.render.domain.AssetPlan.createPlan;
 
 public class ObserverCamera extends Asset {
@@ -30,7 +31,7 @@ public class ObserverCamera extends Asset {
 
         this.inputManager = inputManager;
         this.windowManager = windowManager;
-        this.camera = new LookingCamera(this);
+        this.camera = new LookingCamera(this, ORTHOGRAPHIC);
         this.lastCursorPos = new Vector2f();
     }
 

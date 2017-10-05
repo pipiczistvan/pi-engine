@@ -38,9 +38,15 @@ public class SolidModelRenderService extends AbstractRenderService<SolidModelSha
     protected void render(final RenderContext context) {
         shader.start()
                 .loadLight(context.light)
+                .loadColor(context.color)
                 .loadProjectionMatrix(context.camera.projection)
-                .loadViewMatrix(context.camera.view);
-        textureService.bind(context.texture);
+                .loadViewMatrix(context.camera.view)
+                .loadTextureEnabled(context.texture != null);
+
+        if (context.texture != null) {
+            textureService.bind(context.texture);
+        }
+
         for (Model model : context.models) {
             shader.loadModelMatrix(model.getModelMatrix());
             draw(model.mesh.dao);

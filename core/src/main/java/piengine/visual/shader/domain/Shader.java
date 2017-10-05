@@ -3,6 +3,7 @@ package piengine.visual.shader.domain;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
+import org.joml.Vector4f;
 import piengine.core.base.domain.Domain;
 import piengine.core.base.exception.PIEngineException;
 import piengine.visual.shader.service.ShaderService;
@@ -38,6 +39,10 @@ public class Shader extends Domain<ShaderDao> {
     }
 
     protected void loadUniform(int location, Matrix4f value) {
+        shaderService.loadUniform(location, value);
+    }
+
+    protected void loadUniform(int location, Vector4f value) {
         shaderService.loadUniform(location, value);
     }
 

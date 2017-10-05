@@ -72,9 +72,7 @@ public class DoRenderFragmentHandler extends FragmentHandler<RenderType> {
         for (Model model : context.models) {
             check("model", notNull(model));
         }
-        check("texture", notNull(context.texture));
         check("camera", notNull(context.camera));
-        check("light", notNull(context.light));
     }
 
     private void checkTextRendering(final RenderContext context) {
@@ -86,7 +84,6 @@ public class DoRenderFragmentHandler extends FragmentHandler<RenderType> {
     private void checkPlanetRendering(final RenderContext context) {
         check("planet", notNull(context.planet));
         check("camera", notNull(context.camera));
-        check("light", notNull(context.light));
     }
 
     private void clearContext(final RenderContext context) {

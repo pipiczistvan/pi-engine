@@ -10,6 +10,7 @@ public class PlanetShader extends Shader {
     private int location_modelMatrix;
     private int location_viewMatrix;
     private int location_projectionMatrix;
+    private int location_lightEnabled;
     private int location_lightPosition;
     private int location_lightColor;
 
@@ -22,6 +23,7 @@ public class PlanetShader extends Shader {
         location_modelMatrix = getUniformLocation("modelMatrix");
         location_viewMatrix = getUniformLocation("viewMatrix");
         location_projectionMatrix = getUniformLocation("projectionMatrix");
+        location_lightEnabled = getUniformLocation("lightEnabled");
         location_lightPosition = getUniformLocation("lightPosition");
         location_lightColor = getUniformLocation("lightColor");
     }
@@ -57,8 +59,13 @@ public class PlanetShader extends Shader {
     }
 
     public PlanetShader loadLight(final Light light) {
-        loadUniform(location_lightPosition, light.getPosition());
-        loadUniform(location_lightColor, light.color);
+        if (light != null) {
+            loadUniform(location_lightEnabled, true);
+            loadUniform(location_lightPosition, light.getPosition());
+            loadUniform(location_lightColor, light.color);
+        } else {
+            loadUniform(location_lightEnabled, false);
+        }
 
         return this;
     }

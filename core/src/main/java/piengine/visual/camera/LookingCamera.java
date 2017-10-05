@@ -7,14 +7,13 @@ import static piengine.core.property.domain.ApplicationProperties.get;
 import static piengine.core.property.domain.PropertyKeys.CAMERA_LOOK_SPEED;
 import static piengine.core.utils.MatrixUtils.VIEW_MATRIX;
 import static piengine.core.utils.MatrixUtils.VIEW_MATRIX_REVERSE;
-import static piengine.visual.camera.ProjectionType.ORTHOGRAPHIC;
 
 public class LookingCamera extends Camera {
 
     private final float lookSpeed;
 
-    public LookingCamera(Entity parent) {
-        super(parent, ORTHOGRAPHIC);
+    public LookingCamera(Entity parent, ProjectionType projectionType) {
+        super(parent, projectionType);
 
         this.lookSpeed = get(CAMERA_LOOK_SPEED);
     }

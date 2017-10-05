@@ -8,7 +8,6 @@ import static piengine.core.property.domain.PropertyKeys.CAMERA_LOOK_DOWN_LIMIT;
 import static piengine.core.property.domain.PropertyKeys.CAMERA_LOOK_SPEED;
 import static piengine.core.property.domain.PropertyKeys.CAMERA_LOOK_UP_LIMIT;
 import static piengine.core.property.domain.PropertyKeys.CAMERA_MOVE_SPEED;
-import static piengine.visual.camera.ProjectionType.PERSPECTIVE;
 
 public class MovingCamera extends Camera {
 
@@ -20,8 +19,8 @@ public class MovingCamera extends Camera {
 
     private final Vector2f movement;
 
-    public MovingCamera(Entity parent) {
-        super(parent, PERSPECTIVE);
+    public MovingCamera(Entity parent, ProjectionType projectionType) {
+        super(parent, projectionType);
 
         this.lookDownLimit = get(CAMERA_LOOK_DOWN_LIMIT);
         this.lookUpLimit = get(CAMERA_LOOK_UP_LIMIT);
