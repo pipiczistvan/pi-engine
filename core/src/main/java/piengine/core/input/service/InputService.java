@@ -8,6 +8,7 @@ import piengine.core.base.exception.PIEngineException;
 import piengine.core.input.domain.KeyEventType;
 import piengine.core.input.interpreter.CursorPosCallback;
 import piengine.core.input.interpreter.KeyCallback;
+import piengine.core.input.interpreter.MouseButtonCallback;
 import piutils.map.ListMap;
 import puppeteer.annotation.premade.Component;
 
@@ -18,6 +19,7 @@ import java.util.List;
 public class InputService implements Service {
 
     private final KeyCallback keyCallback;
+    private final MouseButtonCallback mouseButtonCallback;
     private final CursorPosCallback cursorPosCallback;
 
     private final ListMap<Integer, Event> releaseEventMap;
@@ -29,6 +31,7 @@ public class InputService implements Service {
         this.pressEventMap = new ListMap<>();
         this.cursorEvents = new ArrayList<>();
         this.keyCallback = new KeyCallback(releaseEventMap, pressEventMap);
+        this.mouseButtonCallback = new MouseButtonCallback(releaseEventMap, pressEventMap);
         this.cursorPosCallback = new CursorPosCallback(cursorEvents);
     }
 
@@ -51,6 +54,10 @@ public class InputService implements Service {
 
     public KeyCallback getKeyCallback() {
         return keyCallback;
+    }
+
+    public MouseButtonCallback getMouseButtonCallback() {
+        return mouseButtonCallback;
     }
 
     public CursorPosCallback getCursorPosCallback() {

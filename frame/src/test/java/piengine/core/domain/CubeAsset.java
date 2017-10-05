@@ -18,7 +18,8 @@ public class CubeAsset extends Asset {
     private final TextureManager textureManager;
     private final AssetManager assetManager;
 
-    private Model cube;
+    private Model cube1;
+    private Model cube2;
     private Texture arrow;
     private SquareAsset squareAsset;
 
@@ -33,24 +34,27 @@ public class CubeAsset extends Asset {
 
     @Override
     public void initialize() {
-        cube = modelManager.supply("cube", this);
+        cube1 = modelManager.supply("cube", this);
+        cube2 = modelManager.supply("cube", this);
         arrow = textureManager.supply("arrow");
         squareAsset = assetManager.supply(SquareAsset.class, this);
 
-//        squareAsset.position.set(-3, 0, 0);
+        cube1.setPosition(-1, 0, 0);
+        cube1.setScale(0.5f);
+        cube2.setPosition(1, 0, 0);
+        cube2.setScale(0.5f);
     }
 
     @Override
     public void update(double delta) {
-//        cube.rotation.add(30f * (float) delta, 50f * (float) delta, 70f * (float) delta);
     }
 
     @Override
     protected AssetPlan createRenderPlan() {
         return createPlan()
-                .withModel(cube)
-                .withTexture(arrow)
-                .withAsset(squareAsset);
+                .withModel(cube1)
+                .withModel(cube2)
+                .withTexture(arrow);
     }
 
 }

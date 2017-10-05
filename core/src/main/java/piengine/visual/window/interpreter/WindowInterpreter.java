@@ -16,9 +16,8 @@ import java.nio.IntBuffer;
 
 import static org.lwjgl.glfw.GLFW.GLFW_CONTEXT_VERSION_MAJOR;
 import static org.lwjgl.glfw.GLFW.GLFW_CONTEXT_VERSION_MINOR;
-import static org.lwjgl.glfw.GLFW.GLFW_CURSOR;
-import static org.lwjgl.glfw.GLFW.GLFW_CURSOR_HIDDEN;
 import static org.lwjgl.glfw.GLFW.GLFW_FALSE;
+import static org.lwjgl.glfw.GLFW.GLFW_HAND_CURSOR;
 import static org.lwjgl.glfw.GLFW.GLFW_OPENGL_CORE_PROFILE;
 import static org.lwjgl.glfw.GLFW.GLFW_OPENGL_FORWARD_COMPAT;
 import static org.lwjgl.glfw.GLFW.GLFW_OPENGL_PROFILE;
@@ -26,6 +25,7 @@ import static org.lwjgl.glfw.GLFW.GLFW_RESIZABLE;
 import static org.lwjgl.glfw.GLFW.GLFW_SAMPLES;
 import static org.lwjgl.glfw.GLFW.GLFW_TRUE;
 import static org.lwjgl.glfw.GLFW.GLFW_VISIBLE;
+import static org.lwjgl.glfw.GLFW.glfwCreateStandardCursor;
 import static org.lwjgl.glfw.GLFW.glfwCreateWindow;
 import static org.lwjgl.glfw.GLFW.glfwDefaultWindowHints;
 import static org.lwjgl.glfw.GLFW.glfwDestroyWindow;
@@ -37,11 +37,12 @@ import static org.lwjgl.glfw.GLFW.glfwGetWindowSize;
 import static org.lwjgl.glfw.GLFW.glfwInit;
 import static org.lwjgl.glfw.GLFW.glfwMakeContextCurrent;
 import static org.lwjgl.glfw.GLFW.glfwPollEvents;
+import static org.lwjgl.glfw.GLFW.glfwSetCursor;
 import static org.lwjgl.glfw.GLFW.glfwSetCursorPos;
 import static org.lwjgl.glfw.GLFW.glfwSetCursorPosCallback;
 import static org.lwjgl.glfw.GLFW.glfwSetErrorCallback;
-import static org.lwjgl.glfw.GLFW.glfwSetInputMode;
 import static org.lwjgl.glfw.GLFW.glfwSetKeyCallback;
+import static org.lwjgl.glfw.GLFW.glfwSetMouseButtonCallback;
 import static org.lwjgl.glfw.GLFW.glfwSetWindowPos;
 import static org.lwjgl.glfw.GLFW.glfwSetWindowShouldClose;
 import static org.lwjgl.glfw.GLFW.glfwShowWindow;
@@ -63,6 +64,7 @@ public class WindowInterpreter {
     private final ListMap<WindowEventType, Event> eventMap;
 
     private long windowId;
+    private long cursorId;
     private IntBuffer windowWidth = BufferUtils.createIntBuffer(1);
     private IntBuffer windowHeight = BufferUtils.createIntBuffer(1);
     private IntBuffer frameBufferWidth = BufferUtils.createIntBuffer(1);
@@ -145,6 +147,7 @@ public class WindowInterpreter {
         if (windowId == NULL) {
             throw new PIEngineException("Failed to create the GLFW window");
         }
+        cursorId = glfwCreateStandardCursor(GLFW_HAND_CURSOR);;
 
         GLFWVidMode vidMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
         glfwGetFramebufferSize(windowId, frameBufferWidth, frameBufferHeight);
@@ -156,9 +159,10 @@ public class WindowInterpreter {
         );
         windowCenter = new Vector2f(width / 2, height / 2);
 
-        glfwSetCursorPosCallback(windowId, inputService.getCursorPosCallback());
+        glfwSetCursor(windowId, cursorId);
         glfwSetKeyCallback(windowId, inputService.getKeyCallback());
-        glfwSetInputMode(windowId, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+        glfwSetMouseButtonCallback(windowId, inputService.getMouseButtonCallback());
+        glfwSetCursorPosCallback(windowId, inputService.getCursorPosCallback());
 
         glfwMakeContextCurrent(windowId);
         glfwSwapInterval(1);

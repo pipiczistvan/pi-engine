@@ -19,6 +19,9 @@ public class WindowManager {
         windowService.closeWindow();
     }
 
+    public Vector2f getPointer() {
+        return windowService.getPointer();
+    }
 
     public void setPointer(Vector2f position) {
         windowService.setPointer(position);

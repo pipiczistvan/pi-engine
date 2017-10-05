@@ -2,7 +2,7 @@ package piengine.object.asset.domain;
 
 import org.joml.Vector2f;
 import piengine.core.input.manager.InputManager;
-import piengine.visual.camera.Camera;
+import piengine.visual.camera.MovingCamera;
 import piengine.visual.render.domain.AssetPlan;
 import piengine.visual.render.manager.RenderManager;
 import piengine.visual.window.manager.WindowManager;
@@ -20,7 +20,7 @@ public class FirstPersonCamera extends Asset {
 
     private final InputManager inputManager;
     private final WindowManager windowManager;
-    private final Camera camera;
+    private final MovingCamera camera;
 
     @Wire
     public FirstPersonCamera(final RenderManager renderManager,
@@ -30,7 +30,7 @@ public class FirstPersonCamera extends Asset {
 
         this.inputManager = inputManager;
         this.windowManager = windowManager;
-        this.camera = new Camera(this);
+        this.camera = new MovingCamera(this);
     }
 
     @Override

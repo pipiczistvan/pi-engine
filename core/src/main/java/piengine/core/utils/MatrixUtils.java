@@ -40,6 +40,18 @@ public class MatrixUtils {
         return matrix;
     }
 
+    public static Matrix4f VIEW_MATRIX_REVERSE(final Vector3f position, final Vector3f rotation) {
+        Matrix4f matrix = new Matrix4f();
+        Vector3f cameraPos = new Vector3f(position);
+
+        matrix.translate(cameraPos.negate());
+
+        matrix.rotate((float) Math.toRadians(-rotation.y), RIGHT);
+        matrix.rotate((float) Math.toRadians(rotation.x), UP);
+
+        return matrix;
+    }
+
     public static Matrix4f PERSPECTIVE_PROJECTION_MATRIX(final Vector2f viewPort, final float fieldOfView, final float nearPlane, final float farPlane) {
         Matrix4f matrix = new Matrix4f();
         matrix.perspective(
