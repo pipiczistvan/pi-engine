@@ -82,22 +82,24 @@ public class MeshParser {
         return new ParsedMeshData(verticesArray, indicesArray, texturesArray);
     }
 
-    private static void processVertex(String[] vertexData, List<Integer> indices,
-                                      List<Vector2f> textures, float[] texturesArray) {
+    private void processVertex(String[] vertexData, List<Integer> indices,
+                               List<Vector2f> textures, float[] texturesArray) {
         int currentVertexPointer = parseInt(vertexData[0]) - 1;
 
         indices.add(currentVertexPointer);
 
-        Vector2f currentTexture = textures.get(parseInt(vertexData[1]) - 1);
-        texturesArray[currentVertexPointer * 2] = currentTexture.x;
-        texturesArray[currentVertexPointer * 2 + 1] = 1 - currentTexture.y;
+        if (!textures.isEmpty()) {
+            Vector2f currentTexture = textures.get(parseInt(vertexData[1]) - 1);
+            texturesArray[currentVertexPointer * 2] = currentTexture.x;
+            texturesArray[currentVertexPointer * 2 + 1] = 1 - currentTexture.y;
+        }
     }
 
-    private static Vector2f parseVector2f(String[] splatString) {
+    private Vector2f parseVector2f(String[] splatString) {
         return new Vector2f(parseFloat(splatString[1]), parseFloat(splatString[2]));
     }
 
-    private static Vector3f parseVector3f(String[] splatString) {
+    private Vector3f parseVector3f(String[] splatString) {
         return new Vector3f(parseFloat(splatString[1]), parseFloat(splatString[2]), parseFloat(splatString[3]));
     }
 

@@ -3,7 +3,7 @@ package piengine.core.domain;
 import org.joml.Vector2i;
 import org.joml.Vector4f;
 import piengine.core.architecture.scene.domain.Scene;
-import piengine.core.domain.assets.CubeAsset;
+import piengine.core.domain.assets.StickAsset;
 import piengine.core.domain.assets.TextAsset;
 import piengine.core.input.manager.InputManager;
 import piengine.object.asset.domain.ObserverCamera;
@@ -27,7 +27,7 @@ public class ObserverScene extends Scene {
     private final WindowManager windowManager;
 
     private ObserverCamera observerCamera;
-    private CubeAsset cubeAsset;
+    private StickAsset stickAsset;
     private TextAsset textAsset;
 
     @Wire
@@ -42,7 +42,7 @@ public class ObserverScene extends Scene {
     public void initialize() {
         observerCamera = createAsset(ObserverCamera.class);
         textAsset = createAsset(TextAsset.class);
-        cubeAsset = createAsset(CubeAsset.class);
+        stickAsset = createAsset(StickAsset.class);
 
         inputManager.addEvent(GLFW_KEY_ESCAPE, PRESS, windowManager::closeWindow);
     }
@@ -54,7 +54,7 @@ public class ObserverScene extends Scene {
                 .withClearColor(new Vector4f(1, 1, 1, 1))
                 .doClearScreen()
                 .withAsset(observerCamera)
-                .withAsset(cubeAsset)
+                .withAsset(stickAsset)
                 .doRender(RENDER_SOLID_MODEL)
                 .withAsset(textAsset)
                 .doRender(RENDER_TEXT);

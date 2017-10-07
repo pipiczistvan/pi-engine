@@ -56,6 +56,10 @@ public abstract class Entity {
         this.scale.set(x);
     }
 
+    public void setScale(float x, float y, float z) {
+        this.scale.set(x, y, z);
+    }
+
     public Vector3f getRotation() {
         Vector3f relativeRotation = new Vector3f();
         this.rotation.add(parent.rotation, relativeRotation);
