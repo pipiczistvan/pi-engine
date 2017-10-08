@@ -33,14 +33,14 @@ public class StickAsset extends Asset {
             Model stick = modelManager.supply("octahedron", this);
 
             stick.setPosition(
-                    random.nextFloat() * 4 - 2f,
-                    random.nextFloat() * 4 - 2f,
-                    random.nextFloat() * 4 - 2f);
+                    random.nextFloat() * 600 - 300,
+                    random.nextFloat() * 600 - 300,
+                    random.nextFloat() * 600 - 300);
             stick.setRotation(
                     random.nextFloat() * 360 - 180,
                     random.nextFloat() * 360 - 180,
                     random.nextFloat() * 360 - 180);
-            stick.setScale(0.0025f, 0.2f, 0.0025f);
+            stick.setScale(2, 60, 2);
 
             sticks.add(stick);
         }

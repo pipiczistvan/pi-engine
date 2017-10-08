@@ -63,7 +63,7 @@ public class MatrixUtils {
         return matrix;
     }
 
-    public static Matrix4f ORTHOGRAPHIC_PROJECTION_MATRIX(final Vector2f viewPort, final float nearPlane, final float farPlane) {
+    public static Matrix4f ORTHOGRAPHIC_PROJECTION_MATRIX(final Vector2f viewPort, final float farPlane) {
         Matrix4f matrix = new Matrix4f();
 
         matrix.ortho(
@@ -71,7 +71,7 @@ public class MatrixUtils {
                 viewPort.x,
                 viewPort.y,
                 -viewPort.y,
-                nearPlane,
+                -farPlane,
                 farPlane);
 
         return matrix;

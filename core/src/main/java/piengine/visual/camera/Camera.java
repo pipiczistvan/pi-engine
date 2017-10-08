@@ -49,7 +49,7 @@ public abstract class Camera extends Entity implements Updatable {
             case PERSPECTIVE:
                 return PERSPECTIVE_PROJECTION_MATRIX(viewPort, fieldOfView, nearPlane, farPlane);
             case ORTHOGRAPHIC:
-                return ORTHOGRAPHIC_PROJECTION_MATRIX(viewPort, nearPlane, farPlane);
+                return ORTHOGRAPHIC_PROJECTION_MATRIX(viewPort, farPlane);
             default:
                 throw new PIEngineException("Invalid projection type %s!", projectionType.name());
         }

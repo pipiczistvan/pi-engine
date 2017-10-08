@@ -5,25 +5,32 @@ import piengine.core.property.domain.ApplicationProperties;
 import puppeteer.Puppeteer;
 import puppeteer.annotation.premade.Wire;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
+import static java.util.Arrays.asList;
+
 public class piEngine {
 
-    private static final String PREFIX = "piengine";
-    private static final String[] PACKAGES = {
+    private static final Collection<String> PACKAGES = asList(
             "piengine.*.domain",
             "piengine.*.manager",
             "piengine.*.service",
             "piengine.*.accessor",
             "piengine.*.interpreter"
-    };
+    );
     private static final String ENGINE_PROPERTIES = "engine";
 
     @Wire
     private static EngineService engineService;
 
-    public piEngine(final String applicationProperties) {
+    public piEngine(final String applicationProperties, final Collection<String> libraries, final Collection<String> packages) {
         ApplicationProperties.load(ENGINE_PROPERTIES, applicationProperties);
 
-        Puppeteer puppeteer = new Puppeteer(PREFIX, PACKAGES);
+        Collection<String> combinedPackages = new ArrayList<>(PACKAGES);
+        combinedPackages.addAll(packages);
+
+        Puppeteer puppeteer = new Puppeteer(libraries, combinedPackages);
         puppeteer.useDefaultAnnotations();
         puppeteer.processAnnotations();
     }
