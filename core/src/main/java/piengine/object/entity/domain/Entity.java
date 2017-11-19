@@ -23,7 +23,7 @@ public abstract class Entity {
 
         this.position.add(parent.position);
         this.rotation.add(parent.rotation);
-        this.position.mul(parent.scale);
+        this.scale.mul(parent.scale);
 
         setParent(parent);
     }
@@ -50,6 +50,13 @@ public abstract class Entity {
 
     public void setPosition(float x, float y, float z) {
         this.position.set(x, y, z);
+    }
+
+    public Vector3f getScale() {
+        Vector3f relativeScale = new Vector3f();
+        this.scale.mul(parent.scale, relativeScale);
+
+        return relativeScale;
     }
 
     public void setScale(float x) {
