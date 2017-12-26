@@ -6,40 +6,55 @@ import piengine.core.base.api.Renderable;
 import piengine.core.base.api.Service;
 import piengine.core.base.api.Updatable;
 import piengine.visual.render.service.RenderService;
+import puppeteer.Puppeteer;
 import puppeteer.annotation.premade.Component;
 import puppeteer.annotation.premade.Wire;
-
-import java.util.List;
 
 @Component
 public class SceneService implements Service, Initializable, Updatable, Renderable {
 
+    private final Puppeteer puppeteer;
     private final RenderService renderService;
-    private final List<Scene> scenes;
+
+    private Class<? extends Scene> defaultSceneClass;
+    private Scene currentScene;
 
     @Wire
-    public SceneService(final RenderService renderService, final List<Scene> scenes) {
+    public SceneService(final Puppeteer puppeteer,
+                        final RenderService renderService) {
+        this.puppeteer = puppeteer;
         this.renderService = renderService;
-        this.scenes = scenes;
     }
 
     @Override
     public void initialize() {
-        scenes.forEach(scene -> {
-            scene.initialize();
-            scene.setupRenderPlan();
-            renderService.validate(scene.renderPlan);
-        });
+        setCurrentScene(defaultSceneClass);
     }
 
     @Override
     public void update(double delta) {
-        scenes.forEach(scene -> scene.update(delta));
+        if (currentScene != null) {
+            currentScene.update(delta);
+        }
     }
 
     @Override
     public void render() {
-        scenes.forEach(Scene::render);
+        if (currentScene != null) {
+            currentScene.render();
+        }
+    }
+
+    public void setDefaultSceneClass(Class<? extends Scene> defaultSceneClass) {
+        this.defaultSceneClass = defaultSceneClass;
+    }
+
+    public void setCurrentScene(Class<? extends Scene> sceneClass) {
+        currentScene = puppeteer.getInstanceOf(sceneClass);
+
+        currentScene.initialize();
+        currentScene.setupRenderPlan();
+        renderService.validate(currentScene.renderPlan);
     }
 
 }

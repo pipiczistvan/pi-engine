@@ -1,5 +1,6 @@
 package piengine.core.engine.domain;
 
+import piengine.core.architecture.scene.domain.Scene;
 import piengine.core.engine.service.EngineService;
 import piengine.core.property.domain.ApplicationProperties;
 import puppeteer.Puppeteer;
@@ -35,8 +36,8 @@ public class piEngine {
         puppeteer.processAnnotations();
     }
 
-    public void start() {
-        engineService.start();
+    public void start(Class<? extends Scene> sceneClass) {
+        engineService.start(sceneClass);
     }
 
 }

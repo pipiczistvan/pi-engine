@@ -11,7 +11,6 @@ import piengine.object.asset.manager.AssetManager;
 import piengine.visual.render.domain.ScenePlan;
 import piengine.visual.render.manager.RenderManager;
 import piengine.visual.window.manager.WindowManager;
-import puppeteer.annotation.premade.Component;
 import puppeteer.annotation.premade.Wire;
 
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
@@ -20,7 +19,6 @@ import static piengine.visual.render.domain.RenderType.RENDER_SOLID_MODEL;
 import static piengine.visual.render.domain.RenderType.RENDER_TEXT;
 import static piengine.visual.render.domain.ScenePlan.createPlan;
 
-@Component
 public class ObserverScene extends Scene {
 
     private final InputManager inputManager;

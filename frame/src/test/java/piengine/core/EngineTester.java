@@ -2,6 +2,7 @@ package piengine.core;
 
 import org.junit.Ignore;
 import org.junit.Test;
+import piengine.core.domain.InitScene;
 import piengine.core.engine.domain.piEngine;
 
 import static java.util.Collections.emptyList;
@@ -14,11 +15,12 @@ public class EngineTester {
 
     @Test
     public void run() {
-        piEngine engine = new piEngine(APPLICATION_PROPERTIES,
+        piEngine engine = new piEngine(
+                APPLICATION_PROPERTIES,
                 singletonList("^.*/target/.*$"),
                 emptyList()
         );
-        engine.start();
+        engine.start(InitScene.class);
     }
 
 }

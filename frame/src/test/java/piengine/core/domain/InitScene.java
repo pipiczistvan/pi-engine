@@ -20,7 +20,6 @@ import static piengine.visual.render.domain.RenderType.RENDER_PLANET;
 import static piengine.visual.render.domain.RenderType.RENDER_TEXT;
 import static piengine.visual.render.domain.ScenePlan.createPlan;
 
-//@Component
 public class InitScene extends Scene {
 
     private final InputManager inputManager;
