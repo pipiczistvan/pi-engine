@@ -11,11 +11,13 @@ public abstract class Entity {
     protected final Vector3f position;
     protected final Vector3f rotation;
     protected final Vector3f scale;
+    private final Matrix4f modelMatrix;
 
     protected Entity() {
         this.position = new Vector3f();
         this.rotation = new Vector3f();
         this.scale = new Vector3f(1);
+        this.modelMatrix = new Matrix4f();
     }
 
     public Entity(final Entity parent) {
@@ -33,7 +35,7 @@ public abstract class Entity {
     }
 
     public Matrix4f getModelMatrix() {
-        Matrix4f modelMatrix = MODEL_MATRIX(position, rotation, scale);
+        MODEL_MATRIX(position, rotation, scale, modelMatrix);
         if (parent != null) {
             parent.getModelMatrix().mul(modelMatrix, modelMatrix);
         }
