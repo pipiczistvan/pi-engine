@@ -1,48 +1,41 @@
-package piengine.core.domain.assets;
+package piengine.core.domain.assets.object;
 
+import org.joml.Vector4f;
 import piengine.object.asset.domain.Asset;
 import piengine.object.model.domain.Model;
 import piengine.object.model.manager.ModelManager;
 import piengine.visual.render.domain.AssetPlan;
 import piengine.visual.render.manager.RenderManager;
-import piengine.visual.texture.domain.Texture;
-import piengine.visual.texture.manager.TextureManager;
 import puppeteer.annotation.premade.Wire;
 
 import static piengine.visual.render.domain.AssetPlan.createPlan;
 
-public class SquareAsset extends Asset {
+public class CubeAsset extends Asset {
 
     private final ModelManager modelManager;
-    private final TextureManager textureManager;
 
-    private Model square;
-    private Texture arrow;
+    private Model cube;
 
     @Wire
-    public SquareAsset(final RenderManager renderManager, final ModelManager modelManager,
-                       final TextureManager textureManager) {
+    public CubeAsset(final RenderManager renderManager, final ModelManager modelManager) {
         super(renderManager);
         this.modelManager = modelManager;
-        this.textureManager = textureManager;
     }
 
     @Override
     public void initialize() {
-        square = modelManager.supply("square", this);
-        arrow = textureManager.supply("arrow");
+        cube = modelManager.supply("cube", this);
     }
 
     @Override
     public void update(double delta) {
-
     }
 
     @Override
     protected AssetPlan createRenderPlan() {
         return createPlan()
-                .withModel(square)
-                .withTexture(arrow);
+                .withModel(cube)
+                .withColor(new Vector4f(0, 1, 0, 1));
     }
 
 }

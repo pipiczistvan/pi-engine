@@ -15,7 +15,7 @@ import java.util.List;
 
 public class RenderContext {
 
-    public final Vector2i viewPort = new Vector2i();
+    public final Vector2i viewport = new Vector2i();
     public final Vector4f clearColor = new Vector4f();
     public final List<Model> models = new ArrayList<>();
     public final List<Text> texts = new ArrayList<>();

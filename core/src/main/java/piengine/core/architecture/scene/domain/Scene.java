@@ -30,6 +30,18 @@ public abstract class Scene extends RenderPlanner<ScenePlan> implements Initiali
     }
 
     @Override
+    public void initialize() {
+        createAssets();
+        initializeAssets();
+    }
+
+    protected void createAssets() {
+    }
+
+    protected void initializeAssets() {
+    }
+
+    @Override
     public void update(double delta) {
         assets.forEach(asset -> asset.update(delta));
     }

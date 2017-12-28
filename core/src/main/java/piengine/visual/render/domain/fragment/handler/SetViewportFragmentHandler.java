@@ -5,19 +5,19 @@ import piengine.visual.render.domain.RenderContext;
 import piengine.visual.render.domain.fragment.domain.RenderFragmentType;
 import puppeteer.annotation.premade.Component;
 
-import static piengine.visual.render.domain.fragment.domain.RenderFragmentType.SET_VIEW_PORT;
+import static piengine.visual.render.domain.fragment.domain.RenderFragmentType.SET_VIEWPORT;
 
 @Component
-public class SetViewPortFragmentHandler extends FragmentHandler<Vector2i> {
+public class SetViewportFragmentHandler extends FragmentHandler<Vector2i> {
 
     @Override
-    public void handle(final RenderContext context, final Vector2i viewPort) {
-        context.viewPort.set(viewPort);
+    public void handle(final RenderContext context, final Vector2i viewport) {
+        context.viewport.set(viewport);
     }
 
     @Override
     public RenderFragmentType getType() {
-        return SET_VIEW_PORT;
+        return SET_VIEWPORT;
     }
 
 }

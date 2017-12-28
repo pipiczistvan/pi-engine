@@ -1,7 +1,8 @@
-package piengine.object.asset.domain;
+package piengine.core.domain.assets.camera;
 
 import org.joml.Vector2f;
 import piengine.core.input.manager.InputManager;
+import piengine.object.asset.domain.Asset;
 import piengine.visual.camera.LookingCamera;
 import piengine.visual.render.domain.AssetPlan;
 import piengine.visual.render.manager.RenderManager;
@@ -14,7 +15,7 @@ import static piengine.core.input.domain.KeyEventType.RELEASE;
 import static piengine.visual.camera.ProjectionType.ORTHOGRAPHIC;
 import static piengine.visual.render.domain.AssetPlan.createPlan;
 
-public class ObserverCamera extends Asset {
+public class StaticCameraAsset extends Asset {
 
     private final InputManager inputManager;
     private final WindowManager windowManager;
@@ -24,9 +25,9 @@ public class ObserverCamera extends Asset {
     private boolean lookingEnabled;
 
     @Wire
-    public ObserverCamera(final RenderManager renderManager,
-                          final InputManager inputManager,
-                          final WindowManager windowManager) {
+    public StaticCameraAsset(final RenderManager renderManager,
+                             final InputManager inputManager,
+                             final WindowManager windowManager) {
         super(renderManager);
 
         this.inputManager = inputManager;

@@ -1,7 +1,7 @@
 package piengine.visual.render.domain.fragment.domain;
 
 public enum RenderFragmentType {
-    SET_VIEW_PORT,
+    SET_VIEWPORT,
     SET_CLEAR_COLOR,
     SET_MODELS,
     SET_TEXTURE,

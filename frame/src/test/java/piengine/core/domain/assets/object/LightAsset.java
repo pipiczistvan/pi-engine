@@ -1,4 +1,4 @@
-package piengine.core.domain.assets;
+package piengine.core.domain.assets.object;
 
 import piengine.object.asset.domain.Asset;
 import piengine.visual.light.Light;

@@ -9,7 +9,7 @@ import static piengine.visual.render.domain.fragment.domain.RenderFragmentType.D
 import static piengine.visual.render.domain.fragment.domain.RenderFragmentType.DO_RENDER;
 import static piengine.visual.render.domain.fragment.domain.RenderFragmentType.SET_ASSET;
 import static piengine.visual.render.domain.fragment.domain.RenderFragmentType.SET_CLEAR_COLOR;
-import static piengine.visual.render.domain.fragment.domain.RenderFragmentType.SET_VIEW_PORT;
+import static piengine.visual.render.domain.fragment.domain.RenderFragmentType.SET_VIEWPORT;
 
 public class ScenePlan extends RenderPlan {
 
@@ -20,8 +20,8 @@ public class ScenePlan extends RenderPlan {
         return new ScenePlan();
     }
 
-    public ScenePlan withViewPort(final Vector2i viewPort) {
-        fragments.add(new RenderFragment<>(SET_VIEW_PORT, viewPort));
+    public ScenePlan withViewport(final Vector2i viewPort) {
+        fragments.add(new RenderFragment<>(SET_VIEWPORT, viewPort));
         return this;
     }
 

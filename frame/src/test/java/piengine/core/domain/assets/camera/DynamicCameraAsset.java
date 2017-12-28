@@ -1,7 +1,8 @@
-package piengine.object.asset.domain;
+package piengine.core.domain.assets.camera;
 
 import org.joml.Vector2f;
 import piengine.core.input.manager.InputManager;
+import piengine.object.asset.domain.Asset;
 import piengine.visual.camera.MovingCamera;
 import piengine.visual.render.domain.AssetPlan;
 import piengine.visual.render.manager.RenderManager;
@@ -17,16 +18,16 @@ import static piengine.core.input.domain.KeyEventType.RELEASE;
 import static piengine.visual.camera.ProjectionType.PERSPECTIVE;
 import static piengine.visual.render.domain.AssetPlan.createPlan;
 
-public class FirstPersonCamera extends Asset {
+public class DynamicCameraAsset extends Asset {
 
     private final InputManager inputManager;
     private final WindowManager windowManager;
     private final MovingCamera camera;
 
     @Wire
-    public FirstPersonCamera(final RenderManager renderManager,
-                             final InputManager inputManager,
-                             final WindowManager windowManager) {
+    public DynamicCameraAsset(final RenderManager renderManager,
+                              final InputManager inputManager,
+                              final WindowManager windowManager) {
         super(renderManager);
 
         this.inputManager = inputManager;
