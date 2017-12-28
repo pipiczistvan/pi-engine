@@ -37,8 +37,14 @@ public class PlaneModelRenderService extends AbstractRenderService<PlaneModelSha
 
     @Override
     protected void render(final RenderContext context) {
-        shader.start();
-        textureService.bind(context.texture);
+        shader.start()
+                .loadColor(context.color)
+                .loadTextureEnabled(context.texture != null);
+
+        if (context.texture != null) {
+            textureService.bind(context.texture);
+        }
+
         for (Model model : context.models) {
             shader.loadModelMatrix(model.getModelMatrix());
             draw(model.mesh.dao);

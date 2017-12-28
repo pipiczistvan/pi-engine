@@ -2,6 +2,7 @@ package piengine.core.utils;
 
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
+import org.joml.Vector2i;
 import org.joml.Vector3f;
 
 import static piengine.core.utils.VectorUtils.FORWARD;
@@ -57,25 +58,25 @@ public class MatrixUtils {
         return matrix;
     }
 
-    public static Matrix4f PERSPECTIVE_PROJECTION_MATRIX(final Vector2f viewPort, final float fieldOfView, final float nearPlane, final float farPlane) {
+    public static Matrix4f PERSPECTIVE_PROJECTION_MATRIX(final Vector2i viewPort, final float fieldOfView, final float nearPlane, final float farPlane) {
         Matrix4f matrix = new Matrix4f();
         matrix.perspective(
                 (float) Math.toRadians(fieldOfView),
-                viewPort.x / viewPort.y,
+                (float) viewPort.x / (float) viewPort.y,
                 nearPlane,
                 farPlane);
 
         return matrix;
     }
 
-    public static Matrix4f ORTHOGRAPHIC_PROJECTION_MATRIX(final Vector2f viewPort, final float farPlane) {
+    public static Matrix4f ORTHOGRAPHIC_PROJECTION_MATRIX(final Vector2i viewPort, final float farPlane) {
         Matrix4f matrix = new Matrix4f();
 
         matrix.ortho(
-                -viewPort.x,
-                viewPort.x,
-                viewPort.y,
-                -viewPort.y,
+                (float) -viewPort.x,
+                (float) viewPort.x,
+                (float) viewPort.y,
+                (float) -viewPort.y,
                 -farPlane,
                 farPlane);
 

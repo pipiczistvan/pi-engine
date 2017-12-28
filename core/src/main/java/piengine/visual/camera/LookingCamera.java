@@ -1,6 +1,7 @@
 package piengine.visual.camera;
 
 import org.joml.Vector2f;
+import org.joml.Vector2i;
 import piengine.object.entity.domain.Entity;
 
 import static piengine.core.property.domain.ApplicationProperties.get;
@@ -12,8 +13,8 @@ public class LookingCamera extends Camera {
 
     private final float lookSpeed;
 
-    public LookingCamera(Entity parent, ProjectionType projectionType) {
-        super(parent, projectionType);
+    public LookingCamera(Entity parent, Vector2i viewport, float fieldOfView, float nearPlane, float farPlane, ProjectionType projectionType) {
+        super(parent, viewport, fieldOfView, nearPlane, farPlane, projectionType);
 
         this.lookSpeed = get(CAMERA_LOOK_SPEED);
     }

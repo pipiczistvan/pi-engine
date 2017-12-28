@@ -37,11 +37,13 @@ public class DoRenderFragmentHandler extends FragmentHandler<RenderType> {
 
     @Override
     public void validate(final RenderContext context, final RenderType renderType) {
+        checkDefault(context);
+
         switch (renderType) {
             case RENDER_PLANE_MODEL:
-                check2DRendering(context);
+                checkPlaneModelRendering(context);
             case RENDER_SOLID_MODEL:
-                check3DRendering(context);
+                checkSolidModelRendering(context);
                 break;
             case RENDER_TEXT:
                 checkTextRendering(context);
@@ -61,18 +63,16 @@ public class DoRenderFragmentHandler extends FragmentHandler<RenderType> {
         return DO_RENDER;
     }
 
-    private void check2DRendering(final RenderContext context) {
+    private void checkPlaneModelRendering(final RenderContext context) {
         for (Model model : context.models) {
             check("model", notNull(model));
         }
-        check("texture", notNull(context.texture));
     }
 
-    private void check3DRendering(final RenderContext context) {
+    private void checkSolidModelRendering(final RenderContext context) {
         for (Model model : context.models) {
             check("model", notNull(model));
         }
-        check("camera", notNull(context.camera));
     }
 
     private void checkTextRendering(final RenderContext context) {
@@ -81,15 +81,25 @@ public class DoRenderFragmentHandler extends FragmentHandler<RenderType> {
         }
     }
 
-    private void checkPlanetRendering(final RenderContext context) {
-        check("planet", notNull(context.planet));
+    private void checkDefault(final RenderContext context) {
         check("camera", notNull(context.camera));
     }
 
+    private void checkPlanetRendering(final RenderContext context) {
+        check("planet", notNull(context.planet));
+    }
+
     private void clearContext(final RenderContext context) {
+        context.viewport.set(0);
+        context.clearColor.set(0);
         context.models.clear();
         context.texts.clear();
         context.asset = null;
+        context.texture = null;
+        context.camera = null;
+        context.light = null;
+        context.planet = null;
+        context.color = null;
     }
 
 }

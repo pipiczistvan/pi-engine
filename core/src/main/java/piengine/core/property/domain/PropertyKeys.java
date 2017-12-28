@@ -24,8 +24,8 @@ public class PropertyKeys {
     public static final StringProperty FONTS_LOCATION = new StringProperty("engine.resources.root.fonts");
 
     public static final FloatProperty CAMERA_FOV = new FloatProperty("camera.fov");
-    public static final FloatProperty CAMERA_VIEW_PORT_WIDTH = new FloatProperty("camera.view.port.width");
-    public static final FloatProperty CAMERA_VIEW_PORT_HEIGHT = new FloatProperty("camera.view.port.height");
+    public static final IntegerProperty CAMERA_VIEWPORT_WIDTH = new IntegerProperty("camera.viewport.width");
+    public static final IntegerProperty CAMERA_VIEWPORT_HEIGHT = new IntegerProperty("camera.viewport.height");
     public static final FloatProperty CAMERA_NEAR_PLANE = new FloatProperty("camera.near.plane");
     public static final FloatProperty CAMERA_FAR_PLANE = new FloatProperty("camera.far.plane");
     public static final FloatProperty CAMERA_LOOK_UP_LIMIT = new FloatProperty("camera.look.up.limit");

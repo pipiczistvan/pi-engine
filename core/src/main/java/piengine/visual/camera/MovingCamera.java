@@ -1,13 +1,8 @@
 package piengine.visual.camera;
 
 import org.joml.Vector2f;
+import org.joml.Vector2i;
 import piengine.object.entity.domain.Entity;
-
-import static piengine.core.property.domain.ApplicationProperties.get;
-import static piengine.core.property.domain.PropertyKeys.CAMERA_LOOK_DOWN_LIMIT;
-import static piengine.core.property.domain.PropertyKeys.CAMERA_LOOK_SPEED;
-import static piengine.core.property.domain.PropertyKeys.CAMERA_LOOK_UP_LIMIT;
-import static piengine.core.property.domain.PropertyKeys.CAMERA_MOVE_SPEED;
 
 public class MovingCamera extends Camera {
 
@@ -19,14 +14,14 @@ public class MovingCamera extends Camera {
 
     private final Vector2f movement;
 
-    public MovingCamera(Entity parent, ProjectionType projectionType) {
-        super(parent, projectionType);
+    public MovingCamera(Entity parent, Vector2i viewport, float fieldOfView, float nearPlane, float farPlane, float lookUpLimit, float lookDownLimit, float lookSpeed, float moveSpeed, ProjectionType projectionType) {
+        super(parent, viewport, fieldOfView, nearPlane, farPlane, projectionType);
+        this.lookUpLimit = lookUpLimit;
+        this.lookDownLimit = lookDownLimit;
+        this.lookSpeed = lookSpeed;
+        this.moveSpeed = moveSpeed;
 
-        this.lookDownLimit = get(CAMERA_LOOK_DOWN_LIMIT);
-        this.lookUpLimit = get(CAMERA_LOOK_UP_LIMIT);
-        this.lookSpeed = get(CAMERA_LOOK_SPEED);
-        this.moveSpeed = get(CAMERA_MOVE_SPEED);
-        this.strafeSpeed = moveSpeed / (float) Math.sqrt(2);
+        this.strafeSpeed = this.moveSpeed / (float) Math.sqrt(2);
 
         this.movement = new Vector2f();
     }

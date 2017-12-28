@@ -21,6 +21,7 @@ public class DoClearScreenFragmentHandler extends FragmentHandler {
     @Override
     public void handle(final RenderContext context, final Object o) {
         clearScreenRenderService.clearScreen(context.clearColor);
+        //todo: ez a flush-be kell
         clearScreenRenderService.setViewport(context.viewport);
     }
 

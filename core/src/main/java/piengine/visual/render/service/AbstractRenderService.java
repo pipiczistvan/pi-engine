@@ -33,7 +33,7 @@ public abstract class AbstractRenderService<S extends Shader> implements Service
     }
 
     public void process(final RenderContext context) {
-        preConfig();
+        preConfig(context);
         render(context);
     }
 
@@ -62,7 +62,9 @@ public abstract class AbstractRenderService<S extends Shader> implements Service
 
     protected abstract RenderConfig createRenderConfig();
 
-    private void preConfig() {
+    private void preConfig(final RenderContext renderContext) {
+        renderInterpreter.setViewport(renderContext.camera.viewport);
+
         renderInterpreter.setDepthTest(renderConfig.depthTest);
         renderInterpreter.setBlendTest(renderConfig.blendTest);
         renderInterpreter.setCullFace(renderConfig.cullFace);
