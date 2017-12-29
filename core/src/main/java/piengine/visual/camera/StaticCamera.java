@@ -6,8 +6,8 @@ import piengine.visual.framebuffer.domain.FrameBuffer;
 
 public class StaticCamera extends Camera {
 
-    public StaticCamera(Entity parent, FrameBuffer frameBuffer, Vector2i viewport, float fieldOfView, float nearPlane, float farPlane, ProjectionType projectionType) {
-        super(parent, frameBuffer, viewport, fieldOfView, nearPlane, farPlane, projectionType);
+    public StaticCamera(Entity parent, Vector2i viewport, float fieldOfView, float nearPlane, float farPlane, ProjectionType projectionType) {
+        super(parent, viewport, fieldOfView, nearPlane, farPlane, projectionType);
     }
 
 }

@@ -24,10 +24,8 @@ public class StaticCameraAsset extends Asset {
         super(renderManager);
 
         Vector2i viewport = new Vector2i(get(CAMERA_VIEWPORT_WIDTH), get(CAMERA_VIEWPORT_HEIGHT));
-        FrameBuffer frameBuffer = frameBufferManager.supply(new FrameBufferData(viewport));
 
         this.camera = new StaticCamera(this,
-                frameBuffer,
                 viewport,
                 get(CAMERA_FOV),
                 get(CAMERA_NEAR_PLANE),

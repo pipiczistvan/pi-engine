@@ -38,10 +38,8 @@ public class MovingCameraAsset extends Asset {
         this.windowManager = windowManager;
 
         Vector2i viewport = new Vector2i(get(CAMERA_VIEWPORT_WIDTH), get(CAMERA_VIEWPORT_HEIGHT));
-        FrameBuffer frameBuffer = frameBufferManager.supply(new FrameBufferData(viewport));
 
         this.camera = new MovingCamera(this,
-                frameBuffer,
                 viewport,
                 get(CAMERA_FOV),
                 get(CAMERA_NEAR_PLANE),

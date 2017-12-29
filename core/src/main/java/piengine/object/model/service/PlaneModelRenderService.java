@@ -25,9 +25,8 @@ public class PlaneModelRenderService extends AbstractRenderService<PlaneModelSha
     @Wire
     public PlaneModelRenderService(final ShaderService shaderService,
                                    final TextureService textureService,
-                                   final FrameBufferService frameBufferService,
                                    final RenderInterpreter renderInterpreter) {
-        super(shaderService, frameBufferService, renderInterpreter);
+        super(shaderService, renderInterpreter);
 
         this.textureService = textureService;
     }

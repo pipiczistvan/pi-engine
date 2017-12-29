@@ -90,7 +90,6 @@ public class DoRenderFragmentHandler extends FragmentHandler<RenderType> {
     }
 
     private void clearContext(final RenderContext context) {
-        context.viewport.set(0);
         context.clearColor.set(0);
         context.models.clear();
         context.texts.clear();

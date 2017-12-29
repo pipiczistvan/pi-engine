@@ -1,21 +1,14 @@
 package piengine.visual.camera;
 
 import org.joml.Matrix4f;
-import org.joml.Vector2f;
 import org.joml.Vector2i;
 import piengine.core.base.api.Updatable;
 import piengine.core.base.exception.PIEngineException;
 import piengine.object.entity.domain.Entity;
-import piengine.visual.framebuffer.domain.FrameBuffer;
 
-import static piengine.core.utils.MatrixUtils.IDENTITY_MATRIX;
-import static piengine.core.utils.MatrixUtils.ORTHOGRAPHIC_PROJECTION_MATRIX;
-import static piengine.core.utils.MatrixUtils.PERSPECTIVE_PROJECTION_MATRIX;
-import static piengine.core.utils.MatrixUtils.VIEW_MATRIX;
+import static piengine.core.utils.MatrixUtils.*;
 
 public abstract class Camera extends Entity implements Updatable {
-
-    public final FrameBuffer frameBuffer;
 
     public final Matrix4f projection;
     public final Matrix4f view;
@@ -25,10 +18,8 @@ public abstract class Camera extends Entity implements Updatable {
     private final float nearPlane;
     private final float farPlane;
 
-    public Camera(Entity parent, FrameBuffer frameBuffer, Vector2i viewport, float fieldOfView, float nearPlane, float farPlane, ProjectionType projectionType) {
+    public Camera(Entity parent, Vector2i viewport, float fieldOfView, float nearPlane, float farPlane, ProjectionType projectionType) {
         super(parent);
-
-        this.frameBuffer = frameBuffer;
 
         this.viewport = viewport;
         this.fieldOfView = fieldOfView;

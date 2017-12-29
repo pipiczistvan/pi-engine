@@ -14,8 +14,8 @@ public class LookingCamera extends Camera {
 
     private final float lookSpeed;
 
-    public LookingCamera(Entity parent, FrameBuffer frameBuffer, Vector2i viewport, float fieldOfView, float nearPlane, float farPlane, ProjectionType projectionType) {
-        super(parent, frameBuffer, viewport, fieldOfView, nearPlane, farPlane, projectionType);
+    public LookingCamera(Entity parent, Vector2i viewport, float fieldOfView, float nearPlane, float farPlane, ProjectionType projectionType) {
+        super(parent, viewport, fieldOfView, nearPlane, farPlane, projectionType);
 
         this.lookSpeed = get(CAMERA_LOOK_SPEED);
     }

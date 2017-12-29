@@ -1,8 +1,8 @@
 package piengine.visual.framebuffer.domain;
 
-import piengine.core.base.domain.Domain;
+import piengine.visual.texture.domain.Texture;
 
-public class FrameBuffer extends Domain<FrameBufferDao> {
+public class FrameBuffer extends Texture<FrameBufferDao> {
 
     public FrameBuffer(final FrameBufferDao dao) {
         super(dao);

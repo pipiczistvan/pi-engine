@@ -17,16 +17,13 @@ import static piengine.object.mesh.domain.MeshDataType.VERTEX;
 public abstract class AbstractRenderService<S extends Shader> implements Service, Initializable {
 
     private final ShaderService shaderService;
-    private final FrameBufferService frameBufferService;
     private final RenderInterpreter renderInterpreter;
     protected S shader;
     private RenderConfig renderConfig;
 
     public AbstractRenderService(final ShaderService shaderService,
-                                 final FrameBufferService frameBufferService,
                                  final RenderInterpreter renderInterpreter) {
         this.shaderService = shaderService;
-        this.frameBufferService = frameBufferService;
         this.renderInterpreter = renderInterpreter;
     }
 
@@ -39,7 +36,6 @@ public abstract class AbstractRenderService<S extends Shader> implements Service
     public void process(final RenderContext context) {
         preConfig(context);
         render(context);
-        postConfig();
     }
 
     public abstract RenderType getType();
@@ -68,17 +64,11 @@ public abstract class AbstractRenderService<S extends Shader> implements Service
     protected abstract RenderConfig createRenderConfig();
 
     private void preConfig(final RenderContext renderContext) {
-        frameBufferService.bind(renderContext.camera.frameBuffer);
-
         renderInterpreter.setViewport(renderContext.camera.viewport);
 
         renderInterpreter.setDepthTest(renderConfig.depthTest);
         renderInterpreter.setBlendTest(renderConfig.blendTest);
         renderInterpreter.setCullFace(renderConfig.cullFace);
         renderInterpreter.setWireFrameMode(renderConfig.wireFrameMode);
-    }
-
-    private void postConfig() {
-        frameBufferService.unbind();
     }
 }

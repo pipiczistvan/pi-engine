@@ -19,9 +19,8 @@ public class PlanetRenderService extends AbstractRenderService<PlanetShader> {
 
     @Wire
     public PlanetRenderService(final ShaderService shaderService,
-                               final FrameBufferService frameBufferService,
                                final RenderInterpreter renderInterpreter) {
-        super(shaderService, frameBufferService, renderInterpreter);
+        super(shaderService, renderInterpreter);
     }
 
     @Override

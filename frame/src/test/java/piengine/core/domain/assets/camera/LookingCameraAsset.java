@@ -33,8 +33,7 @@ public class LookingCameraAsset extends Asset {
     @Wire
     public LookingCameraAsset(final RenderManager renderManager,
                               final InputManager inputManager,
-                              final WindowManager windowManager,
-                              final FrameBufferManager frameBufferManager) {
+                              final WindowManager windowManager) {
         super(renderManager);
 
         this.inputManager = inputManager;
@@ -42,10 +41,8 @@ public class LookingCameraAsset extends Asset {
         this.lastCursorPos = new Vector2f();
 
         Vector2i viewport = new Vector2i(get(CAMERA_VIEWPORT_WIDTH), get(CAMERA_VIEWPORT_HEIGHT));
-        FrameBuffer frameBuffer = frameBufferManager.supply(new FrameBufferData(viewport));
 
         this.camera = new LookingCamera(this,
-                frameBuffer,
                 viewport,
                 get(CAMERA_FOV),
                 get(CAMERA_NEAR_PLANE),

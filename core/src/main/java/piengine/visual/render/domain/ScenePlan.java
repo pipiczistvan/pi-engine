@@ -3,13 +3,10 @@ package piengine.visual.render.domain;
 import org.joml.Vector2i;
 import org.joml.Vector4f;
 import piengine.object.asset.domain.Asset;
+import piengine.visual.framebuffer.domain.FrameBuffer;
 import piengine.visual.render.domain.fragment.RenderFragment;
 
-import static piengine.visual.render.domain.fragment.domain.RenderFragmentType.DO_CLEAR_SCREEN;
-import static piengine.visual.render.domain.fragment.domain.RenderFragmentType.DO_RENDER;
-import static piengine.visual.render.domain.fragment.domain.RenderFragmentType.SET_ASSET;
-import static piengine.visual.render.domain.fragment.domain.RenderFragmentType.SET_CLEAR_COLOR;
-import static piengine.visual.render.domain.fragment.domain.RenderFragmentType.SET_VIEWPORT;
+import static piengine.visual.render.domain.fragment.domain.RenderFragmentType.*;
 
 public class ScenePlan extends RenderPlan {
 
@@ -18,11 +15,6 @@ public class ScenePlan extends RenderPlan {
 
     public static ScenePlan createPlan() {
         return new ScenePlan();
-    }
-
-    public ScenePlan withViewport(final Vector2i viewPort) {
-        fragments.add(new RenderFragment<>(SET_VIEWPORT, viewPort));
-        return this;
     }
 
     public ScenePlan withClearColor(final Vector4f clearColor) {
@@ -41,9 +33,18 @@ public class ScenePlan extends RenderPlan {
         return this;
     }
 
-    public ScenePlan doRender(RenderType renderType) {
+    public ScenePlan doRender(final RenderType renderType) {
         fragments.add(new RenderFragment<>(DO_RENDER, renderType));
         return this;
     }
 
+    public ScenePlan doBindFrameBuffer(final FrameBuffer frameBuffer) {
+        fragments.add(new RenderFragment<>(DO_BIND_FRAME_BUFFER, frameBuffer));
+        return this;
+    }
+
+    public ScenePlan doUnbindFrameBuffer() {
+        fragments.add(new RenderFragment<>(DO_UNBIND_FRAME_BUFFER));
+        return this;
+    }
 }

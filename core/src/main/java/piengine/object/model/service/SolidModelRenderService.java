@@ -24,9 +24,8 @@ public class SolidModelRenderService extends AbstractRenderService<SolidModelSha
     @Wire
     public SolidModelRenderService(final ShaderService shaderService,
                                    final TextureService textureService,
-                                   final FrameBufferService frameBufferService,
                                    final RenderInterpreter renderInterpreter) {
-        super(shaderService, frameBufferService, renderInterpreter);
+        super(shaderService, renderInterpreter);
 
         this.textureService = textureService;
     }

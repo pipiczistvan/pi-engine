@@ -23,9 +23,8 @@ public class TextRenderService extends AbstractRenderService<TextShader> {
     @Wire
     public TextRenderService(final ShaderService shaderService,
                              final FontService fontService,
-                             final FrameBufferService frameBufferService,
                              final RenderInterpreter renderInterpreter) {
-        super(shaderService, frameBufferService, renderInterpreter);
+        super(shaderService, renderInterpreter);
 
         this.fontService = fontService;
     }

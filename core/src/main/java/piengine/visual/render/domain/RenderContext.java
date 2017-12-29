@@ -1,6 +1,5 @@
 package piengine.visual.render.domain;
 
-import org.joml.Vector2i;
 import org.joml.Vector4f;
 import piengine.common.gui.writing.text.domain.Text;
 import piengine.common.planet.domain.Planet;
@@ -15,7 +14,6 @@ import java.util.List;
 
 public class RenderContext {
 
-    public final Vector2i viewport = new Vector2i();
     public final Vector4f clearColor = new Vector4f();
     public final List<Model> models = new ArrayList<>();
     public final List<Text> texts = new ArrayList<>();

@@ -7,35 +7,35 @@ import org.lwjgl.opengl.GL30;
 import piengine.common.gui.writing.font.domain.FontDao;
 import piengine.common.gui.writing.font.domain.FontData;
 import piengine.core.base.api.Interpreter;
-import piengine.visual.texture.accessor.TextureAccessor;
-import piengine.visual.texture.domain.TextureData;
+import piengine.visual.image.accessor.ImageAccessor;
+import piengine.visual.image.domain.ImageData;
 import puppeteer.annotation.premade.Component;
 import puppeteer.annotation.premade.Wire;
 
 @Component
 public class FontInterpreter implements Interpreter<FontDao, FontData> {
 
-    private final TextureAccessor textureAccessor;
+    private final ImageAccessor imageAccessor;
 
     @Wire
-    public FontInterpreter(final TextureAccessor textureAccessor) {
-        this.textureAccessor = textureAccessor;
+    public FontInterpreter(final ImageAccessor imageAccessor) {
+        this.imageAccessor = imageAccessor;
     }
 
     @Override
-    public FontDao create(FontData fontData) {
-        TextureData textureData = textureAccessor.access(fontData.file);
+    public FontDao create(final FontData fontData) {
+        ImageData imageData = imageAccessor.access(fontData.file);
 
         FontDao dao = new FontDao(GL11.glGenTextures());
         bind(dao);
 
-        if (textureData.comp == 3) {
-            if ((textureData.width & 3) != 0) {
-                GL11.glPixelStorei(GL11.GL_UNPACK_ALIGNMENT, 2 - (textureData.width & 1));
+        if (imageData.comp == 3) {
+            if ((imageData.width & 3) != 0) {
+                GL11.glPixelStorei(GL11.GL_UNPACK_ALIGNMENT, 2 - (imageData.width & 1));
             }
-            GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGB, textureData.width, textureData.height, 0, GL11.GL_RGB, GL11.GL_UNSIGNED_BYTE, textureData.buffer);
+            GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGB, imageData.width, imageData.height, 0, GL11.GL_RGB, GL11.GL_UNSIGNED_BYTE, imageData.buffer);
         } else {
-            GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA, textureData.width, textureData.height, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, textureData.buffer);
+            GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA, imageData.width, imageData.height, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, imageData.buffer);
 
             GL11.glEnable(GL11.GL_BLEND);
             GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
