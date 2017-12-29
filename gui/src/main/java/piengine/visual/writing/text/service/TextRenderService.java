@@ -1,6 +1,7 @@
 package piengine.visual.writing.text.service;
 
 import piengine.common.gui.writing.text.domain.Text;
+import piengine.visual.framebuffer.service.FrameBufferService;
 import piengine.visual.render.domain.RenderContext;
 import piengine.visual.render.domain.RenderType;
 import piengine.visual.render.domain.config.RenderConfig;
@@ -22,8 +23,9 @@ public class TextRenderService extends AbstractRenderService<TextShader> {
     @Wire
     public TextRenderService(final ShaderService shaderService,
                              final FontService fontService,
+                             final FrameBufferService frameBufferService,
                              final RenderInterpreter renderInterpreter) {
-        super(shaderService, renderInterpreter);
+        super(shaderService, frameBufferService, renderInterpreter);
 
         this.fontService = fontService;
     }

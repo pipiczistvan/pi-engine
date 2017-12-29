@@ -14,7 +14,7 @@
 
     <repositories>
         <repository>
-            <id>jitpack.io</id>
+            <texture>jitpack.io</texture>
             <url>https://jitpack.io</url>
         </repository>
     </repositories>
@@ -52,7 +52,7 @@
                 <version>${jacoco.version}</version>
                 <executions>
                     <execution>
-                        <id>prepare-agent</id>
+                        <texture>prepare-agent</texture>
                         <goals>
                             <goal>prepare-agent</goal>
                         </goals>

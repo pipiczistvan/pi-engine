@@ -5,6 +5,9 @@ import org.joml.Vector2i;
 import piengine.core.input.manager.InputManager;
 import piengine.object.asset.domain.Asset;
 import piengine.visual.camera.MovingCamera;
+import piengine.visual.framebuffer.domain.FrameBuffer;
+import piengine.visual.framebuffer.domain.FrameBufferData;
+import piengine.visual.framebuffer.manager.FrameBufferManager;
 import piengine.visual.render.domain.AssetPlan;
 import piengine.visual.render.manager.RenderManager;
 import piengine.visual.window.manager.WindowManager;
@@ -27,13 +30,19 @@ public class MovingCameraAsset extends Asset {
     @Wire
     public MovingCameraAsset(final RenderManager renderManager,
                              final InputManager inputManager,
-                             final WindowManager windowManager) {
+                             final WindowManager windowManager,
+                             final FrameBufferManager frameBufferManager) {
         super(renderManager);
 
         this.inputManager = inputManager;
         this.windowManager = windowManager;
+
+        Vector2i viewport = new Vector2i(get(CAMERA_VIEWPORT_WIDTH), get(CAMERA_VIEWPORT_HEIGHT));
+        FrameBuffer frameBuffer = frameBufferManager.supply(new FrameBufferData(viewport));
+
         this.camera = new MovingCamera(this,
-                new Vector2i(get(CAMERA_VIEWPORT_WIDTH), get(CAMERA_VIEWPORT_HEIGHT)),
+                frameBuffer,
+                viewport,
                 get(CAMERA_FOV),
                 get(CAMERA_NEAR_PLANE),
                 get(CAMERA_FAR_PLANE),

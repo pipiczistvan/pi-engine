@@ -17,7 +17,7 @@ public class AssetService {
     }
 
     public <T extends Asset> T supply(final Class<T> assetClass, final Entity parent) {
-        T asset = puppeteer.getInstanceOf(assetClass);//todo: getNewInstanceOf
+        T asset = puppeteer.getNewInstanceOf(assetClass);
         asset.initialize();
         asset.setParent(parent);
         asset.setupRenderPlan();

@@ -3,6 +3,9 @@ package piengine.core.domain.assets.camera;
 import org.joml.Vector2i;
 import piengine.object.asset.domain.Asset;
 import piengine.visual.camera.StaticCamera;
+import piengine.visual.framebuffer.domain.FrameBuffer;
+import piengine.visual.framebuffer.domain.FrameBufferData;
+import piengine.visual.framebuffer.manager.FrameBufferManager;
 import piengine.visual.render.domain.AssetPlan;
 import piengine.visual.render.manager.RenderManager;
 import puppeteer.annotation.premade.Wire;
@@ -17,11 +20,15 @@ public class StaticCameraAsset extends Asset {
     private final StaticCamera camera;
 
     @Wire
-    public StaticCameraAsset(final RenderManager renderManager) {
+    public StaticCameraAsset(final RenderManager renderManager, final FrameBufferManager frameBufferManager) {
         super(renderManager);
 
+        Vector2i viewport = new Vector2i(get(CAMERA_VIEWPORT_WIDTH), get(CAMERA_VIEWPORT_HEIGHT));
+        FrameBuffer frameBuffer = frameBufferManager.supply(new FrameBufferData(viewport));
+
         this.camera = new StaticCamera(this,
-                new Vector2i(get(CAMERA_VIEWPORT_WIDTH), get(CAMERA_VIEWPORT_HEIGHT)),
+                frameBuffer,
+                viewport,
                 get(CAMERA_FOV),
                 get(CAMERA_NEAR_PLANE),
                 get(CAMERA_FAR_PLANE),

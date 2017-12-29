@@ -60,12 +60,12 @@ public class TextureInterpreter implements Interpreter<TextureDao, TextureData> 
     public void bind(final TextureDao dao) {
         glEnable(GL_TEXTURE_2D);
         glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, dao.id);
+        glBindTexture(GL_TEXTURE_2D, dao.texture);
     }
 
     @Override
     public void free(final TextureDao dao) {
-        glDeleteTextures(dao.id);
+        glDeleteTextures(dao.texture);
     }
 
 }

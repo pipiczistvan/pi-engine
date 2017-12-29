@@ -85,7 +85,7 @@ public class FontAccessor implements Accessor<FontData> {
     }
 
     private Character loadCharacter(final FontContext context) {
-        int id = context.getValueOfVariable("id");
+        int id = context.getValueOfVariable("texture");
         if (id == SPACE_ASCII) {
             context.spaceWidth = (context.getValueOfVariable("xadvance") - context.paddingWidth) * context.horizontalPerPixelSize;
             return null;

@@ -3,6 +3,7 @@ package piengine.core.domain.assets.object;
 import piengine.object.asset.domain.Asset;
 import piengine.object.model.domain.Model;
 import piengine.object.model.manager.ModelManager;
+import piengine.visual.framebuffer.domain.FrameBuffer;
 import piengine.visual.render.domain.AssetPlan;
 import piengine.visual.render.manager.RenderManager;
 import puppeteer.annotation.premade.Wire;
@@ -14,6 +15,7 @@ public class SquareAsset extends Asset {
     private final ModelManager modelManager;
 
     private Model square;
+    private FrameBuffer frameBuffer;
 
     @Wire
     public SquareAsset(final RenderManager renderManager, final ModelManager modelManager) {
@@ -27,6 +29,10 @@ public class SquareAsset extends Asset {
 
         square.setScale(0.5f);
         square.setPosition(-0.5f, -0.5f, 0.0f);
+    }
+
+    public void setFrameBuffer(FrameBuffer frameBuffer) {
+        this.frameBuffer = frameBuffer;
     }
 
     @Override

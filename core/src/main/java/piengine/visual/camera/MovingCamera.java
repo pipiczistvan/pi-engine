@@ -3,6 +3,7 @@ package piengine.visual.camera;
 import org.joml.Vector2f;
 import org.joml.Vector2i;
 import piengine.object.entity.domain.Entity;
+import piengine.visual.framebuffer.domain.FrameBuffer;
 
 public class MovingCamera extends Camera {
 
@@ -14,8 +15,8 @@ public class MovingCamera extends Camera {
 
     private final Vector2f movement;
 
-    public MovingCamera(Entity parent, Vector2i viewport, float fieldOfView, float nearPlane, float farPlane, float lookUpLimit, float lookDownLimit, float lookSpeed, float moveSpeed, ProjectionType projectionType) {
-        super(parent, viewport, fieldOfView, nearPlane, farPlane, projectionType);
+    public MovingCamera(Entity parent, FrameBuffer frameBuffer, Vector2i viewport, float fieldOfView, float nearPlane, float farPlane, float lookUpLimit, float lookDownLimit, float lookSpeed, float moveSpeed, ProjectionType projectionType) {
+        super(parent, frameBuffer, viewport, fieldOfView, nearPlane, farPlane, projectionType);
         this.lookUpLimit = lookUpLimit;
         this.lookDownLimit = lookDownLimit;
         this.lookSpeed = lookSpeed;

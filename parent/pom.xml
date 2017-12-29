@@ -22,7 +22,7 @@
     <properties>
         <lwjgl.version>3.0.0b</lwjgl.version>
         <joml.version>1.8.1</joml.version>
-        <puppeteer.version>0.0.2</puppeteer.version>
+        <puppeteer.version>0.0.3</puppeteer.version>
         <super-csv.version>2.4.0</super-csv.version>
         <junit.version>4.12</junit.version>
         <mockito.version>1.9.5</mockito.version>

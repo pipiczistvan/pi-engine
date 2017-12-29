@@ -4,10 +4,10 @@ import piengine.core.base.domain.Dao;
 
 public class TextureDao implements Dao {
 
-    public final int id;
+    public final int texture;
 
-    public TextureDao(final int id) {
-        this.id = id;
+    public TextureDao(final int texture) {
+        this.texture = texture;
     }
 
 }

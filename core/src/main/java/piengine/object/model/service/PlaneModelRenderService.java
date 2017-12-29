@@ -2,6 +2,7 @@ package piengine.object.model.service;
 
 import piengine.object.model.domain.Model;
 import piengine.object.model.shader.PlaneModelShader;
+import piengine.visual.framebuffer.service.FrameBufferService;
 import piengine.visual.render.domain.RenderContext;
 import piengine.visual.render.domain.RenderType;
 import piengine.visual.render.domain.config.RenderConfig;
@@ -24,8 +25,9 @@ public class PlaneModelRenderService extends AbstractRenderService<PlaneModelSha
     @Wire
     public PlaneModelRenderService(final ShaderService shaderService,
                                    final TextureService textureService,
+                                   final FrameBufferService frameBufferService,
                                    final RenderInterpreter renderInterpreter) {
-        super(shaderService, renderInterpreter);
+        super(shaderService, frameBufferService, renderInterpreter);
 
         this.textureService = textureService;
     }

@@ -3,6 +3,7 @@ package piengine.planet.service;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL40;
 import piengine.planet.shader.PlanetShader;
+import piengine.visual.framebuffer.service.FrameBufferService;
 import piengine.visual.render.domain.RenderContext;
 import piengine.visual.render.domain.RenderType;
 import piengine.visual.render.domain.config.RenderConfig;
@@ -18,8 +19,9 @@ public class PlanetRenderService extends AbstractRenderService<PlanetShader> {
 
     @Wire
     public PlanetRenderService(final ShaderService shaderService,
+                               final FrameBufferService frameBufferService,
                                final RenderInterpreter renderInterpreter) {
-        super(shaderService, renderInterpreter);
+        super(shaderService, frameBufferService, renderInterpreter);
     }
 
     @Override
