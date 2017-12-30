@@ -1,5 +1,6 @@
 package piengine.visual.shader.accessor;
 
+import org.apache.log4j.Logger;
 import piengine.core.base.api.Accessor;
 import piengine.core.base.exception.PIEngineException;
 import piengine.core.base.resource.ResourceLoader;
@@ -14,6 +15,8 @@ public class ShaderAccessor implements Accessor<ShaderData> {
 
     private static final String ROOT = get(SHADERS_LOCATION);
     private static final String SHADER_EXT = "glsl";
+
+    private final Logger logger = Logger.getLogger(getClass());
 
     private final ResourceLoader loader;
 
@@ -37,7 +40,7 @@ public class ShaderAccessor implements Accessor<ShaderData> {
         try {
             return loader.load(file);
         } catch (PIEngineException e) {
-            //todo: logging
+            logger.warn("Could not load shader file!", e);
         }
 
         return null;

@@ -93,7 +93,6 @@ public class DoRenderFragmentHandler extends FragmentHandler<RenderType> {
         context.clearColor.set(0);
         context.models.clear();
         context.texts.clear();
-        context.asset = null;
         context.texture = null;
         context.camera = null;
         context.light = null;

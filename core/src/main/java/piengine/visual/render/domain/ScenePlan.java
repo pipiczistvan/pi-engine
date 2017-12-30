@@ -23,8 +23,12 @@ public class ScenePlan extends RenderPlan {
     }
 
     public ScenePlan withAsset(final Asset asset) {
-        fragments.add(new RenderFragment<>(SET_ASSET, asset));
         fragments.addAll(asset.renderPlan.fragments);
+        return this;
+    }
+
+    public ScenePlan withScenePlan(final ScenePlan plan) {
+        fragments.addAll(plan.fragments);
         return this;
     }
 

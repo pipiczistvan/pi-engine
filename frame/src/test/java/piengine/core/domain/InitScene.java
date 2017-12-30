@@ -1,15 +1,18 @@
 package piengine.core.domain;
 
+import org.joml.Vector2i;
 import org.joml.Vector4f;
 import piengine.core.architecture.scene.domain.Scene;
 import piengine.core.domain.assets.camera.MovingCameraAsset;
 import piengine.core.domain.assets.camera.StaticCameraAsset;
 import piengine.core.domain.assets.object.CubeAsset;
 import piengine.core.domain.assets.object.LightAsset;
-import piengine.core.domain.assets.object.SquareAsset;
+import piengine.core.domain.assets.object.square.SquareAsset;
 import piengine.core.input.manager.InputManager;
 import piengine.object.asset.manager.AssetManager;
 import piengine.visual.framebuffer.domain.FrameBuffer;
+import piengine.visual.framebuffer.domain.FrameBufferData;
+import piengine.visual.framebuffer.manager.FrameBufferManager;
 import piengine.visual.render.domain.ScenePlan;
 import piengine.visual.render.manager.RenderManager;
 import piengine.visual.window.manager.WindowManager;
@@ -25,6 +28,7 @@ public class InitScene extends Scene {
 
     private final InputManager inputManager;
     private final WindowManager windowManager;
+    private final FrameBufferManager frameBufferManager;
 
     private MovingCameraAsset movingCameraAsset;
     private StaticCameraAsset staticCameraAsset;
@@ -35,30 +39,32 @@ public class InitScene extends Scene {
 
     @Wire
     public InitScene(final RenderManager renderManager, final AssetManager assetManager,
-                     final InputManager inputManager, final WindowManager windowManager) {
+                     final InputManager inputManager, final WindowManager windowManager,
+                     final FrameBufferManager frameBufferManager) {
         super(renderManager, assetManager);
 
         this.inputManager = inputManager;
         this.windowManager = windowManager;
+        this.frameBufferManager = frameBufferManager;
     }
 
     @Override
     public void initialize() {
         super.initialize();
-
-        frameBuffer = squareAsset.getFrameBuffer();
         inputManager.addEvent(GLFW_KEY_ESCAPE, PRESS, windowManager::closeWindow);
     }
 
     @Override
     protected void createAssets() {
+        frameBuffer = frameBufferManager.supply(new FrameBufferData(new Vector2i(800, 600)));
+
         movingCameraAsset = createAsset(MovingCameraAsset.class);
         staticCameraAsset = createAsset(StaticCameraAsset.class);
 
         lightAsset = createAsset(LightAsset.class);
 
         cubeAsset = createAsset(CubeAsset.class);
-        squareAsset = createAsset(SquareAsset.class);
+        squareAsset = createAsset(SquareAsset.class, SquareAsset.createArguments(frameBuffer));
     }
 
     @Override
@@ -74,18 +80,28 @@ public class InitScene extends Scene {
                 .doClearScreen()
 
                 .doBindFrameBuffer(frameBuffer)
+                .withScenePlan(cameraAndModelPlan())
+                .doUnbindFrameBuffer()
+
+                .withScenePlan(squarePlan());
+
+    }
+
+    private ScenePlan cameraAndModelPlan() {
+        return createPlan()
                 .doClearScreen()
 
                 .withAsset(movingCameraAsset)
                 .withAsset(lightAsset)
                 .withAsset(cubeAsset)
-                .doRender(RENDER_SOLID_MODEL)
 
-                .doUnbindFrameBuffer()
+                .doRender(RENDER_SOLID_MODEL);
+    }
 
+    private ScenePlan squarePlan() {
+        return createPlan()
                 .withAsset(staticCameraAsset)
                 .withAsset(squareAsset)
                 .doRender(RENDER_PLANE_MODEL);
     }
-
 }

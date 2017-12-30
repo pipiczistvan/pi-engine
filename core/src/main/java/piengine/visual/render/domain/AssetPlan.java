@@ -12,7 +12,6 @@ import piengine.visual.texture.domain.Texture;
 import java.util.Collections;
 import java.util.List;
 
-import static piengine.visual.render.domain.fragment.domain.RenderFragmentType.SET_ASSET;
 import static piengine.visual.render.domain.fragment.domain.RenderFragmentType.SET_CAMERA;
 import static piengine.visual.render.domain.fragment.domain.RenderFragmentType.SET_COLOR;
 import static piengine.visual.render.domain.fragment.domain.RenderFragmentType.SET_LIGHT;
@@ -74,7 +73,6 @@ public class AssetPlan extends RenderPlan {
     }
 
     public AssetPlan withAsset(final Asset asset) {
-        fragments.add(new RenderFragment<>(SET_ASSET, asset));
         fragments.addAll(asset.renderPlan.fragments);
         return this;
     }

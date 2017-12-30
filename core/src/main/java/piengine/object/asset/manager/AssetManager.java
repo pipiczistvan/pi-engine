@@ -1,6 +1,7 @@
 package piengine.object.asset.manager;
 
 import piengine.object.asset.domain.Asset;
+import piengine.object.asset.domain.AssetArgument;
 import piengine.object.asset.service.AssetService;
 import piengine.object.entity.domain.Entity;
 import puppeteer.annotation.premade.Component;
@@ -17,7 +18,10 @@ public class AssetManager {
     }
 
     public <T extends Asset> T supply(final Class<T> assetClass, final Entity parent) {
-        return assetService.supply(assetClass, parent);
+        return this.supply(assetClass, parent, null);
     }
 
+    public <T extends Asset> T supply(final Class<T> assetClass, final Entity parent, final AssetArgument arguments) {
+        return assetService.supply(assetClass, parent, arguments);
+    }
 }

@@ -48,6 +48,11 @@
             <groupId>net.sf.supercsv</groupId>
             <artifactId>super-csv</artifactId>
         </dependency>
+        <!-- LOG4J -->
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+        </dependency>
         <!-- JUNIT -->
         <dependency>
             <groupId>junit</groupId>
