@@ -13,17 +13,7 @@ import piengine.visual.texture.domain.Texture;
 import java.util.Collections;
 import java.util.List;
 
-import static piengine.visual.render.domain.fragment.domain.RenderFragmentType.DO_CLEAR_SCREEN;
-import static piengine.visual.render.domain.fragment.domain.RenderFragmentType.DO_RENDER;
-import static piengine.visual.render.domain.fragment.domain.RenderFragmentType.SET_CAMERA;
-import static piengine.visual.render.domain.fragment.domain.RenderFragmentType.SET_CLEAR_COLOR;
-import static piengine.visual.render.domain.fragment.domain.RenderFragmentType.SET_COLOR;
-import static piengine.visual.render.domain.fragment.domain.RenderFragmentType.SET_LIGHT;
-import static piengine.visual.render.domain.fragment.domain.RenderFragmentType.SET_MODELS;
-import static piengine.visual.render.domain.fragment.domain.RenderFragmentType.SET_PLANET;
-import static piengine.visual.render.domain.fragment.domain.RenderFragmentType.SET_TEXT;
-import static piengine.visual.render.domain.fragment.domain.RenderFragmentType.SET_TEXTURE;
-import static piengine.visual.render.domain.fragment.domain.RenderFragmentType.SET_VIEWPORT;
+import static piengine.visual.render.domain.fragment.domain.RenderFragmentType.*;
 
 public class AssetPlan extends RenderPlan {
 
@@ -74,11 +64,6 @@ public class AssetPlan extends RenderPlan {
 
     public AssetPlan withTexts(final List<Text> texts) {
         fragments.add(new RenderFragment<>(SET_TEXT, texts));
-        return this;
-    }
-
-    public AssetPlan withPlanet(final Model planet) {
-        fragments.add(new RenderFragment<>(SET_PLANET, planet));
         return this;
     }
 

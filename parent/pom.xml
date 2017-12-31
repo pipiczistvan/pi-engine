@@ -16,7 +16,6 @@
         <module>../core</module>
         <module>../gui</module>
         <module>../frame</module>
-        <module>../planet</module>
     </modules>
 
     <properties>
@@ -42,11 +41,6 @@
             <dependency>
                 <groupId>istvan.pipicz.opengl</groupId>
                 <artifactId>pi-engine-gui</artifactId>
-                <version>${piengine.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>istvan.pipicz.opengl</groupId>
-                <artifactId>pi-engine-planet</artifactId>
                 <version>${piengine.version}</version>
             </dependency>
             <dependency>

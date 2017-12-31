@@ -21,10 +21,6 @@
             <groupId>istvan.pipicz.opengl</groupId>
             <artifactId>pi-engine-gui</artifactId>
         </dependency>
-        <dependency>
-            <groupId>istvan.pipicz.opengl</groupId>
-            <artifactId>pi-engine-planet</artifactId>
-        </dependency>
     </dependencies>
 
 </project>

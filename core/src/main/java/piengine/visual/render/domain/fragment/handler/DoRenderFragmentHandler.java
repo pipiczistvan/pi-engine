@@ -49,9 +49,6 @@ public class DoRenderFragmentHandler extends FragmentHandler<RenderType> {
             case RENDER_TEXT:
                 checkTextRendering(context);
                 break;
-            case RENDER_PLANET:
-                checkPlanetRendering(context);
-                break;
             default:
                 throw new PIEngineException("Invalid render type %s!", renderType.name());
         }
@@ -83,11 +80,6 @@ public class DoRenderFragmentHandler extends FragmentHandler<RenderType> {
         }
     }
 
-    private void checkPlanetRendering(final RenderContext context) {
-        check("planet", notNull(context.planet));
-        check("camera", notNull(context.camera));
-    }
-
     private void clearContext(final RenderContext context) {
         context.models.clear();
         context.texts.clear();
@@ -96,7 +88,6 @@ public class DoRenderFragmentHandler extends FragmentHandler<RenderType> {
         context.texture = null;
         context.camera = null;
         context.light = null;
-        context.planet = null;
         context.color = null;
     }
 

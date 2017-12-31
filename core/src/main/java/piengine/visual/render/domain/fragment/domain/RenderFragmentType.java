@@ -9,7 +9,6 @@ public enum RenderFragmentType {
     SET_CAMERA,
     SET_LIGHT,
     SET_TEXT,
-    SET_PLANET,
     DO_CLEAR_SCREEN,
     DO_RENDER,
     DO_BIND_FRAME_BUFFER,
