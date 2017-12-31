@@ -3,7 +3,6 @@ package piengine.visual.render.service;
 import piengine.core.base.api.Initializable;
 import piengine.core.base.api.Service;
 import piengine.object.mesh.domain.MeshDao;
-import piengine.visual.framebuffer.service.FrameBufferService;
 import piengine.visual.render.domain.RenderContext;
 import piengine.visual.render.domain.RenderType;
 import piengine.visual.render.domain.config.RenderConfig;
@@ -64,7 +63,7 @@ public abstract class AbstractRenderService<S extends Shader> implements Service
     protected abstract RenderConfig createRenderConfig();
 
     private void preConfig(final RenderContext renderContext) {
-        renderInterpreter.setViewport(renderContext.camera.viewport);
+        renderInterpreter.setViewport(renderContext.viewport);
 
         renderInterpreter.setDepthTest(renderConfig.depthTest);
         renderInterpreter.setBlendTest(renderConfig.blendTest);

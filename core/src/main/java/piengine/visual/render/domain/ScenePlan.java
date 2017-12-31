@@ -6,7 +6,12 @@ import piengine.object.asset.domain.Asset;
 import piengine.visual.framebuffer.domain.FrameBuffer;
 import piengine.visual.render.domain.fragment.RenderFragment;
 
-import static piengine.visual.render.domain.fragment.domain.RenderFragmentType.*;
+import static piengine.visual.render.domain.fragment.domain.RenderFragmentType.DO_BIND_FRAME_BUFFER;
+import static piengine.visual.render.domain.fragment.domain.RenderFragmentType.DO_CLEAR_SCREEN;
+import static piengine.visual.render.domain.fragment.domain.RenderFragmentType.DO_RENDER;
+import static piengine.visual.render.domain.fragment.domain.RenderFragmentType.DO_UNBIND_FRAME_BUFFER;
+import static piengine.visual.render.domain.fragment.domain.RenderFragmentType.SET_CLEAR_COLOR;
+import static piengine.visual.render.domain.fragment.domain.RenderFragmentType.SET_VIEWPORT;
 
 public class ScenePlan extends RenderPlan {
 
@@ -19,6 +24,11 @@ public class ScenePlan extends RenderPlan {
 
     public ScenePlan withClearColor(final Vector4f clearColor) {
         fragments.add(new RenderFragment<>(SET_CLEAR_COLOR, clearColor));
+        return this;
+    }
+
+    public ScenePlan withViewport(final Vector2i viewport) {
+        fragments.add(new RenderFragment<>(SET_VIEWPORT, viewport));
         return this;
     }
 

@@ -5,19 +5,27 @@ import org.joml.Vector2i;
 import piengine.core.input.manager.InputManager;
 import piengine.object.asset.domain.Asset;
 import piengine.visual.camera.MovingCamera;
-import piengine.visual.framebuffer.domain.FrameBuffer;
-import piengine.visual.framebuffer.domain.FrameBufferData;
-import piengine.visual.framebuffer.manager.FrameBufferManager;
 import piengine.visual.render.domain.AssetPlan;
 import piengine.visual.render.manager.RenderManager;
 import piengine.visual.window.manager.WindowManager;
 import puppeteer.annotation.premade.Wire;
 
-import static org.lwjgl.glfw.GLFW.*;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_A;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_D;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_S;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_W;
 import static piengine.core.input.domain.KeyEventType.PRESS;
 import static piengine.core.input.domain.KeyEventType.RELEASE;
 import static piengine.core.property.domain.ApplicationProperties.get;
-import static piengine.core.property.domain.PropertyKeys.*;
+import static piengine.core.property.domain.PropertyKeys.CAMERA_FAR_PLANE;
+import static piengine.core.property.domain.PropertyKeys.CAMERA_FOV;
+import static piengine.core.property.domain.PropertyKeys.CAMERA_LOOK_DOWN_LIMIT;
+import static piengine.core.property.domain.PropertyKeys.CAMERA_LOOK_SPEED;
+import static piengine.core.property.domain.PropertyKeys.CAMERA_LOOK_UP_LIMIT;
+import static piengine.core.property.domain.PropertyKeys.CAMERA_MOVE_SPEED;
+import static piengine.core.property.domain.PropertyKeys.CAMERA_NEAR_PLANE;
+import static piengine.core.property.domain.PropertyKeys.CAMERA_VIEWPORT_HEIGHT;
+import static piengine.core.property.domain.PropertyKeys.CAMERA_VIEWPORT_WIDTH;
 import static piengine.visual.camera.ProjectionType.PERSPECTIVE;
 import static piengine.visual.render.domain.AssetPlan.createPlan;
 
@@ -30,8 +38,7 @@ public class MovingCameraAsset extends Asset {
     @Wire
     public MovingCameraAsset(final RenderManager renderManager,
                              final InputManager inputManager,
-                             final WindowManager windowManager,
-                             final FrameBufferManager frameBufferManager) {
+                             final WindowManager windowManager) {
         super(renderManager);
 
         this.inputManager = inputManager;

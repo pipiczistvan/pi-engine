@@ -37,11 +37,12 @@ public class DoRenderFragmentHandler extends FragmentHandler<RenderType> {
 
     @Override
     public void validate(final RenderContext context, final RenderType renderType) {
-        checkDefault(context);
+        check("viewport", notNull(context.viewport));
 
         switch (renderType) {
             case RENDER_PLANE_MODEL:
                 checkPlaneModelRendering(context);
+                break;
             case RENDER_SOLID_MODEL:
                 checkSolidModelRendering(context);
                 break;
@@ -73,6 +74,7 @@ public class DoRenderFragmentHandler extends FragmentHandler<RenderType> {
         for (Model model : context.models) {
             check("model", notNull(model));
         }
+        check("camera", notNull(context.camera));
     }
 
     private void checkTextRendering(final RenderContext context) {
@@ -81,18 +83,16 @@ public class DoRenderFragmentHandler extends FragmentHandler<RenderType> {
         }
     }
 
-    private void checkDefault(final RenderContext context) {
+    private void checkPlanetRendering(final RenderContext context) {
+        check("planet", notNull(context.planet));
         check("camera", notNull(context.camera));
     }
 
-    private void checkPlanetRendering(final RenderContext context) {
-        check("planet", notNull(context.planet));
-    }
-
     private void clearContext(final RenderContext context) {
-        context.clearColor.set(0);
         context.models.clear();
         context.texts.clear();
+        context.clearColor = null;
+        context.viewport = null;
         context.texture = null;
         context.camera = null;
         context.light = null;

@@ -44,8 +44,10 @@ public abstract class Entity {
     }
 
     public Vector3f getPosition() {
-        Vector3f relativePosition = new Vector3f();
-        this.position.add(parent.position, relativePosition);
+        Vector3f relativePosition = new Vector3f(this.position);
+        if (parent != null) {
+            this.position.add(parent.position, relativePosition);
+        }
 
         return relativePosition;
     }
@@ -55,14 +57,16 @@ public abstract class Entity {
     }
 
     public Vector3f getScale() {
-        Vector3f relativeScale = new Vector3f();
-        this.scale.mul(parent.scale, relativeScale);
+        Vector3f relativeScale = new Vector3f(this.scale);
+        if (parent != null) {
+            this.scale.mul(parent.scale, relativeScale);
+        }
 
         return relativeScale;
     }
 
     public void setScale(float x) {
-        this.scale.set(x);
+        setScale(x, x, x);
     }
 
     public void setScale(float x, float y, float z) {
@@ -70,8 +74,10 @@ public abstract class Entity {
     }
 
     public Vector3f getRotation() {
-        Vector3f relativeRotation = new Vector3f();
-        this.rotation.add(parent.rotation, relativeRotation);
+        Vector3f relativeRotation = new Vector3f(this.rotation);
+        if (parent != null) {
+            this.rotation.add(parent.rotation, relativeRotation);
+        }
 
         return relativeRotation;
     }

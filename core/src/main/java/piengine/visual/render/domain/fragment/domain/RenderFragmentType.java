@@ -2,6 +2,7 @@ package piengine.visual.render.domain.fragment.domain;
 
 public enum RenderFragmentType {
     SET_CLEAR_COLOR,
+    SET_VIEWPORT,
     SET_MODELS,
     SET_TEXTURE,
     SET_COLOR,

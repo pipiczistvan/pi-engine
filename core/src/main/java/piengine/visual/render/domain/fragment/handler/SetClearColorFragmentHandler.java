@@ -12,7 +12,7 @@ public class SetClearColorFragmentHandler extends FragmentHandler<Vector4f> {
 
     @Override
     public void handle(final RenderContext context, final Vector4f clearColor) {
-        context.clearColor.set(clearColor);
+        context.clearColor = clearColor;
     }
 
     @Override

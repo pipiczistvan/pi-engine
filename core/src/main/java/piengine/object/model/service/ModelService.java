@@ -4,6 +4,8 @@ import piengine.object.entity.domain.Entity;
 import piengine.object.mesh.domain.Mesh;
 import piengine.object.mesh.service.MeshService;
 import piengine.object.model.domain.Model;
+import piengine.object.model.domain.TexturedModel;
+import piengine.visual.texture.domain.Texture;
 import puppeteer.annotation.premade.Component;
 import puppeteer.annotation.premade.Wire;
 
@@ -22,4 +24,8 @@ public class ModelService {
         return new Model(mesh, parent);
     }
 
+    public TexturedModel supply(final String file, final Entity parent, final Texture texture) {
+        Mesh mesh = meshService.supply(file);
+        return new TexturedModel(mesh, parent, texture);
+    }
 }

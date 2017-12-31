@@ -1,8 +1,8 @@
 package piengine.object.model.service;
 
 import piengine.object.model.domain.Model;
+import piengine.object.model.domain.TexturedModel;
 import piengine.object.model.shader.PlaneModelShader;
-import piengine.visual.framebuffer.service.FrameBufferService;
 import piengine.visual.render.domain.RenderContext;
 import piengine.visual.render.domain.RenderType;
 import piengine.visual.render.domain.config.RenderConfig;
@@ -38,16 +38,19 @@ public class PlaneModelRenderService extends AbstractRenderService<PlaneModelSha
 
     @Override
     protected void render(final RenderContext context) {
-        shader.start()
-                .loadColor(context.color)
-                .loadTextureEnabled(context.texture != null);
 
-        if (context.texture != null) {
-            textureService.bind(context.texture);
-        }
+        shader.start()
+                .loadColor(context.color);
 
         for (Model model : context.models) {
             shader.loadModelMatrix(model.getModelMatrix());
+            if (model instanceof TexturedModel) {
+                shader.loadTextureEnabled(true);
+                textureService.bind(((TexturedModel) model).texture);
+            } else {
+                shader.loadTextureEnabled(false);
+            }
+
             draw(model.mesh.dao);
         }
         shader.stop();
