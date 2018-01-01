@@ -2,8 +2,6 @@ package piengine.gui.asset;
 
 import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
-import piengine.common.gui.writing.font.domain.Font;
-import piengine.common.gui.writing.text.domain.Text;
 import piengine.core.input.domain.KeyEventType;
 import piengine.core.input.manager.InputManager;
 import piengine.object.asset.domain.Asset;
@@ -13,7 +11,9 @@ import piengine.visual.image.domain.Image;
 import piengine.visual.image.manager.ImageManager;
 import piengine.visual.render.domain.RenderPlan;
 import piengine.visual.render.manager.RenderManager;
+import piengine.visual.writing.font.domain.Font;
 import piengine.visual.writing.font.manager.FontManager;
+import piengine.visual.writing.text.domain.Text;
 import piengine.visual.writing.text.manager.TextManager;
 import puppeteer.annotation.premade.Wire;
 
@@ -117,7 +117,8 @@ public class ButtonAsset extends Asset<ButtonAssetArgument> {
     @Override
     protected RenderPlan createRenderPlan() {
         return createPlan()
-                .renderToGui(arguments.viewport, buttonModel);
+                .renderToGui(arguments.viewport, buttonModel)
+                .renderText(arguments.viewport, label);
     }
 
     private void setupButtonParameters() {

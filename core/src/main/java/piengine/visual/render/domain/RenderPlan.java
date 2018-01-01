@@ -10,11 +10,17 @@ import piengine.visual.light.Light;
 import piengine.visual.render.domain.context.GuiRenderContext;
 import piengine.visual.render.domain.context.WorldRenderContext;
 import piengine.visual.render.domain.fragment.RenderFragment;
+import piengine.visual.writing.text.domain.Text;
+import piengine.visual.writing.text.domain.TextRenderContext;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static piengine.visual.render.domain.fragment.domain.RenderFragmentType.*;
+import static piengine.visual.render.domain.fragment.domain.RenderFragmentType.BIND_FRAME_BUFFER;
+import static piengine.visual.render.domain.fragment.domain.RenderFragmentType.CLEAR_SCREEN;
+import static piengine.visual.render.domain.fragment.domain.RenderFragmentType.RENDER_TEXT;
+import static piengine.visual.render.domain.fragment.domain.RenderFragmentType.RENDER_TO_GUI;
+import static piengine.visual.render.domain.fragment.domain.RenderFragmentType.RENDER_TO_WORLD;
 
 public class RenderPlan {
 
@@ -41,6 +47,11 @@ public class RenderPlan {
 
     public RenderPlan renderToGui(final Vector2i viewport, final Model... models) {
         fragments.add(new RenderFragment<>(RENDER_TO_GUI, new GuiRenderContext(viewport, models)));
+        return this;
+    }
+
+    public RenderPlan renderText(final Vector2i viewport, final Text... texts) {
+        fragments.add(new RenderFragment<>(RENDER_TEXT, new TextRenderContext(viewport, texts)));
         return this;
     }
 

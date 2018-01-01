@@ -1,9 +1,9 @@
 package piengine.visual.render.domain.fragment.handler;
 
 import piengine.object.model.domain.Model;
-import piengine.object.model.service.WorldRenderService;
 import piengine.visual.render.domain.context.WorldRenderContext;
 import piengine.visual.render.domain.fragment.domain.RenderFragmentType;
+import piengine.visual.render.service.WorldRenderService;
 import puppeteer.annotation.premade.Component;
 import puppeteer.annotation.premade.Wire;
 

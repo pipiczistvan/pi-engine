@@ -4,5 +4,6 @@ public enum RenderFragmentType {
     CLEAR_SCREEN,
     BIND_FRAME_BUFFER,
     RENDER_TO_GUI,
+    RENDER_TEXT,
     RENDER_TO_WORLD
 }
