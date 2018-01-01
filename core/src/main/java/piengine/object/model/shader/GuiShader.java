@@ -5,13 +5,13 @@ import org.joml.Vector4f;
 import piengine.visual.shader.domain.Shader;
 import piengine.visual.shader.domain.ShaderDao;
 
-public class PlaneModelShader extends Shader {
+public class GuiShader extends Shader {
 
     private int location_modelMatrix;
     private int location_color;
     private int location_textureEnabled;
 
-    public PlaneModelShader(final ShaderDao dao) {
+    public GuiShader(final ShaderDao dao) {
         super(dao);
     }
 
@@ -22,25 +22,25 @@ public class PlaneModelShader extends Shader {
         location_textureEnabled = getUniformLocation("textureEnabled");
     }
 
-    public PlaneModelShader start() {
+    public GuiShader start() {
         startShader();
 
         return this;
     }
 
-    public PlaneModelShader stop() {
+    public GuiShader stop() {
         stopShader();
 
         return this;
     }
 
-    public PlaneModelShader loadModelMatrix(final Matrix4f modelMatrix) {
+    public GuiShader loadModelMatrix(final Matrix4f modelMatrix) {
         loadUniform(location_modelMatrix, modelMatrix);
 
         return this;
     }
 
-    public PlaneModelShader loadColor(final Vector4f color) {
+    public GuiShader loadColor(final Vector4f color) {
         if (color != null) {
             loadUniform(location_color, color);
         } else {
@@ -50,7 +50,7 @@ public class PlaneModelShader extends Shader {
         return this;
     }
 
-    public PlaneModelShader loadTextureEnabled(final boolean value) {
+    public GuiShader loadTextureEnabled(final boolean value) {
         loadUniform(location_textureEnabled, value);
 
         return this;

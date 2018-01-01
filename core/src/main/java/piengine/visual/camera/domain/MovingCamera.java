@@ -1,9 +1,8 @@
-package piengine.visual.camera;
+package piengine.visual.camera.domain;
 
 import org.joml.Vector2f;
 import org.joml.Vector2i;
 import piengine.object.entity.domain.Entity;
-import piengine.visual.framebuffer.domain.FrameBuffer;
 
 public class MovingCamera extends Camera {
 

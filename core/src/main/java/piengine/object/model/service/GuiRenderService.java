@@ -1,12 +1,10 @@
 package piengine.object.model.service;
 
 import piengine.object.model.domain.Model;
-import piengine.object.model.domain.TexturedModel;
-import piengine.object.model.shader.PlaneModelShader;
-import piengine.visual.render.domain.RenderContext;
-import piengine.visual.render.domain.RenderType;
+import piengine.object.model.shader.GuiShader;
 import piengine.visual.render.domain.config.RenderConfig;
 import piengine.visual.render.domain.config.RenderConfigBuilder;
+import piengine.visual.render.domain.context.GuiRenderContext;
 import piengine.visual.render.interpreter.RenderInterpreter;
 import piengine.visual.render.service.AbstractRenderService;
 import piengine.visual.shader.service.ShaderService;
@@ -15,50 +13,47 @@ import puppeteer.annotation.premade.Component;
 import puppeteer.annotation.premade.Wire;
 
 import static org.lwjgl.opengl.GL11.GL_NONE;
-import static piengine.visual.render.domain.RenderType.RENDER_PLANE_MODEL;
 
 @Component
-public class PlaneModelRenderService extends AbstractRenderService<PlaneModelShader> {
+public class GuiRenderService extends AbstractRenderService<GuiShader, GuiRenderContext> {
 
     private final TextureService textureService;
 
     @Wire
-    public PlaneModelRenderService(final ShaderService shaderService,
-                                   final TextureService textureService,
-                                   final RenderInterpreter renderInterpreter) {
+    public GuiRenderService(final ShaderService shaderService,
+                            final TextureService textureService,
+                            final RenderInterpreter renderInterpreter) {
         super(shaderService, renderInterpreter);
 
         this.textureService = textureService;
     }
 
     @Override
-    protected PlaneModelShader createShader(final ShaderService shaderService) {
-        return shaderService.supply("planeModelShader").castTo(PlaneModelShader.class);
+    protected GuiShader createShader(final ShaderService shaderService) {
+        return shaderService.supply("guiShader").castTo(GuiShader.class);
     }
 
     @Override
-    protected void render(final RenderContext context) {
+    protected void render(final GuiRenderContext context) {
+        renderInterpreter.setViewport(context.viewport);
 
-        shader.start()
-                .loadColor(context.color);
+        shader.start();
 
         for (Model model : context.models) {
-            shader.loadModelMatrix(model.getModelMatrix());
-            if (model instanceof TexturedModel) {
+            shader.loadModelMatrix(model.getModelMatrix())
+                    .loadColor(model.attribute.color);
+
+            if (model.attribute.texture != null) {
                 shader.loadTextureEnabled(true);
-                textureService.bind(((TexturedModel) model).texture);
+                textureService.bind(model.attribute.texture);
             } else {
                 shader.loadTextureEnabled(false);
             }
 
             draw(model.mesh.dao);
         }
-        shader.stop();
-    }
 
-    @Override
-    public RenderType getType() {
-        return RENDER_PLANE_MODEL;
+        shader.stop();
     }
 
     @Override
@@ -68,5 +63,4 @@ public class PlaneModelRenderService extends AbstractRenderService<PlaneModelSha
                 .withCullFace(GL_NONE)
                 .build();
     }
-
 }

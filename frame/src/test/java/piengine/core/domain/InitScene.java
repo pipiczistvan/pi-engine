@@ -4,37 +4,43 @@ import org.joml.Vector2i;
 import org.joml.Vector4f;
 import piengine.core.architecture.scene.domain.Scene;
 import piengine.core.domain.assets.camera.MovingCameraAsset;
-import piengine.core.domain.assets.object.CubeAsset;
-import piengine.core.domain.assets.object.LightAsset;
+import piengine.core.domain.assets.object.cube.CubeAsset;
+import piengine.core.domain.assets.object.cube.CubeAssetArgument;
 import piengine.core.domain.assets.object.square.SquareAsset;
+import piengine.core.domain.assets.object.square.SquareAssetArgument;
 import piengine.core.input.manager.InputManager;
 import piengine.gui.asset.ButtonAsset;
+import piengine.gui.asset.ButtonAssetArgument;
 import piengine.object.asset.manager.AssetManager;
 import piengine.visual.framebuffer.domain.FrameBuffer;
 import piengine.visual.framebuffer.domain.FrameBufferData;
 import piengine.visual.framebuffer.manager.FrameBufferManager;
-import piengine.visual.render.domain.ScenePlan;
+import piengine.visual.light.Light;
+import piengine.visual.render.domain.RenderPlan;
 import piengine.visual.render.manager.RenderManager;
 import piengine.visual.window.manager.WindowManager;
 import puppeteer.annotation.premade.Wire;
 
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
 import static piengine.core.input.domain.KeyEventType.PRESS;
-import static piengine.visual.render.domain.RenderType.RENDER_SOLID_MODEL;
-import static piengine.visual.render.domain.ScenePlan.createPlan;
+import static piengine.visual.render.domain.RenderPlan.createPlan;
 
 public class InitScene extends Scene {
+
+    private static final Vector4f CLEAR_COLOR = new Vector4f();
+    private static final Vector2i VIEWPORT = new Vector2i(800, 600);
 
     private final InputManager inputManager;
     private final WindowManager windowManager;
     private final FrameBufferManager frameBufferManager;
 
-    private MovingCameraAsset movingCameraAsset;
-    private LightAsset lightAsset;
-    private CubeAsset cubeAsset;
-    private SquareAsset squareAsset;
-    private ButtonAsset buttonAsset;
     private FrameBuffer frameBuffer;
+    private MovingCameraAsset movingCameraAsset;
+    private Light light;
+
+    private SquareAsset squareAsset;
+    private CubeAsset cubeAsset;
+    private ButtonAsset buttonAsset;
 
     @Wire
     public InitScene(final RenderManager renderManager, final AssetManager assetManager,
@@ -55,63 +61,36 @@ public class InitScene extends Scene {
 
     @Override
     protected void createAssets() {
-        frameBuffer = frameBufferManager.supply(new FrameBufferData(new Vector2i(800, 600)));
+        frameBuffer = frameBufferManager.supply(new FrameBufferData(VIEWPORT));
+        movingCameraAsset = createAsset(MovingCameraAsset.class);
+        light = new Light(this);
 
-//        movingCameraAsset = createAsset(MovingCameraAsset.class);
-
-        lightAsset = createAsset(LightAsset.class);
-
-        cubeAsset = createAsset(CubeAsset.class);
-        squareAsset = createAsset(SquareAsset.class, SquareAsset.createArguments(frameBuffer));
-
-        buttonAsset = createAsset(ButtonAsset.class, ButtonAsset.createArguments(
+        squareAsset = createAsset(SquareAsset.class, new SquareAssetArgument(VIEWPORT, frameBuffer));
+        cubeAsset = createAsset(CubeAsset.class, new CubeAssetArgument(movingCameraAsset, light));
+        buttonAsset = createAsset(ButtonAsset.class, new ButtonAssetArgument(
                 "buttonDefault", "buttonHover", "buttonPress",
-                new Vector2i(800, 600), () -> System.out.println("OK")));
+                VIEWPORT, () -> System.out.println("Button clicked!")));
     }
 
     @Override
     protected void initializeAssets() {
-//        movingCameraAsset.setPosition(0, 0, 5);
-        lightAsset.setPosition(5, 5, 5);
+        light.setPosition(5, 5, 5);
 
-        buttonAsset.setPosition(0.25f, 0f, 0f);
+        movingCameraAsset.setPosition(0, 0, 5);
+
+        buttonAsset.setPosition(-0.5f, 0.5f, 0);
     }
 
     @Override
-    protected ScenePlan createRenderPlan() {
+    protected RenderPlan createRenderPlan() {
         return createPlan()
-//                .doBindFrameBuffer(frameBuffer)
-//                .withScenePlan(worldPlan())
-//                .doUnbindFrameBuffer()
-
-                .withScenePlan(guiPlan());
-    }
-
-    private ScenePlan worldPlan() {
-        return createPlan()
-                .withScenePlan(preparePlan())
-
-                .withAsset(movingCameraAsset)
-                .withAsset(lightAsset)
-                .withAsset(cubeAsset)
-
-                .doRender(RENDER_SOLID_MODEL);
-    }
-
-    private ScenePlan guiPlan() {
-        return createPlan()
-//                .withScenePlan(preparePlan())
-//                .withAsset(squareAsset)
-//                .doRender(RENDER_PLANE_MODEL)
-
-                .withScenePlan(preparePlan())
-                .withAsset(buttonAsset);
-    }
-
-    private ScenePlan preparePlan() {
-        return createPlan()
-                .withClearColor(new Vector4f(1))
-                .withViewport(new Vector2i(800, 600))
-                .doClearScreen();
+                .renderToFrameBuffer(frameBuffer,
+                        createPlan()
+                                .clearScreen(CLEAR_COLOR)
+                                .loadAsset(cubeAsset)
+                )
+                .clearScreen(CLEAR_COLOR)
+                .loadAsset(squareAsset)
+                .loadAsset(buttonAsset);
     }
 }

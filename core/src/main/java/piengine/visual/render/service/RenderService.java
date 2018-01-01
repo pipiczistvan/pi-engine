@@ -1,6 +1,5 @@
 package piengine.visual.render.service;
 
-import piengine.visual.render.domain.RenderContext;
 import piengine.visual.render.domain.RenderPlan;
 import piengine.visual.render.domain.fragment.RenderFragment;
 import piengine.visual.render.domain.fragment.handler.FragmentHandler;
@@ -27,13 +26,12 @@ public class RenderService {
         if (plan == null) {
             return;
         }
-        RenderContext context = new RenderContext();
 
         for (RenderFragment fragment : plan.fragments) {
             fragmentHandlers.stream()
                     .filter(handler -> handler.getType() == fragment.type)
                     .findFirst()
-                    .ifPresent(handler -> handler.validate(context, fragment.value));
+                    .ifPresent(handler -> handler.validate(fragment.value));
         }
     }
 
@@ -41,18 +39,16 @@ public class RenderService {
         if (plan == null) {
             return;
         }
-        RenderContext context = new RenderContext();
 
         for (RenderFragment fragment : plan.fragments) {
             fragmentHandlers.stream()
                     .filter(handler -> handler.getType() == fragment.type)
                     .findFirst()
-                    .ifPresent(handler -> handler.handle(context, fragment.value));
+                    .ifPresent(handler -> handler.handle(fragment.value));
         }
     }
 
     public void setWireFrameMode(final boolean wireFrameMode) {
         renderInterpreter.setWireFrameMode(wireFrameMode);
     }
-
 }

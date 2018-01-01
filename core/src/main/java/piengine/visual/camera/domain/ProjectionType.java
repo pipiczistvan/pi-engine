@@ -1,4 +1,4 @@
-package piengine.visual.camera;
+package piengine.visual.camera.domain;
 
 public enum ProjectionType {
     ORTHOGRAPHIC,

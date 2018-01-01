@@ -3,9 +3,8 @@ package piengine.visual.render.service;
 import piengine.core.base.api.Initializable;
 import piengine.core.base.api.Service;
 import piengine.object.mesh.domain.MeshDao;
-import piengine.visual.render.domain.RenderContext;
-import piengine.visual.render.domain.RenderType;
 import piengine.visual.render.domain.config.RenderConfig;
+import piengine.visual.render.domain.context.RenderContext;
 import piengine.visual.render.interpreter.RenderInterpreter;
 import piengine.visual.shader.domain.Shader;
 import piengine.visual.shader.service.ShaderService;
@@ -13,10 +12,10 @@ import piengine.visual.shader.service.ShaderService;
 import static piengine.object.mesh.domain.MeshDataType.TEXTURE_COORD;
 import static piengine.object.mesh.domain.MeshDataType.VERTEX;
 
-public abstract class AbstractRenderService<S extends Shader> implements Service, Initializable {
+public abstract class AbstractRenderService<S extends Shader, C extends RenderContext> implements Service, Initializable {
 
     private final ShaderService shaderService;
-    private final RenderInterpreter renderInterpreter;
+    protected final RenderInterpreter renderInterpreter;
     protected S shader;
     private RenderConfig renderConfig;
 
@@ -32,12 +31,10 @@ public abstract class AbstractRenderService<S extends Shader> implements Service
         this.renderConfig = createRenderConfig();
     }
 
-    public void process(final RenderContext context) {
-        preConfig(context);
+    public void process(final C context) {
+        preConfig();
         render(context);
     }
-
-    public abstract RenderType getType();
 
     protected void draw(final MeshDao dao) {
         renderInterpreter.bindVertexArray(dao.vaoId);
@@ -58,13 +55,11 @@ public abstract class AbstractRenderService<S extends Shader> implements Service
 
     protected abstract S createShader(final ShaderService shaderService);
 
-    protected abstract void render(final RenderContext context);
+    protected abstract void render(final C context);
 
     protected abstract RenderConfig createRenderConfig();
 
-    private void preConfig(final RenderContext renderContext) {
-        renderInterpreter.setViewport(renderContext.viewport);
-
+    private void preConfig() {
         renderInterpreter.setDepthTest(renderConfig.depthTest);
         renderInterpreter.setBlendTest(renderConfig.blendTest);
         renderInterpreter.setCullFace(renderConfig.cullFace);

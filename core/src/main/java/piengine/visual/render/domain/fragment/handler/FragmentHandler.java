@@ -1,15 +1,14 @@
 package piengine.visual.render.domain.fragment.handler;
 
 import piengine.core.base.exception.PIEngineException;
-import piengine.visual.render.domain.RenderContext;
 import piengine.visual.render.domain.fragment.domain.RenderFragmentType;
 
 public abstract class FragmentHandler<T> {
 
-    public abstract void handle(final RenderContext context, final T t);
+    public abstract void handle(final T t);
 
-    public void validate(final RenderContext context, final T t) {
-        handle(context, t);
+    public void validate(final T t) {
+        handle(t);
     }
 
     public abstract RenderFragmentType getType();

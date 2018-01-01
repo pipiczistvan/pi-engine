@@ -3,10 +3,10 @@ package piengine.object.asset.domain;
 import piengine.core.base.RenderPlanner;
 import piengine.core.base.api.Initializable;
 import piengine.core.base.api.Updatable;
-import piengine.visual.render.domain.AssetPlan;
+import piengine.visual.render.domain.RenderPlan;
 import piengine.visual.render.manager.RenderManager;
 
-public abstract class Asset<T extends AssetArgument> extends RenderPlanner<AssetPlan> implements Initializable, Updatable {
+public abstract class Asset<T extends AssetArgument> extends RenderPlanner<RenderPlan> implements Initializable, Updatable {
 
     protected T arguments;
 

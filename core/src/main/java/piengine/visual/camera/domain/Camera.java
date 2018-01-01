@@ -1,4 +1,4 @@
-package piengine.visual.camera;
+package piengine.visual.camera.domain;
 
 import org.joml.Matrix4f;
 import org.joml.Vector2i;

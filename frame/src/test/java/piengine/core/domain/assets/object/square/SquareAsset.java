@@ -3,18 +3,17 @@ package piengine.core.domain.assets.object.square;
 import piengine.object.asset.domain.Asset;
 import piengine.object.model.domain.Model;
 import piengine.object.model.manager.ModelManager;
-import piengine.visual.framebuffer.domain.FrameBuffer;
-import piengine.visual.render.domain.AssetPlan;
+import piengine.visual.render.domain.RenderPlan;
 import piengine.visual.render.manager.RenderManager;
 import puppeteer.annotation.premade.Wire;
 
-import static piengine.visual.render.domain.AssetPlan.createPlan;
+import static piengine.visual.render.domain.RenderPlan.createPlan;
 
 public class SquareAsset extends Asset<SquareAssetArgument> {
 
     private final ModelManager modelManager;
 
-    private Model square;
+    private Model squareModel;
 
     @Wire
     public SquareAsset(final RenderManager renderManager, final ModelManager modelManager) {
@@ -25,7 +24,7 @@ public class SquareAsset extends Asset<SquareAssetArgument> {
 
     @Override
     public void initialize() {
-        square = modelManager.supply("square", this);
+        squareModel = modelManager.supply("square", this, arguments.frameBuffer);
     }
 
     @Override
@@ -33,14 +32,9 @@ public class SquareAsset extends Asset<SquareAssetArgument> {
 
     }
 
-    public static SquareAssetArgument createArguments(final FrameBuffer frameBuffer) {
-        return new SquareAssetArgument(frameBuffer);
-    }
-
     @Override
-    protected AssetPlan createRenderPlan() {
+    protected RenderPlan createRenderPlan() {
         return createPlan()
-                .withTexture(arguments.frameBuffer)
-                .withModel(square);
+                .renderToGui(arguments.viewport, squareModel);
     }
 }

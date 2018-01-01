@@ -6,7 +6,7 @@ import piengine.visual.light.Light;
 import piengine.visual.shader.domain.Shader;
 import piengine.visual.shader.domain.ShaderDao;
 
-public class SolidModelShader extends Shader {
+public class WorldShader extends Shader {
 
     private int location_modelMatrix;
     private int location_viewMatrix;
@@ -17,7 +17,7 @@ public class SolidModelShader extends Shader {
     private int location_color;
     private int location_textureEnabled;
 
-    public SolidModelShader(final ShaderDao dao) {
+    public WorldShader(final ShaderDao dao) {
         super(dao);
     }
 
@@ -33,37 +33,37 @@ public class SolidModelShader extends Shader {
         location_textureEnabled = getUniformLocation("textureEnabled");
     }
 
-    public SolidModelShader start() {
+    public WorldShader start() {
         startShader();
 
         return this;
     }
 
-    public SolidModelShader stop() {
+    public WorldShader stop() {
         stopShader();
 
         return this;
     }
 
-    public SolidModelShader loadModelMatrix(final Matrix4f modelMatrix) {
+    public WorldShader loadModelMatrix(final Matrix4f modelMatrix) {
         loadUniform(location_modelMatrix, modelMatrix);
 
         return this;
     }
 
-    public SolidModelShader loadViewMatrix(final Matrix4f viewMatrix) {
+    public WorldShader loadViewMatrix(final Matrix4f viewMatrix) {
         loadUniform(location_viewMatrix, viewMatrix);
 
         return this;
     }
 
-    public SolidModelShader loadProjectionMatrix(final Matrix4f projectionMatrix) {
+    public WorldShader loadProjectionMatrix(final Matrix4f projectionMatrix) {
         loadUniform(location_projectionMatrix, projectionMatrix);
 
         return this;
     }
 
-    public SolidModelShader loadLight(final Light light) {
+    public WorldShader loadLight(final Light light) {
         if (light != null) {
             loadUniform(location_lightEnabled, true);
             loadUniform(location_lightPosition, light.getPosition());
@@ -75,7 +75,7 @@ public class SolidModelShader extends Shader {
         return this;
     }
 
-    public SolidModelShader loadColor(final Vector4f color) {
+    public WorldShader loadColor(final Vector4f color) {
         if (color != null) {
             loadUniform(location_color, color);
         } else {
@@ -85,7 +85,7 @@ public class SolidModelShader extends Shader {
         return this;
     }
 
-    public SolidModelShader loadTextureEnabled(final boolean value) {
+    public WorldShader loadTextureEnabled(final boolean value) {
         loadUniform(location_textureEnabled, value);
 
         return this;

@@ -1,28 +1,23 @@
 package piengine.gui.asset;
 
-import org.joml.Vector2i;
 import org.joml.Vector3f;
-import org.joml.Vector4f;
 import org.lwjgl.glfw.GLFW;
 import piengine.common.gui.writing.font.domain.Font;
 import piengine.common.gui.writing.text.domain.Text;
-import piengine.core.base.event.Event;
 import piengine.core.input.domain.KeyEventType;
 import piengine.core.input.manager.InputManager;
 import piengine.object.asset.domain.Asset;
-import piengine.object.model.domain.TexturedModel;
+import piengine.object.model.domain.Model;
 import piengine.object.model.manager.ModelManager;
 import piengine.visual.image.domain.Image;
 import piengine.visual.image.manager.ImageManager;
-import piengine.visual.render.domain.AssetPlan;
+import piengine.visual.render.domain.RenderPlan;
 import piengine.visual.render.manager.RenderManager;
 import piengine.visual.writing.font.manager.FontManager;
 import piengine.visual.writing.text.manager.TextManager;
 import puppeteer.annotation.premade.Wire;
 
-import static piengine.visual.render.domain.AssetPlan.createPlan;
-import static piengine.visual.render.domain.RenderType.RENDER_PLANE_MODEL;
-import static piengine.visual.render.domain.RenderType.RENDER_TEXT;
+import static piengine.visual.render.domain.RenderPlan.createPlan;
 import static piengine.visual.writing.text.domain.TextConfiguration.textConfig;
 
 public class ButtonAsset extends Asset<ButtonAssetArgument> {
@@ -39,7 +34,7 @@ public class ButtonAsset extends Asset<ButtonAssetArgument> {
     private Image defaultImage;
     private Image hoverImage;
     private Image pressImage;
-    private TexturedModel buttonModel;
+    private Model buttonModel;
     private Font font;
     private Text label;
 
@@ -78,19 +73,19 @@ public class ButtonAsset extends Asset<ButtonAssetArgument> {
             hover = v.x >= x && v.x <= x + width && v.y >= y && v.y <= y + height;
 
             if (pressed) {
-                buttonModel.texture = pressImage;
+                buttonModel.attribute.texture = pressImage;
             } else {
                 if (hover) {
-                    buttonModel.texture = hoverImage;
+                    buttonModel.attribute.texture = hoverImage;
                 } else {
-                    buttonModel.texture = defaultImage;
+                    buttonModel.attribute.texture = defaultImage;
                 }
             }
         });
         inputManager.addEvent(GLFW.GLFW_MOUSE_BUTTON_1, KeyEventType.PRESS, () -> {
             pressed = hover;
             if (pressed) {
-                buttonModel.texture = pressImage;
+                buttonModel.attribute.texture = pressImage;
             }
         });
         inputManager.addEvent(GLFW.GLFW_MOUSE_BUTTON_1, KeyEventType.RELEASE, () -> {
@@ -98,7 +93,7 @@ public class ButtonAsset extends Asset<ButtonAssetArgument> {
                 arguments.onClickEvent.invoke();
             }
             pressed = false;
-            buttonModel.texture = defaultImage;
+            buttonModel.attribute.texture = defaultImage;
         });
     }
 
@@ -120,15 +115,9 @@ public class ButtonAsset extends Asset<ButtonAssetArgument> {
     }
 
     @Override
-    protected AssetPlan createRenderPlan() {
+    protected RenderPlan createRenderPlan() {
         return createPlan()
-                .withPlan(preparePlan())
-                .withModel(buttonModel)
-                .doRender(RENDER_PLANE_MODEL)
-
-                .withPlan(preparePlan())
-                .withText(label)
-                .doRender(RENDER_TEXT);
+                .renderToGui(arguments.viewport, buttonModel);
     }
 
     private void setupButtonParameters() {
@@ -139,20 +128,5 @@ public class ButtonAsset extends Asset<ButtonAssetArgument> {
         height = arguments.viewport.y * scale.y;
         x = (arguments.viewport.x - width + arguments.viewport.x * position.x) / 2;
         y = (arguments.viewport.y - height + arguments.viewport.y * position.y) / 2;
-    }
-
-    public static ButtonAssetArgument createArguments(final String defaultImageName,
-                                                      final String hoverImageName,
-                                                      final String pressImageName,
-                                                      final Vector2i viewport,
-                                                      final Event onClickEvent) {
-        return new ButtonAssetArgument(defaultImageName, hoverImageName, pressImageName, viewport, onClickEvent);
-    }
-
-
-    private AssetPlan preparePlan() {
-        return createPlan()
-                .withClearColor(new Vector4f(1))
-                .withViewport(new Vector2i(800, 600));
     }
 }

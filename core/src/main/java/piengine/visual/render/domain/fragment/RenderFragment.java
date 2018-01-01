@@ -11,9 +11,4 @@ public class RenderFragment<T> {
         this.type = type;
         this.value = value;
     }
-
-    public RenderFragment(RenderFragmentType type) {
-        this(type, null);
-    }
-
 }

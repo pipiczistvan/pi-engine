@@ -6,13 +6,13 @@ import piengine.core.base.api.Updatable;
 import piengine.object.asset.domain.Asset;
 import piengine.object.asset.domain.AssetArgument;
 import piengine.object.asset.manager.AssetManager;
-import piengine.visual.render.domain.ScenePlan;
+import piengine.visual.render.domain.RenderPlan;
 import piengine.visual.render.manager.RenderManager;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class Scene extends RenderPlanner<ScenePlan> implements Initializable, Updatable {
+public abstract class Scene extends RenderPlanner<RenderPlan> implements Initializable, Updatable {
 
     private final AssetManager assetManager;
     private final List<Asset> assets;
