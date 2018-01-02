@@ -62,7 +62,7 @@ public class ButtonAsset extends Asset<ButtonAssetArgument> {
         pressImage = imageManager.supply(arguments.pressImageName);
 
         font = fontManager.supply("candara");
-        label = textManager.supply(textConfig().withFont(font).withText("press me"));
+        label = textManager.supply(textConfig().withFont(font).withFontSize(1.5f).withMaxLineLength(SCALE_X).withText(arguments.text), this);
 
         buttonModel = modelManager.supply("square", this, defaultImage);
         buttonModel.setScale(SCALE_X, SCALE_Y, 1.0f);

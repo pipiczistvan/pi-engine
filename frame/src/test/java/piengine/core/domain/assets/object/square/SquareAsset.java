@@ -25,7 +25,6 @@ public class SquareAsset extends Asset<SquareAssetArgument> {
     @Override
     public void initialize() {
         squareModel = modelManager.supply("square", this, arguments.frameBuffer);
-        squareModel.setScale(0.5f);
     }
 
     @Override

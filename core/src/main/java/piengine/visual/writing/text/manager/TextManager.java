@@ -1,5 +1,6 @@
 package piengine.visual.writing.text.manager;
 
+import piengine.object.entity.domain.Entity;
 import piengine.visual.writing.text.domain.Text;
 import piengine.visual.writing.text.domain.TextConfiguration;
 import piengine.visual.writing.text.service.TextService;
@@ -16,12 +17,11 @@ public class TextManager {
         this.textService = textService;
     }
 
-    public Text supply(final TextConfiguration config) {
-        return textService.supply(config);
+    public Text supply(final TextConfiguration config, final Entity parent) {
+        return textService.supply(config, parent);
     }
 
     public void update(final Text text, final TextConfiguration config) {
         textService.update(text, config);
     }
-
 }

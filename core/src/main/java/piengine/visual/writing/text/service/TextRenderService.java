@@ -38,9 +38,10 @@ public class TextRenderService extends AbstractRenderService<TextShader, TextRen
 
         shader.start();
         for (Text text : context.texts) {
+            shader.loadModelMatrix(text.getModelMatrix())
+                    .loadColor(text.color);
             fontService.bind(text.font);
-            shader.loadColor(text.color);
-            shader.loadTranslation(text.translation);
+
             draw(text.dao);
         }
         shader.stop();

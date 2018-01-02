@@ -27,7 +27,8 @@ import static piengine.visual.render.domain.RenderPlan.createPlan;
 
 public class InitScene extends Scene {
 
-    private static final Vector4f CLEAR_COLOR = new Vector4f();
+    private static final Vector4f CLEAR_COLOR_BLACK = new Vector4f();
+    private static final Vector4f CLEAR_COLOR_GREEN = new Vector4f(0, 1, 0, 1);
     private static final Vector2i VIEWPORT = new Vector2i(800, 600);
 
     private final InputManager inputManager;
@@ -69,7 +70,7 @@ public class InitScene extends Scene {
         cubeAsset = createAsset(CubeAsset.class, new CubeAssetArgument(movingCameraAsset, light));
         buttonAsset = createAsset(ButtonAsset.class, new ButtonAssetArgument(
                 "buttonDefault", "buttonHover", "buttonPress",
-                VIEWPORT, () -> System.out.println("Button clicked!")));
+                VIEWPORT, "Please press me!", () -> System.out.println("Button clicked!")));
     }
 
     @Override
@@ -86,10 +87,10 @@ public class InitScene extends Scene {
         return createPlan()
                 .renderToFrameBuffer(frameBuffer,
                         createPlan()
-                                .clearScreen(CLEAR_COLOR)
+                                .clearScreen(CLEAR_COLOR_GREEN)
                                 .loadAsset(cubeAsset)
                 )
-                .clearScreen(CLEAR_COLOR)
+                .clearScreen(CLEAR_COLOR_BLACK)
                 .loadAsset(squareAsset)
                 .loadAsset(buttonAsset);
     }

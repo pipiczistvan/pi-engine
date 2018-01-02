@@ -16,6 +16,9 @@ public class TextAccessor {
     public static final double LINE_HEIGHT = 0.03f;
     public static final int SPACE_ASCII = 32;
 
+    private static final double MAX_WIDTH = 1;
+    private static final double MAX_HEIGHT = 1;
+
     public TextData access(final TextConfiguration config) {
         List<Line> lines = createStructure(config);
         return createQuadVertices(config, lines);
@@ -58,12 +61,18 @@ public class TextAccessor {
     private TextData createQuadVertices(final TextConfiguration config, final List<Line> lines) {
         double cursorX = 0f;
         double cursorY = 0f;
+        double lineHeight = LINE_HEIGHT * config.getFontSize();
+
+        if (config.isCentered()) {
+            cursorY = (MAX_HEIGHT - lines.size() * lineHeight) / 2;
+        }
+
         List<Float> vertices = new ArrayList<>();
         List<Float> textureCoords = new ArrayList<>();
 
         for (Line line : lines) {
             if (config.isCentered()) {
-                cursorX = (line.maxLength - line.getLineLength()) / 2;
+                cursorX = (MAX_WIDTH - line.getLineLength()) / 2;
             }
             for (Word word : line.words) {
                 for (Character letter : word.characters) {
@@ -75,7 +84,7 @@ public class TextAccessor {
                 cursorX += config.getFont().data.spaceWidth * config.getFontSize();
             }
             cursorX = 0;
-            cursorY += LINE_HEIGHT * config.getFontSize();
+            cursorY += lineHeight;
         }
         return new TextData(listToArray(vertices), listToArray(textureCoords));
     }
