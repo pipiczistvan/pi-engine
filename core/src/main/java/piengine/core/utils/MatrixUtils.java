@@ -1,13 +1,10 @@
 package piengine.core.utils;
 
 import org.joml.Matrix4f;
-import org.joml.Vector2f;
 import org.joml.Vector2i;
 import org.joml.Vector3f;
 
-import static piengine.core.utils.VectorUtils.FORWARD;
-import static piengine.core.utils.VectorUtils.RIGHT;
-import static piengine.core.utils.VectorUtils.UP;
+import static piengine.core.utils.VectorUtils.*;
 
 public class MatrixUtils {
 
@@ -42,18 +39,6 @@ public class MatrixUtils {
         matrix.rotate((float) Math.toRadians(rotation.x), UP);
 
         matrix.translate(cameraPos.negate());
-
-        return matrix;
-    }
-
-    public static Matrix4f VIEW_MATRIX_REVERSE(final Vector3f position, final Vector3f rotation) {
-        Matrix4f matrix = new Matrix4f();
-        Vector3f cameraPos = new Vector3f(position);
-
-        matrix.translate(cameraPos.negate());
-
-        matrix.rotate((float) Math.toRadians(-rotation.y), RIGHT);
-        matrix.rotate((float) Math.toRadians(rotation.x), UP);
 
         return matrix;
     }

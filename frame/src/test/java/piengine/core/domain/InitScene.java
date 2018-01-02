@@ -12,6 +12,7 @@ import piengine.core.input.manager.InputManager;
 import piengine.gui.asset.ButtonAsset;
 import piengine.gui.asset.ButtonAssetArgument;
 import piengine.object.asset.manager.AssetManager;
+import piengine.visual.camera.asset.CameraAsset;
 import piengine.visual.framebuffer.domain.FrameBuffer;
 import piengine.visual.framebuffer.domain.FrameBufferData;
 import piengine.visual.framebuffer.manager.FrameBufferManager;
@@ -37,7 +38,7 @@ public class InitScene extends Scene {
     private final FrameBufferManager frameBufferManager;
 
     private FrameBuffer frameBuffer;
-    private FirstPersonCameraAsset firstPersonCameraAsset;
+    private CameraAsset cameraAsset;
     private Light light;
 
     private SquareAsset squareAsset;
@@ -59,19 +60,17 @@ public class InitScene extends Scene {
     public void initialize() {
         super.initialize();
         inputManager.addEvent(GLFW_KEY_ESCAPE, PRESS, windowManager::closeWindow);
-        inputManager.addEvent(GLFW_KEY_SPACE, PRESS, () -> {
-            firstPersonCameraAsset.active = !firstPersonCameraAsset.active;
-        });
+        inputManager.addEvent(GLFW_KEY_SPACE, PRESS, () -> cameraAsset.lookingEnabled = !cameraAsset.lookingEnabled);
     }
 
     @Override
     protected void createAssets() {
         frameBuffer = frameBufferManager.supply(new FrameBufferData(VIEWPORT));
-        firstPersonCameraAsset = createAsset(FirstPersonCameraAsset.class);
+        cameraAsset = createAsset(FirstPersonCameraAsset.class);
         light = new Light(this);
 
         squareAsset = createAsset(SquareAsset.class, new SquareAssetArgument(VIEWPORT, frameBuffer));
-        cubeAsset = createAsset(CubeAsset.class, new CubeAssetArgument(firstPersonCameraAsset, light));
+        cubeAsset = createAsset(CubeAsset.class, new CubeAssetArgument(cameraAsset, light));
         buttonAsset = createAsset(ButtonAsset.class, new ButtonAssetArgument(
                 "buttonDefault", "buttonHover", "buttonPress",
                 VIEWPORT, "Please press me!", () -> System.out.println("Button clicked!")));
@@ -81,9 +80,9 @@ public class InitScene extends Scene {
     protected void initializeAssets() {
         light.setPosition(5, 5, 5);
 
-        firstPersonCameraAsset.setPosition(0, 0, 5);
-
         buttonAsset.setPosition(-0.75f, 0.875f, 0);
+
+        cameraAsset.setPosition(0, 0, 5);
     }
 
     @Override

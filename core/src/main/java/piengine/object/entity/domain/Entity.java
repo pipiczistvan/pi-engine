@@ -8,6 +8,7 @@ import static piengine.core.utils.MatrixUtils.MODEL_MATRIX;
 public abstract class Entity {
 
     protected Entity parent;
+    //todo: private: csak getterrel
     protected final Vector3f position;
     protected final Vector3f rotation;
     protected final Vector3f scale;
@@ -65,6 +66,7 @@ public abstract class Entity {
         return relativeScale;
     }
 
+    @SuppressWarnings("SuspiciousNameCombination")
     public void setScale(float x) {
         setScale(x, x, x);
     }
