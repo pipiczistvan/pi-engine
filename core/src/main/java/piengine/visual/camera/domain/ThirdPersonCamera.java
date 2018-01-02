@@ -12,11 +12,8 @@ public class ThirdPersonCamera extends Camera {
     private final Vector3f cameraPosition;
     private float distance = 10;
 
-    public ThirdPersonCamera(final Entity parent, final Vector2i viewport, final float fieldOfView,
-                             final float nearPlane, final float farPlane, final float lookUpLimit,
-                             final float lookDownLimit, final float lookSpeed, final float moveSpeed,
-                             final ProjectionType projectionType) {
-        super(parent, viewport, fieldOfView, nearPlane, farPlane, lookUpLimit, lookDownLimit, lookSpeed, moveSpeed, projectionType);
+    public ThirdPersonCamera(final Entity parent, final Vector2i viewport, final CameraAttribute attribute, final ProjectionType projectionType) {
+        super(parent, viewport, attribute, projectionType);
 
         this.cameraPosition = new Vector3f();
     }

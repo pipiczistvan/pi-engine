@@ -8,10 +8,10 @@ import static piengine.core.utils.MatrixUtils.MODEL_MATRIX;
 public abstract class Entity {
 
     protected Entity parent;
-    //todo: private: csak getterrel
-    protected final Vector3f position;
-    protected final Vector3f rotation;
-    protected final Vector3f scale;
+
+    private final Vector3f position;
+    private final Vector3f rotation;
+    private final Vector3f scale;
     private final Matrix4f modelMatrix;
 
     protected Entity() {
@@ -55,6 +55,10 @@ public abstract class Entity {
 
     public void setPosition(float x, float y, float z) {
         this.position.set(x, y, z);
+    }
+
+    public void addPosition(float x, float y, float z) {
+        this.position.add(x, y, z);
     }
 
     public Vector3f getScale() {

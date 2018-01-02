@@ -8,11 +8,8 @@ import static piengine.core.utils.MatrixUtils.VIEW_MATRIX;
 
 public class FirstPersonCamera extends Camera {
 
-    public FirstPersonCamera(final Entity parent, final Vector2i viewport, final float fieldOfView,
-                             final float nearPlane, final float farPlane, final float lookUpLimit,
-                             final float lookDownLimit, final float lookSpeed, final float moveSpeed,
-                             final ProjectionType projectionType) {
-        super(parent, viewport, fieldOfView, nearPlane, farPlane, lookUpLimit, lookDownLimit, lookSpeed, moveSpeed, projectionType);
+    public FirstPersonCamera(final Entity parent, final Vector2i viewport, final CameraAttribute attribute, final ProjectionType projectionType) {
+        super(parent, viewport, attribute, projectionType);
     }
 
     @Override
