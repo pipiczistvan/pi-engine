@@ -93,7 +93,11 @@ public class ButtonAsset extends Asset<ButtonAssetArgument> {
                 arguments.onClickEvent.invoke();
             }
             pressed = false;
-            buttonModel.attribute.texture = defaultImage;
+            if (hover) {
+                buttonModel.attribute.texture = hoverImage;
+            } else {
+                buttonModel.attribute.texture = defaultImage;
+            }
         });
     }
 
@@ -128,6 +132,6 @@ public class ButtonAsset extends Asset<ButtonAssetArgument> {
         width = arguments.viewport.x * scale.x;
         height = arguments.viewport.y * scale.y;
         x = (arguments.viewport.x - width + arguments.viewport.x * position.x) / 2;
-        y = (arguments.viewport.y - height + arguments.viewport.y * position.y) / 2;
+        y = (arguments.viewport.y - height - arguments.viewport.y * position.y) / 2;
     }
 }

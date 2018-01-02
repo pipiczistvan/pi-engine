@@ -4,7 +4,7 @@ import org.joml.Vector2f;
 import org.joml.Vector2i;
 import piengine.core.input.manager.InputManager;
 import piengine.visual.camera.asset.CameraAsset;
-import piengine.visual.camera.domain.MovingCamera;
+import piengine.visual.camera.domain.FirstPersonCamera;
 import piengine.visual.render.manager.RenderManager;
 import piengine.visual.window.manager.WindowManager;
 import puppeteer.annotation.premade.Wire;
@@ -16,15 +16,17 @@ import static piengine.core.property.domain.ApplicationProperties.get;
 import static piengine.core.property.domain.PropertyKeys.*;
 import static piengine.visual.camera.domain.ProjectionType.PERSPECTIVE;
 
-public class MovingCameraAsset extends CameraAsset<MovingCamera> {
+public class FirstPersonCameraAsset extends CameraAsset<FirstPersonCamera> {
+
+    public boolean active = true;
 
     private final InputManager inputManager;
     private final WindowManager windowManager;
 
     @Wire
-    public MovingCameraAsset(final RenderManager renderManager,
-                             final InputManager inputManager,
-                             final WindowManager windowManager) {
+    public FirstPersonCameraAsset(final RenderManager renderManager,
+                                  final InputManager inputManager,
+                                  final WindowManager windowManager) {
         super(renderManager);
 
         this.inputManager = inputManager;
@@ -42,26 +44,30 @@ public class MovingCameraAsset extends CameraAsset<MovingCamera> {
         inputManager.addEvent(GLFW_KEY_D, RELEASE, camera::moveLeft);
         inputManager.addEvent(GLFW_KEY_W, RELEASE, camera::moveBackward);
         inputManager.addEvent(v -> {
-            Vector2f delta = new Vector2f();
-            Vector2f windowCenter = windowManager.getWindowCenter();
-            v.sub(windowCenter, delta);
-            if (Math.abs(delta.x) >= 1 || Math.abs(delta.y) >= 1) {
-                camera.lookAt(delta);
-                windowManager.setPointer(windowCenter);
+            if (active) {
+                Vector2f delta = new Vector2f();
+                Vector2f windowCenter = windowManager.getWindowCenter();
+                v.sub(windowCenter, delta);
+                if (Math.abs(delta.x) >= 1 || Math.abs(delta.y) >= 1) {
+                    camera.lookAt(delta);
+                    windowManager.setPointer(windowCenter);
+                }
             }
         });
     }
 
     @Override
     public void update(double delta) {
-        camera.update(delta);
+        if (active) {
+            camera.update(delta);
+        }
     }
 
     @Override
-    protected MovingCamera getCamera() {
+    protected FirstPersonCamera getCamera() {
         Vector2i viewport = new Vector2i(get(CAMERA_VIEWPORT_WIDTH), get(CAMERA_VIEWPORT_HEIGHT));
 
-        return new MovingCamera(this,
+        return new FirstPersonCamera(this,
                 viewport,
                 get(CAMERA_FOV),
                 get(CAMERA_NEAR_PLANE),
