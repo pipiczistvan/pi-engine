@@ -10,12 +10,13 @@ import piengine.visual.shader.service.ShaderService;
 
 import java.lang.reflect.InvocationTargetException;
 
-public class Shader extends Domain<ShaderDao> {
+public class Shader implements Domain<ShaderDao> {
 
     private ShaderService shaderService;
+    private final ShaderDao dao;
 
     public Shader(final ShaderDao dao) {
-        super(dao);
+        this.dao = dao;
     }
 
     public void initialize(final ShaderService shaderService) {
@@ -76,4 +77,8 @@ public class Shader extends Domain<ShaderDao> {
         }
     }
 
+    @Override
+    public ShaderDao getDao() {
+        return dao;
+    }
 }

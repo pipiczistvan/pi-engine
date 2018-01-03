@@ -8,6 +8,7 @@ import org.lwjgl.opengl.GL30;
 import piengine.core.base.api.Interpreter;
 import piengine.object.mesh.domain.MeshDao;
 import piengine.object.mesh.domain.MeshDataType;
+import piengine.visual.writing.text.domain.TextDao;
 import piengine.visual.writing.text.domain.TextData;
 import puppeteer.annotation.premade.Component;
 
@@ -15,11 +16,11 @@ import java.nio.FloatBuffer;
 import java.util.ArrayList;
 
 @Component
-public class TextInterpreter implements Interpreter<MeshDao, TextData> {
+public class TextInterpreter implements Interpreter<TextDao, TextData> {
 
     @Override
-    public MeshDao create(TextData textData) {
-        final MeshDao dao = new MeshDao(GL30.glGenVertexArrays(), new ArrayList<>(), textData.vertices.length / 2);
+    public TextDao create(TextData textData) {
+        final TextDao dao = new TextDao(GL30.glGenVertexArrays(), new ArrayList<>(), textData.vertices.length / 2);
         bind(dao);
 
         dao.vboIds.add(createVbo(MeshDataType.VERTEX.value, textData.vertices, 2));
@@ -30,7 +31,7 @@ public class TextInterpreter implements Interpreter<MeshDao, TextData> {
         return dao;
     }
 
-    public void update(final MeshDao dao, final TextData textData) {
+    public void update(final TextDao dao, final TextData textData) {
         free(dao);
 
         MeshDao newDao = create(textData);
@@ -41,7 +42,7 @@ public class TextInterpreter implements Interpreter<MeshDao, TextData> {
     }
 
     @Override
-    public void free(final MeshDao dao) {
+    public void free(final TextDao dao) {
         GL30.glDeleteVertexArrays(dao.vaoId);
         dao.vboIds.forEach(GL15::glDeleteBuffers);
     }

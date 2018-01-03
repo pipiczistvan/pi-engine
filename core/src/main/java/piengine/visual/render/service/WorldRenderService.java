@@ -50,7 +50,7 @@ public class WorldRenderService extends AbstractRenderService<WorldShader, World
                 shader.loadTextureEnabled(false);
             }
 
-            draw(model.mesh.dao);
+            draw(model.mesh.getDao());
         }
         shader.stop();
     }

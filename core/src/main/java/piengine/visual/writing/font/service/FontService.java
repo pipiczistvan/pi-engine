@@ -26,7 +26,7 @@ public class FontService extends SupplierService<Font, FontDao, FontData> {
     }
 
     public void bind(final Font font) {
-        fontInterpreter.bind(font.dao);
+        fontInterpreter.bind(font.getDao());
     }
 
 }

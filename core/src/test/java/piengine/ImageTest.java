@@ -43,7 +43,7 @@ public class ImageTest extends TestBase {
         Image image = imageManager.supply("arrow");
         ImageData imageData = argumentCaptor.getValue();
 
-        assertThat(image.dao, equalTo(dao));
+        assertThat(image.getDao(), equalTo(dao));
         assertThat(imageData.width, equalTo(16));
         assertThat(imageData.height, equalTo(16));
         assertThat(imageData.comp, equalTo(3));

@@ -49,7 +49,7 @@ public class GuiRenderService extends AbstractRenderService<GuiShader, GuiRender
                 shader.loadTextureEnabled(false);
             }
 
-            draw(model.mesh.dao);
+            draw(model.mesh.getDao());
         }
 
         shader.stop();

@@ -30,7 +30,7 @@ public abstract class SupplierService<M extends Domain<D>, D extends Dao, R exte
 
     @Override
     public void terminate() {
-        resourceMap.values().forEach(domain -> interpreter.free(domain.dao));
+        resourceMap.values().forEach(domain -> interpreter.free(domain.getDao()));
     }
 
     protected abstract M createDomain(final D dao, final R resource);

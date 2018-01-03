@@ -12,6 +12,8 @@ import piengine.core.input.manager.InputManager;
 import piengine.gui.asset.ButtonAsset;
 import piengine.gui.asset.ButtonAssetArgument;
 import piengine.object.asset.manager.AssetManager;
+import piengine.object.terrain.domain.Terrain;
+import piengine.object.terrain.manager.TerrainManager;
 import piengine.visual.camera.asset.CameraAsset;
 import piengine.visual.framebuffer.domain.FrameBuffer;
 import piengine.visual.framebuffer.domain.FrameBufferData;
@@ -36,10 +38,13 @@ public class InitScene extends Scene {
     private final InputManager inputManager;
     private final WindowManager windowManager;
     private final FrameBufferManager frameBufferManager;
+    private final TerrainManager terrainManager;
 
     private FrameBuffer frameBuffer;
     private CameraAsset cameraAsset;
     private Light light;
+    private Terrain terrain1;
+    private Terrain terrain2;
 
     private SquareAsset squareAsset;
     private CubeAsset cubeAsset;
@@ -48,12 +53,13 @@ public class InitScene extends Scene {
     @Wire
     public InitScene(final RenderManager renderManager, final AssetManager assetManager,
                      final InputManager inputManager, final WindowManager windowManager,
-                     final FrameBufferManager frameBufferManager) {
+                     final FrameBufferManager frameBufferManager, final TerrainManager terrainManager) {
         super(renderManager, assetManager);
 
         this.inputManager = inputManager;
         this.windowManager = windowManager;
         this.frameBufferManager = frameBufferManager;
+        this.terrainManager = terrainManager;
     }
 
     @Override
@@ -68,6 +74,8 @@ public class InitScene extends Scene {
         frameBuffer = frameBufferManager.supply(new FrameBufferData(VIEWPORT));
         cameraAsset = createAsset(FirstPersonCameraAsset.class);
         light = new Light(this);
+        terrain1 = terrainManager.supply("a");
+        terrain2 = terrainManager.supply("b");
 
         squareAsset = createAsset(SquareAsset.class, new SquareAssetArgument(VIEWPORT, frameBuffer));
         cubeAsset = createAsset(CubeAsset.class, new CubeAssetArgument(cameraAsset, light));
@@ -79,6 +87,8 @@ public class InitScene extends Scene {
     @Override
     protected void initializeAssets() {
         light.setPosition(5, 5, 5);
+        terrain1.setPosition(0, -1, -64);
+        terrain2.setPosition(-128, -1, -64);
 
         buttonAsset.setPosition(-0.75f, 0.875f, 0);
 
@@ -91,6 +101,7 @@ public class InitScene extends Scene {
                 .renderToFrameBuffer(frameBuffer,
                         createPlan()
                                 .clearScreen(CLEAR_COLOR_GREEN)
+                                .renderTerrain(cameraAsset, light, terrain1, terrain2)
                                 .loadAsset(cubeAsset)
                 )
                 .clearScreen(CLEAR_COLOR_BLACK)

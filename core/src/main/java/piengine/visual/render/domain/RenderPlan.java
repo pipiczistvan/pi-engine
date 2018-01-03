@@ -4,10 +4,12 @@ import org.joml.Vector2i;
 import org.joml.Vector4f;
 import piengine.object.asset.domain.Asset;
 import piengine.object.model.domain.Model;
+import piengine.object.terrain.domain.Terrain;
 import piengine.visual.camera.asset.CameraAsset;
 import piengine.visual.framebuffer.domain.FrameBuffer;
 import piengine.visual.light.Light;
 import piengine.visual.render.domain.context.GuiRenderContext;
+import piengine.visual.render.domain.context.TerrainRenderContext;
 import piengine.visual.render.domain.context.WorldRenderContext;
 import piengine.visual.render.domain.fragment.RenderFragment;
 import piengine.visual.writing.text.domain.Text;
@@ -16,11 +18,7 @@ import piengine.visual.writing.text.domain.TextRenderContext;
 import java.util.ArrayList;
 import java.util.List;
 
-import static piengine.visual.render.domain.fragment.domain.RenderFragmentType.BIND_FRAME_BUFFER;
-import static piengine.visual.render.domain.fragment.domain.RenderFragmentType.CLEAR_SCREEN;
-import static piengine.visual.render.domain.fragment.domain.RenderFragmentType.RENDER_TEXT;
-import static piengine.visual.render.domain.fragment.domain.RenderFragmentType.RENDER_TO_GUI;
-import static piengine.visual.render.domain.fragment.domain.RenderFragmentType.RENDER_TO_WORLD;
+import static piengine.visual.render.domain.fragment.domain.RenderFragmentType.*;
 
 public class RenderPlan {
 
@@ -52,6 +50,11 @@ public class RenderPlan {
 
     public RenderPlan renderText(final Vector2i viewport, final Text... texts) {
         fragments.add(new RenderFragment<>(RENDER_TEXT, new TextRenderContext(viewport, texts)));
+        return this;
+    }
+
+    public RenderPlan renderTerrain(final CameraAsset cameraAsset, final Light light, final Terrain... terrains) {
+        fragments.add(new RenderFragment<>(RENDER_TERRAIN, new TerrainRenderContext(cameraAsset.camera, light, terrains)));
         return this;
     }
 

@@ -17,7 +17,7 @@ public class TextureService {
     }
 
     public <T extends TextureDao> void bind(final Texture<T> texture) {
-        textureInterpreter.bind(texture.dao);
+        textureInterpreter.bind(texture.getDao());
     }
 
 }

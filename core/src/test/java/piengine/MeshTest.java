@@ -49,7 +49,7 @@ public class MeshTest extends TestBase {
         Mesh mesh = meshManager.supply("square");
         MeshData meshData = argumentCaptor.getValue();
 
-        assertThat(mesh.dao, equalTo(dao));
+        assertThat(mesh.getDao(), equalTo(dao));
         assertThat(meshData.vertices, equalTo(getVertices()));
         assertThat(meshData.indices, equalTo(getIndices()));
         assertThat(meshData.textureCoords, equalTo(getTextureCoords()));

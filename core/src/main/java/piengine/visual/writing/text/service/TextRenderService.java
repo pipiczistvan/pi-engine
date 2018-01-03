@@ -42,7 +42,7 @@ public class TextRenderService extends AbstractRenderService<TextShader, TextRen
                     .loadColor(text.color);
             fontService.bind(text.font);
 
-            draw(text.dao);
+            draw(text.getDao());
         }
         shader.stop();
     }

@@ -35,12 +35,12 @@ public class FrameBufferService implements Terminatable {
     @Override
     public void terminate() {
         for (FrameBuffer frameBuffer : frameBuffers) {
-            frameBufferInterpreter.free(frameBuffer.dao);
+            frameBufferInterpreter.free(frameBuffer.getDao());
         }
     }
 
     public void bind(final FrameBuffer frameBuffer) {
-        frameBufferInterpreter.bind(frameBuffer.dao);
+        frameBufferInterpreter.bind(frameBuffer.getDao());
     }
 
     public void unbind() {

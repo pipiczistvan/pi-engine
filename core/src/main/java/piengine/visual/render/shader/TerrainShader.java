@@ -6,7 +6,7 @@ import piengine.visual.light.Light;
 import piengine.visual.shader.domain.Shader;
 import piengine.visual.shader.domain.ShaderDao;
 
-public class WorldShader extends Shader {
+public class TerrainShader extends Shader {
 
     private int location_modelMatrix;
     private int location_viewMatrix;
@@ -17,7 +17,7 @@ public class WorldShader extends Shader {
     private int location_color;
     private int location_textureEnabled;
 
-    public WorldShader(final ShaderDao dao) {
+    public TerrainShader(final ShaderDao dao) {
         super(dao);
     }
 
@@ -33,37 +33,37 @@ public class WorldShader extends Shader {
         location_textureEnabled = getUniformLocation("textureEnabled");
     }
 
-    public WorldShader start() {
+    public TerrainShader start() {
         startShader();
 
         return this;
     }
 
-    public WorldShader stop() {
+    public TerrainShader stop() {
         stopShader();
 
         return this;
     }
 
-    public WorldShader loadModelMatrix(final Matrix4f modelMatrix) {
+    public TerrainShader loadModelMatrix(final Matrix4f modelMatrix) {
         loadUniform(location_modelMatrix, modelMatrix);
 
         return this;
     }
 
-    public WorldShader loadViewMatrix(final Matrix4f viewMatrix) {
+    public TerrainShader loadViewMatrix(final Matrix4f viewMatrix) {
         loadUniform(location_viewMatrix, viewMatrix);
 
         return this;
     }
 
-    public WorldShader loadProjectionMatrix(final Matrix4f projectionMatrix) {
+    public TerrainShader loadProjectionMatrix(final Matrix4f projectionMatrix) {
         loadUniform(location_projectionMatrix, projectionMatrix);
 
         return this;
     }
 
-    public WorldShader loadLight(final Light light) {
+    public TerrainShader loadLight(final Light light) {
         if (light != null) {
             loadUniform(location_lightEnabled, true);
             loadUniform(location_lightPosition, light.getPosition());
@@ -75,7 +75,7 @@ public class WorldShader extends Shader {
         return this;
     }
 
-    public WorldShader loadColor(final Vector4f color) {
+    public TerrainShader loadColor(final Vector4f color) {
         if (color != null) {
             loadUniform(location_color, color);
         } else {
@@ -85,7 +85,7 @@ public class WorldShader extends Shader {
         return this;
     }
 
-    public WorldShader loadTextureEnabled(final boolean value) {
+    public TerrainShader loadTextureEnabled(final boolean value) {
         loadUniform(location_textureEnabled, value);
 
         return this;

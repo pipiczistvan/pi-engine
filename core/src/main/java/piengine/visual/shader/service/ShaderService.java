@@ -34,7 +34,7 @@ public class ShaderService extends SupplierService<Shader, ShaderDao, ShaderData
     }
 
     public void start(Shader shader) {
-        shaderInterpreter.startShader(shader.dao);
+        shaderInterpreter.startShader(shader.getDao());
     }
 
     public void stop() {
@@ -70,7 +70,7 @@ public class ShaderService extends SupplierService<Shader, ShaderDao, ShaderData
     }
 
     public int getUniformLocation(final Shader shader, final String variable) {
-        int location = shaderInterpreter.getUniformLocation(shader.dao, variable);
+        int location = shaderInterpreter.getUniformLocation(shader.getDao(), variable);
         if (location < 0) {
             throw new PIEngineException("Could not find uniform variable %s!", variable);
         }
