@@ -24,11 +24,7 @@ public abstract class Scene extends RenderPlanner<RenderPlan> implements Initial
         this.assets = new ArrayList<>();
     }
 
-    protected <T extends Asset> T createAsset(final Class<T> assetClass) {
-        return this.createAsset(assetClass, null);
-    }
-
-    protected <T extends Asset> T createAsset(final Class<T> assetClass, final AssetArgument arguments) {
+    protected <T extends Asset<A>, A extends AssetArgument> T createAsset(final Class<T> assetClass, final A arguments) {
         final T asset = assetManager.supply(assetClass, this, arguments);
         assets.add(asset);
         return asset;

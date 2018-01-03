@@ -4,7 +4,7 @@ import piengine.object.asset.domain.AssetArgument;
 import piengine.visual.camera.asset.CameraAsset;
 import piengine.visual.light.Light;
 
-public class CubeAssetArgument extends AssetArgument {
+public class CubeAssetArgument implements AssetArgument {
 
     public final CameraAsset cameraAsset;
     public final Light light;

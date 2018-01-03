@@ -14,7 +14,7 @@ import piengine.gui.asset.ButtonAssetArgument;
 import piengine.object.asset.manager.AssetManager;
 import piengine.object.terrain.domain.Terrain;
 import piengine.object.terrain.manager.TerrainManager;
-import piengine.visual.camera.asset.CameraAsset;
+import piengine.visual.camera.asset.CameraAssetArgument;
 import piengine.visual.framebuffer.domain.FrameBuffer;
 import piengine.visual.framebuffer.domain.FrameBufferData;
 import piengine.visual.framebuffer.manager.FrameBufferManager;
@@ -25,8 +25,13 @@ import piengine.visual.window.manager.WindowManager;
 import puppeteer.annotation.premade.Wire;
 
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_SPACE;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_RIGHT_CONTROL;
 import static piengine.core.input.domain.KeyEventType.PRESS;
+import static piengine.core.property.domain.ApplicationProperties.get;
+import static piengine.core.property.domain.PropertyKeys.CAMERA_LOOK_DOWN_LIMIT;
+import static piengine.core.property.domain.PropertyKeys.CAMERA_LOOK_SPEED;
+import static piengine.core.property.domain.PropertyKeys.CAMERA_LOOK_UP_LIMIT;
+import static piengine.core.property.domain.PropertyKeys.CAMERA_MOVE_SPEED;
 import static piengine.visual.render.domain.RenderPlan.createPlan;
 
 public class InitScene extends Scene {
@@ -41,7 +46,7 @@ public class InitScene extends Scene {
     private final TerrainManager terrainManager;
 
     private FrameBuffer frameBuffer;
-    private CameraAsset cameraAsset;
+    private FirstPersonCameraAsset cameraAsset;
     private Light light;
     private Terrain terrain;
 
@@ -65,13 +70,17 @@ public class InitScene extends Scene {
     public void initialize() {
         super.initialize();
         inputManager.addEvent(GLFW_KEY_ESCAPE, PRESS, windowManager::closeWindow);
-        inputManager.addEvent(GLFW_KEY_SPACE, PRESS, () -> cameraAsset.lookingEnabled = !cameraAsset.lookingEnabled);
+        inputManager.addEvent(GLFW_KEY_RIGHT_CONTROL, PRESS, () -> cameraAsset.lookingEnabled = !cameraAsset.lookingEnabled);
     }
 
     @Override
     protected void createAssets() {
         frameBuffer = frameBufferManager.supply(new FrameBufferData(VIEWPORT));
-        cameraAsset = createAsset(FirstPersonCameraAsset.class);
+        cameraAsset = createAsset(FirstPersonCameraAsset.class, new CameraAssetArgument(
+                get(CAMERA_LOOK_UP_LIMIT),
+                get(CAMERA_LOOK_DOWN_LIMIT),
+                get(CAMERA_LOOK_SPEED),
+                get(CAMERA_MOVE_SPEED)));
         light = new Light(this);
         terrain = terrainManager.supply("heightmap");
 
@@ -85,7 +94,7 @@ public class InitScene extends Scene {
     @Override
     protected void initializeAssets() {
         light.setPosition(100, 100, 100);
-        terrain.setPosition(0, -3, 0);
+        terrain.setPosition(0, 0, 0);
 
         buttonAsset.setPosition(-0.75f, 0.875f, 0);
 

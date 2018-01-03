@@ -24,10 +24,6 @@ public abstract class Entity {
     public Entity(final Entity parent) {
         this();
 
-        this.position.add(parent.position);
-        this.rotation.add(parent.rotation);
-        this.scale.mul(parent.scale);
-
         setParent(parent);
     }
 

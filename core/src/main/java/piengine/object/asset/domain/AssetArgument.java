@@ -1,4 +1,4 @@
 package piengine.object.asset.domain;
 
-public abstract class AssetArgument {
+public interface AssetArgument {
 }

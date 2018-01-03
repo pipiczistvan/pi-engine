@@ -14,6 +14,6 @@ public class FirstPersonCamera extends Camera {
 
     @Override
     protected void calculateViewMatrix(final Matrix4f viewMatrix) {
-        VIEW_MATRIX(getPosition(), getRotation()).mul(VIEW_MATRIX(parent.getPosition(), parent.getRotation()), viewMatrix);
+        viewMatrix.set(VIEW_MATRIX(getPosition(), getRotation()));
     }
 }

@@ -4,7 +4,7 @@ import org.joml.Vector2i;
 import piengine.core.base.event.Event;
 import piengine.object.asset.domain.AssetArgument;
 
-public class ButtonAssetArgument extends AssetArgument {
+public class ButtonAssetArgument implements AssetArgument {
 
     final String defaultImageName;
     final String hoverImageName;

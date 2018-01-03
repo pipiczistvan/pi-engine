@@ -4,7 +4,7 @@ import org.joml.Vector2i;
 import piengine.object.asset.domain.AssetArgument;
 import piengine.visual.framebuffer.domain.FrameBuffer;
 
-public class SquareAssetArgument extends AssetArgument {
+public class SquareAssetArgument implements AssetArgument {
 
     final Vector2i viewport;
     final FrameBuffer frameBuffer;

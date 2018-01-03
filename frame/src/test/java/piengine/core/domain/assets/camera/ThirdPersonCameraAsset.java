@@ -12,10 +12,6 @@ import puppeteer.annotation.premade.Wire;
 import static piengine.core.property.domain.ApplicationProperties.get;
 import static piengine.core.property.domain.PropertyKeys.CAMERA_FAR_PLANE;
 import static piengine.core.property.domain.PropertyKeys.CAMERA_FOV;
-import static piengine.core.property.domain.PropertyKeys.CAMERA_LOOK_DOWN_LIMIT;
-import static piengine.core.property.domain.PropertyKeys.CAMERA_LOOK_SPEED;
-import static piengine.core.property.domain.PropertyKeys.CAMERA_LOOK_UP_LIMIT;
-import static piengine.core.property.domain.PropertyKeys.CAMERA_MOVE_SPEED;
 import static piengine.core.property.domain.PropertyKeys.CAMERA_NEAR_PLANE;
 import static piengine.core.property.domain.PropertyKeys.CAMERA_VIEWPORT_HEIGHT;
 import static piengine.core.property.domain.PropertyKeys.CAMERA_VIEWPORT_WIDTH;
@@ -36,11 +32,7 @@ public class ThirdPersonCameraAsset extends CameraAsset<ThirdPersonCamera> {
         CameraAttribute attribute = new CameraAttribute(
                 get(CAMERA_FOV),
                 get(CAMERA_NEAR_PLANE),
-                get(CAMERA_FAR_PLANE),
-                get(CAMERA_LOOK_UP_LIMIT),
-                get(CAMERA_LOOK_DOWN_LIMIT),
-                get(CAMERA_LOOK_SPEED),
-                get(CAMERA_MOVE_SPEED)
+                get(CAMERA_FAR_PLANE)
         );
 
         return new ThirdPersonCamera(this, viewport, attribute, PERSPECTIVE);
