@@ -19,6 +19,6 @@ public class TerrainService extends SupplierService<Terrain, TerrainDao, Terrain
 
     @Override
     protected Terrain createDomain(final TerrainDao dao, final TerrainData resource) {
-        return new Terrain(dao, null);//todo
+        return new Terrain(dao, resource.heights, resource.size);
     }
 }

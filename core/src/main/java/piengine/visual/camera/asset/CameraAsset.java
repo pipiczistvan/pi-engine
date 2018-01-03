@@ -106,11 +106,13 @@ public abstract class CameraAsset<C extends Camera> extends Asset<CameraAssetArg
         addPosition(0, upwardsSpeed * (float) delta, 0);
 
         Vector3f position = getPosition();
+        float terrainHeight = arguments.terrain != null ?
+                arguments.terrain.getHeight(position.x, position.z) : 0;
 
-        if (position.y < TERRAIN_HEIGHT) {
+        if (position.y < terrainHeight) {
             upwardsSpeed = 0;
             isInAir = false;
-            setPosition(position.x, TERRAIN_HEIGHT, position.z);
+            setPosition(position.x, terrainHeight, position.z);
         }
 
         // VIEW MATRIX CALCULATION

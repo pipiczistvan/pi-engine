@@ -19,7 +19,7 @@ public class TerrainAccessor implements Accessor<TerrainData> {
     private static final String PNG_EXT = "png";
     //todo: nem dinamikus
     private static final float TILE_SIZE = 0.5f;
-    private static final float MAX_HEIGHT = 5;
+    private static final float MAX_HEIGHT = 10;
     private static final float MAX_PIXEL_COLOR = 256 * 256 * 256;
 
     private final ResourceLoader loader;
@@ -44,12 +44,14 @@ public class TerrainAccessor implements Accessor<TerrainData> {
         float[] vertices = new float[count * 3];
         float[] textureCoords = new float[count * 2];
         int[] indices = new int[6 * (width - 1) * (height - 1)];
+        float[][] heights = new float[height][width];
 
         int vertexPointer = 0;
         for (int z = 0; z < height; z++) {
             for (int x = 0; x < width; x++) {
                 vertices[vertexPointer * 3] = x * TILE_SIZE;
-                vertices[vertexPointer * 3 + 1] = getHeight(x, z, heightmap);
+                heights[z][x] = getHeight(x, z, heightmap);
+                vertices[vertexPointer * 3 + 1] = heights[z][x];
                 vertices[vertexPointer * 3 + 2] = z * TILE_SIZE;
                 //todo: nem kell
                 textureCoords[vertexPointer * 2] = (float) x / ((float) width - 1);
@@ -76,7 +78,7 @@ public class TerrainAccessor implements Accessor<TerrainData> {
             }
         }
 
-        return new TerrainData(vertices, indices, textureCoords);
+        return new TerrainData(vertices, indices, textureCoords, heights, TILE_SIZE);
     }
 
     private float getHeight(int x, int z, BufferedImage image) {

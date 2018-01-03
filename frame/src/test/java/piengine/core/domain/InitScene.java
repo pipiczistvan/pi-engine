@@ -76,13 +76,14 @@ public class InitScene extends Scene {
     @Override
     protected void createAssets() {
         frameBuffer = frameBufferManager.supply(new FrameBufferData(VIEWPORT));
+        terrain = terrainManager.supply("heightmap");
         cameraAsset = createAsset(FirstPersonCameraAsset.class, new CameraAssetArgument(
+                terrain,
                 get(CAMERA_LOOK_UP_LIMIT),
                 get(CAMERA_LOOK_DOWN_LIMIT),
                 get(CAMERA_LOOK_SPEED),
                 get(CAMERA_MOVE_SPEED)));
         light = new Light(this);
-        terrain = terrainManager.supply("heightmap");
 
         squareAsset = createAsset(SquareAsset.class, new SquareAssetArgument(VIEWPORT, frameBuffer));
         cubeAsset = createAsset(CubeAsset.class, new CubeAssetArgument(cameraAsset, light));
@@ -94,11 +95,11 @@ public class InitScene extends Scene {
     @Override
     protected void initializeAssets() {
         light.setPosition(100, 100, 100);
-        terrain.setPosition(0, 0, 0);
+        terrain.setPosition(-64, -0.5f,-64);
 
         buttonAsset.setPosition(-0.75f, 0.875f, 0);
 
-        cameraAsset.setPosition(0, 0, 5);
+        cameraAsset.setPosition(0, 0, 0);
     }
 
     @Override
