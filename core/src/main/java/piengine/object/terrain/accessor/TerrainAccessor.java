@@ -1,52 +1,94 @@
 package piengine.object.terrain.accessor;
 
 import piengine.core.base.api.Accessor;
+import piengine.core.base.exception.PIEngineException;
+import piengine.core.base.resource.ResourceLoader;
 import piengine.object.terrain.domain.TerrainData;
 import puppeteer.annotation.premade.Component;
+
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+
+import static piengine.core.property.domain.ApplicationProperties.get;
+import static piengine.core.property.domain.PropertyKeys.IMAGES_LOCATION;
 
 @Component
 public class TerrainAccessor implements Accessor<TerrainData> {
 
+    private static final String ROOT = get(IMAGES_LOCATION);
+    private static final String PNG_EXT = "png";
     //todo: nem dinamikus
-    private static final float SIZE = 128;
-    private static final int VERTEX_COUNT = 128;
+    private static final float TILE_SIZE = 0.5f;
+    private static final float MAX_HEIGHT = 5;
+    private static final float MAX_PIXEL_COLOR = 256 * 256 * 256;
+
+    private final ResourceLoader loader;
+
+    public TerrainAccessor() {
+        this.loader = new ResourceLoader(ROOT, PNG_EXT);
+    }
 
     @Override
     public TerrainData access(final String file) {
-        int count = VERTEX_COUNT * VERTEX_COUNT;
+        BufferedImage heightmap;
+        try {
+            heightmap = loader.loadBufferedImage(file);
+        } catch (IOException e) {
+            throw new PIEngineException("Could not load heightmap %s!", file, e);
+        }
+
+        int width = heightmap.getWidth();
+        int height = heightmap.getHeight();
+        int count = width * height;
 
         float[] vertices = new float[count * 3];
         float[] textureCoords = new float[count * 2];
-        int[] indices = new int[6 * (VERTEX_COUNT - 1) * (VERTEX_COUNT - 1)];
+        int[] indices = new int[6 * (width - 1) * (height - 1)];
 
         int vertexPointer = 0;
-        for (int i = 0; i < VERTEX_COUNT; i++) {
-            for (int j = 0; j < VERTEX_COUNT; j++) {
-                vertices[vertexPointer * 3] = (float) j / ((float) VERTEX_COUNT - 1) * SIZE;
-                vertices[vertexPointer * 3 + 1] = 0;
-                vertices[vertexPointer * 3 + 2] = (float) i / ((float) VERTEX_COUNT - 1) * SIZE;
-                textureCoords[vertexPointer * 2] = (float) j / ((float) VERTEX_COUNT - 1);
-                textureCoords[vertexPointer * 2 + 1] = (float) i / ((float) VERTEX_COUNT - 1);
+        for (int z = 0; z < height; z++) {
+            for (int x = 0; x < width; x++) {
+                vertices[vertexPointer * 3] = x * TILE_SIZE;
+                vertices[vertexPointer * 3 + 1] = getHeight(x, z, heightmap);
+                vertices[vertexPointer * 3 + 2] = z * TILE_SIZE;
+                //todo: nem kell
+                textureCoords[vertexPointer * 2] = (float) x / ((float) width - 1);
+                textureCoords[vertexPointer * 2 + 1] = (float) z / ((float) height - 1);
+
                 vertexPointer++;
             }
         }
 
-        int pointer = 0;
-        for (int gz = 0; gz < VERTEX_COUNT - 1; gz++) {
-            for (int gx = 0; gx < VERTEX_COUNT - 1; gx++) {
-                int topLeft = (gz * VERTEX_COUNT) + gx;
+        int indexPointer = 0;
+        for (int z = 0; z < height - 1; z++) {
+            for (int x = 0; x < width - 1; x++) {
+                int topLeft = (z * width) + x;
                 int topRight = topLeft + 1;
-                int bottomLeft = ((gz + 1) * VERTEX_COUNT) + gx;
+                int bottomLeft = ((z + 1) * width) + x;
                 int bottomRight = bottomLeft + 1;
-                indices[pointer++] = topLeft;
-                indices[pointer++] = bottomLeft;
-                indices[pointer++] = topRight;
-                indices[pointer++] = topRight;
-                indices[pointer++] = bottomLeft;
-                indices[pointer++] = bottomRight;
+
+                indices[indexPointer++] = topLeft;
+                indices[indexPointer++] = bottomLeft;
+                indices[indexPointer++] = topRight;
+                indices[indexPointer++] = topRight;
+                indices[indexPointer++] = bottomLeft;
+                indices[indexPointer++] = bottomRight;
             }
         }
 
         return new TerrainData(vertices, indices, textureCoords);
+    }
+
+    private float getHeight(int x, int z, BufferedImage image) {
+        if (x < 0 || x >= image.getWidth() || z < 0 || z >= image.getHeight()) {
+            return 0;
+        }
+
+        float height = image.getRGB(x, z);
+        height += MAX_PIXEL_COLOR / 2f;
+        height /= MAX_PIXEL_COLOR / 2f;
+        height *= MAX_HEIGHT;
+
+        return height;
     }
 }

@@ -4,6 +4,8 @@ import jdk.nashorn.api.scripting.URLReader;
 import org.lwjgl.BufferUtils;
 import piengine.core.base.exception.PIEngineException;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -77,6 +79,10 @@ public class ResourceLoader {
 
         buffer.flip();
         return buffer;
+    }
+
+    public BufferedImage loadBufferedImage(final String file) throws IOException {
+        return ImageIO.read(getUrl(file));
     }
 
     public URL getUrl(final String file) {

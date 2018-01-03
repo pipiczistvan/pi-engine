@@ -10,6 +10,7 @@ import static piengine.core.utils.MatrixUtils.VIEW_MATRIX;
 public class ThirdPersonCamera extends Camera {
 
     private final Vector3f cameraPosition;
+    //todo: nem dinamikus
     private float distance = 10;
 
     public ThirdPersonCamera(final Entity parent, final Vector2i viewport, final CameraAttribute attribute, final ProjectionType projectionType) {
