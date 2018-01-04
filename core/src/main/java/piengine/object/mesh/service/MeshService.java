@@ -10,7 +10,7 @@ import puppeteer.annotation.premade.Component;
 import puppeteer.annotation.premade.Wire;
 
 @Component
-public class MeshService extends SupplierService<Mesh, MeshDao, MeshData> {
+public class MeshService extends SupplierService<String, MeshData, MeshDao, Mesh> {
 
     @Wire
     public MeshService(final MeshAccessor meshAccessor, final MeshInterpreter meshInterpreter) {

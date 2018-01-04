@@ -10,7 +10,7 @@ import puppeteer.annotation.premade.Component;
 import puppeteer.annotation.premade.Wire;
 
 @Component
-public class ImageService extends SupplierService<Image, ImageDao, ImageData> {
+public class ImageService extends SupplierService<String, ImageData, ImageDao, Image> {
 
     @Wire
     public ImageService(final ImageAccessor imageAccessor, final ImageInterpreter imageInterpreter) {

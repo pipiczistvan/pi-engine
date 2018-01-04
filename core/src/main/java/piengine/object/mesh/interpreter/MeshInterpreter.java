@@ -10,8 +10,6 @@ import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
 
-import static org.lwjgl.BufferUtils.createFloatBuffer;
-import static org.lwjgl.BufferUtils.createIntBuffer;
 import static org.lwjgl.opengl.GL11.GL_FLOAT;
 import static org.lwjgl.opengl.GL15.GL_ARRAY_BUFFER;
 import static org.lwjgl.opengl.GL15.GL_ELEMENT_ARRAY_BUFFER;
@@ -23,11 +21,13 @@ import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
 import static org.lwjgl.opengl.GL30.glBindVertexArray;
 import static org.lwjgl.opengl.GL30.glDeleteVertexArrays;
 import static org.lwjgl.opengl.GL30.glGenVertexArrays;
+import static piengine.core.utils.BufferUtils.convertToFloatBuffer;
+import static piengine.core.utils.BufferUtils.convertToIntBuffer;
 import static piengine.object.mesh.domain.MeshDataType.TEXTURE_COORD;
 import static piengine.object.mesh.domain.MeshDataType.VERTEX;
 
 @Component
-public class MeshInterpreter implements Interpreter<MeshDao, MeshData> {
+public class MeshInterpreter implements Interpreter<MeshData, MeshDao> {
 
     @Override
     public MeshDao create(final MeshData meshData) {
@@ -76,17 +76,4 @@ public class MeshInterpreter implements Interpreter<MeshDao, MeshData> {
 
         return vbo;
     }
-
-    private FloatBuffer convertToFloatBuffer(float[] data) {
-        FloatBuffer buffer = createFloatBuffer(data.length);
-        buffer.put(data).flip();
-        return buffer;
-    }
-
-    private IntBuffer convertToIntBuffer(int[] data) {
-        IntBuffer buffer = createIntBuffer(data.length);
-        buffer.put(data).flip();
-        return buffer;
-    }
-
 }

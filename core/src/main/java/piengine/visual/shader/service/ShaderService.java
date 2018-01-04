@@ -15,7 +15,7 @@ import puppeteer.annotation.premade.Component;
 import puppeteer.annotation.premade.Wire;
 
 @Component
-public class ShaderService extends SupplierService<Shader, ShaderDao, ShaderData> {
+public class ShaderService extends SupplierService<String, ShaderData, ShaderDao, Shader> {
 
     private final ShaderInterpreter shaderInterpreter;
 

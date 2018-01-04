@@ -10,6 +10,7 @@ import piengine.visual.window.manager.WindowManager;
 import puppeteer.annotation.premade.Wire;
 
 import static piengine.core.property.domain.ApplicationProperties.get;
+import static piengine.core.property.domain.PropertyKeys.CAMERA_DISTANCE;
 import static piengine.core.property.domain.PropertyKeys.CAMERA_FAR_PLANE;
 import static piengine.core.property.domain.PropertyKeys.CAMERA_FOV;
 import static piengine.core.property.domain.PropertyKeys.CAMERA_NEAR_PLANE;
@@ -34,7 +35,8 @@ public class ThirdPersonCameraAsset extends CameraAsset<ThirdPersonCamera> {
                 get(CAMERA_NEAR_PLANE),
                 get(CAMERA_FAR_PLANE)
         );
+        float distance = get(CAMERA_DISTANCE);
 
-        return new ThirdPersonCamera(this, viewport, attribute, PERSPECTIVE);
+        return new ThirdPersonCamera(this, viewport, attribute, distance, PERSPECTIVE);
     }
 }

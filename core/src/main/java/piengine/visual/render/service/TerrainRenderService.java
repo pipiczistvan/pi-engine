@@ -37,8 +37,6 @@ public class TerrainRenderService extends AbstractRenderService<TerrainShader, T
             shader.loadModelMatrix(terrain.getModelMatrix())
                     .loadColor(new Vector4f(1));
 
-            shader.loadTextureEnabled(false);
-
             draw(terrain.getDao());
         }
 

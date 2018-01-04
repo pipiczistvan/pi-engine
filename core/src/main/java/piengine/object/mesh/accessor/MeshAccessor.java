@@ -11,7 +11,7 @@ import static piengine.core.property.domain.ApplicationProperties.get;
 import static piengine.core.property.domain.PropertyKeys.MESHES_LOCATION;
 
 @Component
-public class MeshAccessor implements Accessor<MeshData> {
+public class MeshAccessor implements Accessor<String, MeshData> {
 
     private static final String ROOT = get(MESHES_LOCATION);
     private static final String MESH_EXT = "obj";

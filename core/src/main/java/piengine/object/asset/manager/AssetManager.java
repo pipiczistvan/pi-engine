@@ -17,11 +17,7 @@ public class AssetManager {
         this.assetService = assetService;
     }
 
-    public <T extends Asset> T supply(final Class<T> assetClass, final Entity parent) {
-        return this.supply(assetClass, parent, null);
-    }
-
-    public <T extends Asset> T supply(final Class<T> assetClass, final Entity parent, final AssetArgument arguments) {
+    public <T extends Asset<A>, A extends AssetArgument> T supply(final Class<T> assetClass, final Entity parent, final A arguments) {
         return assetService.supply(assetClass, parent, arguments);
     }
 }

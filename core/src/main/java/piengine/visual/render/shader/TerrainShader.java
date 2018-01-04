@@ -15,7 +15,6 @@ public class TerrainShader extends Shader {
     private int location_lightPosition;
     private int location_lightColor;
     private int location_color;
-    private int location_textureEnabled;
 
     public TerrainShader(final ShaderDao dao) {
         super(dao);
@@ -30,7 +29,6 @@ public class TerrainShader extends Shader {
         location_lightPosition = getUniformLocation("lightPosition");
         location_lightColor = getUniformLocation("lightColor");
         location_color = getUniformLocation("color");
-        location_textureEnabled = getUniformLocation("textureEnabled");
     }
 
     public TerrainShader start() {
@@ -81,12 +79,6 @@ public class TerrainShader extends Shader {
         } else {
             loadUniform(location_color, new Vector4f(1));
         }
-
-        return this;
-    }
-
-    public TerrainShader loadTextureEnabled(final boolean value) {
-        loadUniform(location_textureEnabled, value);
 
         return this;
     }

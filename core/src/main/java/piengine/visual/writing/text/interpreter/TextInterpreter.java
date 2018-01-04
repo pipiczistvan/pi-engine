@@ -16,7 +16,7 @@ import java.nio.FloatBuffer;
 import java.util.ArrayList;
 
 @Component
-public class TextInterpreter implements Interpreter<TextDao, TextData> {
+public class TextInterpreter implements Interpreter<TextData, TextDao> {
 
     @Override
     public TextDao create(TextData textData) {

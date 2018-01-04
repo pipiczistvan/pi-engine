@@ -10,7 +10,7 @@ import puppeteer.annotation.premade.Component;
 import puppeteer.annotation.premade.Wire;
 
 @Component
-public class FontService extends SupplierService<Font, FontDao, FontData> {
+public class FontService extends SupplierService<String, FontData, FontDao, Font> {
 
     private final FontInterpreter fontInterpreter;
 

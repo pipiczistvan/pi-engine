@@ -13,6 +13,7 @@ import piengine.gui.asset.ButtonAsset;
 import piengine.gui.asset.ButtonAssetArgument;
 import piengine.object.asset.manager.AssetManager;
 import piengine.object.terrain.domain.Terrain;
+import piengine.object.terrain.domain.TerrainKey;
 import piengine.object.terrain.manager.TerrainManager;
 import piengine.visual.camera.asset.CameraAssetArgument;
 import piengine.visual.framebuffer.domain.FrameBuffer;
@@ -76,7 +77,7 @@ public class InitScene extends Scene {
     @Override
     protected void createAssets() {
         frameBuffer = frameBufferManager.supply(new FrameBufferData(VIEWPORT));
-        terrain = terrainManager.supply("heightmap");
+        terrain = terrainManager.supply(new TerrainKey(this, "heightmap"));
         cameraAsset = createAsset(FirstPersonCameraAsset.class, new CameraAssetArgument(
                 terrain,
                 get(CAMERA_LOOK_UP_LIMIT),
@@ -107,7 +108,7 @@ public class InitScene extends Scene {
         return createPlan()
                 .renderToFrameBuffer(frameBuffer,
                         createPlan()
-                                .clearScreen(CLEAR_COLOR_GREEN)
+                                .clearScreen(CLEAR_COLOR_BLACK)
                                 .renderTerrain(cameraAsset, light, terrain)
                                 .loadAsset(cubeAsset)
                 )

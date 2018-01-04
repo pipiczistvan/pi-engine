@@ -11,7 +11,7 @@ import static piengine.core.property.domain.ApplicationProperties.get;
 import static piengine.core.property.domain.PropertyKeys.SHADERS_LOCATION;
 
 @Component
-public class ShaderAccessor implements Accessor<ShaderData> {
+public class ShaderAccessor implements Accessor<String, ShaderData> {
 
     private static final String ROOT = get(SHADERS_LOCATION);
     private static final String SHADER_EXT = "glsl";

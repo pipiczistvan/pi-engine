@@ -4,6 +4,7 @@ import piengine.core.base.api.Accessor;
 import piengine.core.base.exception.PIEngineException;
 import piengine.core.base.resource.ResourceLoader;
 import piengine.object.terrain.domain.TerrainData;
+import piengine.object.terrain.domain.TerrainKey;
 import puppeteer.annotation.premade.Component;
 
 import java.awt.image.BufferedImage;
@@ -13,7 +14,7 @@ import static piengine.core.property.domain.ApplicationProperties.get;
 import static piengine.core.property.domain.PropertyKeys.IMAGES_LOCATION;
 
 @Component
-public class TerrainAccessor implements Accessor<TerrainData> {
+public class TerrainAccessor implements Accessor<TerrainKey, TerrainData> {
 
     private static final String ROOT = get(IMAGES_LOCATION);
     private static final String PNG_EXT = "png";
@@ -29,12 +30,12 @@ public class TerrainAccessor implements Accessor<TerrainData> {
     }
 
     @Override
-    public TerrainData access(final String file) {
+    public TerrainData access(final TerrainKey key) {
         BufferedImage heightmap;
         try {
-            heightmap = loader.loadBufferedImage(file);
+            heightmap = loader.loadBufferedImage(key.heightmap);
         } catch (IOException e) {
-            throw new PIEngineException("Could not load heightmap %s!", file, e);
+            throw new PIEngineException("Could not load heightmap %s!", key.heightmap, e);
         }
 
         int width = heightmap.getWidth();
@@ -42,7 +43,6 @@ public class TerrainAccessor implements Accessor<TerrainData> {
         int count = width * height;
 
         float[] vertices = new float[count * 3];
-        float[] textureCoords = new float[count * 2];
         int[] indices = new int[6 * (width - 1) * (height - 1)];
         float[][] heights = new float[height][width];
 
@@ -53,9 +53,6 @@ public class TerrainAccessor implements Accessor<TerrainData> {
                 heights[z][x] = getHeight(x, z, heightmap);
                 vertices[vertexPointer * 3 + 1] = heights[z][x];
                 vertices[vertexPointer * 3 + 2] = z * TILE_SIZE;
-                //todo: nem kell
-                textureCoords[vertexPointer * 2] = (float) x / ((float) width - 1);
-                textureCoords[vertexPointer * 2 + 1] = (float) z / ((float) height - 1);
 
                 vertexPointer++;
             }
@@ -78,7 +75,7 @@ public class TerrainAccessor implements Accessor<TerrainData> {
             }
         }
 
-        return new TerrainData(vertices, indices, textureCoords, heights, TILE_SIZE);
+        return new TerrainData(key.parent, vertices, indices, heights, TILE_SIZE);
     }
 
     private float getHeight(int x, int z, BufferedImage image) {

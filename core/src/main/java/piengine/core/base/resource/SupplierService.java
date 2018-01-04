@@ -11,21 +11,21 @@ import piengine.core.base.domain.ResourceData;
 import java.util.HashMap;
 import java.util.Map;
 
-public abstract class SupplierService<M extends Domain<D>, D extends Dao, R extends ResourceData> implements Service, Terminatable {
+public abstract class SupplierService<K, R extends ResourceData, D extends Dao, M extends Domain<D>> implements Service, Terminatable {
 
-    protected final Interpreter<D, R> interpreter;
-    private final Accessor<R> accessor;
-    private final Map<String, M> resourceMap;
+    protected final Interpreter<R, D> interpreter;
+    private final Accessor<K, R> accessor;
+    private final Map<K, M> resourceMap;
 
-    public SupplierService(final Accessor<R> accessor, final Interpreter<D, R> interpreter) {
+    public SupplierService(final Accessor<K, R> accessor, final Interpreter<R, D> interpreter) {
         this.accessor = accessor;
         this.interpreter = interpreter;
 
         this.resourceMap = new HashMap<>();
     }
 
-    public M supply(final String file) {
-        return resourceMap.computeIfAbsent(file, this::compute);
+    public M supply(final K key) {
+        return resourceMap.computeIfAbsent(key, this::compute);
     }
 
     @Override
@@ -35,11 +35,10 @@ public abstract class SupplierService<M extends Domain<D>, D extends Dao, R exte
 
     protected abstract M createDomain(final D dao, final R resource);
 
-    private M compute(final String file) {
-        R resourceData = accessor.access(file);
+    private M compute(final K key) {
+        R resourceData = accessor.access(key);
         D dao = interpreter.create(resourceData);
         accessor.free(resourceData);
         return createDomain(dao, resourceData);
     }
-
 }

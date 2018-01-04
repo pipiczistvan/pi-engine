@@ -13,7 +13,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Component
-public class FontAccessor implements Accessor<FontData> {
+public class FontAccessor implements Accessor<String, FontData> {
 
     private static final String ROOT = ApplicationProperties.get(PropertyKeys.FONTS_LOCATION);
     private static final String FONT_EXT = "fnt";

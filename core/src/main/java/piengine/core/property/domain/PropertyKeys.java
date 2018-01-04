@@ -32,5 +32,6 @@ public class PropertyKeys {
     public static final FloatProperty CAMERA_LOOK_DOWN_LIMIT = new FloatProperty("camera.look.down.limit");
     public static final FloatProperty CAMERA_LOOK_SPEED = new FloatProperty("camera.look.speed");
     public static final FloatProperty CAMERA_MOVE_SPEED = new FloatProperty("camera.move.speed");
+    public static final FloatProperty CAMERA_DISTANCE = new FloatProperty("camera.distance");
 
 }

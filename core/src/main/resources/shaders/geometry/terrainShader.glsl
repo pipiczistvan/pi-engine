@@ -3,10 +3,7 @@
 layout (triangles) in;
 layout (triangle_strip, max_vertices = 3) out;
 
-in vec2 vTextureCoord[3];
-
 out vec4 gLightFactor;
-out vec2 gTextureCoord;
 
 uniform mat4 viewMatrix;
 uniform mat4 projectionMatrix;
@@ -25,7 +22,6 @@ void main(void) {
 
     for(int i = 0; i < gl_in.length(); i++)
     {
-        gTextureCoord = vTextureCoord[i];
         gl_Position = projectionMatrix * viewMatrix * gl_in[i].gl_Position;
         EmitVertex();
     }

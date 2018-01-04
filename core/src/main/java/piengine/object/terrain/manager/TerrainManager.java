@@ -1,6 +1,7 @@
 package piengine.object.terrain.manager;
 
 import piengine.object.terrain.domain.Terrain;
+import piengine.object.terrain.domain.TerrainKey;
 import piengine.object.terrain.service.TerrainService;
 import puppeteer.annotation.premade.Component;
 import puppeteer.annotation.premade.Wire;
@@ -15,7 +16,7 @@ public class TerrainManager {
         this.terrainService = terrainService;
     }
 
-    public Terrain supply(final String file) {
-        return terrainService.supply(file);
+    public Terrain supply(final TerrainKey key) {
+        return terrainService.supply(key);
     }
 }

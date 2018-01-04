@@ -2,6 +2,7 @@ package piengine.object.terrain.domain;
 
 import org.joml.Vector2f;
 import org.joml.Vector3f;
+import piengine.object.entity.domain.Entity;
 import piengine.object.entity.domain.EntityDomain;
 
 public class Terrain extends EntityDomain<TerrainDao> {
@@ -9,9 +10,8 @@ public class Terrain extends EntityDomain<TerrainDao> {
     private final float[][] heights;
     private final float size;
 
-    //todo: parent nem kell? (asset miatt) -> supplyservice-nek ne csak string mehessen be
-    public Terrain(final TerrainDao dao, final float[][] heights, final float size) {
-        super(dao);
+    public Terrain(final Entity parent, final TerrainDao dao, final float[][] heights, final float size) {
+        super(parent, dao);
 
         this.heights = heights;
         this.size = size;

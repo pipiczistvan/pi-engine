@@ -13,7 +13,7 @@ import puppeteer.annotation.premade.Component;
 import puppeteer.annotation.premade.Wire;
 
 @Component
-public class FontInterpreter implements Interpreter<FontDao, FontData> {
+public class FontInterpreter implements Interpreter<FontData, FontDao> {
 
     private final ImageAccessor imageAccessor;
 

@@ -44,7 +44,7 @@ import static org.lwjgl.opengl.GL40.GL_TESS_CONTROL_SHADER;
 import static org.lwjgl.opengl.GL40.GL_TESS_EVALUATION_SHADER;
 
 @Component
-public class ShaderInterpreter implements Interpreter<ShaderDao, ShaderData> {
+public class ShaderInterpreter implements Interpreter<ShaderData, ShaderDao> {
 
     private static FloatBuffer matrixBuffer = BufferUtils.createFloatBuffer(16);
 
