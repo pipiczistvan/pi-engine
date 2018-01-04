@@ -9,13 +9,13 @@ import piengine.visual.render.manager.RenderManager;
 import piengine.visual.window.manager.WindowManager;
 import puppeteer.annotation.premade.Wire;
 
-import static piengine.core.property.domain.ApplicationProperties.get;
-import static piengine.core.property.domain.PropertyKeys.CAMERA_DISTANCE;
-import static piengine.core.property.domain.PropertyKeys.CAMERA_FAR_PLANE;
-import static piengine.core.property.domain.PropertyKeys.CAMERA_FOV;
-import static piengine.core.property.domain.PropertyKeys.CAMERA_NEAR_PLANE;
-import static piengine.core.property.domain.PropertyKeys.CAMERA_VIEWPORT_HEIGHT;
-import static piengine.core.property.domain.PropertyKeys.CAMERA_VIEWPORT_WIDTH;
+import static piengine.core.base.type.property.ApplicationProperties.get;
+import static piengine.core.base.type.property.PropertyKeys.CAMERA_DISTANCE;
+import static piengine.core.base.type.property.PropertyKeys.CAMERA_FAR_PLANE;
+import static piengine.core.base.type.property.PropertyKeys.CAMERA_FOV;
+import static piengine.core.base.type.property.PropertyKeys.CAMERA_NEAR_PLANE;
+import static piengine.core.base.type.property.PropertyKeys.CAMERA_VIEWPORT_HEIGHT;
+import static piengine.core.base.type.property.PropertyKeys.CAMERA_VIEWPORT_WIDTH;
 import static piengine.visual.camera.domain.ProjectionType.PERSPECTIVE;
 
 public class ThirdPersonCameraAsset extends CameraAsset<ThirdPersonCamera> {

@@ -7,15 +7,15 @@ import piengine.visual.window.interpreter.WindowInterpreter;
 import puppeteer.annotation.premade.Component;
 import puppeteer.annotation.premade.Wire;
 
-import static piengine.core.property.domain.ApplicationProperties.get;
-import static piengine.core.property.domain.PropertyKeys.WINDOW_CURSOR_HIDDEN;
-import static piengine.core.property.domain.PropertyKeys.WINDOW_FULL_SCREEN;
-import static piengine.core.property.domain.PropertyKeys.WINDOW_HEIGHT;
-import static piengine.core.property.domain.PropertyKeys.WINDOW_MAJOR_VERSION;
-import static piengine.core.property.domain.PropertyKeys.WINDOW_MINOR_VERSION;
-import static piengine.core.property.domain.PropertyKeys.WINDOW_MULTI_SAMPLE_COUNT;
-import static piengine.core.property.domain.PropertyKeys.WINDOW_TITLE;
-import static piengine.core.property.domain.PropertyKeys.WINDOW_WIDTH;
+import static piengine.core.base.type.property.ApplicationProperties.get;
+import static piengine.core.base.type.property.PropertyKeys.WINDOW_CURSOR_HIDDEN;
+import static piengine.core.base.type.property.PropertyKeys.WINDOW_FULL_SCREEN;
+import static piengine.core.base.type.property.PropertyKeys.WINDOW_HEIGHT;
+import static piengine.core.base.type.property.PropertyKeys.WINDOW_MAJOR_VERSION;
+import static piengine.core.base.type.property.PropertyKeys.WINDOW_MINOR_VERSION;
+import static piengine.core.base.type.property.PropertyKeys.WINDOW_MULTI_SAMPLE_COUNT;
+import static piengine.core.base.type.property.PropertyKeys.WINDOW_TITLE;
+import static piengine.core.base.type.property.PropertyKeys.WINDOW_WIDTH;
 
 @Component
 public class WindowService {

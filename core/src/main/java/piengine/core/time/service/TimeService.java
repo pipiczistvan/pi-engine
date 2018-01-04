@@ -7,8 +7,8 @@ import piengine.core.time.interpreter.TimeInterpreter;
 import puppeteer.annotation.premade.Component;
 import puppeteer.annotation.premade.Wire;
 
-import static piengine.core.property.domain.ApplicationProperties.get;
-import static piengine.core.property.domain.PropertyKeys.TIME_FPS_CAP;
+import static piengine.core.base.type.property.ApplicationProperties.get;
+import static piengine.core.base.type.property.PropertyKeys.TIME_FPS_CAP;
 
 @Component
 public class TimeService implements Service, Initializable, Updatable {

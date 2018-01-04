@@ -8,44 +8,52 @@ import piengine.object.entity.domain.EntityDomain;
 public class Terrain extends EntityDomain<TerrainDao> {
 
     private final float[][] heights;
-    private final float size;
 
-    public Terrain(final Entity parent, final TerrainDao dao, final float[][] heights, final float size) {
+    public Terrain(final Entity parent, final TerrainDao dao, final float[][] heights) {
         super(parent, dao);
 
         this.heights = heights;
-        this.size = size;
     }
 
     public float getHeight(final float x, final float z) {
         Vector3f position = getPosition();
+        Vector3f scale = getScale();
 
         float terrainX = x - position.x;
         float terrainZ = z - position.z;
 
-        int gridX = (int) Math.floor(terrainX / size);
-        int gridZ = (int) Math.floor(terrainZ / size);
+        int terrainWidth = heights[0].length;
+        int terrainLength = heights.length;
 
-        if (gridX >= heights[0].length - 1 || gridZ >= heights.length - 1 || gridX < 0 || gridZ < 0) {
+        float tileSizeX = scale.x / terrainWidth;
+        float tileSizeZ = scale.z / terrainLength;
+
+        int gridX = (int) Math.floor(terrainX / tileSizeX);
+        int gridZ = (int) Math.floor(terrainZ / tileSizeZ);
+
+        if (gridX >= terrainWidth - 1 || gridZ >= terrainLength - 1 || gridX < 0 || gridZ < 0) {
             return 0;
         }
 
-        float xCoord = (terrainX % size);
-        float zCoord = (terrainZ % size);
+        float xCoord = (terrainX % tileSizeX);
+        float zCoord = (terrainZ % tileSizeZ);
 
+        float terrainHeight;
         if (xCoord <= (1 - zCoord)) {
-            return barryCentric(
+            terrainHeight = barryCentric(
                     new Vector3f(0, heights[gridZ][gridX], 0),
                     new Vector3f(1, heights[gridZ][gridX + 1], 0),
                     new Vector3f(0, heights[gridZ + 1][gridX], 1),
                     new Vector2f(xCoord, zCoord));
         } else {
-            return barryCentric(
+            terrainHeight = barryCentric(
                     new Vector3f(1, heights[gridZ][gridX + 1], 0),
                     new Vector3f(1, heights[gridZ + 1][gridX + 1], 1),
                     new Vector3f(0, heights[gridZ + 1][gridX], 1),
                     new Vector2f(xCoord, zCoord));
         }
+
+        return terrainHeight * scale.y + position.y;
     }
 
     private static float barryCentric(Vector3f p1, Vector3f p2, Vector3f p3, Vector2f pos) {

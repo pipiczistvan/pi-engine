@@ -26,7 +26,6 @@ public abstract class CameraAsset<C extends Camera> extends Asset<CameraAssetArg
 
     private static final float GRAVITY = -100;
     private static final float JUMP_POWER = 30;
-    private static final float TERRAIN_HEIGHT = 0;
 
     private final Vector2f movement;
     private float upwardsSpeed = 0;
@@ -47,7 +46,7 @@ public abstract class CameraAsset<C extends Camera> extends Asset<CameraAssetArg
 
     @Override
     public void initialize() {
-        inputManager.addEvent(GLFW_KEY_SPACE, RELEASE, this::jump);
+        inputManager.addEvent(GLFW_KEY_SPACE, PRESS, this::jump);
         inputManager.addEvent(GLFW_KEY_A, PRESS, this::moveLeft);
         inputManager.addEvent(GLFW_KEY_S, PRESS, this::moveBackward);
         inputManager.addEvent(GLFW_KEY_D, PRESS, this::moveRight);
@@ -107,7 +106,7 @@ public abstract class CameraAsset<C extends Camera> extends Asset<CameraAssetArg
 
         Vector3f position = getPosition();
         float terrainHeight = arguments.terrain != null ?
-                arguments.terrain.getHeight(position.x, position.z) : 0;
+                arguments.terrain.getHeight(position.x, position.z) + 0.5f : 0;
 
         if (position.y < terrainHeight) {
             upwardsSpeed = 0;

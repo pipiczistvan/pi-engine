@@ -1,7 +1,7 @@
 package piengine.visual.render.domain;
 
 import org.joml.Vector2i;
-import org.joml.Vector4f;
+import piengine.core.base.type.color.Color;
 import piengine.object.asset.domain.Asset;
 import piengine.object.model.domain.Model;
 import piengine.object.terrain.domain.Terrain;
@@ -18,7 +18,12 @@ import piengine.visual.writing.text.domain.TextRenderContext;
 import java.util.ArrayList;
 import java.util.List;
 
-import static piengine.visual.render.domain.fragment.domain.RenderFragmentType.*;
+import static piengine.visual.render.domain.fragment.domain.RenderFragmentType.BIND_FRAME_BUFFER;
+import static piengine.visual.render.domain.fragment.domain.RenderFragmentType.CLEAR_SCREEN;
+import static piengine.visual.render.domain.fragment.domain.RenderFragmentType.RENDER_TERRAIN;
+import static piengine.visual.render.domain.fragment.domain.RenderFragmentType.RENDER_TEXT;
+import static piengine.visual.render.domain.fragment.domain.RenderFragmentType.RENDER_TO_GUI;
+import static piengine.visual.render.domain.fragment.domain.RenderFragmentType.RENDER_TO_WORLD;
 
 public class RenderPlan {
 
@@ -31,7 +36,7 @@ public class RenderPlan {
         return new RenderPlan();
     }
 
-    public RenderPlan clearScreen(final Vector4f color) {
+    public RenderPlan clearScreen(final Color color) {
         fragments.add(new RenderFragment<>(CLEAR_SCREEN, color));
         return this;
     }

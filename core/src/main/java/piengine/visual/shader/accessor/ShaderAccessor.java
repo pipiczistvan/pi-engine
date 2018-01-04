@@ -7,8 +7,8 @@ import piengine.core.base.resource.ResourceLoader;
 import piengine.visual.shader.domain.ShaderData;
 import puppeteer.annotation.premade.Component;
 
-import static piengine.core.property.domain.ApplicationProperties.get;
-import static piengine.core.property.domain.PropertyKeys.SHADERS_LOCATION;
+import static piengine.core.base.type.property.ApplicationProperties.get;
+import static piengine.core.base.type.property.PropertyKeys.SHADERS_LOCATION;
 
 @Component
 public class ShaderAccessor implements Accessor<String, ShaderData> {

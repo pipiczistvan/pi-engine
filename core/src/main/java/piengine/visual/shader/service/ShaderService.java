@@ -6,6 +6,7 @@ import org.joml.Vector3f;
 import org.joml.Vector4f;
 import piengine.core.base.exception.PIEngineException;
 import piengine.core.base.resource.SupplierService;
+import piengine.core.base.type.color.Color;
 import piengine.visual.shader.accessor.ShaderAccessor;
 import piengine.visual.shader.domain.Shader;
 import piengine.visual.shader.domain.ShaderDao;
@@ -55,6 +56,10 @@ public class ShaderService extends SupplierService<String, ShaderData, ShaderDao
 
     public void loadUniform(final int location, final Vector2f value) {
         shaderInterpreter.loadVector2(location, value);
+    }
+
+    public void loadUniform(final int location, final Color color) {
+        shaderInterpreter.loadColor(location, color);
     }
 
     public void loadUniform(final int location, final float value) {

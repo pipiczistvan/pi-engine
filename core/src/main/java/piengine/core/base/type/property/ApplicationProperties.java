@@ -1,4 +1,4 @@
-package piengine.core.property.domain;
+package piengine.core.base.type.property;
 
 import piengine.core.base.exception.PIEngineException;
 import piengine.core.base.resource.ResourceLoader;

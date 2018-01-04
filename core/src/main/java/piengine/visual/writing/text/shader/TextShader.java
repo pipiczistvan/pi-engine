@@ -2,7 +2,7 @@ package piengine.visual.writing.text.shader;
 
 
 import org.joml.Matrix4f;
-import org.joml.Vector4f;
+import piengine.core.base.type.color.Color;
 import piengine.visual.shader.domain.Shader;
 import piengine.visual.shader.domain.ShaderDao;
 
@@ -40,10 +40,9 @@ public class TextShader extends Shader {
         return this;
     }
 
-    public TextShader loadColor(final Vector4f color) {
+    public TextShader loadColor(final Color color) {
         super.loadUniform(location_color, color);
 
         return this;
     }
-
 }

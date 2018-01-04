@@ -24,6 +24,7 @@ import static org.lwjgl.opengl.GL30.glDeleteVertexArrays;
 import static org.lwjgl.opengl.GL30.glGenVertexArrays;
 import static piengine.core.utils.BufferUtils.convertToFloatBuffer;
 import static piengine.core.utils.BufferUtils.convertToIntBuffer;
+import static piengine.object.mesh.domain.MeshDataType.COLOR;
 import static piengine.object.mesh.domain.MeshDataType.VERTEX;
 
 @Component
@@ -36,6 +37,7 @@ public class TerrainInterpreter implements Interpreter<TerrainData, TerrainDao> 
 
         dao.vboIds.add(createIndicesVbo(terrainData.indices));
         dao.vboIds.add(createVbo(VERTEX.value, terrainData.vertices, 3));
+        dao.vboIds.add(createVbo(COLOR.value, terrainData.colors, 3));
 
         unbind();
 

@@ -1,7 +1,8 @@
 package piengine.visual.render.shader;
 
 import org.joml.Matrix4f;
-import org.joml.Vector4f;
+import piengine.core.base.type.color.Color;
+import piengine.core.utils.ColorUtils;
 import piengine.visual.light.Light;
 import piengine.visual.shader.domain.Shader;
 import piengine.visual.shader.domain.ShaderDao;
@@ -75,11 +76,11 @@ public class WorldShader extends Shader {
         return this;
     }
 
-    public WorldShader loadColor(final Vector4f color) {
+    public WorldShader loadColor(final Color color) {
         if (color != null) {
             loadUniform(location_color, color);
         } else {
-            loadUniform(location_color, new Vector4f(1));
+            loadUniform(location_color, ColorUtils.WHITE);
         }
 
         return this;

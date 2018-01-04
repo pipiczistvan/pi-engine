@@ -2,8 +2,8 @@ package piengine.visual.writing.font.accessor;
 
 import piengine.core.base.api.Accessor;
 import piengine.core.base.resource.ResourceLoader;
-import piengine.core.property.domain.ApplicationProperties;
-import piengine.core.property.domain.PropertyKeys;
+import piengine.core.base.type.property.ApplicationProperties;
+import piengine.core.base.type.property.PropertyKeys;
 import piengine.visual.writing.font.domain.FontData;
 import piengine.visual.writing.text.accessor.TextAccessor;
 import piengine.visual.writing.text.domain.Character;

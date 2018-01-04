@@ -1,7 +1,7 @@
 package piengine;
 
 import org.junit.Before;
-import piengine.core.property.domain.ApplicationProperties;
+import piengine.core.base.type.property.ApplicationProperties;
 
 public abstract class TestBase {
 

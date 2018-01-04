@@ -6,6 +6,7 @@ import org.joml.Vector3f;
 import org.joml.Vector4f;
 import piengine.core.base.domain.Domain;
 import piengine.core.base.exception.PIEngineException;
+import piengine.core.base.type.color.Color;
 import piengine.visual.shader.service.ShaderService;
 
 import java.lang.reflect.InvocationTargetException;
@@ -53,6 +54,10 @@ public class Shader implements Domain<ShaderDao> {
 
     protected void loadUniform(int location, Vector2f value) {
         shaderService.loadUniform(location, value);
+    }
+
+    protected void loadUniform(int location, Color color) {
+        shaderService.loadUniform(location, color);
     }
 
     protected void loadUniform(int location, float value) {

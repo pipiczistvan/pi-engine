@@ -3,7 +3,8 @@ package piengine.object.mesh.domain;
 public enum MeshDataType {
 
     VERTEX(0),
-    TEXTURE_COORD(1);
+    TEXTURE_COORD(1),
+    COLOR(2);
 
     public final int value;
 

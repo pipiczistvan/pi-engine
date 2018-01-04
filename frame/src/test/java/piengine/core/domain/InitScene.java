@@ -1,7 +1,6 @@
 package piengine.core.domain;
 
 import org.joml.Vector2i;
-import org.joml.Vector4f;
 import piengine.core.architecture.scene.domain.Scene;
 import piengine.core.domain.assets.camera.FirstPersonCameraAsset;
 import piengine.core.domain.assets.object.cube.CubeAsset;
@@ -9,6 +8,7 @@ import piengine.core.domain.assets.object.cube.CubeAssetArgument;
 import piengine.core.domain.assets.object.square.SquareAsset;
 import piengine.core.domain.assets.object.square.SquareAssetArgument;
 import piengine.core.input.manager.InputManager;
+import piengine.core.utils.ColorUtils;
 import piengine.gui.asset.ButtonAsset;
 import piengine.gui.asset.ButtonAssetArgument;
 import piengine.object.asset.manager.AssetManager;
@@ -27,19 +27,19 @@ import puppeteer.annotation.premade.Wire;
 
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_RIGHT_CONTROL;
+import static piengine.core.base.type.property.ApplicationProperties.get;
+import static piengine.core.base.type.property.PropertyKeys.CAMERA_LOOK_DOWN_LIMIT;
+import static piengine.core.base.type.property.PropertyKeys.CAMERA_LOOK_SPEED;
+import static piengine.core.base.type.property.PropertyKeys.CAMERA_LOOK_UP_LIMIT;
+import static piengine.core.base.type.property.PropertyKeys.CAMERA_MOVE_SPEED;
+import static piengine.core.base.type.property.PropertyKeys.CAMERA_VIEWPORT_HEIGHT;
+import static piengine.core.base.type.property.PropertyKeys.CAMERA_VIEWPORT_WIDTH;
 import static piengine.core.input.domain.KeyEventType.PRESS;
-import static piengine.core.property.domain.ApplicationProperties.get;
-import static piengine.core.property.domain.PropertyKeys.CAMERA_LOOK_DOWN_LIMIT;
-import static piengine.core.property.domain.PropertyKeys.CAMERA_LOOK_SPEED;
-import static piengine.core.property.domain.PropertyKeys.CAMERA_LOOK_UP_LIMIT;
-import static piengine.core.property.domain.PropertyKeys.CAMERA_MOVE_SPEED;
 import static piengine.visual.render.domain.RenderPlan.createPlan;
 
 public class InitScene extends Scene {
 
-    private static final Vector4f CLEAR_COLOR_BLACK = new Vector4f();
-    private static final Vector4f CLEAR_COLOR_GREEN = new Vector4f(0, 1, 0, 1);
-    private static final Vector2i VIEWPORT = new Vector2i(800, 600);
+    private static final Vector2i VIEWPORT = new Vector2i(get(CAMERA_VIEWPORT_WIDTH), get(CAMERA_VIEWPORT_HEIGHT));
 
     private final InputManager inputManager;
     private final WindowManager windowManager;
@@ -96,7 +96,8 @@ public class InitScene extends Scene {
     @Override
     protected void initializeAssets() {
         light.setPosition(100, 100, 100);
-        terrain.setPosition(-64, -0.5f,-64);
+        terrain.setPosition(-64, 0, -64);
+        terrain.setScale(128, 15, 128);
 
         buttonAsset.setPosition(-0.75f, 0.875f, 0);
 
@@ -108,11 +109,11 @@ public class InitScene extends Scene {
         return createPlan()
                 .renderToFrameBuffer(frameBuffer,
                         createPlan()
-                                .clearScreen(CLEAR_COLOR_BLACK)
+                                .clearScreen(ColorUtils.BLACK)
                                 .renderTerrain(cameraAsset, light, terrain)
                                 .loadAsset(cubeAsset)
                 )
-                .clearScreen(CLEAR_COLOR_BLACK)
+                .clearScreen(ColorUtils.BLACK)
                 .loadAsset(squareAsset)
                 .loadAsset(buttonAsset);
     }

@@ -1,4 +1,4 @@
-package piengine.core.property.domain;
+package piengine.core.base.type.property;
 
 import java.util.HashSet;
 import java.util.Set;

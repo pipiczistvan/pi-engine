@@ -20,6 +20,6 @@ public class TerrainService extends SupplierService<TerrainKey, TerrainData, Ter
 
     @Override
     protected Terrain createDomain(final TerrainDao dao, final TerrainData resource) {
-        return new Terrain(resource.parent, dao, resource.heights, resource.size);
+        return new Terrain(resource.parent, dao, resource.heights);
     }
 }

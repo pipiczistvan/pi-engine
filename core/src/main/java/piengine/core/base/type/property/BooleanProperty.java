@@ -1,4 +1,4 @@
-package piengine.core.property.domain;
+package piengine.core.base.type.property;
 
 class BooleanProperty extends Property<Boolean> {
 

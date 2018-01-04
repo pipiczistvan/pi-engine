@@ -1,4 +1,4 @@
-package piengine.core.property.domain;
+package piengine.core.base.type.property;
 
 import piengine.core.base.exception.PIEngineException;
 
@@ -6,7 +6,7 @@ import java.util.Properties;
 
 abstract class Property<T> {
 
-    final String key;
+    private final String key;
 
     Property(final String key) {
         this.key = key;

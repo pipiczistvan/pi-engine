@@ -1,6 +1,6 @@
 package piengine.object.model.manager;
 
-import org.joml.Vector4f;
+import piengine.core.base.type.color.Color;
 import piengine.object.entity.domain.Entity;
 import piengine.object.model.domain.Model;
 import piengine.object.model.domain.ModelAttribute;
@@ -20,18 +20,18 @@ public class ModelManager {
     }
 
     public Model supply(final String file, final Entity parent) {
-        return supply(file, parent, new Vector4f(1));
+        return supply(file, parent, new Color(1));
     }
 
     public Model supply(final String file, final Entity parent, final Texture texture) {
-        return supply(file, parent, texture, new Vector4f(1));
+        return supply(file, parent, texture, new Color(1));
     }
 
-    public Model supply(final String file, final Entity parent, final Vector4f color) {
+    public Model supply(final String file, final Entity parent, final Color color) {
         return supply(file, parent, null, color);
     }
 
-    public Model supply(final String file, final Entity parent, final Texture texture, final Vector4f color) {
+    public Model supply(final String file, final Entity parent, final Texture texture, final Color color) {
         return modelService.supply(file, parent, new ModelAttribute(texture, color));
     }
 }

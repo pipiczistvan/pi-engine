@@ -7,8 +7,8 @@ import piengine.object.mesh.domain.ParsedMeshData;
 import puppeteer.annotation.premade.Component;
 import puppeteer.annotation.premade.Wire;
 
-import static piengine.core.property.domain.ApplicationProperties.get;
-import static piengine.core.property.domain.PropertyKeys.MESHES_LOCATION;
+import static piengine.core.base.type.property.ApplicationProperties.get;
+import static piengine.core.base.type.property.PropertyKeys.MESHES_LOCATION;
 
 @Component
 public class MeshAccessor implements Accessor<String, MeshData> {

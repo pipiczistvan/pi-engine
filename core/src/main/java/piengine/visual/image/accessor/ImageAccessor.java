@@ -17,8 +17,8 @@ import static org.lwjgl.stb.STBImage.stbi_failure_reason;
 import static org.lwjgl.stb.STBImage.stbi_image_free;
 import static org.lwjgl.stb.STBImage.stbi_info_from_memory;
 import static org.lwjgl.stb.STBImage.stbi_load_from_memory;
-import static piengine.core.property.domain.ApplicationProperties.get;
-import static piengine.core.property.domain.PropertyKeys.IMAGES_LOCATION;
+import static piengine.core.base.type.property.ApplicationProperties.get;
+import static piengine.core.base.type.property.PropertyKeys.IMAGES_LOCATION;
 
 @Component
 public class ImageAccessor implements Accessor<String, ImageData> {

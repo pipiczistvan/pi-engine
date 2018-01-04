@@ -7,6 +7,7 @@ import org.joml.Vector4f;
 import org.lwjgl.BufferUtils;
 import piengine.core.base.api.Interpreter;
 import piengine.core.base.exception.PIEngineException;
+import piengine.core.base.type.color.Color;
 import piengine.visual.shader.domain.ShaderDao;
 import piengine.visual.shader.domain.ShaderData;
 import puppeteer.annotation.premade.Component;
@@ -90,6 +91,10 @@ public class ShaderInterpreter implements Interpreter<ShaderData, ShaderDao> {
 
     public void loadVector4(final int location, final Vector4f vector) {
         glUniform4f(location, vector.x, vector.y, vector.z, vector.w);
+    }
+
+    public void loadColor(final int location, final Color color) {
+        glUniform4f(location, color.r, color.g, color.b, color.a);
     }
 
     public void loadBoolean(final int location, final boolean value) {

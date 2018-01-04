@@ -1,8 +1,8 @@
 package piengine.core.engine.domain;
 
 import piengine.core.architecture.scene.domain.Scene;
+import piengine.core.base.type.property.ApplicationProperties;
 import piengine.core.engine.service.EngineService;
-import piengine.core.property.domain.ApplicationProperties;
 import puppeteer.Puppeteer;
 import puppeteer.annotation.premade.Wire;
 

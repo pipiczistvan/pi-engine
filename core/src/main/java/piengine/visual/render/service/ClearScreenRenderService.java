@@ -1,7 +1,7 @@
 package piengine.visual.render.service;
 
 import org.joml.Vector2i;
-import org.joml.Vector4f;
+import piengine.core.base.type.color.Color;
 import piengine.visual.render.interpreter.RenderInterpreter;
 import puppeteer.annotation.premade.Component;
 import puppeteer.annotation.premade.Wire;
@@ -16,7 +16,7 @@ public class ClearScreenRenderService {
         this.renderInterpreter = renderInterpreter;
     }
 
-    public void clearScreen(final Vector4f clearColor) {
+    public void clearScreen(final Color clearColor) {
         renderInterpreter.setClearColor(clearColor);
         renderInterpreter.clearScreen();
     }

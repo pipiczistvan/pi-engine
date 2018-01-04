@@ -1,6 +1,6 @@
 package piengine.visual.render.domain.fragment.handler;
 
-import org.joml.Vector4f;
+import piengine.core.base.type.color.Color;
 import piengine.visual.render.domain.fragment.domain.RenderFragmentType;
 import piengine.visual.render.service.ClearScreenRenderService;
 import puppeteer.annotation.premade.Component;
@@ -9,7 +9,7 @@ import puppeteer.annotation.premade.Wire;
 import static piengine.visual.render.domain.fragment.domain.RenderFragmentType.CLEAR_SCREEN;
 
 @Component
-public class ClearScreenFragmentHandler extends FragmentHandler<Vector4f> {
+public class ClearScreenFragmentHandler extends FragmentHandler<Color> {
 
     private final ClearScreenRenderService renderService;
 
@@ -19,7 +19,7 @@ public class ClearScreenFragmentHandler extends FragmentHandler<Vector4f> {
     }
 
     @Override
-    public void handle(final Vector4f color) {
+    public void handle(final Color color) {
         renderService.clearScreen(color);
     }
 
