@@ -60,12 +60,12 @@ public class ImageInterpreter implements Interpreter<ImageData, ImageDao> {
 
     @Override
     public void free(final ImageDao dao) {
-        glDeleteTextures(dao.texture);
+        glDeleteTextures(dao.getTexture());
     }
 
     private void bind(final TextureDao dao) {
         glEnable(GL_TEXTURE_2D);
         glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, dao.texture);
+        glBindTexture(GL_TEXTURE_2D, dao.getTexture());
     }
 }

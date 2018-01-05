@@ -4,8 +4,14 @@ import piengine.visual.texture.domain.TextureDao;
 
 public class FontDao extends TextureDao {
 
-    public FontDao(final int id) {
-        super(id);
+    private final int texture;
+
+    public FontDao(final int texture) {
+        this.texture = texture;
     }
 
+    @Override
+    public int getTexture() {
+        return texture;
+    }
 }

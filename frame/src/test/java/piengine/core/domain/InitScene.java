@@ -39,6 +39,7 @@ import static piengine.core.base.type.property.PropertyKeys.CAMERA_MOVE_SPEED;
 import static piengine.core.base.type.property.PropertyKeys.CAMERA_VIEWPORT_HEIGHT;
 import static piengine.core.base.type.property.PropertyKeys.CAMERA_VIEWPORT_WIDTH;
 import static piengine.core.input.domain.KeyEventType.PRESS;
+import static piengine.visual.framebuffer.domain.FrameBufferAttachment.COLOR_TEXTURE_ATTACHMENT;
 import static piengine.visual.render.domain.RenderPlan.createPlan;
 
 public class InitScene extends Scene {
@@ -86,7 +87,7 @@ public class InitScene extends Scene {
 
     @Override
     protected void createAssets() {
-        frameBuffer = frameBufferManager.supply(new FrameBufferData(VIEWPORT));
+        frameBuffer = frameBufferManager.supply(new FrameBufferData(VIEWPORT, COLOR_TEXTURE_ATTACHMENT));
         terrain = terrainManager.supply(new TerrainKey(this, "heightmap"));
         water = waterManager.supply(new WaterKey(this));
         cameraAsset = createAsset(FirstPersonCameraAsset.class, new CameraAssetArgument(
@@ -133,12 +134,19 @@ public class InitScene extends Scene {
     @Override
     protected RenderPlan createRenderPlan() {
         return createPlan()
-                .renderToFrameBuffer(frameBuffer,
+                .renderToFrameBuffer(
+                        frameBuffer,
+                        null,
                         createPlan()
-                                .clearScreen(ColorUtils.BLACK)
-                                .renderTerrain(cameraAsset, light, terrain)
-                                .loadAsset(cubeAsset)
-                                .renderWater(cameraAsset, water)
+                                .renderWater(
+                                        cameraAsset,
+                                        water,
+                                        frameBuffer,
+                                        createPlan()
+                                                .clearScreen(ColorUtils.BLACK)
+                                                .renderTerrain(cameraAsset, light, terrain)
+                                                .loadAsset(cubeAsset)
+                                )
                 )
                 .clearScreen(ColorUtils.BLACK)
                 .loadAsset(squareAsset)

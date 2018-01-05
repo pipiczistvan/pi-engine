@@ -44,10 +44,10 @@ public class RenderPlan {
         return this;
     }
 
-    public RenderPlan renderToFrameBuffer(final FrameBuffer frameBuffer, final RenderPlan plan) {
-        fragments.add(new RenderFragment<>(BIND_FRAME_BUFFER, frameBuffer));
+    public RenderPlan renderToFrameBuffer(final FrameBuffer currentFrameBuffer, final FrameBuffer oldFrameBuffer, final RenderPlan plan) {
+        fragments.add(new RenderFragment<>(BIND_FRAME_BUFFER, currentFrameBuffer));
         fragments.addAll(plan.fragments);
-        fragments.add(new RenderFragment<>(BIND_FRAME_BUFFER, null));
+        fragments.add(new RenderFragment<>(BIND_FRAME_BUFFER, oldFrameBuffer));
         return this;
     }
 
@@ -66,7 +66,10 @@ public class RenderPlan {
         return this;
     }
 
-    public RenderPlan renderWater(final CameraAsset cameraAsset, final Water water) {
+    public RenderPlan renderWater(final CameraAsset cameraAsset, final Water water, final FrameBuffer oldFrameBuffer, final RenderPlan plan) {
+        renderToFrameBuffer(water.reflectionBuffer, oldFrameBuffer, plan);
+        renderToFrameBuffer(water.refractionBuffer, oldFrameBuffer, plan);
+        loadPlan(plan);
         fragments.add(new RenderFragment<>(RENDER_WATER, new WaterRenderContext(cameraAsset.camera, water)));
         return this;
     }
@@ -76,8 +79,13 @@ public class RenderPlan {
         return this;
     }
 
+    public RenderPlan loadPlan(final RenderPlan plan) {
+        fragments.addAll(plan.fragments);
+        return this;
+    }
+
     public RenderPlan loadAsset(final Asset asset) {
-        fragments.addAll(asset.renderPlan.fragments);
+        loadPlan(asset.renderPlan);
         return this;
     }
 }
