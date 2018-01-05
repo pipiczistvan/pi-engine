@@ -16,6 +16,9 @@ import piengine.object.asset.manager.AssetManager;
 import piengine.object.terrain.domain.Terrain;
 import piengine.object.terrain.domain.TerrainKey;
 import piengine.object.terrain.manager.TerrainManager;
+import piengine.object.water.domain.Water;
+import piengine.object.water.domain.WaterKey;
+import piengine.object.water.manager.WaterManager;
 import piengine.visual.camera.asset.CameraAssetArgument;
 import piengine.visual.framebuffer.domain.FrameBuffer;
 import piengine.visual.framebuffer.domain.FrameBufferData;
@@ -46,12 +49,14 @@ public class InitScene extends Scene {
     private final WindowManager windowManager;
     private final FrameBufferManager frameBufferManager;
     private final TerrainManager terrainManager;
+    private final WaterManager waterManager;
     private final TimeManager timeManager;
 
     private FrameBuffer frameBuffer;
     private FirstPersonCameraAsset cameraAsset;
     private Light light;
     private Terrain terrain;
+    private Water water;
 
     private SquareAsset squareAsset;
     private CubeAsset cubeAsset;
@@ -61,13 +66,14 @@ public class InitScene extends Scene {
     public InitScene(final RenderManager renderManager, final AssetManager assetManager,
                      final InputManager inputManager, final WindowManager windowManager,
                      final FrameBufferManager frameBufferManager, final TerrainManager terrainManager,
-                     final TimeManager timeManager) {
+                     final WaterManager waterManager, final TimeManager timeManager) {
         super(renderManager, assetManager);
 
         this.inputManager = inputManager;
         this.windowManager = windowManager;
         this.frameBufferManager = frameBufferManager;
         this.terrainManager = terrainManager;
+        this.waterManager = waterManager;
         this.timeManager = timeManager;
     }
 
@@ -82,6 +88,7 @@ public class InitScene extends Scene {
     protected void createAssets() {
         frameBuffer = frameBufferManager.supply(new FrameBufferData(VIEWPORT));
         terrain = terrainManager.supply(new TerrainKey(this, "heightmap"));
+        water = waterManager.supply(new WaterKey(this));
         cameraAsset = createAsset(FirstPersonCameraAsset.class, new CameraAssetArgument(
                 terrain,
                 get(CAMERA_LOOK_UP_LIMIT),
@@ -104,6 +111,9 @@ public class InitScene extends Scene {
 
         terrain.setPosition(-64, 0, -64);
         terrain.setScale(128, 15, 128);
+
+        water.setScale(128, 0, 128);
+        water.setPosition(-64, -4.9f, -64);
 
         buttonAsset.setPosition(-0.75f, 0.875f, 0);
 
@@ -128,6 +138,7 @@ public class InitScene extends Scene {
                                 .clearScreen(ColorUtils.BLACK)
                                 .renderTerrain(cameraAsset, light, terrain)
                                 .loadAsset(cubeAsset)
+                                .renderWater(cameraAsset, water)
                 )
                 .clearScreen(ColorUtils.BLACK)
                 .loadAsset(squareAsset)

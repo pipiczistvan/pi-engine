@@ -6,5 +6,6 @@ public enum RenderFragmentType {
     RENDER_TO_GUI,
     RENDER_TEXT,
     RENDER_TERRAIN,
+    RENDER_WATER,
     RENDER_TO_WORLD
 }
