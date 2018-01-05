@@ -2,6 +2,8 @@ package piengine.core.utils;
 
 import piengine.core.base.type.color.Color;
 
+import java.util.List;
+
 public class ColorUtils {
 
     public static final Color WHITE = new Color(1);
@@ -18,5 +20,18 @@ public class ColorUtils {
         float a = (colour1Weight * color1.a) + (blend * color2.a);
 
         return new Color(r, g, b, a);
+    }
+
+    public static float[] convertListToArray(final List<Color> colors) {
+        float[] array = new float[colors.size() * 3];
+
+        int pointer = 0;
+        for (Color color : colors) {
+            array[pointer++] = color.r;
+            array[pointer++] = color.g;
+            array[pointer++] = color.b;
+        }
+
+        return array;
     }
 }

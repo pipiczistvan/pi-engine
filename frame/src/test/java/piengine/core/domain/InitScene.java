@@ -8,6 +8,7 @@ import piengine.core.domain.assets.object.cube.CubeAssetArgument;
 import piengine.core.domain.assets.object.square.SquareAsset;
 import piengine.core.domain.assets.object.square.SquareAssetArgument;
 import piengine.core.input.manager.InputManager;
+import piengine.core.time.manager.TimeManager;
 import piengine.core.utils.ColorUtils;
 import piengine.gui.asset.ButtonAsset;
 import piengine.gui.asset.ButtonAssetArgument;
@@ -45,6 +46,7 @@ public class InitScene extends Scene {
     private final WindowManager windowManager;
     private final FrameBufferManager frameBufferManager;
     private final TerrainManager terrainManager;
+    private final TimeManager timeManager;
 
     private FrameBuffer frameBuffer;
     private FirstPersonCameraAsset cameraAsset;
@@ -58,13 +60,15 @@ public class InitScene extends Scene {
     @Wire
     public InitScene(final RenderManager renderManager, final AssetManager assetManager,
                      final InputManager inputManager, final WindowManager windowManager,
-                     final FrameBufferManager frameBufferManager, final TerrainManager terrainManager) {
+                     final FrameBufferManager frameBufferManager, final TerrainManager terrainManager,
+                     final TimeManager timeManager) {
         super(renderManager, assetManager);
 
         this.inputManager = inputManager;
         this.windowManager = windowManager;
         this.frameBufferManager = frameBufferManager;
         this.terrainManager = terrainManager;
+        this.timeManager = timeManager;
     }
 
     @Override
@@ -95,13 +99,25 @@ public class InitScene extends Scene {
 
     @Override
     protected void initializeAssets() {
-        light.setPosition(100, 100, 100);
+        light.setPosition(0, 20, 0);
+        cubeAsset.setPosition(0, 20, 0);
+
         terrain.setPosition(-64, 0, -64);
         terrain.setScale(128, 15, 128);
 
         buttonAsset.setPosition(-0.75f, 0.875f, 0);
 
         cameraAsset.setPosition(0, 0, 0);
+    }
+
+    @Override
+    public void update(double delta) {
+//        light.addPosition((float) (1f * delta), 0, 0);
+//        cubeAsset.addPosition((float) (1f * delta), 0, 0);
+
+        System.out.println(timeManager.getFPS());
+
+        super.update(delta);
     }
 
     @Override

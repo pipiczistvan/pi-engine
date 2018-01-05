@@ -3,6 +3,7 @@ package piengine.visual.render.interpreter;
 import org.joml.Vector2i;
 import piengine.core.base.type.color.Color;
 import piengine.object.mesh.domain.MeshDataType;
+import piengine.visual.render.domain.config.ProvokingVertex;
 import puppeteer.annotation.premade.Component;
 
 import static org.lwjgl.opengl.GL11.GL_BLEND;
@@ -30,6 +31,7 @@ import static org.lwjgl.opengl.GL11.glViewport;
 import static org.lwjgl.opengl.GL20.glDisableVertexAttribArray;
 import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
 import static org.lwjgl.opengl.GL30.glBindVertexArray;
+import static org.lwjgl.opengl.GL32.glProvokingVertex;
 
 @Component
 public class RenderInterpreter {
@@ -44,6 +46,10 @@ public class RenderInterpreter {
 
     public void setViewport(final Vector2i viewport) {
         glViewport(0, 0, viewport.x, viewport.y);
+    }
+
+    public void setProvokingVertex(final ProvokingVertex provokingVertex) {
+        glProvokingVertex(provokingVertex.value);
     }
 
     public void bindVertexArray(final int id) {

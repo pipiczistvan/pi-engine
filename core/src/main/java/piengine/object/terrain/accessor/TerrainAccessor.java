@@ -4,9 +4,8 @@ import piengine.core.base.api.Accessor;
 import piengine.core.base.exception.PIEngineException;
 import piengine.core.base.resource.ResourceLoader;
 import piengine.core.base.type.color.Color;
-import piengine.core.utils.ColorUtils;
-import piengine.core.utils.MathUtils;
 import piengine.object.terrain.domain.TerrainData;
+import piengine.object.terrain.domain.TerrainGrid;
 import piengine.object.terrain.domain.TerrainKey;
 import puppeteer.annotation.premade.Component;
 
@@ -30,12 +29,15 @@ public class TerrainAccessor implements Accessor<TerrainKey, TerrainData> {
             new Color(0.78431372549f, 0.78431372549f, 0.82352941176f)
     };
     private static final float COLOR_SPREAD = 0.45f;
-    private static final float COLOR_PART = 1f / (BIOME_COLORS.length - 1);
 
     private final ResourceLoader loader;
+    private final TerrainColorGenerator colorGenerator;
+    private final TerrainGridGenerator gridGenerator;
 
     public TerrainAccessor() {
         this.loader = new ResourceLoader(ROOT, PNG_EXT);
+        this.colorGenerator = new TerrainColorGenerator(BIOME_COLORS, COLOR_SPREAD);
+        this.gridGenerator = new TerrainGridGenerator();
     }
 
     @Override
@@ -47,56 +49,33 @@ public class TerrainAccessor implements Accessor<TerrainKey, TerrainData> {
             throw new PIEngineException("Could not load heightmap %s!", key.heightmap, e);
         }
 
-        int width = heightmap.getWidth();
-        int height = heightmap.getHeight();
-        int count = width * height;
-        float tileSizeX = 1f / width;
-        float tileSizeZ = 1f / height;
+        int mapWidth = heightmap.getWidth();
+        int mapHeight = heightmap.getHeight();
 
-        float[] vertices = new float[count * 3];
-        int[] indices = new int[6 * (width - 1) * (height - 1)];
-        float[] colors = new float[count * 3];
-        float[][] heights = new float[height][width];
+        float[][] heights = new float[mapHeight][mapWidth];
+        Color[][] colors = new Color[mapHeight][mapWidth];
 
-        int vertexPointer = 0;
-        for (int z = 0; z < height; z++) {
-            for (int x = 0; x < width; x++) {
-                heights[z][x] = getHeight(x, z, heightmap);
+        for (int z = 0; z < mapHeight; z++) {
+            for (int x = 0; x < mapWidth; x++) {
+                float height = getHeight(x, z, heightmap);
 
-                vertices[vertexPointer * 3] = x * tileSizeX;
-                vertices[vertexPointer * 3 + 1] = heights[z][x];
-                vertices[vertexPointer * 3 + 2] = z * tileSizeZ;
-
-                Color color = getColor(heights[z][x]);
-                colors[vertexPointer * 3] = color.r;
-                colors[vertexPointer * 3 + 1] = color.g;
-                colors[vertexPointer * 3 + 2] = color.b;
-
-                vertexPointer++;
+                heights[z][x] = height;
+                colors[z][x] = colorGenerator.generate(height);
             }
         }
 
-        int indexPointer = 0;
-        for (int z = 0; z < height - 1; z++) {
-            for (int x = 0; x < width - 1; x++) {
-                int topLeft = (z * width) + x;
-                int topRight = topLeft + 1;
-                int bottomLeft = ((z + 1) * width) + x;
-                int bottomRight = bottomLeft + 1;
+        TerrainGrid grid = gridGenerator.generate(heights, colors);
 
-                indices[indexPointer++] = topLeft;
-                indices[indexPointer++] = bottomLeft;
-                indices[indexPointer++] = topRight;
-                indices[indexPointer++] = topRight;
-                indices[indexPointer++] = bottomLeft;
-                indices[indexPointer++] = bottomRight;
-            }
-        }
-
-        return new TerrainData(key.parent, vertices, indices, colors, heights);
+        return new TerrainData(
+                key.parent,
+                grid.positions,
+                grid.indices,
+                grid.colors,
+                grid.normals,
+                heights);
     }
 
-    private float getHeight(int x, int z, BufferedImage image) {
+    private float getHeight(final int x, final int z, final BufferedImage image) {
         if (x < 0 || x >= image.getWidth() || z < 0 || z >= image.getHeight()) {
             return 0;
         }
@@ -106,14 +85,5 @@ public class TerrainAccessor implements Accessor<TerrainKey, TerrainData> {
         height /= MAX_PIXEL_COLOR / 2f;
 
         return height;
-    }
-
-    private Color getColor(float height) {
-        float value = (height + 1) / 2f;
-        value = MathUtils.clamp((value - COLOR_SPREAD / 2) * (1f / COLOR_SPREAD), 0f, 0.9999f);
-        int firstBiome = (int) Math.floor(value / COLOR_PART);
-        float blend = (value - (firstBiome * COLOR_PART)) / COLOR_PART;
-
-        return ColorUtils.interpolateColors(BIOME_COLORS[firstBiome], BIOME_COLORS[firstBiome + 1], blend);
     }
 }

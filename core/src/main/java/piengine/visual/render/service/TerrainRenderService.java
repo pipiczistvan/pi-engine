@@ -11,6 +11,8 @@ import piengine.visual.shader.service.ShaderService;
 import puppeteer.annotation.premade.Component;
 import puppeteer.annotation.premade.Wire;
 
+import static piengine.visual.render.domain.config.ProvokingVertex.FIRST_VERTEX_CONVENTION;
+
 @Component
 public class TerrainRenderService extends AbstractRenderService<TerrainShader, TerrainRenderContext> {
 
@@ -27,6 +29,7 @@ public class TerrainRenderService extends AbstractRenderService<TerrainShader, T
     @Override
     protected void render(final TerrainRenderContext context) {
         renderInterpreter.setViewport(context.camera.viewport);
+        renderInterpreter.setProvokingVertex(FIRST_VERTEX_CONVENTION);
 
         shader.start()
                 .loadLight(context.light)

@@ -1,6 +1,5 @@
 package piengine.visual.writing.text.domain;
 
-import org.joml.Vector2f;
 import piengine.core.base.type.color.Color;
 import piengine.visual.writing.font.domain.Font;
 
@@ -12,7 +11,6 @@ public class TextConfiguration {
     private float maxLineLength;
     private boolean centered;
     private Color color;
-    private Vector2f translation;
 
     private TextConfiguration() {
         this.text = "";
@@ -20,7 +18,6 @@ public class TextConfiguration {
         this.maxLineLength = 1;
         this.centered = true;
         this.color = new Color(1);
-        this.translation = new Vector2f();
     }
 
     public static TextConfiguration textConfig() {
@@ -39,11 +36,6 @@ public class TextConfiguration {
 
     public TextConfiguration withColor(final Color color) {
         this.color = color;
-        return this;
-    }
-
-    public TextConfiguration withTranslation(final Vector2f translation) {
-        this.translation = translation;
         return this;
     }
 
@@ -72,10 +64,6 @@ public class TextConfiguration {
 
     public Color getColor() {
         return color;
-    }
-
-    public Vector2f getTranslation() {
-        return translation;
     }
 
     public float getFontSize() {
