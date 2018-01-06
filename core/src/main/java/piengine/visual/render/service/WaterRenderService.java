@@ -7,15 +7,24 @@ import piengine.visual.render.domain.fragment.domain.RenderWorldPlanContext;
 import piengine.visual.render.interpreter.RenderInterpreter;
 import piengine.visual.render.shader.WaterShader;
 import piengine.visual.shader.service.ShaderService;
+import piengine.visual.texture.service.TextureService;
 import puppeteer.annotation.premade.Component;
 import puppeteer.annotation.premade.Wire;
+
+import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
+import static org.lwjgl.opengl.GL13.GL_TEXTURE1;
 
 @Component
 public class WaterRenderService extends AbstractRenderService<WaterShader, RenderWorldPlanContext> {
 
+    private final TextureService textureService;
+
     @Wire
-    public WaterRenderService(final ShaderService shaderService, final RenderInterpreter renderInterpreter) {
+    public WaterRenderService(final ShaderService shaderService, final RenderInterpreter renderInterpreter,
+                              final TextureService textureService) {
         super(shaderService, renderInterpreter);
+
+        this.textureService = textureService;
     }
 
     @Override
@@ -29,10 +38,13 @@ public class WaterRenderService extends AbstractRenderService<WaterShader, Rende
 
         shader.start()
                 .loadProjectionMatrix(context.camera.getProjection())
-                .loadViewMatrix(context.camera.getView());
+                .loadViewMatrix(context.camera.getView())
+                .loadTextureUnits();
 
         for (Water water : context.waters) {
             shader.loadModelMatrix(water.getModelMatrix());
+            textureService.bind(GL_TEXTURE0, water.reflectionBuffer);
+            textureService.bind(GL_TEXTURE1, water.refractionBuffer);
 
             draw(water.getDao());
         }

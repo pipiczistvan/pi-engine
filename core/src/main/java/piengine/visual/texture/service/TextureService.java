@@ -6,6 +6,8 @@ import piengine.visual.texture.interpreter.TextureInterpreter;
 import puppeteer.annotation.premade.Component;
 import puppeteer.annotation.premade.Wire;
 
+import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
+
 @Component
 public class TextureService {
 
@@ -17,7 +19,11 @@ public class TextureService {
     }
 
     public <T extends TextureDao> void bind(final Texture<T> texture) {
-        textureInterpreter.bind(texture.getDao());
+        bind(GL_TEXTURE0, texture);
+    }
+
+    public <T extends TextureDao> void bind(final int textureBank, final Texture<T> texture) {
+        textureInterpreter.bind(textureBank, texture.getDao());
     }
 
 }

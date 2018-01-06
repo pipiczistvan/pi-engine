@@ -9,6 +9,8 @@ public class WaterShader extends Shader {
     private int location_modelMatrix;
     private int location_viewMatrix;
     private int location_projectionMatrix;
+    private int location_reflectionTexture;
+    private int location_refractionTexture;
 
     public WaterShader(final ShaderDao dao) {
         super(dao);
@@ -19,35 +21,38 @@ public class WaterShader extends Shader {
         location_modelMatrix = getUniformLocation("modelMatrix");
         location_viewMatrix = getUniformLocation("viewMatrix");
         location_projectionMatrix = getUniformLocation("projectionMatrix");
+        location_reflectionTexture = getUniformLocation("reflectionTexture");
+        location_refractionTexture = getUniformLocation("refractionTexture");
     }
 
     public WaterShader start() {
         startShader();
-
         return this;
     }
 
     public WaterShader stop() {
         stopShader();
-
         return this;
     }
 
     public WaterShader loadModelMatrix(final Matrix4f modelMatrix) {
         loadUniform(location_modelMatrix, modelMatrix);
-
         return this;
     }
 
     public WaterShader loadViewMatrix(final Matrix4f viewMatrix) {
         loadUniform(location_viewMatrix, viewMatrix);
-
         return this;
     }
 
     public WaterShader loadProjectionMatrix(final Matrix4f projectionMatrix) {
         loadUniform(location_projectionMatrix, projectionMatrix);
+        return this;
+    }
 
+    public WaterShader loadTextureUnits() {
+        loadUniform(location_reflectionTexture, 0);
+        loadUniform(location_refractionTexture, 1);
         return this;
     }
 }

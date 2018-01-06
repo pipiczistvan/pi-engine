@@ -118,7 +118,7 @@ public class InitScene extends Scene {
     @Override
     protected void initializeAssets() {
         light.setPosition(0, 20, 0);
-        cube.setPosition(4, -4.9f, -14);
+        cube.setPosition(4, -1f, -14);
 
         terrain.setPosition(-64, 0, -64);
         terrain.setScale(128, 15, 128);
@@ -164,8 +164,9 @@ public class InitScene extends Scene {
                                 .render()
                 )
                 .loadModels(squareAsset.getModels())
-                .loadModels(reflectionFrameAsset.getModels())
-                .loadModels(refractionFrameAsset.getModels())
+//                .loadModels(reflectionFrameAsset.getModels())
+//                .loadModels(refractionFrameAsset.getModels())
+//                .loadModels(buttonAsset.getModels())
                 .clearScreen(ColorUtils.BLACK)
                 .render();
     }

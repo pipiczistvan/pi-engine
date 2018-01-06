@@ -6,15 +6,14 @@ import puppeteer.annotation.premade.Component;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
 import static org.lwjgl.opengl.GL11.glBindTexture;
 import static org.lwjgl.opengl.GL11.glEnable;
-import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
 import static org.lwjgl.opengl.GL13.glActiveTexture;
 
 @Component
 public class TextureInterpreter {
 
-    public void bind(final TextureDao dao) {
+    public void bind(final int bank, final TextureDao dao) {
         glEnable(GL_TEXTURE_2D);
-        glActiveTexture(GL_TEXTURE0);
+        glActiveTexture(bank);
         glBindTexture(GL_TEXTURE_2D, dao.getTexture());
     }
 
