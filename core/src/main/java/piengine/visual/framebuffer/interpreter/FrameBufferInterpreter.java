@@ -26,7 +26,7 @@ import static org.lwjgl.opengl.GL11.glDrawBuffer;
 import static org.lwjgl.opengl.GL11.glGenTextures;
 import static org.lwjgl.opengl.GL11.glTexImage2D;
 import static org.lwjgl.opengl.GL11.glTexParameteri;
-import static org.lwjgl.opengl.GL14.GL_DEPTH_COMPONENT32;
+import static org.lwjgl.opengl.GL14.GL_DEPTH_COMPONENT24;
 import static org.lwjgl.opengl.GL30.GL_COLOR_ATTACHMENT0;
 import static org.lwjgl.opengl.GL30.GL_DEPTH_ATTACHMENT;
 import static org.lwjgl.opengl.GL30.GL_FRAMEBUFFER;
@@ -36,11 +36,11 @@ import static org.lwjgl.opengl.GL30.glBindRenderbuffer;
 import static org.lwjgl.opengl.GL30.glDeleteFramebuffers;
 import static org.lwjgl.opengl.GL30.glDeleteRenderbuffers;
 import static org.lwjgl.opengl.GL30.glFramebufferRenderbuffer;
+import static org.lwjgl.opengl.GL30.glFramebufferTexture2D;
 import static org.lwjgl.opengl.GL30.glGenFramebuffers;
 import static org.lwjgl.opengl.GL30.glGenRenderbuffers;
 import static org.lwjgl.opengl.GL30.glRenderbufferStorage;
-import static org.lwjgl.opengl.GL32.glFramebufferTexture;
-import static piengine.visual.framebuffer.domain.FrameBufferAttachment.DEPTH_BUFFER_ATTACHMENT;
+import static piengine.visual.framebuffer.domain.FrameBufferAttachment.RENDER_BUFFER_ATTACHMENT;
 
 @Component
 public class FrameBufferInterpreter implements Interpreter<FrameBufferData, FrameBufferDao> {
@@ -64,7 +64,7 @@ public class FrameBufferInterpreter implements Interpreter<FrameBufferData, Fram
         glDeleteFramebuffers(dao.fbo);
 
         for (Map.Entry<FrameBufferAttachment, Integer> attachment : dao.attachments.entrySet()) {
-            if (attachment.getKey().equals(DEPTH_BUFFER_ATTACHMENT)) {
+            if (attachment.getKey().equals(RENDER_BUFFER_ATTACHMENT)) {
                 glDeleteRenderbuffers(attachment.getValue());
             } else {
                 glDeleteTextures(attachment.getValue());
@@ -94,8 +94,8 @@ public class FrameBufferInterpreter implements Interpreter<FrameBufferData, Fram
                 return createColorAttachment(viewport);
             case DEPTH_TEXTURE_ATTACHMENT:
                 return createDepthTextureAttachment(viewport);
-            case DEPTH_BUFFER_ATTACHMENT:
-                return createDepthBufferAttachment(viewport);
+            case RENDER_BUFFER_ATTACHMENT:
+                return createRenderBufferAttachment(viewport);
             default:
                 throw new PIEngineException("Invalid framebuffer attachment: %s", attachment.name());
         }
@@ -107,7 +107,7 @@ public class FrameBufferInterpreter implements Interpreter<FrameBufferData, Fram
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, viewport.x, viewport.y, 0, GL_RGB, GL_UNSIGNED_BYTE, (ByteBuffer) null);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, texture, 0);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0);
 
         return texture;
     }
@@ -115,17 +115,18 @@ public class FrameBufferInterpreter implements Interpreter<FrameBufferData, Fram
     private int createDepthTextureAttachment(final Vector2i viewport) {
         int texture = glGenTextures();
         glBindTexture(GL_TEXTURE_2D, texture);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT32, viewport.x, viewport.y, 0, GL_DEPTH_COMPONENT, GL_FLOAT, (ByteBuffer) null);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT24, viewport.x, viewport.y, 0, GL_DEPTH_COMPONENT, GL_FLOAT, (ByteBuffer) null);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, texture, 0);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, texture, 0);
+
         return texture;
     }
 
-    private int createDepthBufferAttachment(final Vector2i viewPort) {
+    private int createRenderBufferAttachment(final Vector2i viewPort) {
         int rbo = glGenRenderbuffers();
         glBindRenderbuffer(GL_RENDERBUFFER, rbo);
-        glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, viewPort.x, viewPort.y);
+        glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, viewPort.x, viewPort.y);
         glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, rbo);
 
         return rbo;

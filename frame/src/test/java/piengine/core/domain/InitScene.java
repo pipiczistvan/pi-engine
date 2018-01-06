@@ -41,7 +41,7 @@ import static piengine.core.base.type.property.PropertyKeys.CAMERA_VIEWPORT_HEIG
 import static piengine.core.base.type.property.PropertyKeys.CAMERA_VIEWPORT_WIDTH;
 import static piengine.core.input.domain.KeyEventType.PRESS;
 import static piengine.visual.framebuffer.domain.FrameBufferAttachment.COLOR_ATTACHMENT;
-import static piengine.visual.framebuffer.domain.FrameBufferAttachment.DEPTH_BUFFER_ATTACHMENT;
+import static piengine.visual.framebuffer.domain.FrameBufferAttachment.RENDER_BUFFER_ATTACHMENT;
 
 public class InitScene extends Scene {
 
@@ -93,7 +93,7 @@ public class InitScene extends Scene {
 
     @Override
     protected void createAssets() {
-        frameBuffer = frameBufferManager.supply(new FrameBufferData(VIEWPORT, COLOR_ATTACHMENT, DEPTH_BUFFER_ATTACHMENT));
+        frameBuffer = frameBufferManager.supply(new FrameBufferData(VIEWPORT, COLOR_ATTACHMENT, RENDER_BUFFER_ATTACHMENT));
         terrain = terrainManager.supply(new TerrainKey(this, "heightmap"));
         water = waterManager.supply(new WaterKey(this, new Vector2i(128, 128)));
         cameraAsset = createAsset(FirstPersonCameraAsset.class, new CameraAssetArgument(
@@ -125,7 +125,7 @@ public class InitScene extends Scene {
         terrain.setScale(128, 15, 128);
 
         water.setScale(128, 0, 128);
-        water.setPosition(-64, -3.9f, -64);
+        water.setPosition(-64, -2.0f, -64);
 
         buttonAsset.setPosition(-0.75f, 0.875f, 0);
 

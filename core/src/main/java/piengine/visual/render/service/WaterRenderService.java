@@ -1,6 +1,7 @@
 package piengine.visual.render.service;
 
 import piengine.object.water.domain.Water;
+import piengine.visual.framebuffer.domain.FrameBufferAttachment;
 import piengine.visual.render.domain.config.RenderConfig;
 import piengine.visual.render.domain.config.RenderConfigBuilder;
 import piengine.visual.render.domain.fragment.domain.RenderWorldPlanContext;
@@ -13,6 +14,7 @@ import puppeteer.annotation.premade.Wire;
 
 import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
 import static org.lwjgl.opengl.GL13.GL_TEXTURE1;
+import static org.lwjgl.opengl.GL13.GL_TEXTURE2;
 import static piengine.visual.render.domain.config.RenderFunction.DRAW_ARRAYS;
 
 @Component
@@ -47,6 +49,12 @@ public class WaterRenderService extends AbstractRenderService<WaterShader, Rende
             shader.loadModelMatrix(water.getModelMatrix());
             textureService.bind(GL_TEXTURE0, water.reflectionBuffer);
             textureService.bind(GL_TEXTURE1, water.refractionBuffer);
+            textureService.bind(GL_TEXTURE2, water
+                    .refractionBuffer
+                    .getDao()
+                    .attachments
+                    .get(FrameBufferAttachment.DEPTH_TEXTURE_ATTACHMENT)
+            );
 
             draw(water.getDao());
         }
@@ -58,6 +66,7 @@ public class WaterRenderService extends AbstractRenderService<WaterShader, Rende
     protected RenderConfig createRenderConfig() {
         return RenderConfigBuilder.create()
                 .withRenderFunction(DRAW_ARRAYS)
+                .withBlendTest(true)
                 .build();
     }
 }

@@ -69,9 +69,10 @@ public class RenderWorldFragmentHandler implements FragmentHandler<RenderWorldPl
         }
 
         context.clippingPlane.set(0, 0, 0, 0);
-        waterRenderService.process(context);
         terrainRenderService.process(context);
         worldRenderService.process(context);
+
+        waterRenderService.process(context);
     }
 
     @Override

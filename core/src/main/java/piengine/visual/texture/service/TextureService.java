@@ -23,7 +23,10 @@ public class TextureService {
     }
 
     public <T extends TextureDao> void bind(final int textureBank, final Texture<T> texture) {
-        textureInterpreter.bind(textureBank, texture.getDao());
+        bind(textureBank, texture.getDao().getTexture());
     }
 
+    public void bind(final int textureBank, final int textureId) {
+        textureInterpreter.bind(textureBank, textureId);
+    }
 }
