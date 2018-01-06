@@ -8,6 +8,9 @@ public class ColorUtils {
 
     public static final Color WHITE = new Color(1);
     public static final Color BLACK = new Color(0);
+    public static final Color RED = new Color(1, 0, 0, 1);
+    public static final Color GREEN = new Color(0, 1, 0, 1);
+    public static final Color BLUE = new Color(0, 0, 1, 1);
 
     private ColorUtils() {
     }
@@ -22,7 +25,7 @@ public class ColorUtils {
         return new Color(r, g, b, a);
     }
 
-    public static float[] convertListToArray(final List<Color> colors) {
+    public static float[] colorToFloatArray(final List<Color> colors) {
         float[] array = new float[colors.size() * 3];
 
         int pointer = 0;

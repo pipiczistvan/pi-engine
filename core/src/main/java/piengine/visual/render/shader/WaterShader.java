@@ -1,6 +1,7 @@
 package piengine.visual.render.shader;
 
 import org.joml.Matrix4f;
+import org.joml.Vector3f;
 import piengine.visual.shader.domain.Shader;
 import piengine.visual.shader.domain.ShaderDao;
 
@@ -11,6 +12,7 @@ public class WaterShader extends Shader {
     private int location_projectionMatrix;
     private int location_reflectionTexture;
     private int location_refractionTexture;
+    private int location_cameraPosition;
 
     public WaterShader(final ShaderDao dao) {
         super(dao);
@@ -23,6 +25,7 @@ public class WaterShader extends Shader {
         location_projectionMatrix = getUniformLocation("projectionMatrix");
         location_reflectionTexture = getUniformLocation("reflectionTexture");
         location_refractionTexture = getUniformLocation("refractionTexture");
+        location_cameraPosition = getUniformLocation("cameraPosition");
     }
 
     public WaterShader start() {
@@ -53,6 +56,11 @@ public class WaterShader extends Shader {
     public WaterShader loadTextureUnits() {
         loadUniform(location_reflectionTexture, 0);
         loadUniform(location_refractionTexture, 1);
+        return this;
+    }
+
+    public WaterShader loadCameraPosition(Vector3f position) {
+        loadUniform(location_cameraPosition, position);
         return this;
     }
 }

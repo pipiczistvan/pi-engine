@@ -95,7 +95,7 @@ public class InitScene extends Scene {
     protected void createAssets() {
         frameBuffer = frameBufferManager.supply(new FrameBufferData(VIEWPORT, COLOR_ATTACHMENT, DEPTH_BUFFER_ATTACHMENT));
         terrain = terrainManager.supply(new TerrainKey(this, "heightmap"));
-        water = waterManager.supply(new WaterKey(this));
+        water = waterManager.supply(new WaterKey(this, new Vector2i(128, 128)));
         cameraAsset = createAsset(FirstPersonCameraAsset.class, new CameraAssetArgument(
                 terrain,
                 get(CAMERA_LOOK_UP_LIMIT),
@@ -104,7 +104,7 @@ public class InitScene extends Scene {
                 get(CAMERA_MOVE_SPEED)));
         light = new Light(this);
 
-        cube = modelManager.supply("cube", this);
+        cube = modelManager.supply("cube", this, ColorUtils.RED);
 
         squareAsset = createAsset(SquareAsset.class, new SquareAssetArgument(VIEWPORT, frameBuffer));
         buttonAsset = createAsset(ButtonAsset.class, new ButtonAssetArgument(
@@ -118,13 +118,14 @@ public class InitScene extends Scene {
     @Override
     protected void initializeAssets() {
         light.setPosition(0, 20, 0);
+
         cube.setPosition(4, -1f, -14);
 
         terrain.setPosition(-64, 0, -64);
         terrain.setScale(128, 15, 128);
 
         water.setScale(128, 0, 128);
-        water.setPosition(-64, -4.9f, -64);
+        water.setPosition(-64, -3.9f, -64);
 
         buttonAsset.setPosition(-0.75f, 0.875f, 0);
 
@@ -142,9 +143,9 @@ public class InitScene extends Scene {
 //        light.addPosition((float) (1f * delta), 0, 0);
 //        cubeAsset.addPosition((float) (1f * delta), 0, 0);
 
-//        System.out.println(timeManager.getFPS());
+        System.out.println(timeManager.getFPS());
 //        System.out.println(cameraAsset.getPosition());
-        System.out.println(cameraAsset.getRotation());
+//        System.out.println(cameraAsset.getRotation());
 
         super.update(delta);
     }
@@ -160,7 +161,7 @@ public class InitScene extends Scene {
                                 .loadModels(cube)
                                 .loadTerrains(terrain)
                                 .loadWaters(water)
-                                .clearScreen(ColorUtils.BLACK)
+                                .clearScreen(ColorUtils.WHITE)
                                 .render()
                 )
                 .loadModels(squareAsset.getModels())

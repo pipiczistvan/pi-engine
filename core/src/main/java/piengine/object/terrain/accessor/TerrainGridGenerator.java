@@ -40,9 +40,9 @@ public class TerrainGridGenerator {
             lastRow[i].storeBottomRowData(positionList, colorList, normalList);
         }
 
-        float[] positions = VectorUtils.convertListToArray(positionList);
-        float[] colors = ColorUtils.convertListToArray(colorList);
-        float[] normals = VectorUtils.convertListToArray(normalList);
+        float[] positions = VectorUtils.vector3fToFloatArray(positionList);
+        float[] colors = ColorUtils.colorToFloatArray(colorList);
+        float[] normals = VectorUtils.vector3fToFloatArray(normalList);
         int[] indices = indexGenerator.generateIndexBuffer(heightMapWidth, heightMapHeight);
 
         return new TerrainGrid(positions, colors, normals, indices);

@@ -5,7 +5,8 @@ public enum MeshDataType {
     VERTEX(0),
     TEXTURE_COORD(1),
     COLOR(2),
-    NORMAL(3);
+    NORMAL(3),
+    INDICATOR(4);
 
     public final int value;
 
