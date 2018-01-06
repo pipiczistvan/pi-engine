@@ -14,6 +14,7 @@ public class WaterShader extends Shader {
     private int location_refractionTexture;
     private int location_depthTexture;
     private int location_cameraPosition;
+    private int location_waveTime;
 
     public WaterShader(final ShaderDao dao) {
         super(dao);
@@ -28,6 +29,7 @@ public class WaterShader extends Shader {
         location_refractionTexture = getUniformLocation("refractionTexture");
         location_depthTexture = getUniformLocation("depthTexture");
         location_cameraPosition = getUniformLocation("cameraPosition");
+        location_waveTime = getUniformLocation("waveTime");
     }
 
     public WaterShader start() {
@@ -62,8 +64,13 @@ public class WaterShader extends Shader {
         return this;
     }
 
-    public WaterShader loadCameraPosition(Vector3f position) {
+    public WaterShader loadCameraPosition(final Vector3f position) {
         loadUniform(location_cameraPosition, position);
+        return this;
+    }
+
+    public WaterShader loadWaveTime(final float waveTime) {
+        loadUniform(location_waveTime, waveTime);
         return this;
     }
 }

@@ -20,7 +20,10 @@ import static piengine.visual.render.domain.config.RenderFunction.DRAW_ARRAYS;
 @Component
 public class WaterRenderService extends AbstractRenderService<WaterShader, RenderWorldPlanContext> {
 
+    private static final float WAVE_SPEED = 0.004f;
+
     private final TextureService textureService;
+    private float time = 0;
 
     @Wire
     public WaterRenderService(final ShaderService shaderService, final RenderInterpreter renderInterpreter,
@@ -37,12 +40,18 @@ public class WaterRenderService extends AbstractRenderService<WaterShader, Rende
 
     @Override
     protected void render(final RenderWorldPlanContext context) {
+        time += WAVE_SPEED; //todo: water attribútum legyen
+        if (time >= 1) {
+            time = 0;
+        }
+
         renderInterpreter.setViewport(context.camera.viewport);
 
         shader.start()
                 .loadProjectionMatrix(context.camera.getProjection())
                 .loadViewMatrix(context.camera.getView())
                 .loadCameraPosition(context.camera.getPosition())
+                .loadWaveTime(time)
                 .loadTextureUnits();
 
         for (Water water : context.waters) {
