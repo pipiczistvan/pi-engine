@@ -24,7 +24,6 @@ public class AssetService {
         }
         asset.initialize();
         asset.setParent(parent);
-        asset.setupRenderPlan();
 
         return asset;
     }

@@ -3,7 +3,7 @@ package piengine.visual.render.service;
 import piengine.object.model.domain.Model;
 import piengine.visual.render.domain.config.RenderConfig;
 import piengine.visual.render.domain.config.RenderConfigBuilder;
-import piengine.visual.render.domain.context.WorldRenderContext;
+import piengine.visual.render.domain.fragment.domain.RenderWorldPlanContext;
 import piengine.visual.render.interpreter.RenderInterpreter;
 import piengine.visual.render.shader.WorldShader;
 import piengine.visual.shader.service.ShaderService;
@@ -11,8 +11,10 @@ import piengine.visual.texture.service.TextureService;
 import puppeteer.annotation.premade.Component;
 import puppeteer.annotation.premade.Wire;
 
+import static piengine.visual.render.domain.config.ProvokingVertex.FIRST_VERTEX_CONVENTION;
+
 @Component
-public class WorldRenderService extends AbstractRenderService<WorldShader, WorldRenderContext> {
+public class WorldRenderService extends AbstractRenderService<WorldShader, RenderWorldPlanContext> {
 
     private final TextureService textureService;
 
@@ -31,13 +33,15 @@ public class WorldRenderService extends AbstractRenderService<WorldShader, World
     }
 
     @Override
-    protected void render(final WorldRenderContext context) {
+    protected void render(final RenderWorldPlanContext context) {
         renderInterpreter.setViewport(context.camera.viewport);
+        renderInterpreter.setProvokingVertex(FIRST_VERTEX_CONVENTION);
 
         shader.start()
                 .loadLight(context.light)
-                .loadProjectionMatrix(context.camera.projection)
-                .loadViewMatrix(context.camera.view);
+                .loadProjectionMatrix(context.camera.getProjection())
+                .loadViewMatrix(context.camera.getView())
+                .loadClippingPlane(context.clippingPlane);
 
         for (Model model : context.models) {
             shader.loadModelMatrix(model.getModelMatrix())
@@ -58,6 +62,7 @@ public class WorldRenderService extends AbstractRenderService<WorldShader, World
     @Override
     protected RenderConfig createRenderConfig() {
         return RenderConfigBuilder.create()
+                .withClipDistance(true)
                 .build();
     }
 }

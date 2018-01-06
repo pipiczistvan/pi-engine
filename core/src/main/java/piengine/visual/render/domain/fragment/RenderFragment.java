@@ -1,14 +1,15 @@
 package piengine.visual.render.domain.fragment;
 
 import piengine.visual.render.domain.fragment.domain.RenderFragmentType;
+import piengine.visual.render.domain.plan.PlanContext;
 
-public class RenderFragment<T> {
+public class RenderFragment<T extends PlanContext> {
 
     public final RenderFragmentType type;
-    public final T value;
+    public final T context;
 
-    public RenderFragment(RenderFragmentType type, T value) {
+    public RenderFragment(final RenderFragmentType type, final T context) {
         this.type = type;
-        this.value = value;
+        this.context = context;
     }
 }

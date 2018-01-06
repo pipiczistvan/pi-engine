@@ -2,13 +2,13 @@ package piengine.core.base;
 
 import piengine.core.base.api.Renderable;
 import piengine.object.entity.domain.Entity;
-import piengine.visual.render.domain.RenderPlan;
+import piengine.visual.render.domain.plan.RenderPlan;
 import piengine.visual.render.manager.RenderManager;
 
 public abstract class RenderPlanner<T extends RenderPlan> extends Entity implements Renderable {
 
-    public T renderPlan;
-    protected final RenderManager renderManager;
+    private T renderPlan;
+    private final RenderManager renderManager;
 
     public RenderPlanner(final RenderManager renderManager) {
         super();

@@ -5,7 +5,6 @@ import piengine.core.input.manager.InputManager;
 import piengine.visual.camera.asset.CameraAsset;
 import piengine.visual.camera.domain.CameraAttribute;
 import piengine.visual.camera.domain.ThirdPersonCamera;
-import piengine.visual.render.manager.RenderManager;
 import piengine.visual.window.manager.WindowManager;
 import puppeteer.annotation.premade.Wire;
 
@@ -21,10 +20,9 @@ import static piengine.visual.camera.domain.ProjectionType.PERSPECTIVE;
 public class ThirdPersonCameraAsset extends CameraAsset<ThirdPersonCamera> {
 
     @Wire
-    public ThirdPersonCameraAsset(final RenderManager renderManager,
-                                  final InputManager inputManager,
+    public ThirdPersonCameraAsset(final InputManager inputManager,
                                   final WindowManager windowManager) {
-        super(renderManager, inputManager, windowManager);
+        super(inputManager, windowManager);
     }
 
     @Override

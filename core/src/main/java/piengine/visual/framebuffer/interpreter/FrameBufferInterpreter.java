@@ -2,11 +2,15 @@ package piengine.visual.framebuffer.interpreter;
 
 import org.joml.Vector2i;
 import piengine.core.base.api.Interpreter;
+import piengine.core.base.exception.PIEngineException;
+import piengine.visual.framebuffer.domain.FrameBufferAttachment;
 import piengine.visual.framebuffer.domain.FrameBufferDao;
 import piengine.visual.framebuffer.domain.FrameBufferData;
 import puppeteer.annotation.premade.Component;
 
 import java.nio.ByteBuffer;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.lwjgl.opengl.GL11.GL_DEPTH_COMPONENT;
 import static org.lwjgl.opengl.GL11.GL_FLOAT;
@@ -36,6 +40,7 @@ import static org.lwjgl.opengl.GL30.glGenFramebuffers;
 import static org.lwjgl.opengl.GL30.glGenRenderbuffers;
 import static org.lwjgl.opengl.GL30.glRenderbufferStorage;
 import static org.lwjgl.opengl.GL32.glFramebufferTexture;
+import static piengine.visual.framebuffer.domain.FrameBufferAttachment.DEPTH_BUFFER_ATTACHMENT;
 
 @Component
 public class FrameBufferInterpreter implements Interpreter<FrameBufferData, FrameBufferDao> {
@@ -43,31 +48,27 @@ public class FrameBufferInterpreter implements Interpreter<FrameBufferData, Fram
     @Override
     public FrameBufferDao create(final FrameBufferData frameBufferData) {
         int fbo = createFrameBuffer();
-        int rbo = createRenderBuffer(frameBufferData.viewport);
 
-        int[] textures = new int[frameBufferData.attachments.length];
-        for (int i = 0; i < frameBufferData.attachments.length; i++) {
-            switch (frameBufferData.attachments[i]) {
-                case COLOR_TEXTURE_ATTACHMENT:
-                    textures[i] = createColorTextureAttachment(frameBufferData.viewport);
-                    break;
-                case DEPTH_TEXTURE_ATTACHMENT:
-                    textures[i] = createDepthTextureAttachment(frameBufferData.viewport);
-                    break;
-            }
+        Map<FrameBufferAttachment, Integer> attachments = new HashMap<>();
+        for (FrameBufferAttachment attachment : frameBufferData.attachments) {
+            attachments.put(attachment, createAttachment(attachment, frameBufferData.viewport));
         }
 
         unbind();
 
-        return new FrameBufferDao(fbo, rbo, textures);
+        return new FrameBufferDao(fbo, attachments);
     }
 
     @Override
     public void free(final FrameBufferDao dao) {
         glDeleteFramebuffers(dao.fbo);
-        glDeleteRenderbuffers(dao.rbo);
-        for (int texture : dao.textures) {
-            glDeleteTextures(texture);
+
+        for (Map.Entry<FrameBufferAttachment, Integer> attachment : dao.attachments.entrySet()) {
+            if (attachment.getKey().equals(DEPTH_BUFFER_ATTACHMENT)) {
+                glDeleteRenderbuffers(attachment.getValue());
+            } else {
+                glDeleteTextures(attachment.getValue());
+            }
         }
     }
 
@@ -87,7 +88,20 @@ public class FrameBufferInterpreter implements Interpreter<FrameBufferData, Fram
         return frameBuffer;
     }
 
-    private int createColorTextureAttachment(final Vector2i viewport) {
+    private int createAttachment(final FrameBufferAttachment attachment, final Vector2i viewport) {
+        switch (attachment) {
+            case COLOR_ATTACHMENT:
+                return createColorAttachment(viewport);
+            case DEPTH_TEXTURE_ATTACHMENT:
+                return createDepthTextureAttachment(viewport);
+            case DEPTH_BUFFER_ATTACHMENT:
+                return createDepthBufferAttachment(viewport);
+            default:
+                throw new PIEngineException("Invalid framebuffer attachment: %s", attachment.name());
+        }
+    }
+
+    private int createColorAttachment(final Vector2i viewport) {
         int texture = glGenTextures();
         glBindTexture(GL_TEXTURE_2D, texture);
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, viewport.x, viewport.y, 0, GL_RGB, GL_UNSIGNED_BYTE, (ByteBuffer) null);
@@ -108,7 +122,7 @@ public class FrameBufferInterpreter implements Interpreter<FrameBufferData, Fram
         return texture;
     }
 
-    private int createRenderBuffer(final Vector2i viewPort) {
+    private int createDepthBufferAttachment(final Vector2i viewPort) {
         int rbo = glGenRenderbuffers();
         glBindRenderbuffer(GL_RENDERBUFFER, rbo);
         glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, viewPort.x, viewPort.y);

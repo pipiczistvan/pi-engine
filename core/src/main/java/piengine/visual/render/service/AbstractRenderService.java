@@ -62,5 +62,6 @@ public abstract class AbstractRenderService<S extends Shader, C extends RenderCo
         renderInterpreter.setBlendTest(renderConfig.blendTest);
         renderInterpreter.setCullFace(renderConfig.cullFace);
         renderInterpreter.setWireFrameMode(renderConfig.wireFrameMode);
+        renderInterpreter.setClipDistance(renderConfig.clipDistance);
     }
 }

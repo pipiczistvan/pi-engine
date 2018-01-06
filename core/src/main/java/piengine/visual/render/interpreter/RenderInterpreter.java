@@ -30,6 +30,7 @@ import static org.lwjgl.opengl.GL11.glPolygonMode;
 import static org.lwjgl.opengl.GL11.glViewport;
 import static org.lwjgl.opengl.GL20.glDisableVertexAttribArray;
 import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
+import static org.lwjgl.opengl.GL30.GL_CLIP_DISTANCE0;
 import static org.lwjgl.opengl.GL30.glBindVertexArray;
 import static org.lwjgl.opengl.GL32.glProvokingVertex;
 
@@ -111,6 +112,14 @@ public class RenderInterpreter {
             glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
         } else {
             glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+        }
+    }
+
+    public void setClipDistance(final boolean enabled) {
+        if (enabled) {
+            glEnable(GL_CLIP_DISTANCE0);
+        } else {
+            glDisable(GL_CLIP_DISTANCE0);
         }
     }
 

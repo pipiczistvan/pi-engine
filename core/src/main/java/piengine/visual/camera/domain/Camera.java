@@ -2,7 +2,6 @@ package piengine.visual.camera.domain;
 
 import org.joml.Matrix4f;
 import org.joml.Vector2i;
-import piengine.core.base.api.Updatable;
 import piengine.core.base.exception.PIEngineException;
 import piengine.object.entity.domain.Entity;
 
@@ -10,10 +9,10 @@ import static piengine.core.utils.MatrixUtils.IDENTITY_MATRIX;
 import static piengine.core.utils.MatrixUtils.ORTHOGRAPHIC_PROJECTION_MATRIX;
 import static piengine.core.utils.MatrixUtils.PERSPECTIVE_PROJECTION_MATRIX;
 
-public abstract class Camera extends Entity implements Updatable {
+public abstract class Camera extends Entity {
 
-    public final Matrix4f projection;
-    public final Matrix4f view;
+    private final Matrix4f projection;
+    private final Matrix4f view;
     public final Vector2i viewport;
     public final CameraAttribute attribute;
 
@@ -26,9 +25,13 @@ public abstract class Camera extends Entity implements Updatable {
         this.view = IDENTITY_MATRIX();
     }
 
-    @Override
-    public void update(final double delta) {
-        calculateViewMatrix(this.view);
+    public Matrix4f getProjection() {
+        return projection;
+    }
+
+    public Matrix4f getView() {
+        calculateViewMatrix(view);
+        return view;
     }
 
     protected abstract void calculateViewMatrix(final Matrix4f viewMatrix);

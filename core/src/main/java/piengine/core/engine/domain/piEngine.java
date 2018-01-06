@@ -18,7 +18,8 @@ public class piEngine {
             "piengine.*.manager",
             "piengine.*.service",
             "piengine.*.accessor",
-            "piengine.*.interpreter"
+            "piengine.*.interpreter",
+            "piengine.*.handler"
     );
     private static final String ENGINE_PROPERTIES = "engine";
 

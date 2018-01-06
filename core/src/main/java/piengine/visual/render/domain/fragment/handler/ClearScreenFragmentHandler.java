@@ -1,6 +1,6 @@
 package piengine.visual.render.domain.fragment.handler;
 
-import piengine.core.base.type.color.Color;
+import piengine.visual.render.domain.fragment.domain.ClearScreenPlanContext;
 import piengine.visual.render.domain.fragment.domain.RenderFragmentType;
 import piengine.visual.render.service.ClearScreenRenderService;
 import puppeteer.annotation.premade.Component;
@@ -9,7 +9,7 @@ import puppeteer.annotation.premade.Wire;
 import static piengine.visual.render.domain.fragment.domain.RenderFragmentType.CLEAR_SCREEN;
 
 @Component
-public class ClearScreenFragmentHandler extends FragmentHandler<Color> {
+public class ClearScreenFragmentHandler implements FragmentHandler<ClearScreenPlanContext> {
 
     private final ClearScreenRenderService renderService;
 
@@ -19,8 +19,8 @@ public class ClearScreenFragmentHandler extends FragmentHandler<Color> {
     }
 
     @Override
-    public void handle(final Color color) {
-        renderService.clearScreen(color);
+    public void handle(final ClearScreenPlanContext context) {
+        renderService.clearScreen(context.color);
     }
 
     @Override

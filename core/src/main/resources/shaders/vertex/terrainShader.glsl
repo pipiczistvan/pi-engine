@@ -12,11 +12,14 @@ uniform mat4 projectionMatrix;
 uniform float lightEnabled;
 uniform vec3 lightColor;
 uniform vec3 lightPosition;
+uniform vec4 clippingPlane;
 
 vec3 calculateLightFactor(vec3 positionVector, vec3 normalVector);
 
 void main(void) {
     vec4 worldPosition = modelMatrix * vec4(Position, 1.0);
+    gl_ClipDistance[0] = dot(worldPosition, clippingPlane);
+
     vec3 lightFactor = lightEnabled > 0.5 ? calculateLightFactor(worldPosition.xyz, Normal) : vec3(1.0);
 
     vColor = vec4(lightFactor * Color, 1.0);

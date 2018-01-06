@@ -1,8 +1,8 @@
 package piengine.visual.render.service;
 
-import piengine.visual.render.domain.RenderPlan;
 import piengine.visual.render.domain.fragment.RenderFragment;
 import piengine.visual.render.domain.fragment.handler.FragmentHandler;
+import piengine.visual.render.domain.plan.RenderPlan;
 import piengine.visual.render.interpreter.RenderInterpreter;
 import puppeteer.annotation.premade.Component;
 import puppeteer.annotation.premade.Wire;
@@ -22,19 +22,6 @@ public class RenderService {
         this.fragmentHandlers = fragmentHandlers;
     }
 
-    public void validate(final RenderPlan plan) {
-        if (plan == null) {
-            return;
-        }
-
-        for (RenderFragment fragment : plan.fragments) {
-            fragmentHandlers.stream()
-                    .filter(handler -> handler.getType() == fragment.type)
-                    .findFirst()
-                    .ifPresent(handler -> handler.validate(fragment.value));
-        }
-    }
-
     public void render(final RenderPlan plan) {
         if (plan == null) {
             return;
@@ -44,7 +31,7 @@ public class RenderService {
             fragmentHandlers.stream()
                     .filter(handler -> handler.getType() == fragment.type)
                     .findFirst()
-                    .ifPresent(handler -> handler.handle(fragment.value));
+                    .ifPresent(handler -> handler.handle(fragment.context));
         }
     }
 

@@ -1,8 +1,9 @@
 package piengine.visual.render.service;
 
+import piengine.object.water.domain.Water;
 import piengine.visual.render.domain.config.RenderConfig;
 import piengine.visual.render.domain.config.RenderConfigBuilder;
-import piengine.visual.render.domain.context.WaterRenderContext;
+import piengine.visual.render.domain.fragment.domain.RenderWorldPlanContext;
 import piengine.visual.render.interpreter.RenderInterpreter;
 import piengine.visual.render.shader.WaterShader;
 import piengine.visual.shader.service.ShaderService;
@@ -10,7 +11,7 @@ import puppeteer.annotation.premade.Component;
 import puppeteer.annotation.premade.Wire;
 
 @Component
-public class WaterRenderService extends AbstractRenderService<WaterShader, WaterRenderContext> {
+public class WaterRenderService extends AbstractRenderService<WaterShader, RenderWorldPlanContext> {
 
     @Wire
     public WaterRenderService(final ShaderService shaderService, final RenderInterpreter renderInterpreter) {
@@ -23,15 +24,18 @@ public class WaterRenderService extends AbstractRenderService<WaterShader, Water
     }
 
     @Override
-    protected void render(final WaterRenderContext context) {
+    protected void render(final RenderWorldPlanContext context) {
         renderInterpreter.setViewport(context.camera.viewport);
 
         shader.start()
-                .loadProjectionMatrix(context.camera.projection)
-                .loadViewMatrix(context.camera.view)
-                .loadModelMatrix(context.water.getModelMatrix());
+                .loadProjectionMatrix(context.camera.getProjection())
+                .loadViewMatrix(context.camera.getView());
 
-        draw(context.water.getDao());
+        for (Water water : context.waters) {
+            shader.loadModelMatrix(water.getModelMatrix());
+
+            draw(water.getDao());
+        }
 
         shader.stop();
     }

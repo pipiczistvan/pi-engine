@@ -6,7 +6,7 @@ import piengine.core.base.api.Updatable;
 import piengine.object.asset.domain.Asset;
 import piengine.object.asset.domain.AssetArgument;
 import piengine.object.asset.manager.AssetManager;
-import piengine.visual.render.domain.RenderPlan;
+import piengine.visual.render.domain.plan.RenderPlan;
 import piengine.visual.render.manager.RenderManager;
 
 import java.util.ArrayList;

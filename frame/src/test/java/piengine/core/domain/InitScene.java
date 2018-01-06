@@ -3,8 +3,6 @@ package piengine.core.domain;
 import org.joml.Vector2i;
 import piengine.core.architecture.scene.domain.Scene;
 import piengine.core.domain.assets.camera.FirstPersonCameraAsset;
-import piengine.core.domain.assets.object.cube.CubeAsset;
-import piengine.core.domain.assets.object.cube.CubeAssetArgument;
 import piengine.core.domain.assets.object.square.SquareAsset;
 import piengine.core.domain.assets.object.square.SquareAssetArgument;
 import piengine.core.input.manager.InputManager;
@@ -13,6 +11,8 @@ import piengine.core.utils.ColorUtils;
 import piengine.gui.asset.ButtonAsset;
 import piengine.gui.asset.ButtonAssetArgument;
 import piengine.object.asset.manager.AssetManager;
+import piengine.object.model.domain.Model;
+import piengine.object.model.manager.ModelManager;
 import piengine.object.terrain.domain.Terrain;
 import piengine.object.terrain.domain.TerrainKey;
 import piengine.object.terrain.manager.TerrainManager;
@@ -24,7 +24,8 @@ import piengine.visual.framebuffer.domain.FrameBuffer;
 import piengine.visual.framebuffer.domain.FrameBufferData;
 import piengine.visual.framebuffer.manager.FrameBufferManager;
 import piengine.visual.light.Light;
-import piengine.visual.render.domain.RenderPlan;
+import piengine.visual.render.domain.plan.RenderPlan;
+import piengine.visual.render.domain.plan.RenderPlanBuilder;
 import piengine.visual.render.manager.RenderManager;
 import piengine.visual.window.manager.WindowManager;
 import puppeteer.annotation.premade.Wire;
@@ -39,8 +40,8 @@ import static piengine.core.base.type.property.PropertyKeys.CAMERA_MOVE_SPEED;
 import static piengine.core.base.type.property.PropertyKeys.CAMERA_VIEWPORT_HEIGHT;
 import static piengine.core.base.type.property.PropertyKeys.CAMERA_VIEWPORT_WIDTH;
 import static piengine.core.input.domain.KeyEventType.PRESS;
-import static piengine.visual.framebuffer.domain.FrameBufferAttachment.COLOR_TEXTURE_ATTACHMENT;
-import static piengine.visual.render.domain.RenderPlan.createPlan;
+import static piengine.visual.framebuffer.domain.FrameBufferAttachment.COLOR_ATTACHMENT;
+import static piengine.visual.framebuffer.domain.FrameBufferAttachment.DEPTH_BUFFER_ATTACHMENT;
 
 public class InitScene extends Scene {
 
@@ -51,6 +52,7 @@ public class InitScene extends Scene {
     private final FrameBufferManager frameBufferManager;
     private final TerrainManager terrainManager;
     private final WaterManager waterManager;
+    private final ModelManager modelManager;
     private final TimeManager timeManager;
 
     private FrameBuffer frameBuffer;
@@ -58,16 +60,19 @@ public class InitScene extends Scene {
     private Light light;
     private Terrain terrain;
     private Water water;
+    private Model cube;
 
     private SquareAsset squareAsset;
-    private CubeAsset cubeAsset;
+    private SquareAsset reflectionFrameAsset;
+    private SquareAsset refractionFrameAsset;
     private ButtonAsset buttonAsset;
 
     @Wire
     public InitScene(final RenderManager renderManager, final AssetManager assetManager,
                      final InputManager inputManager, final WindowManager windowManager,
                      final FrameBufferManager frameBufferManager, final TerrainManager terrainManager,
-                     final WaterManager waterManager, final TimeManager timeManager) {
+                     final WaterManager waterManager, final ModelManager modelManager,
+                     final TimeManager timeManager) {
         super(renderManager, assetManager);
 
         this.inputManager = inputManager;
@@ -75,6 +80,7 @@ public class InitScene extends Scene {
         this.frameBufferManager = frameBufferManager;
         this.terrainManager = terrainManager;
         this.waterManager = waterManager;
+        this.modelManager = modelManager;
         this.timeManager = timeManager;
     }
 
@@ -87,7 +93,7 @@ public class InitScene extends Scene {
 
     @Override
     protected void createAssets() {
-        frameBuffer = frameBufferManager.supply(new FrameBufferData(VIEWPORT, COLOR_TEXTURE_ATTACHMENT));
+        frameBuffer = frameBufferManager.supply(new FrameBufferData(VIEWPORT, COLOR_ATTACHMENT, DEPTH_BUFFER_ATTACHMENT));
         terrain = terrainManager.supply(new TerrainKey(this, "heightmap"));
         water = waterManager.supply(new WaterKey(this));
         cameraAsset = createAsset(FirstPersonCameraAsset.class, new CameraAssetArgument(
@@ -98,17 +104,21 @@ public class InitScene extends Scene {
                 get(CAMERA_MOVE_SPEED)));
         light = new Light(this);
 
+        cube = modelManager.supply("cube", this);
+
         squareAsset = createAsset(SquareAsset.class, new SquareAssetArgument(VIEWPORT, frameBuffer));
-        cubeAsset = createAsset(CubeAsset.class, new CubeAssetArgument(cameraAsset, light));
         buttonAsset = createAsset(ButtonAsset.class, new ButtonAssetArgument(
                 "buttonDefault", "buttonHover", "buttonPress",
                 VIEWPORT, "Please press me!", () -> System.out.println("Button clicked!")));
+
+        reflectionFrameAsset = createAsset(SquareAsset.class, new SquareAssetArgument(VIEWPORT, water.reflectionBuffer));
+        refractionFrameAsset = createAsset(SquareAsset.class, new SquareAssetArgument(VIEWPORT, water.refractionBuffer));
     }
 
     @Override
     protected void initializeAssets() {
         light.setPosition(0, 20, 0);
-        cubeAsset.setPosition(0, 20, 0);
+        cube.setPosition(4, -4.9f, -14);
 
         terrain.setPosition(-64, 0, -64);
         terrain.setScale(128, 15, 128);
@@ -119,6 +129,12 @@ public class InitScene extends Scene {
         buttonAsset.setPosition(-0.75f, 0.875f, 0);
 
         cameraAsset.setPosition(0, 0, 0);
+
+        reflectionFrameAsset.setScale(0.25f);
+        reflectionFrameAsset.setPosition(-0.5f, 0.5f, 0);
+
+        refractionFrameAsset.setScale(0.25f);
+        refractionFrameAsset.setPosition(0.5f, 0.5f, 0);
     }
 
     @Override
@@ -126,30 +142,31 @@ public class InitScene extends Scene {
 //        light.addPosition((float) (1f * delta), 0, 0);
 //        cubeAsset.addPosition((float) (1f * delta), 0, 0);
 
-        System.out.println(timeManager.getFPS());
+//        System.out.println(timeManager.getFPS());
+//        System.out.println(cameraAsset.getPosition());
+        System.out.println(cameraAsset.getRotation());
 
         super.update(delta);
     }
 
     @Override
     protected RenderPlan createRenderPlan() {
-        return createPlan()
-                .renderToFrameBuffer(
+        return RenderPlanBuilder
+                .createPlan(VIEWPORT)
+                .bindFrameBuffer(
                         frameBuffer,
-                        null,
-                        createPlan()
-                                .renderWater(
-                                        cameraAsset,
-                                        water,
-                                        frameBuffer,
-                                        createPlan()
-                                                .clearScreen(ColorUtils.BLACK)
-                                                .renderTerrain(cameraAsset, light, terrain)
-                                                .loadAsset(cubeAsset)
-                                )
+                        RenderPlanBuilder
+                                .createPlan(cameraAsset.camera, light)
+                                .loadModels(cube)
+                                .loadTerrains(terrain)
+                                .loadWaters(water)
+                                .clearScreen(ColorUtils.BLACK)
+                                .render()
                 )
+                .loadModels(squareAsset.getModels())
+                .loadModels(reflectionFrameAsset.getModels())
+                .loadModels(refractionFrameAsset.getModels())
                 .clearScreen(ColorUtils.BLACK)
-                .loadAsset(squareAsset)
-                .loadAsset(buttonAsset);
+                .render();
     }
 }

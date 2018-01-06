@@ -14,7 +14,8 @@ import piengine.visual.framebuffer.service.FrameBufferService;
 import puppeteer.annotation.premade.Component;
 import puppeteer.annotation.premade.Wire;
 
-import static piengine.visual.framebuffer.domain.FrameBufferAttachment.COLOR_TEXTURE_ATTACHMENT;
+import static piengine.visual.framebuffer.domain.FrameBufferAttachment.COLOR_ATTACHMENT;
+import static piengine.visual.framebuffer.domain.FrameBufferAttachment.DEPTH_BUFFER_ATTACHMENT;
 import static piengine.visual.framebuffer.domain.FrameBufferAttachment.DEPTH_TEXTURE_ATTACHMENT;
 
 @Component
@@ -35,11 +36,11 @@ public class WaterService extends SupplierService<WaterKey, WaterData, WaterDao,
         //todo: temporary solution (viewport)
         FrameBuffer reflectionBuffer = frameBufferService.supply(new FrameBufferData(
                 new Vector2i(800, 600),
-                COLOR_TEXTURE_ATTACHMENT
+                COLOR_ATTACHMENT, DEPTH_BUFFER_ATTACHMENT
         ));
         FrameBuffer refractionBuffer = frameBufferService.supply(new FrameBufferData(
                 new Vector2i(800, 600),
-                DEPTH_TEXTURE_ATTACHMENT
+                COLOR_ATTACHMENT, DEPTH_TEXTURE_ATTACHMENT
         ));
 
         return new Water(resource.parent, dao, reflectionBuffer, refractionBuffer);

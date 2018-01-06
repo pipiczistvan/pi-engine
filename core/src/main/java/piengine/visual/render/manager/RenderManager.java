@@ -1,6 +1,6 @@
 package piengine.visual.render.manager;
 
-import piengine.visual.render.domain.RenderPlan;
+import piengine.visual.render.domain.plan.RenderPlan;
 import piengine.visual.render.service.RenderService;
 import puppeteer.annotation.premade.Component;
 import puppeteer.annotation.premade.Wire;

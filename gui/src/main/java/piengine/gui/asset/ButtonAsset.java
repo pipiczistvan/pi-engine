@@ -9,15 +9,12 @@ import piengine.object.model.domain.Model;
 import piengine.object.model.manager.ModelManager;
 import piengine.visual.image.domain.Image;
 import piengine.visual.image.manager.ImageManager;
-import piengine.visual.render.domain.RenderPlan;
-import piengine.visual.render.manager.RenderManager;
 import piengine.visual.writing.font.domain.Font;
 import piengine.visual.writing.font.manager.FontManager;
 import piengine.visual.writing.text.domain.Text;
 import piengine.visual.writing.text.manager.TextManager;
 import puppeteer.annotation.premade.Wire;
 
-import static piengine.visual.render.domain.RenderPlan.createPlan;
 import static piengine.visual.writing.text.domain.TextConfiguration.textConfig;
 
 public class ButtonAsset extends Asset<ButtonAssetArgument> {
@@ -43,11 +40,9 @@ public class ButtonAsset extends Asset<ButtonAssetArgument> {
     private boolean pressed = false;
 
     @Wire
-    public ButtonAsset(final RenderManager renderManager, final ImageManager imageManager,
-                       final ModelManager modelManager, final InputManager inputManager,
-                       final FontManager fontManager, final TextManager textManager) {
-        super(renderManager);
-
+    public ButtonAsset(final ImageManager imageManager, final ModelManager modelManager,
+                       final InputManager inputManager, final FontManager fontManager,
+                       final TextManager textManager) {
         this.imageManager = imageManager;
         this.modelManager = modelManager;
         this.inputManager = inputManager;
@@ -119,10 +114,11 @@ public class ButtonAsset extends Asset<ButtonAssetArgument> {
     }
 
     @Override
-    protected RenderPlan createRenderPlan() {
-        return createPlan()
-                .renderToGui(arguments.viewport, buttonModel)
-                .renderText(arguments.viewport, label);
+    public Model[] getModels() {
+        return new Model[] {
+                buttonModel
+//                label todo: text rendering
+        };
     }
 
     private void setupButtonParameters() {

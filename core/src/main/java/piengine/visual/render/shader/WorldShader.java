@@ -1,6 +1,7 @@
 package piengine.visual.render.shader;
 
 import org.joml.Matrix4f;
+import org.joml.Vector4f;
 import piengine.core.base.type.color.Color;
 import piengine.core.utils.ColorUtils;
 import piengine.visual.light.Light;
@@ -17,6 +18,7 @@ public class WorldShader extends Shader {
     private int location_lightColor;
     private int location_color;
     private int location_textureEnabled;
+    private int location_clippingPlane;
 
     public WorldShader(final ShaderDao dao) {
         super(dao);
@@ -32,6 +34,7 @@ public class WorldShader extends Shader {
         location_lightColor = getUniformLocation("lightColor");
         location_color = getUniformLocation("color");
         location_textureEnabled = getUniformLocation("textureEnabled");
+        location_clippingPlane = getUniformLocation("clippingPlane");
     }
 
     public WorldShader start() {
@@ -88,6 +91,12 @@ public class WorldShader extends Shader {
 
     public WorldShader loadTextureEnabled(final boolean value) {
         loadUniform(location_textureEnabled, value);
+
+        return this;
+    }
+
+    public WorldShader loadClippingPlane(final Vector4f clippingPlane) {
+        loadUniform(location_clippingPlane, clippingPlane);
 
         return this;
     }

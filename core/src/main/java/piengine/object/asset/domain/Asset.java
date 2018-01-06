@@ -1,20 +1,21 @@
 package piengine.object.asset.domain;
 
-import piengine.core.base.RenderPlanner;
 import piengine.core.base.api.Initializable;
 import piengine.core.base.api.Updatable;
-import piengine.visual.render.domain.RenderPlan;
-import piengine.visual.render.manager.RenderManager;
+import piengine.object.entity.domain.Entity;
+import piengine.object.model.domain.Model;
 
-public abstract class Asset<T extends AssetArgument> extends RenderPlanner<RenderPlan> implements Initializable, Updatable {
+public abstract class Asset<T extends AssetArgument> extends Entity implements Initializable, Updatable {
 
     protected T arguments;
-
-    public Asset(final RenderManager renderManager) {
-        super(renderManager);
-    }
 
     public void passArguments(final T arguments) {
         this.arguments = arguments;
     }
+
+    @Override
+    public void update(double delta) {
+    }
+
+    public abstract Model[] getModels();
 }

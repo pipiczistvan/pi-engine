@@ -3,7 +3,7 @@ package piengine.visual.render.service;
 import piengine.object.model.domain.Model;
 import piengine.visual.render.domain.config.RenderConfig;
 import piengine.visual.render.domain.config.RenderConfigBuilder;
-import piengine.visual.render.domain.context.GuiRenderContext;
+import piengine.visual.render.domain.fragment.domain.RenderGuiPlanContext;
 import piengine.visual.render.interpreter.RenderInterpreter;
 import piengine.visual.render.shader.GuiShader;
 import piengine.visual.shader.service.ShaderService;
@@ -14,7 +14,7 @@ import puppeteer.annotation.premade.Wire;
 import static org.lwjgl.opengl.GL11.GL_NONE;
 
 @Component
-public class GuiRenderService extends AbstractRenderService<GuiShader, GuiRenderContext> {
+public class GuiRenderService extends AbstractRenderService<GuiShader, RenderGuiPlanContext> {
 
     private final TextureService textureService;
 
@@ -33,7 +33,7 @@ public class GuiRenderService extends AbstractRenderService<GuiShader, GuiRender
     }
 
     @Override
-    protected void render(final GuiRenderContext context) {
+    protected void render(final RenderGuiPlanContext context) {
         renderInterpreter.setViewport(context.viewport);
 
         shader.start();

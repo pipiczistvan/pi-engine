@@ -4,9 +4,8 @@ import org.joml.Vector2f;
 import org.joml.Vector3f;
 import piengine.core.input.manager.InputManager;
 import piengine.object.asset.domain.Asset;
+import piengine.object.model.domain.Model;
 import piengine.visual.camera.domain.Camera;
-import piengine.visual.render.domain.RenderPlan;
-import piengine.visual.render.manager.RenderManager;
 import piengine.visual.window.manager.WindowManager;
 
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_A;
@@ -16,7 +15,6 @@ import static org.lwjgl.glfw.GLFW.GLFW_KEY_SPACE;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_W;
 import static piengine.core.input.domain.KeyEventType.PRESS;
 import static piengine.core.input.domain.KeyEventType.RELEASE;
-import static piengine.visual.render.domain.RenderPlan.createPlan;
 
 public abstract class CameraAsset<C extends Camera> extends Asset<CameraAssetArgument> {
 
@@ -34,9 +32,7 @@ public abstract class CameraAsset<C extends Camera> extends Asset<CameraAssetArg
     private final InputManager inputManager;
     private final WindowManager windowManager;
 
-    public CameraAsset(final RenderManager renderManager, final InputManager inputManager, final WindowManager windowManager) {
-        super(renderManager);
-
+    public CameraAsset(final InputManager inputManager, final WindowManager windowManager) {
         this.camera = getCamera();
         this.inputManager = inputManager;
         this.windowManager = windowManager;
@@ -113,17 +109,14 @@ public abstract class CameraAsset<C extends Camera> extends Asset<CameraAssetArg
             isInAir = false;
             setPosition(position.x, terrainHeight, position.z);
         }
+    }
 
-        // VIEW MATRIX CALCULATION
-        camera.update(delta);
+    @Override
+    public Model[] getModels() {
+        return new Model[0];
     }
 
     protected abstract C getCamera();
-
-    @Override
-    protected RenderPlan createRenderPlan() {
-        return createPlan();
-    }
 
     private void jump() {
         if (!isInAir) {

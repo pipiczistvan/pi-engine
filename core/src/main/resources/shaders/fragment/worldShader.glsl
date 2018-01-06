@@ -1,7 +1,7 @@
 #version 330 core
 
-in vec4 gLightFactor;
-in vec2 gTextureCoord;
+flat in vec4 vColor;
+in vec2 vTextureCoord;
 
 out vec4 fColor;
 
@@ -11,8 +11,8 @@ uniform vec4 color;
 
 void main(void) {
     // TEXTURE
-    vec4 textureFactor = textureEnabled > 0.5 ? texture(textureSampler, gTextureCoord) : vec4(1.0);
+    vec4 textureFactor = textureEnabled > 0.5 ? texture(textureSampler, vTextureCoord) : vec4(1.0);
 
     // FINAL OUTPUT
-    fColor = gLightFactor * textureFactor * color;
+    fColor = vColor * textureFactor * color;
 }

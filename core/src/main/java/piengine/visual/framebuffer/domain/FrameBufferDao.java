@@ -2,20 +2,22 @@ package piengine.visual.framebuffer.domain;
 
 import piengine.visual.texture.domain.TextureDao;
 
+import java.util.Map;
+
+import static piengine.visual.framebuffer.domain.FrameBufferAttachment.COLOR_ATTACHMENT;
+
 public class FrameBufferDao extends TextureDao {
 
     public final int fbo;
-    public final int rbo;
-    public final int[] textures;
+    public final Map<FrameBufferAttachment, Integer> attachments;
 
-    public FrameBufferDao(final int fbo, final int rbo, final int[] textures) {
+    public FrameBufferDao(final int fbo, final Map<FrameBufferAttachment, Integer> attachments) {
         this.fbo = fbo;
-        this.rbo = rbo;
-        this.textures = textures;
+        this.attachments = attachments;
     }
 
     @Override
     public int getTexture() {
-        return textures[0]; //todo: temporary solution (index)
+        return attachments.getOrDefault(COLOR_ATTACHMENT, -1);
     }
 }

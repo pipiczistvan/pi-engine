@@ -4,7 +4,7 @@ import org.joml.Vector4f;
 import piengine.object.terrain.domain.Terrain;
 import piengine.visual.render.domain.config.RenderConfig;
 import piengine.visual.render.domain.config.RenderConfigBuilder;
-import piengine.visual.render.domain.context.TerrainRenderContext;
+import piengine.visual.render.domain.fragment.domain.RenderWorldPlanContext;
 import piengine.visual.render.interpreter.RenderInterpreter;
 import piengine.visual.render.shader.TerrainShader;
 import piengine.visual.shader.service.ShaderService;
@@ -14,7 +14,7 @@ import puppeteer.annotation.premade.Wire;
 import static piengine.visual.render.domain.config.ProvokingVertex.FIRST_VERTEX_CONVENTION;
 
 @Component
-public class TerrainRenderService extends AbstractRenderService<TerrainShader, TerrainRenderContext> {
+public class TerrainRenderService extends AbstractRenderService<TerrainShader, RenderWorldPlanContext> {
 
     @Wire
     public TerrainRenderService(final ShaderService shaderService, final RenderInterpreter renderInterpreter) {
@@ -27,14 +27,15 @@ public class TerrainRenderService extends AbstractRenderService<TerrainShader, T
     }
 
     @Override
-    protected void render(final TerrainRenderContext context) {
+    protected void render(final RenderWorldPlanContext context) {
         renderInterpreter.setViewport(context.camera.viewport);
         renderInterpreter.setProvokingVertex(FIRST_VERTEX_CONVENTION);
 
         shader.start()
                 .loadLight(context.light)
-                .loadProjectionMatrix(context.camera.projection)
-                .loadViewMatrix(context.camera.view);
+                .loadProjectionMatrix(context.camera.getProjection())
+                .loadViewMatrix(context.camera.getView())
+                .loadClippingPlane(context.clippingPlane);
 
         for (Terrain terrain : context.terrains) {
             shader.loadModelMatrix(terrain.getModelMatrix())
@@ -49,6 +50,7 @@ public class TerrainRenderService extends AbstractRenderService<TerrainShader, T
     @Override
     protected RenderConfig createRenderConfig() {
         return RenderConfigBuilder.create()
+                .withClipDistance(true)
                 .build();
     }
 }

@@ -54,7 +54,6 @@ public class SceneService implements Service, Initializable, Updatable, Renderab
 
         currentScene.initialize();
         currentScene.setupRenderPlan();
-        renderService.validate(currentScene.renderPlan);
     }
 
 }

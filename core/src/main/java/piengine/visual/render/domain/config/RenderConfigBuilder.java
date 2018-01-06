@@ -9,6 +9,7 @@ public class RenderConfigBuilder {
     private boolean depthTest = true;
     private boolean blendTest = false;
     private boolean wireFrameMode = false;
+    private boolean clipDistance = false;
     private int cullFace = GL_BACK;
     private int drawMode = GL_TRIANGLES;
     private RenderFunction renderFunction = DRAW_ELEMENTS;
@@ -27,6 +28,11 @@ public class RenderConfigBuilder {
 
     public RenderConfigBuilder withBlendTest(final boolean blendTest) {
         this.blendTest = blendTest;
+        return this;
+    }
+
+    public RenderConfigBuilder withClipDistance(final boolean clipDistance) {
+        this.clipDistance = clipDistance;
         return this;
     }
 
@@ -51,6 +57,6 @@ public class RenderConfigBuilder {
     }
 
     public RenderConfig build() {
-        return new RenderConfig(depthTest, blendTest, wireFrameMode, cullFace, drawMode, renderFunction);
+        return new RenderConfig(depthTest, blendTest, wireFrameMode, clipDistance, cullFace, drawMode, renderFunction);
     }
 }
