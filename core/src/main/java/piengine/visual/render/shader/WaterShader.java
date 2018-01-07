@@ -1,7 +1,6 @@
 package piengine.visual.render.shader;
 
 import org.joml.Matrix4f;
-import org.joml.Vector2f;
 import org.joml.Vector3f;
 import piengine.visual.light.Light;
 import piengine.visual.shader.domain.Shader;
@@ -85,7 +84,7 @@ public class WaterShader extends Shader {
     public WaterShader loadLight(final Light light) {
         loadUniform(location_lightPosition, light.getPosition());
         loadUniform(location_lightColor, light.color);
-        loadUniform(location_lightBias, new Vector2f(0.3f, 0.8f)); //todo: temporary
+        loadUniform(location_lightBias, light.bias);
         return this;
     }
 }

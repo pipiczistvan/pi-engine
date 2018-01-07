@@ -23,6 +23,8 @@ import piengine.visual.camera.asset.CameraAssetArgument;
 import piengine.visual.framebuffer.domain.FrameBuffer;
 import piengine.visual.framebuffer.domain.FrameBufferData;
 import piengine.visual.framebuffer.manager.FrameBufferManager;
+import piengine.visual.image.domain.Image;
+import piengine.visual.image.manager.ImageManager;
 import piengine.visual.light.Light;
 import piengine.visual.render.domain.plan.RenderPlan;
 import piengine.visual.render.domain.plan.RenderPlanBuilder;
@@ -34,6 +36,8 @@ import piengine.visual.writing.text.domain.Text;
 import piengine.visual.writing.text.domain.TextConfiguration;
 import piengine.visual.writing.text.manager.TextManager;
 import puppeteer.annotation.premade.Wire;
+
+import java.util.Random;
 
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_RIGHT_CONTROL;
@@ -62,6 +66,7 @@ public class InitScene extends Scene {
     private final TimeManager timeManager;
     private final FontManager fontManager;
     private final TextManager textManager;
+    private final ImageManager imageManager;
 
     private FrameBuffer frameBuffer;
     private FirstPersonCameraAsset cameraAsset;
@@ -69,6 +74,8 @@ public class InitScene extends Scene {
     private Terrain terrain;
     private Water water;
     private Model cube;
+    private Model[] trees = new Model[40];
+    private Image treeTexture;
     private Font font;
     private Text fpsText;
 
@@ -80,7 +87,8 @@ public class InitScene extends Scene {
                      final InputManager inputManager, final WindowManager windowManager,
                      final FrameBufferManager frameBufferManager, final TerrainManager terrainManager,
                      final WaterManager waterManager, final ModelManager modelManager,
-                     final TimeManager timeManager, final FontManager fontManager, final TextManager textManager) {
+                     final TimeManager timeManager, final FontManager fontManager,
+                     final TextManager textManager, final ImageManager imageManager) {
         super(renderManager, assetManager);
 
         this.inputManager = inputManager;
@@ -92,6 +100,7 @@ public class InitScene extends Scene {
         this.timeManager = timeManager;
         this.fontManager = fontManager;
         this.textManager = textManager;
+        this.imageManager = imageManager;
     }
 
     @Override
@@ -115,6 +124,11 @@ public class InitScene extends Scene {
         light = new Light(this);
 
         cube = modelManager.supply("cube", this, ColorUtils.RED);
+
+        treeTexture = imageManager.supply("lowPolyTree");
+        for (int i = 0; i < trees.length; i++) {
+            trees[i] = modelManager.supply("lowPolyTree", this, treeTexture);
+        }
 
         squareAsset = createAsset(SquareAsset.class, new SquareAssetArgument(VIEWPORT, frameBuffer));
         buttonAsset = createAsset(ButtonAsset.class, new ButtonAssetArgument(
@@ -142,6 +156,23 @@ public class InitScene extends Scene {
         fpsText.setPosition(0.85f, 0.85f, 0);
 
         cameraAsset.setPosition(-2, 0, 0);
+
+        Random random = new Random();
+        float waterHeight = water.getPosition().y;
+        for (Model tree : trees) {
+            float x;
+            float y;
+            float z;
+            do {
+                x = random.nextFloat() * 128 - 64;
+                z = random.nextFloat() * 128 - 64;
+                y = terrain.getHeight(x, z) - 0.1f;
+            } while (y < waterHeight - 0.2);
+            float scale = random.nextFloat() * 0.05f + 0.1f;
+
+            tree.setScale(scale);
+            tree.setPosition(x, y, z);
+        }
     }
 
     @Override
@@ -164,6 +195,7 @@ public class InitScene extends Scene {
                         RenderPlanBuilder
                                 .createPlan(cameraAsset.camera, light)
                                 .loadModels(cube)
+                                .loadModels(trees)
                                 .loadTerrains(terrain)
                                 .loadWaters(water)
                                 .clearScreen(ColorUtils.WHITE)
