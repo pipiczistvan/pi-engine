@@ -113,7 +113,7 @@ public abstract class CameraAsset<C extends Camera> extends Asset<CameraAssetArg
         addPosition(0, upwardsSpeed * (float) delta, 0);
 
         Vector3f position = getPosition();
-        float terrainHeight = arguments.terrain != null ? arguments.terrain.getHeight(position.x, position.z) + 0.5f : 0;
+        float terrainHeight = arguments.terrain != null ? arguments.terrain.getHeight(position.x, position.z) + 1f : 0;
 
         if (position.y < terrainHeight) {
             upwardsSpeed = 0;

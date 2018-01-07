@@ -16,7 +16,7 @@ public class WaterShader extends Shader {
     private int location_refractionTexture;
     private int location_depthTexture;
     private int location_cameraPosition;
-    private int location_waveTime;
+    private int location_waveFactor;
     private int location_lightPosition;
     private int location_lightColor;
     private int location_lightBias;
@@ -34,7 +34,7 @@ public class WaterShader extends Shader {
         location_refractionTexture = getUniformLocation("refractionTexture");
         location_depthTexture = getUniformLocation("depthTexture");
         location_cameraPosition = getUniformLocation("cameraPosition");
-        location_waveTime = getUniformLocation("waveTime");
+        location_waveFactor = getUniformLocation("waveFactor");
         location_lightPosition = getUniformLocation("lightPosition");
         location_lightColor = getUniformLocation("lightColor");
         location_lightBias = getUniformLocation("lightBias");
@@ -77,8 +77,8 @@ public class WaterShader extends Shader {
         return this;
     }
 
-    public WaterShader loadWaveTime(final float waveTime) {
-        loadUniform(location_waveTime, waveTime);
+    public WaterShader loadWaveFactor(final float waveFactor) {
+        loadUniform(location_waveFactor, waveFactor);
         return this;
     }
 

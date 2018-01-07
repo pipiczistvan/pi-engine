@@ -49,6 +49,7 @@ public class RenderWorldFragmentHandler implements FragmentHandler<RenderWorldPl
                 context.camera.addRotation(0, -cameraPitch * 2, 0);
 
                 context.clippingPlane.set(0, 1, 0, -waterHeight + 0.1f);
+                context.viewport.set(water.reflectionBuffer.resolution);
                 clearScreenRenderService.clearScreen(ColorUtils.WHITE);
                 terrainRenderService.process(context);
                 worldRenderService.process(context);
@@ -61,6 +62,7 @@ public class RenderWorldFragmentHandler implements FragmentHandler<RenderWorldPl
             frameBufferService.bind(water.refractionBuffer);
             {
                 context.clippingPlane.set(0, -1, 0, waterHeight + 1);
+                context.viewport.set(water.refractionBuffer.resolution);
                 clearScreenRenderService.clearScreen(ColorUtils.WHITE);
                 terrainRenderService.process(context);
                 worldRenderService.process(context);
@@ -69,6 +71,7 @@ public class RenderWorldFragmentHandler implements FragmentHandler<RenderWorldPl
         }
 
         context.clippingPlane.set(0, 0, 0, 0);
+        context.viewport.set(context.camera.viewport);
         terrainRenderService.process(context);
         worldRenderService.process(context);
 

@@ -51,7 +51,7 @@ public class FrameBufferInterpreter implements Interpreter<FrameBufferData, Fram
 
         Map<FrameBufferAttachment, Integer> attachments = new HashMap<>();
         for (FrameBufferAttachment attachment : frameBufferData.attachments) {
-            attachments.put(attachment, createAttachment(attachment, frameBufferData.viewport));
+            attachments.put(attachment, createAttachment(attachment, frameBufferData.size));
         }
 
         unbind();

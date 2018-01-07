@@ -2,12 +2,12 @@
 
 const vec3 waterColor = vec3(0.604, 0.867, 0.851);
 const float fresnelReflective = 0.5;
-const float edgeSoftness = 1.0;
+const float edgeSoftness = 2.0;
 const float nearPlane = 0.1;
 const float farPlane = 1000;
 const float minBlueness = 0.4;
 const float maxBlueness = 0.75;
-const float murkyDepth = 15;
+const float murkyDepth = 5.0;
 
 in vec4 vClipSpaceGrid;
 in vec4 vClipSpaceReal;

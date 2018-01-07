@@ -45,6 +45,7 @@ import static piengine.visual.framebuffer.domain.FrameBufferAttachment.RENDER_BU
 
 public class InitScene extends Scene {
 
+    private static final float WAVE_SPEED = 0.2f;
     private static final Vector2i VIEWPORT = new Vector2i(get(CAMERA_VIEWPORT_WIDTH), get(CAMERA_VIEWPORT_HEIGHT));
 
     private final InputManager inputManager;
@@ -63,8 +64,6 @@ public class InitScene extends Scene {
     private Model cube;
 
     private SquareAsset squareAsset;
-    private SquareAsset reflectionFrameAsset;
-    private SquareAsset refractionFrameAsset;
     private ButtonAsset buttonAsset;
 
     @Wire
@@ -94,8 +93,8 @@ public class InitScene extends Scene {
     @Override
     protected void createAssets() {
         frameBuffer = frameBufferManager.supply(new FrameBufferData(VIEWPORT, COLOR_ATTACHMENT, RENDER_BUFFER_ATTACHMENT));
-        terrain = terrainManager.supply(new TerrainKey(this, "heightmap"));
-        water = waterManager.supply(new WaterKey(this, new Vector2i(128, 128)));
+        terrain = terrainManager.supply(new TerrainKey(this, "heightmap2"));
+        water = waterManager.supply(new WaterKey(this, VIEWPORT, new Vector2i(128, 128)));
         cameraAsset = createAsset(FirstPersonCameraAsset.class, new CameraAssetArgument(
                 terrain,
                 get(CAMERA_LOOK_UP_LIMIT),
@@ -110,38 +109,31 @@ public class InitScene extends Scene {
         buttonAsset = createAsset(ButtonAsset.class, new ButtonAssetArgument(
                 "buttonDefault", "buttonHover", "buttonPress",
                 VIEWPORT, "Please press me!", () -> System.out.println("Button clicked!")));
-
-        reflectionFrameAsset = createAsset(SquareAsset.class, new SquareAssetArgument(VIEWPORT, water.reflectionBuffer));
-        refractionFrameAsset = createAsset(SquareAsset.class, new SquareAssetArgument(VIEWPORT, water.refractionBuffer));
     }
 
     @Override
     protected void initializeAssets() {
-        light.setPosition(50, 40, 30);
+        light.setPosition(0, 40, 10);
 
         cube.setPosition(4, 0f, -14);
 
         terrain.setPosition(-64, 0, -64);
-        terrain.setScale(128, 50, 128);
+        terrain.setScale(128, 5, 128);
 
         water.setScale(128, 0, 128);
         water.setPosition(-64, -2.0f, -64);
 
         buttonAsset.setPosition(-0.75f, 0.875f, 0);
 
-        cameraAsset.setPosition(0, 0, 0);
-
-        reflectionFrameAsset.setScale(0.25f);
-        reflectionFrameAsset.setPosition(-0.5f, 0.5f, 0);
-
-        refractionFrameAsset.setScale(0.25f);
-        refractionFrameAsset.setPosition(0.5f, 0.5f, 0);
+        cameraAsset.setPosition(-2, 0, 0);
     }
 
     @Override
     public void update(double delta) {
 //        light.addPosition((float) (1f * delta), 0, 0);
 //        cubeAsset.addPosition((float) (1f * delta), 0, 0);
+
+        water.waveFactor += WAVE_SPEED * delta;
 
         System.out.println(timeManager.getFPS());
 //        System.out.println(cameraAsset.getPosition());
@@ -165,8 +157,6 @@ public class InitScene extends Scene {
                                 .render()
                 )
                 .loadModels(squareAsset.getModels())
-//                .loadModels(reflectionFrameAsset.getModels())
-//                .loadModels(refractionFrameAsset.getModels())
 //                .loadModels(buttonAsset.getModels())
                 .clearScreen(ColorUtils.BLACK)
                 .render();

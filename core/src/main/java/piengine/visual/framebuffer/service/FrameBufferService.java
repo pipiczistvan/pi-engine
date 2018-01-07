@@ -28,7 +28,7 @@ public class FrameBufferService implements Terminatable {
 
     public FrameBuffer supply(final FrameBufferData frameBufferData) {
         FrameBufferDao dao = frameBufferInterpreter.create(frameBufferData);
-        FrameBuffer frameBuffer = new FrameBuffer(dao);
+        FrameBuffer frameBuffer = new FrameBuffer(dao, frameBufferData.size);
 
         frameBuffers.add(frameBuffer);
 

@@ -28,7 +28,7 @@ public class TerrainRenderService extends AbstractRenderService<TerrainShader, R
 
     @Override
     protected void render(final RenderWorldPlanContext context) {
-        renderInterpreter.setViewport(context.camera.viewport);
+        renderInterpreter.setViewport(context.viewport);
         renderInterpreter.setProvokingVertex(FIRST_VERTEX_CONVENTION);
 
         shader.start()

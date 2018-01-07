@@ -19,6 +19,6 @@ public class WaterAccessor implements Accessor<WaterKey, WaterData> {
     public WaterData access(final WaterKey key) {
         WaterGrid grid = gridGenerator.generate(key.size);
 
-        return new WaterData(key.parent, grid.positions, grid.indicators);
+        return new WaterData(key.parent, grid.positions, grid.indicators, key.resolution);
     }
 }

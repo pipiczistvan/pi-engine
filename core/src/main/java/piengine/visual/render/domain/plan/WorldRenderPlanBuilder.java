@@ -1,5 +1,6 @@
 package piengine.visual.render.domain.plan;
 
+import org.joml.Vector2i;
 import org.joml.Vector4f;
 import piengine.object.model.domain.Model;
 import piengine.object.terrain.domain.Terrain;
@@ -22,6 +23,7 @@ public class WorldRenderPlanBuilder extends RenderPlanBuilder<WorldRenderPlanBui
                 new ArrayList<>(),
                 new ArrayList<>(),
                 new Vector4f(),
+                new Vector2i(camera.viewport),
                 camera,
                 light
         ));
