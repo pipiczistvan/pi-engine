@@ -117,12 +117,12 @@ public class InitScene extends Scene {
 
     @Override
     protected void initializeAssets() {
-        light.setPosition(0, 20, 0);
+        light.setPosition(50, 40, 30);
 
         cube.setPosition(4, 0f, -14);
 
         terrain.setPosition(-64, 0, -64);
-        terrain.setScale(128, 15, 128);
+        terrain.setScale(128, 50, 128);
 
         water.setScale(128, 0, 128);
         water.setPosition(-64, -2.0f, -64);

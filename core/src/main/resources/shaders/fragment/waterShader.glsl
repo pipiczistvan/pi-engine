@@ -5,14 +5,16 @@ const float fresnelReflective = 0.5;
 const float edgeSoftness = 1.0;
 const float nearPlane = 0.1;
 const float farPlane = 1000;
-const float minBlueness = 0.5;
-const float maxBlueness = 1.0;
+const float minBlueness = 0.4;
+const float maxBlueness = 0.75;
 const float murkyDepth = 15;
 
 in vec4 vClipSpaceGrid;
 in vec4 vClipSpaceReal;
 in vec3 vToCameraVector;
 in vec3 vNormal;
+in vec3 vSpecular;
+in vec3 vDiffuse;
 
 out vec4 fColor;
 
@@ -61,13 +63,13 @@ void main(void) {
     vec3 reflectColor = texture(reflectionTexture, reflectTextureCoords).rgb;
     vec3 refractColor = texture(refractionTexture, refractTextureCoords).rgb;
 
-    float fresnelFactor = calculateFresnel(vToCameraVector, vNormal);
     float waterDepth = calculateWaterDepth(texCoordsReal);
 
     refractColor = calculateMurkiness(refractColor, waterDepth);
     reflectColor = mix(reflectColor, waterColor, minBlueness);
 
-    vec3 finalColor = mix(reflectColor, refractColor, fresnelFactor);
+    vec3 finalColor = mix(reflectColor, refractColor, calculateFresnel(vToCameraVector, vNormal));
+    finalColor = finalColor * vDiffuse + vSpecular;
 
     fColor = vec4(finalColor, clamp(waterDepth / edgeSoftness, 0.0, 1.0));
 }

@@ -41,9 +41,6 @@ public class WaterRenderService extends AbstractRenderService<WaterShader, Rende
     @Override
     protected void render(final RenderWorldPlanContext context) {
         time += WAVE_SPEED; //todo: water attribútum legyen
-        if (time >= 1) {
-            time = 0;
-        }
 
         renderInterpreter.setViewport(context.camera.viewport);
 
@@ -51,6 +48,7 @@ public class WaterRenderService extends AbstractRenderService<WaterShader, Rende
                 .loadProjectionMatrix(context.camera.getProjection())
                 .loadViewMatrix(context.camera.getView())
                 .loadCameraPosition(context.camera.getPosition())
+                .loadLight(context.light)
                 .loadWaveTime(time)
                 .loadTextureUnits();
 

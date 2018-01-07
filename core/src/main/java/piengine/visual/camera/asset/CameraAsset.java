@@ -10,6 +10,7 @@ import piengine.visual.window.manager.WindowManager;
 
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_A;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_D;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_LEFT_SHIFT;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_S;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_SPACE;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_W;
@@ -21,6 +22,7 @@ public abstract class CameraAsset<C extends Camera> extends Asset<CameraAssetArg
     public final C camera;
     public boolean movingEnabled = true;
     public boolean lookingEnabled = true;
+    public boolean flyingEnabled = true;
 
     private static final float GRAVITY = -100;
     private static final float JUMP_POWER = 30;
@@ -28,6 +30,10 @@ public abstract class CameraAsset<C extends Camera> extends Asset<CameraAssetArg
     private final Vector2f movement;
     private float upwardsSpeed = 0;
     private boolean isInAir = false;
+    private boolean isFlying = false;
+
+    private boolean spacePressed = false;
+    private boolean shiftPressed = false;
 
     private final InputManager inputManager;
     private final WindowManager windowManager;
@@ -42,7 +48,10 @@ public abstract class CameraAsset<C extends Camera> extends Asset<CameraAssetArg
 
     @Override
     public void initialize() {
-        inputManager.addEvent(GLFW_KEY_SPACE, PRESS, this::jump);
+        inputManager.addEvent(GLFW_KEY_SPACE, PRESS, this::pressSpace);
+        inputManager.addEvent(GLFW_KEY_SPACE, RELEASE, this::releaseSpace);
+        inputManager.addEvent(GLFW_KEY_LEFT_SHIFT, PRESS, this::pressShift);
+        inputManager.addEvent(GLFW_KEY_LEFT_SHIFT, RELEASE, this::releaseShift);
         inputManager.addEvent(GLFW_KEY_A, PRESS, this::moveLeft);
         inputManager.addEvent(GLFW_KEY_S, PRESS, this::moveBackward);
         inputManager.addEvent(GLFW_KEY_D, PRESS, this::moveRight);
@@ -97,16 +106,19 @@ public abstract class CameraAsset<C extends Camera> extends Asset<CameraAssetArg
         addPosition(translateX * (float) delta * multiplier, 0, translateZ * (float) delta * multiplier);
 
         // VERTICAL MOVEMENT
-        upwardsSpeed += GRAVITY * delta;
+        if (!isFlying) {
+            upwardsSpeed += GRAVITY * delta;
+        }
+
         addPosition(0, upwardsSpeed * (float) delta, 0);
 
         Vector3f position = getPosition();
-        float terrainHeight = arguments.terrain != null ?
-                arguments.terrain.getHeight(position.x, position.z) + 0.5f : 0;
+        float terrainHeight = arguments.terrain != null ? arguments.terrain.getHeight(position.x, position.z) + 0.5f : 0;
 
         if (position.y < terrainHeight) {
             upwardsSpeed = 0;
             isInAir = false;
+            isFlying = false;
             setPosition(position.x, terrainHeight, position.z);
         }
     }
@@ -118,11 +130,42 @@ public abstract class CameraAsset<C extends Camera> extends Asset<CameraAssetArg
 
     protected abstract C getCamera();
 
-    private void jump() {
+    private void pressSpace() {
+        spacePressed = true;
+
         if (!isInAir) {
             upwardsSpeed = JUMP_POWER;
+        } else {
+            if (flyingEnabled) {
+                isFlying = true;
+                upwardsSpeed = JUMP_POWER;
+            }
         }
         isInAir = true;
+    }
+
+    private void releaseSpace() {
+        spacePressed = false;
+
+        if (isFlying) {
+            upwardsSpeed = 0;
+        }
+    }
+
+    private void pressShift() {
+        shiftPressed = true;
+
+        if (isInAir && isFlying) {
+            upwardsSpeed = -JUMP_POWER;
+        }
+    }
+
+    private void releaseShift() {
+        shiftPressed = false;
+
+        if (isFlying) {
+            upwardsSpeed = 0;
+        }
     }
 
     private void moveLeft() {

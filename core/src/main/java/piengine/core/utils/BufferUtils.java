@@ -1,8 +1,10 @@
 package piengine.core.utils;
 
+import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 
+import static org.lwjgl.BufferUtils.createByteBuffer;
 import static org.lwjgl.BufferUtils.createFloatBuffer;
 import static org.lwjgl.BufferUtils.createIntBuffer;
 
@@ -19,6 +21,12 @@ public class BufferUtils {
 
     public static IntBuffer convertToIntBuffer(final int[] data) {
         IntBuffer buffer = createIntBuffer(data.length);
+        buffer.put(data).flip();
+        return buffer;
+    }
+
+    public static ByteBuffer convertToByteBuffer(final byte[] data) {
+        ByteBuffer buffer = createByteBuffer(data.length);
         buffer.put(data).flip();
         return buffer;
     }

@@ -30,19 +30,18 @@ public class WaterGridGenerator {
     }
 
     private static void storeTriangle(Vector2f[] cornerPos, final List<Vector2f> positions, final List<Vector4f> indicators, boolean left) {
-        Vector4f indicator = new Vector4f(0, 0, 0, 0);
-
         int index0 = left ? 0 : 2;
-        positions.add(cornerPos[index0]);
-        indicators.add(indicator);
-
         int index1 = 1;
-        positions.add(cornerPos[index1]);
-        indicators.add(indicator);
-
         int index2 = left ? 2 : 3;
+
+        positions.add(cornerPos[index0]);
+        indicators.add(getIndicator(index0, cornerPos, index1, index2));
+
+        positions.add(cornerPos[index1]);
+        indicators.add(getIndicator(index1, cornerPos, index2, index0));
+
         positions.add(cornerPos[index2]);
-        indicators.add(indicator);
+        indicators.add(getIndicator(index2, cornerPos, index0, index1));
     }
 
     private static Vector2f[] calculateCornerPositions(int col, int row, float width, float height) {
@@ -54,4 +53,17 @@ public class WaterGridGenerator {
         return vertices;
     }
 
+    private static Vector4f getIndicator(int currentVertex, Vector2f[] vertexPositions, int vertex1, int vertex2) {
+        Vector2f currentVertexPos = vertexPositions[currentVertex];
+        Vector2f vertex1Pos = vertexPositions[vertex1];
+        Vector2f vertex2Pos = vertexPositions[vertex2];
+
+        Vector2f offset1 = new Vector2f();
+        vertex1Pos.sub(currentVertexPos, offset1);
+
+        Vector2f offset2 = new Vector2f();
+        vertex2Pos.sub(currentVertexPos, offset2);
+
+        return new Vector4f(offset1.x, offset1.y, offset2.x, offset2.y);
+    }
 }

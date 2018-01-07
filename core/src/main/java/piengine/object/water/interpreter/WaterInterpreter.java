@@ -29,7 +29,7 @@ public class WaterInterpreter implements Interpreter<WaterData, WaterDao> {
 
     @Override
     public WaterDao create(final WaterData waterData) {
-        final WaterDao dao = new WaterDao(glGenVertexArrays(), new ArrayList<>(), waterData.vertices.length / 2);
+        final WaterDao dao = new WaterDao(glGenVertexArrays(), new ArrayList<>(), waterData.vertices.length * 2);
         bind(dao);
 
         dao.vboIds.add(createVbo(VERTEX.value, waterData.vertices, 2));
