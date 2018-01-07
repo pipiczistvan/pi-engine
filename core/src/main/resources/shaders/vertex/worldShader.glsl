@@ -2,6 +2,7 @@
 
 layout (location = 0) in vec3 Position;
 layout (location = 1) in vec2 TextureCoord;
+layout (location = 3) in vec3 Normal;
 
 out vec2 vTextureCoord;
 flat out vec4 vColor;
@@ -18,10 +19,10 @@ vec3 calculateLightFactor(vec3 positionVector, vec3 normalVector);
 
 void main(void) {
     vec4 worldPosition = modelMatrix * vec4(Position, 1.0);
+    vec4 worldNormal = modelMatrix * vec4(Normal, 0.0);
     gl_ClipDistance[0] = dot(worldPosition, clippingPlane);
 
-//todo: temporary (a normal vectort ki kéne számítani valahol)
-    vec3 lightFactor = lightEnabled > 0.5 ? calculateLightFactor(worldPosition.xyz, vec3(0, 1, 0)) : vec3(1.0);
+    vec3 lightFactor = lightEnabled > 0.5 ? calculateLightFactor(worldPosition.xyz, worldNormal.xyz) : vec3(1.0);
 
     vColor = vec4(lightFactor, 1.0);
     vTextureCoord = TextureCoord;
@@ -29,10 +30,10 @@ void main(void) {
 }
 
 vec3 calculateLightFactor(vec3 positionVector, vec3 normalVector) {
-    vec3 toLightVector = normalize(lightPosition - positionVector);
+    vec3 toLightVector = lightPosition - positionVector;
 
     // LIGHT
-    float nDot1 = dot(normalVector, toLightVector);
+    float nDot1 = dot(normalize(toLightVector), normalize(normalVector));
     float brightness = max(nDot1, 0.2);
     return brightness * lightColor;
 }

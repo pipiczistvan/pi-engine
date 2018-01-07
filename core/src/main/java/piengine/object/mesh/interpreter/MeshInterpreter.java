@@ -23,6 +23,7 @@ import static org.lwjgl.opengl.GL30.glDeleteVertexArrays;
 import static org.lwjgl.opengl.GL30.glGenVertexArrays;
 import static piengine.core.utils.BufferUtils.convertToFloatBuffer;
 import static piengine.core.utils.BufferUtils.convertToIntBuffer;
+import static piengine.object.mesh.domain.MeshDataType.NORMAL;
 import static piengine.object.mesh.domain.MeshDataType.TEXTURE_COORD;
 import static piengine.object.mesh.domain.MeshDataType.VERTEX;
 
@@ -37,6 +38,7 @@ public class MeshInterpreter implements Interpreter<MeshData, MeshDao> {
         dao.vboIds.add(createIndicesVbo(meshData.indices));
         dao.vboIds.add(createVbo(VERTEX.value, meshData.vertices, 3));
         dao.vboIds.add(createVbo(TEXTURE_COORD.value, meshData.textureCoords, 2));
+        dao.vboIds.add(createVbo(NORMAL.value, meshData.normals, 3));
 
         unbind();
 

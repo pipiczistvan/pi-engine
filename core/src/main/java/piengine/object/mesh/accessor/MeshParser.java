@@ -16,15 +16,18 @@ public class MeshParser {
 
     private static final String VERTEX_PREFIX = "v";
     private static final String TEXTURE_PREFIX = "vt";
+    private static final String NORMAL_PREFIX = "vn";
     private static final String FACE_PREFIX = "f";
 
     public ParsedMeshData parseSource(final String[] source) {
         List<Vector3f> vertices = new ArrayList<>();
         List<Vector2f> textures = new ArrayList<>();
+        List<Vector3f> normals = new ArrayList<>();
         List<Integer> indices = new ArrayList<>();
 
         float[] verticesArray;
         float[] texturesArray;
+        float[] normalsArray;
         int[] indicesArray;
 
         int lineIndex = 0;
@@ -39,6 +42,9 @@ public class MeshParser {
                 case TEXTURE_PREFIX:
                     textures.add(parseVector2f(splatLine));
                     break;
+                case NORMAL_PREFIX:
+                    normals.add(parseVector3f(splatLine));
+                    break;
                 case FACE_PREFIX:
                     break lineReader;
             }
@@ -47,6 +53,7 @@ public class MeshParser {
         }
 
         texturesArray = new float[vertices.size() * 2];
+        normalsArray = new float[vertices.size() * 3];
 
         while (lineIndex < source.length) {
             String[] splatLine = source[lineIndex].split(" ");
@@ -57,9 +64,9 @@ public class MeshParser {
                 String[] vertex2 = splatLine[2].split("/");
                 String[] vertex3 = splatLine[3].split("/");
 
-                processVertex(vertex1, indices, textures, texturesArray);
-                processVertex(vertex2, indices, textures, texturesArray);
-                processVertex(vertex3, indices, textures, texturesArray);
+                processVertex(vertex1, indices, textures, texturesArray, normals, normalsArray);
+                processVertex(vertex2, indices, textures, texturesArray, normals, normalsArray);
+                processVertex(vertex3, indices, textures, texturesArray, normals, normalsArray);
             }
 
             lineIndex++;
@@ -79,11 +86,12 @@ public class MeshParser {
             indicesArray[indexPointer++] = index;
         }
 
-        return new ParsedMeshData(verticesArray, indicesArray, texturesArray);
+        return new ParsedMeshData(verticesArray, indicesArray, texturesArray, normalsArray);
     }
 
-    private void processVertex(String[] vertexData, List<Integer> indices,
-                               List<Vector2f> textures, float[] texturesArray) {
+    private void processVertex(final String[] vertexData, final List<Integer> indices,
+                              final List<Vector2f> textures, final float[] texturesArray,
+                              final List<Vector3f> normals, final float[] normalsArray) {
         int currentVertexPointer = parseInt(vertexData[0]) - 1;
 
         indices.add(currentVertexPointer);
@@ -93,6 +101,11 @@ public class MeshParser {
             texturesArray[currentVertexPointer * 2] = currentTexture.x;
             texturesArray[currentVertexPointer * 2 + 1] = 1 - currentTexture.y;
         }
+
+        Vector3f currentNormal = normals.get(parseInt(vertexData[2]) - 1);
+        normalsArray[currentVertexPointer * 3] = currentNormal.x;
+        normalsArray[currentVertexPointer * 3 + 1] = currentNormal.y;
+        normalsArray[currentVertexPointer * 3 + 2] = currentNormal.z;
     }
 
     private Vector2f parseVector2f(String[] splatString) {

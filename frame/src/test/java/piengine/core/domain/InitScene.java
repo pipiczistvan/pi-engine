@@ -28,6 +28,11 @@ import piengine.visual.render.domain.plan.RenderPlan;
 import piengine.visual.render.domain.plan.RenderPlanBuilder;
 import piengine.visual.render.manager.RenderManager;
 import piengine.visual.window.manager.WindowManager;
+import piengine.visual.writing.font.domain.Font;
+import piengine.visual.writing.font.manager.FontManager;
+import piengine.visual.writing.text.domain.Text;
+import piengine.visual.writing.text.domain.TextConfiguration;
+import piengine.visual.writing.text.manager.TextManager;
 import puppeteer.annotation.premade.Wire;
 
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
@@ -55,6 +60,8 @@ public class InitScene extends Scene {
     private final WaterManager waterManager;
     private final ModelManager modelManager;
     private final TimeManager timeManager;
+    private final FontManager fontManager;
+    private final TextManager textManager;
 
     private FrameBuffer frameBuffer;
     private FirstPersonCameraAsset cameraAsset;
@@ -62,6 +69,8 @@ public class InitScene extends Scene {
     private Terrain terrain;
     private Water water;
     private Model cube;
+    private Font font;
+    private Text fpsText;
 
     private SquareAsset squareAsset;
     private ButtonAsset buttonAsset;
@@ -71,7 +80,7 @@ public class InitScene extends Scene {
                      final InputManager inputManager, final WindowManager windowManager,
                      final FrameBufferManager frameBufferManager, final TerrainManager terrainManager,
                      final WaterManager waterManager, final ModelManager modelManager,
-                     final TimeManager timeManager) {
+                     final TimeManager timeManager, final FontManager fontManager, final TextManager textManager) {
         super(renderManager, assetManager);
 
         this.inputManager = inputManager;
@@ -81,6 +90,8 @@ public class InitScene extends Scene {
         this.waterManager = waterManager;
         this.modelManager = modelManager;
         this.timeManager = timeManager;
+        this.fontManager = fontManager;
+        this.textManager = textManager;
     }
 
     @Override
@@ -109,6 +120,9 @@ public class InitScene extends Scene {
         buttonAsset = createAsset(ButtonAsset.class, new ButtonAssetArgument(
                 "buttonDefault", "buttonHover", "buttonPress",
                 VIEWPORT, "Please press me!", () -> System.out.println("Button clicked!")));
+
+        font = fontManager.supply("candara");
+        fpsText = textManager.supply(TextConfiguration.textConfig().withFont(font), this);
     }
 
     @Override
@@ -125,6 +139,8 @@ public class InitScene extends Scene {
 
         buttonAsset.setPosition(-0.75f, 0.875f, 0);
 
+        fpsText.setPosition(0.85f, 0.85f, 0);
+
         cameraAsset.setPosition(-2, 0, 0);
     }
 
@@ -134,7 +150,7 @@ public class InitScene extends Scene {
 
         cube.addRotation((float) (5f * delta), (float) (10f * delta), (float) (15f * delta));
 
-        System.out.println(timeManager.getFPS());
+        textManager.update(fpsText, TextConfiguration.textConfig().withFont(font).withFontSize(2).withText("FPS: " + timeManager.getFPS()));
 
         super.update(delta);
     }
@@ -156,6 +172,7 @@ public class InitScene extends Scene {
                 .loadModels(squareAsset.getModels())
                 .loadModels(buttonAsset.getModels())
                 .loadTexts(buttonAsset.getTexts())
+                .loadTexts(fpsText)
                 .clearScreen(ColorUtils.BLACK)
                 .render();
     }

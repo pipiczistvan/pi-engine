@@ -30,7 +30,7 @@ public class MeshAccessor implements Accessor<String, MeshData> {
         final String meshSource = loader.load(file);
         final ParsedMeshData parsedMeshData = meshParser.parseSource(meshSource.split("\n"));
 
-        return new MeshData(parsedMeshData.vertices, parsedMeshData.indices, parsedMeshData.textureCoords);
+        return new MeshData(parsedMeshData.vertices, parsedMeshData.indices, parsedMeshData.textureCoords, parsedMeshData.normals);
     }
 
 }
