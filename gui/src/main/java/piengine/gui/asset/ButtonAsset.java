@@ -117,7 +117,12 @@ public class ButtonAsset extends Asset<ButtonAssetArgument> {
     public Model[] getModels() {
         return new Model[] {
                 buttonModel
-//                label todo: text rendering
+        };
+    }
+
+    public Text[] getTexts() {
+        return new Text[] {
+                label
         };
     }
 

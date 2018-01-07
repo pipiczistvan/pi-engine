@@ -3,18 +3,18 @@ package piengine.visual.writing.text.service;
 import piengine.visual.render.domain.config.RenderConfig;
 import piengine.visual.render.domain.config.RenderConfigBuilder;
 import piengine.visual.render.domain.config.RenderFunction;
+import piengine.visual.render.domain.fragment.domain.RenderGuiPlanContext;
 import piengine.visual.render.interpreter.RenderInterpreter;
 import piengine.visual.render.service.AbstractRenderService;
 import piengine.visual.shader.service.ShaderService;
 import piengine.visual.writing.font.service.FontService;
 import piengine.visual.writing.text.domain.Text;
-import piengine.visual.writing.text.domain.TextRenderContext;
 import piengine.visual.writing.text.shader.TextShader;
 import puppeteer.annotation.premade.Component;
 import puppeteer.annotation.premade.Wire;
 
 @Component
-public class TextRenderService extends AbstractRenderService<TextShader, TextRenderContext> {
+public class TextRenderService extends AbstractRenderService<TextShader, RenderGuiPlanContext> {
 
     private final FontService fontService;
 
@@ -33,7 +33,7 @@ public class TextRenderService extends AbstractRenderService<TextShader, TextRen
     }
 
     @Override
-    protected void render(final TextRenderContext context) {
+    protected void render(final RenderGuiPlanContext context) {
         renderInterpreter.setViewport(context.viewport);
 
         shader.start();

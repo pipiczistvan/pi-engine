@@ -130,14 +130,11 @@ public class InitScene extends Scene {
 
     @Override
     public void update(double delta) {
-//        light.addPosition((float) (1f * delta), 0, 0);
-//        cubeAsset.addPosition((float) (1f * delta), 0, 0);
-
         water.waveFactor += WAVE_SPEED * delta;
 
+        cube.addRotation((float) (5f * delta), (float) (10f * delta), (float) (15f * delta));
+
         System.out.println(timeManager.getFPS());
-//        System.out.println(cameraAsset.getPosition());
-//        System.out.println(cameraAsset.getRotation());
 
         super.update(delta);
     }
@@ -157,7 +154,8 @@ public class InitScene extends Scene {
                                 .render()
                 )
                 .loadModels(squareAsset.getModels())
-//                .loadModels(buttonAsset.getModels())
+                .loadModels(buttonAsset.getModels())
+                .loadTexts(buttonAsset.getTexts())
                 .clearScreen(ColorUtils.BLACK)
                 .render();
     }
