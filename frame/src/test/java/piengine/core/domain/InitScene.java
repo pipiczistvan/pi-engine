@@ -3,6 +3,8 @@ package piengine.core.domain;
 import org.joml.Vector2i;
 import piengine.core.architecture.scene.domain.Scene;
 import piengine.core.domain.assets.camera.FirstPersonCameraAsset;
+import piengine.core.domain.assets.object.lamp.LampAsset;
+import piengine.core.domain.assets.object.lamp.LampAssetArgument;
 import piengine.core.domain.assets.object.square.SquareAsset;
 import piengine.core.domain.assets.object.square.SquareAssetArgument;
 import piengine.core.input.manager.InputManager;
@@ -24,9 +26,6 @@ import piengine.visual.fog.Fog;
 import piengine.visual.framebuffer.domain.FrameBuffer;
 import piengine.visual.framebuffer.domain.FrameBufferData;
 import piengine.visual.framebuffer.manager.FrameBufferManager;
-import piengine.visual.image.domain.Image;
-import piengine.visual.image.manager.ImageManager;
-import piengine.visual.light.Light;
 import piengine.visual.render.domain.plan.RenderPlan;
 import piengine.visual.render.domain.plan.RenderPlanBuilder;
 import piengine.visual.render.manager.RenderManager;
@@ -67,22 +66,18 @@ public class InitScene extends Scene {
     private final TimeManager timeManager;
     private final FontManager fontManager;
     private final TextManager textManager;
-    private final ImageManager imageManager;
 
     private FrameBuffer frameBuffer;
     private FirstPersonCameraAsset cameraAsset;
-    private Light light1;
-    private Light light2;
-    private Light light3;
-    private Light light4;
+    private LampAsset lampAsset;
     private Fog fog;
     private Terrain terrain;
     private Water water;
+
     private Model cube;
+
     private Model[] trees = new Model[40];
-    private Image treeTexture;
-    private Model lamp;
-    private Image lampTexture;
+
     private Font font;
     private Text fpsText;
 
@@ -95,7 +90,7 @@ public class InitScene extends Scene {
                      final FrameBufferManager frameBufferManager, final TerrainManager terrainManager,
                      final WaterManager waterManager, final ModelManager modelManager,
                      final TimeManager timeManager, final FontManager fontManager,
-                     final TextManager textManager, final ImageManager imageManager) {
+                     final TextManager textManager) {
         super(renderManager, assetManager);
 
         this.inputManager = inputManager;
@@ -107,7 +102,6 @@ public class InitScene extends Scene {
         this.timeManager = timeManager;
         this.fontManager = fontManager;
         this.textManager = textManager;
-        this.imageManager = imageManager;
     }
 
     @Override
@@ -128,20 +122,14 @@ public class InitScene extends Scene {
                 get(CAMERA_LOOK_DOWN_LIMIT),
                 get(CAMERA_LOOK_SPEED),
                 get(CAMERA_MOVE_SPEED)));
-        light1 = new Light(this);
-        light2 = new Light(this);
-        light3 = new Light(this);
-        light4 = new Light(this);
-        lampTexture = imageManager.supply("lamp");
-        lamp = modelManager.supply("lamp", this, lampTexture);
+        lampAsset = createAsset(LampAsset.class, new LampAssetArgument());
 
         fog = new Fog(ColorUtils.BLACK, 0.015f, 1.5f);
 
         cube = modelManager.supply("cube", this, ColorUtils.RED);
 
-        treeTexture = imageManager.supply("lowPolyTree");
         for (int i = 0; i < trees.length; i++) {
-            trees[i] = modelManager.supply("lowPolyTree", this, treeTexture);
+            trees[i] = modelManager.supply("lowPolyTree", this, "lowPolyTree");
         }
 
         squareAsset = createAsset(SquareAsset.class, new SquareAssetArgument(VIEWPORT, frameBuffer));
@@ -155,17 +143,6 @@ public class InitScene extends Scene {
 
     @Override
     protected void initializeAssets() {
-        light1.setColor(0.9568627451f, 0.96862745098f, 0.67843137255f);
-        light1.setPosition(0, 4, 0);
-        light1.setAttenuation(1, 0.01f, 0.002f);
-
-        light2.setColor(0, 1, 0);
-        light2.setPosition(-200, 20, 0);
-        light3.setColor(0, 0, 1);
-        light3.setPosition(0, 20, 200);
-        light4.setColor(1, 1, 1);
-        light4.setPosition(0, 20, -200);
-
         cube.setPosition(4, 0f, -14);
 
         terrain.setPosition(-64, 0, -64);
@@ -200,8 +177,7 @@ public class InitScene extends Scene {
         float lampX = 0;
         float lampZ = 0;
         float lampY = terrain.getHeight(lampX, lampZ);
-        lamp.setScale(0.5f);
-        lamp.setPosition(lampX, lampY, lampZ);
+        lampAsset.setPosition(lampX, lampY, lampZ);
     }
 
     @Override
@@ -223,18 +199,18 @@ public class InitScene extends Scene {
                         frameBuffer,
                         RenderPlanBuilder
                                 .createPlan(cameraAsset.camera, fog)
-                                .loadLights(light1)
+                                .loadLights(lampAsset.getLights())
+                                .loadModels(lampAsset.getModels())
                                 .loadModels(cube)
                                 .loadModels(trees)
-                                .loadModels(lamp)
                                 .loadTerrains(terrain)
                                 .loadWaters(water)
                                 .clearScreen(ColorUtils.BLACK)
                                 .render()
                 )
                 .loadModels(squareAsset.getModels())
-                .loadModels(buttonAsset.getModels())
-                .loadTexts(buttonAsset.getTexts())
+//                .loadModels(buttonAsset.getModels())
+//                .loadTexts(buttonAsset.getTexts())
                 .loadTexts(fpsText)
                 .clearScreen(ColorUtils.BLACK)
                 .render();
