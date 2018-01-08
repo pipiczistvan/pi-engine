@@ -18,20 +18,20 @@ public class RenderWorldPlanContext implements PlanContext, RenderContext {
     public final List<Model> models;
     public final List<Terrain> terrains;
     public final List<Water> waters;
+    public final List<Light> lights;
     public final Vector4f clippingPlane;
     public final Vector2i viewport;
     public final Camera camera;
-    public final Light light;
     public final Fog fog;
 
-    public RenderWorldPlanContext(final List<Model> models, final List<Terrain> terrains, final List<Water> waters, final Vector4f clippingPlane, final Vector2i viewport, final Camera camera, final Light light, final Fog fog) {
+    public RenderWorldPlanContext(final List<Model> models, final List<Terrain> terrains, final List<Water> waters, final List<Light> lights, final Vector4f clippingPlane, final Vector2i viewport, final Camera camera, final Fog fog) {
         this.models = models;
         this.terrains = terrains;
         this.waters = waters;
+        this.lights = lights;
         this.clippingPlane = clippingPlane;
         this.viewport = viewport;
         this.camera = camera;
-        this.light = light;
         this.fog = fog;
     }
 }

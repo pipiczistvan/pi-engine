@@ -14,6 +14,7 @@ public class VectorUtils {
     public static final Vector3f RIGHT = new Vector3f(1, 0, 0);
     public static final Vector3f UP = new Vector3f(0, 1, 0);
     public static final Vector3f FORWARD = new Vector3f(0, 0, 1);
+    public static final Vector3f ZERO = new Vector3f(0, 0, 0);
 
     public static float[] vector2fToFloatArray(final List<Vector2f> vectors) {
         float[] array = new float[vectors.size() * 2];

@@ -38,7 +38,7 @@ public class WorldRenderService extends AbstractRenderService<WorldShader, Rende
         renderInterpreter.setProvokingVertex(FIRST_VERTEX_CONVENTION);
 
         shader.start()
-                .loadLight(context.light)
+                .loadLights(context.lights)
                 .loadFog(context.fog)
                 .loadProjectionMatrix(context.camera.getProjection())
                 .loadViewMatrix(context.camera.getView())

@@ -18,15 +18,15 @@ import static piengine.visual.render.domain.fragment.domain.RenderFragmentType.R
 
 public class WorldRenderPlanBuilder extends RenderPlanBuilder<WorldRenderPlanBuilder, RenderWorldPlanContext> {
 
-    WorldRenderPlanBuilder(final Camera camera, final Light light, final Fog fog) {
+    WorldRenderPlanBuilder(final Camera camera, final Fog fog) {
         super(new RenderWorldPlanContext(
+                new ArrayList<>(),
                 new ArrayList<>(),
                 new ArrayList<>(),
                 new ArrayList<>(),
                 new Vector4f(),
                 new Vector2i(camera.viewport),
                 camera,
-                light,
                 fog
         ));
     }
@@ -43,6 +43,11 @@ public class WorldRenderPlanBuilder extends RenderPlanBuilder<WorldRenderPlanBui
 
     public WorldRenderPlanBuilder loadWaters(Water... waters) {
         this.context.waters.addAll(Arrays.asList(waters));
+        return this;
+    }
+
+    public WorldRenderPlanBuilder loadLights(Light... lights) {
+        this.context.lights.addAll(Arrays.asList(lights));
         return this;
     }
 

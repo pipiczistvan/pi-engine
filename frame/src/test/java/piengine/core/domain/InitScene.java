@@ -71,7 +71,10 @@ public class InitScene extends Scene {
 
     private FrameBuffer frameBuffer;
     private FirstPersonCameraAsset cameraAsset;
-    private Light light;
+    private Light light1;
+    private Light light2;
+    private Light light3;
+    private Light light4;
     private Fog fog;
     private Terrain terrain;
     private Water water;
@@ -123,7 +126,10 @@ public class InitScene extends Scene {
                 get(CAMERA_LOOK_DOWN_LIMIT),
                 get(CAMERA_LOOK_SPEED),
                 get(CAMERA_MOVE_SPEED)));
-        light = new Light(this);
+        light1 = new Light(this);
+        light2 = new Light(this);
+        light3 = new Light(this);
+        light4 = new Light(this);
         fog = new Fog(ColorUtils.WHITE, 0.015f, 1.5f);
 
         cube = modelManager.supply("cube", this, ColorUtils.RED);
@@ -144,7 +150,14 @@ public class InitScene extends Scene {
 
     @Override
     protected void initializeAssets() {
-        light.setPosition(200, 20, 0);
+        light1.color.set(1, 0, 0);
+        light1.setPosition(200, 20, 0);
+        light2.color.set(0, 1, 0);
+        light2.setPosition(-200, 20, 0);
+        light3.color.set(0, 0, 1);
+        light3.setPosition(0, 20, 200);
+        light4.color.set(1, 1, 1);
+        light4.setPosition(0, 20, -200);
 
         cube.setPosition(4, 0f, -14);
 
@@ -196,7 +209,8 @@ public class InitScene extends Scene {
                 .bindFrameBuffer(
                         frameBuffer,
                         RenderPlanBuilder
-                                .createPlan(cameraAsset.camera, light, fog)
+                                .createPlan(cameraAsset.camera, fog)
+                                .loadLights(light1, light2, light3, light4)
                                 .loadModels(cube)
                                 .loadModels(trees)
                                 .loadTerrains(terrain)

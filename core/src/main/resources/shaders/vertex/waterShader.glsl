@@ -1,5 +1,13 @@
 #version 330 core
 
+const int MAX_LIGHTS = 4;
+
+struct Light {
+    vec4 color;
+    vec3 position;
+    vec2 bias;
+};
+
 const float PI = 3.1415926535897932384626433832795;
 
 const float waveLength = 10.0;
@@ -26,9 +34,7 @@ uniform mat4 modelMatrix;
 uniform mat4 viewMatrix;
 uniform mat4 projectionMatrix;
 // LIGHT
-uniform vec3 lightPosition;
-uniform vec4 lightColor;
-uniform vec2 lightBias;
+uniform Light lights[MAX_LIGHTS];
 // FOG
 uniform float fogGradient;
 uniform float fogDensity;
@@ -43,17 +49,17 @@ float calculateVisibilityFactor(vec3 viewPosition) {
     return clamp(visiblity, 0.0, 1.0);
 }
 
-vec3 calcSpecularLighting(vec3 toCamVector, vec3 toLightVector, vec3 normal){
+vec3 calcSpecularLighting(Light light, vec3 toCamVector, vec3 toLightVector, vec3 normal){
 	vec3 reflectedLightDirection = reflect(-toLightVector, normal);
 	float specularFactor = dot(reflectedLightDirection , toCamVector);
 	specularFactor = max(specularFactor, 0.0);
 	specularFactor = pow(specularFactor, shineDamper);
-	return specularFactor * specularReflectivity * lightColor.xyz;
+	return specularFactor * specularReflectivity * light.color.xyz;
 }
 
-vec3 calculateDiffuseLighting(vec3 toLightVector, vec3 normal){
+vec3 calculateDiffuseLighting(Light light, vec3 toLightVector, vec3 normal){
 	float brightness = max(dot(toLightVector, normal), 0.0);
-	return (lightColor.xyz * lightBias.x) + (brightness * lightColor.xyz * lightBias.y);
+	return (light.color.xyz * light.bias.x) + (brightness * light.color.xyz * light.bias.y);
 }
 
 vec3 calcNormal(vec3 vertex0, vec3 vertex1, vec3 vertex2){
@@ -98,7 +104,12 @@ void main(void) {
     vNormal = calcNormal(currentVertex, vertex1, vertex2);
     vToCameraVector = normalize(cameraPosition - currentVertex);
     vVisibility = calculateVisibilityFactor(viewPosition.xyz);
-    vec3 toLightVector = normalize(lightPosition);
-	vSpecular = calcSpecularLighting(vToCameraVector, toLightVector, vNormal);
-    vDiffuse = calculateDiffuseLighting(toLightVector, vNormal);
+
+    vSpecular = vec3(0);
+    vDiffuse = vec3(0);
+    for (int i = 0; i < MAX_LIGHTS; i++) {
+        vec3 toLightVector = normalize(lights[i].position);
+        vSpecular += calcSpecularLighting(lights[i], vToCameraVector, toLightVector, vNormal);
+        vDiffuse += calculateDiffuseLighting(lights[i], toLightVector, vNormal);
+    }
 }

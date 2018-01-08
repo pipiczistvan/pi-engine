@@ -1,5 +1,12 @@
 #version 330 core
 
+const int MAX_LIGHTS = 4;
+
+struct Light {
+    vec4 color;
+    vec3 position;
+};
+
 layout (location = 0) in vec3 Position;
 layout (location = 2) in vec3 Color;
 layout (location = 3) in vec3 Normal;
@@ -15,9 +22,7 @@ uniform mat4 modelMatrix;
 uniform mat4 viewMatrix;
 uniform mat4 projectionMatrix;
 // LIGHT
-uniform float lightEnabled;
-uniform vec4 lightColor;
-uniform vec3 lightPosition;
+uniform Light lights[MAX_LIGHTS];
 // FOG
 uniform float fogGradient;
 uniform float fogDensity;
@@ -30,16 +35,12 @@ float calculateVisibilityFactor(vec3 viewPosition) {
     return clamp(visiblity, 0.0, 1.0);
 }
 
-vec4 calculateLightFactor(vec3 positionVector, vec3 normalVector) {
-    if (lightEnabled < 0.5) {
-        return vec4(1.0);
-    }
+vec4 calculateLightFactor(Light light, vec3 vertexPosition, vec3 vertexNormal) {
+    vec3 toLightVector = light.position - vertexPosition;
 
-    vec3 toLightVector = lightPosition - positionVector;
-
-    float nDot1 = dot(normalize(toLightVector), normalize(normalVector));
-    float brightness = max(nDot1, 0.2);
-    return brightness * lightColor;
+    float nDot1 = dot(normalize(toLightVector), vertexNormal);
+    float brightness = max(nDot1, 0.0);
+    return brightness * light.color;
 }
 
 void main(void) {
@@ -48,7 +49,12 @@ void main(void) {
     vec4 worldNormal = modelMatrix * vec4(Normal, 0.0);
     gl_ClipDistance[0] = dot(worldPosition, clippingPlane);
 
-    vec4 lightFactor = calculateLightFactor(worldPosition.xyz, worldNormal.xyz);
+    vec3 normalizedVertexNormal = normalize(worldNormal.xyz);
+    vec4 lightFactor = vec4(0);
+    for(int i = 0; i < MAX_LIGHTS; i++) {
+        lightFactor += calculateLightFactor(lights[i], worldPosition.xyz, normalizedVertexNormal);
+    }
+    lightFactor = max(lightFactor, 0.2);
 
     vColor = lightFactor * vec4(Color, 1.0);
     vVisibility = calculateVisibilityFactor(viewPosition.xyz);

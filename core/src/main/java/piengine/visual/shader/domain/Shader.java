@@ -13,6 +13,9 @@ import java.lang.reflect.InvocationTargetException;
 
 public class Shader implements Domain<ShaderDao> {
 
+    // todo: temporary
+    protected static final int MAX_LIGHTS = 4;
+
     private ShaderService shaderService;
     private final ShaderDao dao;
 
