@@ -4,6 +4,7 @@ import org.joml.Matrix4f;
 import org.joml.Vector4f;
 import piengine.core.base.type.color.Color;
 import piengine.core.utils.ColorUtils;
+import piengine.visual.fog.Fog;
 import piengine.visual.light.Light;
 import piengine.visual.shader.domain.Shader;
 import piengine.visual.shader.domain.ShaderDao;
@@ -19,6 +20,9 @@ public class WorldShader extends Shader {
     private int location_color;
     private int location_textureEnabled;
     private int location_clippingPlane;
+    private int location_fogColor;
+    private int location_fogDensity;
+    private int location_fogGradient;
 
     public WorldShader(final ShaderDao dao) {
         super(dao);
@@ -35,6 +39,9 @@ public class WorldShader extends Shader {
         location_color = getUniformLocation("color");
         location_textureEnabled = getUniformLocation("textureEnabled");
         location_clippingPlane = getUniformLocation("clippingPlane");
+        location_fogColor = getUniformLocation("fogColor");
+        location_fogDensity = getUniformLocation("fogDensity");
+        location_fogGradient = getUniformLocation("fogGradient");
     }
 
     public WorldShader start() {
@@ -97,6 +104,14 @@ public class WorldShader extends Shader {
 
     public WorldShader loadClippingPlane(final Vector4f clippingPlane) {
         loadUniform(location_clippingPlane, clippingPlane);
+
+        return this;
+    }
+
+    public WorldShader loadFog(final Fog fog) {
+        loadUniform(location_fogColor, fog.color);
+        loadUniform(location_fogDensity, fog.density);
+        loadUniform(location_fogGradient, fog.gradient);
 
         return this;
     }

@@ -3,6 +3,7 @@ package piengine.visual.render.domain.plan;
 import org.joml.Vector2i;
 import piengine.core.base.type.color.Color;
 import piengine.visual.camera.domain.Camera;
+import piengine.visual.fog.Fog;
 import piengine.visual.framebuffer.domain.FrameBuffer;
 import piengine.visual.light.Light;
 import piengine.visual.render.domain.fragment.RenderFragment;
@@ -25,8 +26,8 @@ public abstract class RenderPlanBuilder<B extends RenderPlanBuilder<B, C>, C ext
         this.context = context;
     }
 
-    public static WorldRenderPlanBuilder createPlan(final Camera camera, final Light light) {
-        return new WorldRenderPlanBuilder(camera, light);
+    public static WorldRenderPlanBuilder createPlan(final Camera camera, final Light light, final Fog fog) {
+        return new WorldRenderPlanBuilder(camera, light, fog);
     }
 
     public static GuiRenderPlanBuilder createPlan(final Vector2i viewport) {

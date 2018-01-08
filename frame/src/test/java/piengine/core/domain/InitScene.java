@@ -20,6 +20,7 @@ import piengine.object.water.domain.Water;
 import piengine.object.water.domain.WaterKey;
 import piengine.object.water.manager.WaterManager;
 import piengine.visual.camera.asset.CameraAssetArgument;
+import piengine.visual.fog.Fog;
 import piengine.visual.framebuffer.domain.FrameBuffer;
 import piengine.visual.framebuffer.domain.FrameBufferData;
 import piengine.visual.framebuffer.manager.FrameBufferManager;
@@ -71,6 +72,7 @@ public class InitScene extends Scene {
     private FrameBuffer frameBuffer;
     private FirstPersonCameraAsset cameraAsset;
     private Light light;
+    private Fog fog;
     private Terrain terrain;
     private Water water;
     private Model cube;
@@ -122,6 +124,7 @@ public class InitScene extends Scene {
                 get(CAMERA_LOOK_SPEED),
                 get(CAMERA_MOVE_SPEED)));
         light = new Light(this);
+        fog = new Fog(ColorUtils.WHITE, 0.015f, 1.5f);
 
         cube = modelManager.supply("cube", this, ColorUtils.RED);
 
@@ -141,7 +144,7 @@ public class InitScene extends Scene {
 
     @Override
     protected void initializeAssets() {
-        light.setPosition(0, 40, 10);
+        light.setPosition(200, 20, 0);
 
         cube.setPosition(4, 0f, -14);
 
@@ -193,7 +196,7 @@ public class InitScene extends Scene {
                 .bindFrameBuffer(
                         frameBuffer,
                         RenderPlanBuilder
-                                .createPlan(cameraAsset.camera, light)
+                                .createPlan(cameraAsset.camera, light, fog)
                                 .loadModels(cube)
                                 .loadModels(trees)
                                 .loadTerrains(terrain)

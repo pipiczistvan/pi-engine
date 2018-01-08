@@ -44,6 +44,7 @@ public class WaterRenderService extends AbstractRenderService<WaterShader, Rende
                 .loadViewMatrix(context.camera.getView())
                 .loadCameraPosition(context.camera.getPosition())
                 .loadLight(context.light)
+                .loadFog(context.fog)
                 .loadTextureUnits();
 
         for (Water water : context.waters) {

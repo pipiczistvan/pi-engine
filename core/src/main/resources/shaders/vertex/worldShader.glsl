@@ -6,34 +6,51 @@ layout (location = 3) in vec3 Normal;
 
 out vec2 vTextureCoord;
 flat out vec4 vColor;
+out float vVisibility;
 
+//////////////
+// UNIFORMS //
+//////////////
+// TRANSFORMATION
 uniform mat4 modelMatrix;
 uniform mat4 viewMatrix;
 uniform mat4 projectionMatrix;
+// LIGHT
 uniform float lightEnabled;
-uniform vec3 lightColor;
+uniform vec4 lightColor;
 uniform vec3 lightPosition;
+// FOG
+uniform float fogGradient;
+uniform float fogDensity;
+// CLIPPING PLANE
 uniform vec4 clippingPlane;
 
-vec3 calculateLightFactor(vec3 positionVector, vec3 normalVector);
-
-void main(void) {
-    vec4 worldPosition = modelMatrix * vec4(Position, 1.0);
-    vec4 worldNormal = modelMatrix * vec4(Normal, 0.0);
-    gl_ClipDistance[0] = dot(worldPosition, clippingPlane);
-
-    vec3 lightFactor = lightEnabled > 0.5 ? calculateLightFactor(worldPosition.xyz, worldNormal.xyz) : vec3(1.0);
-
-    vColor = vec4(lightFactor, 1.0);
-    vTextureCoord = TextureCoord;
-    gl_Position = projectionMatrix * viewMatrix * worldPosition;
+float calculateVisibilityFactor(vec3 viewPosition) {
+    float distance = length(viewPosition);
+    float visiblity = exp(-pow(distance * fogDensity, fogGradient));
+    return clamp(visiblity, 0.0, 1.0);
 }
 
-vec3 calculateLightFactor(vec3 positionVector, vec3 normalVector) {
+vec4 calculateLightFactor(vec3 positionVector, vec3 normalVector) {
+    if (lightEnabled < 0.5) {
+        return vec4(1.0);
+    }
+
     vec3 toLightVector = lightPosition - positionVector;
 
-    // LIGHT
     float nDot1 = dot(normalize(toLightVector), normalize(normalVector));
     float brightness = max(nDot1, 0.2);
     return brightness * lightColor;
+}
+
+void main(void) {
+    vec4 worldPosition = modelMatrix * vec4(Position, 1.0);
+    vec4 viewPosition = viewMatrix * worldPosition;
+    vec4 worldNormal = modelMatrix * vec4(Normal, 0.0);
+    gl_ClipDistance[0] = dot(worldPosition, clippingPlane);
+
+    vColor = calculateLightFactor(worldPosition.xyz, worldNormal.xyz);
+    vTextureCoord = TextureCoord;
+    vVisibility = calculateVisibilityFactor(viewPosition.xyz);
+    gl_Position = projectionMatrix * viewPosition;
 }

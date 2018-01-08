@@ -2,6 +2,7 @@ package piengine.visual.render.shader;
 
 import org.joml.Matrix4f;
 import org.joml.Vector4f;
+import piengine.visual.fog.Fog;
 import piengine.visual.light.Light;
 import piengine.visual.shader.domain.Shader;
 import piengine.visual.shader.domain.ShaderDao;
@@ -16,6 +17,9 @@ public class TerrainShader extends Shader {
     private int location_lightColor;
     private int location_color;
     private int location_clippingPlane;
+    private int location_fogColor;
+    private int location_fogDensity;
+    private int location_fogGradient;
 
     public TerrainShader(final ShaderDao dao) {
         super(dao);
@@ -31,6 +35,9 @@ public class TerrainShader extends Shader {
         location_lightColor = getUniformLocation("lightColor");
         location_color = getUniformLocation("color");
         location_clippingPlane = getUniformLocation("clippingPlane");
+        location_fogColor = getUniformLocation("fogColor");
+        location_fogDensity = getUniformLocation("fogDensity");
+        location_fogGradient = getUniformLocation("fogGradient");
     }
 
     public TerrainShader start() {
@@ -87,6 +94,14 @@ public class TerrainShader extends Shader {
 
     public TerrainShader loadClippingPlane(final Vector4f clippingPlane) {
         loadUniform(location_clippingPlane, clippingPlane);
+
+        return this;
+    }
+
+    public TerrainShader loadFog(final Fog fog) {
+        loadUniform(location_fogColor, fog.color);
+        loadUniform(location_fogDensity, fog.density);
+        loadUniform(location_fogGradient, fog.gradient);
 
         return this;
     }

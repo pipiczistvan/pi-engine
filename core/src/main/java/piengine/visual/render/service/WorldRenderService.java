@@ -39,6 +39,7 @@ public class WorldRenderService extends AbstractRenderService<WorldShader, Rende
 
         shader.start()
                 .loadLight(context.light)
+                .loadFog(context.fog)
                 .loadProjectionMatrix(context.camera.getProjection())
                 .loadViewMatrix(context.camera.getView())
                 .loadClippingPlane(context.clippingPlane);

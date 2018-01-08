@@ -16,27 +16,44 @@ out vec3 vToCameraVector;
 out vec3 vNormal;
 out vec3 vSpecular;
 out vec3 vDiffuse;
+out float vVisibility;
 
+//////////////
+// UNIFORMS //
+//////////////
+// TRANSFORMATION
 uniform mat4 modelMatrix;
 uniform mat4 viewMatrix;
 uniform mat4 projectionMatrix;
-uniform vec3 cameraPosition;
-uniform float waveFactor;
+// LIGHT
 uniform vec3 lightPosition;
-uniform vec3 lightColor;
+uniform vec4 lightColor;
 uniform vec2 lightBias;
+// FOG
+uniform float fogGradient;
+uniform float fogDensity;
+// CAMERA
+uniform vec3 cameraPosition;
+// WAVE
+uniform float waveFactor;
+
+float calculateVisibilityFactor(vec3 viewPosition) {
+    float distance = length(viewPosition);
+    float visiblity = exp(-pow(distance * fogDensity, fogGradient));
+    return clamp(visiblity, 0.0, 1.0);
+}
 
 vec3 calcSpecularLighting(vec3 toCamVector, vec3 toLightVector, vec3 normal){
 	vec3 reflectedLightDirection = reflect(-toLightVector, normal);
 	float specularFactor = dot(reflectedLightDirection , toCamVector);
 	specularFactor = max(specularFactor, 0.0);
 	specularFactor = pow(specularFactor, shineDamper);
-	return specularFactor * specularReflectivity * lightColor;
+	return specularFactor * specularReflectivity * lightColor.xyz;
 }
 
 vec3 calculateDiffuseLighting(vec3 toLightVector, vec3 normal){
 	float brightness = max(dot(toLightVector, normal), 0.0);
-	return (lightColor * lightBias.x) + (brightness * lightColor * lightBias.y);
+	return (lightColor.xyz * lightBias.x) + (brightness * lightColor.xyz * lightBias.y);
 }
 
 vec3 calcNormal(vec3 vertex0, vec3 vertex1, vec3 vertex2){
@@ -75,12 +92,13 @@ void main(void) {
     vertex2 = applyDistortion(vertex2);
 
     vClipSpaceReal = projectionViewMatrix * vec4(currentVertex, 1.0);
+    vec4 viewPosition = viewMatrix * vec4(currentVertex, 1.0);
     gl_Position = vClipSpaceReal;
 
     vNormal = calcNormal(currentVertex, vertex1, vertex2);
     vToCameraVector = normalize(cameraPosition - currentVertex);
+    vVisibility = calculateVisibilityFactor(viewPosition.xyz);
     vec3 toLightVector = normalize(lightPosition);
-
 	vSpecular = calcSpecularLighting(vToCameraVector, toLightVector, vNormal);
     vDiffuse = calculateDiffuseLighting(toLightVector, vNormal);
 }

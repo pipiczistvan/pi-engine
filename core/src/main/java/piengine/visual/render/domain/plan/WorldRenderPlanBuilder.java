@@ -6,6 +6,7 @@ import piengine.object.model.domain.Model;
 import piengine.object.terrain.domain.Terrain;
 import piengine.object.water.domain.Water;
 import piengine.visual.camera.domain.Camera;
+import piengine.visual.fog.Fog;
 import piengine.visual.light.Light;
 import piengine.visual.render.domain.fragment.domain.RenderFragmentType;
 import piengine.visual.render.domain.fragment.domain.RenderWorldPlanContext;
@@ -17,7 +18,7 @@ import static piengine.visual.render.domain.fragment.domain.RenderFragmentType.R
 
 public class WorldRenderPlanBuilder extends RenderPlanBuilder<WorldRenderPlanBuilder, RenderWorldPlanContext> {
 
-    WorldRenderPlanBuilder(final Camera camera, final Light light) {
+    WorldRenderPlanBuilder(final Camera camera, final Light light, final Fog fog) {
         super(new RenderWorldPlanContext(
                 new ArrayList<>(),
                 new ArrayList<>(),
@@ -25,7 +26,8 @@ public class WorldRenderPlanBuilder extends RenderPlanBuilder<WorldRenderPlanBui
                 new Vector4f(),
                 new Vector2i(camera.viewport),
                 camera,
-                light
+                light,
+                fog
         ));
     }
 

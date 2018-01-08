@@ -15,12 +15,14 @@ in vec3 vToCameraVector;
 in vec3 vNormal;
 in vec3 vSpecular;
 in vec3 vDiffuse;
+in float vVisibility;
 
 out vec4 fColor;
 
 uniform sampler2D reflectionTexture;
 uniform sampler2D refractionTexture;
 uniform sampler2D depthTexture;
+uniform vec4 fogColor;
 
 vec3 calculateMurkiness(vec3 refractColor, float waterDepth) {
     float murkyFactor = smoothstep(0, murkyDepth, waterDepth);
@@ -72,4 +74,5 @@ void main(void) {
     finalColor = finalColor * vDiffuse + vSpecular;
 
     fColor = vec4(finalColor, clamp(waterDepth / edgeSoftness, 0.0, 1.0));
+    fColor = mix(fogColor, fColor, vVisibility);
 }

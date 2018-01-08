@@ -2,6 +2,7 @@ package piengine.visual.render.shader;
 
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
+import piengine.visual.fog.Fog;
 import piengine.visual.light.Light;
 import piengine.visual.shader.domain.Shader;
 import piengine.visual.shader.domain.ShaderDao;
@@ -19,6 +20,9 @@ public class WaterShader extends Shader {
     private int location_lightPosition;
     private int location_lightColor;
     private int location_lightBias;
+    private int location_fogColor;
+    private int location_fogDensity;
+    private int location_fogGradient;
 
     public WaterShader(final ShaderDao dao) {
         super(dao);
@@ -37,6 +41,9 @@ public class WaterShader extends Shader {
         location_lightPosition = getUniformLocation("lightPosition");
         location_lightColor = getUniformLocation("lightColor");
         location_lightBias = getUniformLocation("lightBias");
+        location_fogColor = getUniformLocation("fogColor");
+        location_fogDensity = getUniformLocation("fogDensity");
+        location_fogGradient = getUniformLocation("fogGradient");
     }
 
     public WaterShader start() {
@@ -85,6 +92,14 @@ public class WaterShader extends Shader {
         loadUniform(location_lightPosition, light.getPosition());
         loadUniform(location_lightColor, light.color);
         loadUniform(location_lightBias, light.bias);
+        return this;
+    }
+
+    public WaterShader loadFog(final Fog fog) {
+        loadUniform(location_fogColor, fog.color);
+        loadUniform(location_fogDensity, fog.density);
+        loadUniform(location_fogGradient, fog.gradient);
+
         return this;
     }
 }

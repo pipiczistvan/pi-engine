@@ -33,6 +33,7 @@ public class TerrainRenderService extends AbstractRenderService<TerrainShader, R
 
         shader.start()
                 .loadLight(context.light)
+                .loadFog(context.fog)
                 .loadProjectionMatrix(context.camera.getProjection())
                 .loadViewMatrix(context.camera.getView())
                 .loadClippingPlane(context.clippingPlane);

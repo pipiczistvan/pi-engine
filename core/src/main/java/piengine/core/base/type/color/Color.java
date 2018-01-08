@@ -2,10 +2,10 @@ package piengine.core.base.type.color;
 
 public class Color {
 
-    public final float r;
-    public final float g;
-    public final float b;
-    public final float a;
+    public float r;
+    public float g;
+    public float b;
+    public float a;
 
     public Color(final float r, final float g, final float b, final float a) {
         this.r = r;
@@ -18,7 +18,31 @@ public class Color {
         this(r, g, b, 1);
     }
 
-    public Color(final float rgba) {
-        this(rgba, rgba, rgba, rgba);
+    public Color(final float rgb) {
+        this(rgb, rgb, rgb);
+    }
+
+    public Color(final Color color) {
+        this(color.r, color.g, color.b, color.a);
+    }
+
+    public void set(final float r, final float g, final float b, final float a) {
+        this.r = r;
+        this.g = g;
+        this.b = b;
+        this.a = a;
+    }
+
+    public void set(final float r, final float g, final float b) {
+        this.r = r;
+        this.g = g;
+        this.b = b;
+    }
+
+    public void set(final Color color) {
+        this.r = color.r;
+        this.g = color.g;
+        this.b = color.b;
+        this.a = color.a;
     }
 }
