@@ -5,6 +5,7 @@ const int MAX_LIGHTS = 4;
 struct Light {
     vec4 color;
     vec3 position;
+    vec3 attenuation;
 };
 
 layout (location = 0) in vec3 Position;
@@ -38,10 +39,14 @@ float calculateVisibilityFactor(vec3 viewPosition) {
 
 vec4 calculateLightFactor(Light light, vec3 vertexPosition, vec3 vertexNormal) {
     vec3 toLightVector = light.position - vertexPosition;
+    float distance = length(toLightVector);
+    float attenuationFactor = light.attenuation.x +
+                (light.attenuation.y * distance) +
+                (light.attenuation.z * distance * distance);
 
     float nDot1 = dot(normalize(toLightVector), vertexNormal);
     float brightness = max(nDot1, 0.0);
-    return brightness * light.color;
+    return brightness * light.color / attenuationFactor;
 }
 
 void main(void) {
@@ -55,7 +60,7 @@ void main(void) {
     for(int i = 0; i < MAX_LIGHTS; i++) {
         lightFactor += calculateLightFactor(lights[i], worldPosition.xyz, normalizedVertexNormal);
     }
-    lightFactor = max(lightFactor, 0.2);
+    lightFactor = max(lightFactor, 0.1);
 
     vColor = lightFactor;
     vTextureCoord = TextureCoord;

@@ -81,6 +81,8 @@ public class InitScene extends Scene {
     private Model cube;
     private Model[] trees = new Model[40];
     private Image treeTexture;
+    private Model lamp;
+    private Image lampTexture;
     private Font font;
     private Text fpsText;
 
@@ -130,7 +132,10 @@ public class InitScene extends Scene {
         light2 = new Light(this);
         light3 = new Light(this);
         light4 = new Light(this);
-        fog = new Fog(ColorUtils.WHITE, 0.015f, 1.5f);
+        lampTexture = imageManager.supply("lamp");
+        lamp = modelManager.supply("lamp", this, lampTexture);
+
+        fog = new Fog(ColorUtils.BLACK, 0.015f, 1.5f);
 
         cube = modelManager.supply("cube", this, ColorUtils.RED);
 
@@ -150,13 +155,15 @@ public class InitScene extends Scene {
 
     @Override
     protected void initializeAssets() {
-        light1.color.set(1, 0, 0);
-        light1.setPosition(200, 20, 0);
-        light2.color.set(0, 1, 0);
+        light1.setColor(0.9568627451f, 0.96862745098f, 0.67843137255f);
+        light1.setPosition(0, 4, 0);
+        light1.setAttenuation(1, 0.01f, 0.002f);
+
+        light2.setColor(0, 1, 0);
         light2.setPosition(-200, 20, 0);
-        light3.color.set(0, 0, 1);
+        light3.setColor(0, 0, 1);
         light3.setPosition(0, 20, 200);
-        light4.color.set(1, 1, 1);
+        light4.setColor(1, 1, 1);
         light4.setPosition(0, 20, -200);
 
         cube.setPosition(4, 0f, -14);
@@ -189,6 +196,12 @@ public class InitScene extends Scene {
             tree.setScale(scale);
             tree.setPosition(x, y, z);
         }
+
+        float lampX = 0;
+        float lampZ = 0;
+        float lampY = terrain.getHeight(lampX, lampZ);
+        lamp.setScale(0.5f);
+        lamp.setPosition(lampX, lampY, lampZ);
     }
 
     @Override
@@ -210,12 +223,13 @@ public class InitScene extends Scene {
                         frameBuffer,
                         RenderPlanBuilder
                                 .createPlan(cameraAsset.camera, fog)
-                                .loadLights(light1, light2, light3, light4)
+                                .loadLights(light1)
                                 .loadModels(cube)
                                 .loadModels(trees)
+                                .loadModels(lamp)
                                 .loadTerrains(terrain)
                                 .loadWaters(water)
-                                .clearScreen(ColorUtils.WHITE)
+                                .clearScreen(ColorUtils.BLACK)
                                 .render()
                 )
                 .loadModels(squareAsset.getModels())

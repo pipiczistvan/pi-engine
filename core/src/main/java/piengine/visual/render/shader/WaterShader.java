@@ -1,11 +1,7 @@
 package piengine.visual.render.shader;
 
 import org.joml.Matrix4f;
-import org.joml.Vector2f;
 import org.joml.Vector3f;
-import piengine.core.base.type.color.Color;
-import piengine.core.utils.ColorUtils;
-import piengine.core.utils.VectorUtils;
 import piengine.visual.fog.Fog;
 import piengine.visual.light.Light;
 import piengine.visual.shader.domain.Shader;
@@ -29,6 +25,7 @@ public class WaterShader extends Shader {
     private int[] location_lights_position;
     private int[] location_lights_color;
     private int[] location_lights_bias;
+    private int[] location_lights_attenuation;
 
     public WaterShader(final ShaderDao dao) {
         super(dao);
@@ -51,10 +48,12 @@ public class WaterShader extends Shader {
         location_lights_position = new int[MAX_LIGHTS];
         location_lights_color = new int[MAX_LIGHTS];
         location_lights_bias = new int[MAX_LIGHTS];
+        location_lights_attenuation = new int[MAX_LIGHTS];
         for (int i = 0; i < MAX_LIGHTS; i++) {
             location_lights_position[i] = getUniformLocation("lights[" + i + "].position");
             location_lights_color[i] = getUniformLocation("lights[" + i + "].color");
             location_lights_bias[i] = getUniformLocation("lights[" + i + "].bias");
+            location_lights_attenuation[i] = getUniformLocation("lights[" + i + "].attenuation");
         }
     }
 
@@ -104,22 +103,11 @@ public class WaterShader extends Shader {
         int lightCount = lights.size();
 
         for (int i = 0; i < MAX_LIGHTS; i++) {
-            Vector3f position;
-            Color color;
-            Vector2f bias;
-            if (i < lightCount) {
-                Light light = lights.get(i);
-                position = light.getPosition();
-                color = light.color;
-                bias = light.bias;
-            } else {
-                position = VectorUtils.ZERO;
-                color = ColorUtils.BLACK;
-                bias = new Vector2f(0);
-            }
-            loadUniform(location_lights_position[i], position);
-            loadUniform(location_lights_color[i], color);
-            loadUniform(location_lights_bias[i], bias);
+            Light light = i < lightCount ? lights.get(i) : new Light(null);
+            loadUniform(location_lights_position[i], light.getPosition());
+            loadUniform(location_lights_color[i], light.getColor());
+            loadUniform(location_lights_bias[i], light.getBias());
+            loadUniform(location_lights_attenuation[i], light.getAttenuation());
         }
 
         return this;

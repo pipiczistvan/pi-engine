@@ -6,6 +6,7 @@ struct Light {
     vec4 color;
     vec3 position;
     vec2 bias;
+    vec3 attenuation;
 };
 
 const float PI = 3.1415926535897932384626433832795;
@@ -49,6 +50,11 @@ float calculateVisibilityFactor(vec3 viewPosition) {
     return clamp(visiblity, 0.0, 1.0);
 }
 
+float calculateAttenuationFactor(Light light, vec3 toLightVector) {
+    float distance = length(toLightVector);
+    return light.attenuation.x + (light.attenuation.y * distance) + (light.attenuation.z * distance * distance);
+}
+
 vec3 calcSpecularLighting(Light light, vec3 toCamVector, vec3 toLightVector, vec3 normal){
 	vec3 reflectedLightDirection = reflect(-toLightVector, normal);
 	float specularFactor = dot(reflectedLightDirection , toCamVector);
@@ -59,7 +65,7 @@ vec3 calcSpecularLighting(Light light, vec3 toCamVector, vec3 toLightVector, vec
 
 vec3 calculateDiffuseLighting(Light light, vec3 toLightVector, vec3 normal){
 	float brightness = max(dot(toLightVector, normal), 0.0);
-	return (light.color.xyz * light.bias.x) + (brightness * light.color.xyz * light.bias.y);
+	return brightness * ((light.color.xyz * light.bias.x) + (light.color.xyz * light.bias.y));
 }
 
 vec3 calcNormal(vec3 vertex0, vec3 vertex1, vec3 vertex2){
@@ -74,42 +80,46 @@ float generateOffset(float x, float z, float val1, float val2){
 	return waveAmplitude * 0.5 * (sin(radiansZ) + cos(radiansX));
 }
 
-vec3 applyDistortion(vec3 vertex){
+vec4 applyDistortion(vec4 vertex){
 	float xDistortion = generateOffset(vertex.x, vertex.z, 0.2, 0.1);
     float yDistortion = generateOffset(vertex.x, vertex.z, 0.1, 0.3);
     float zDistortion = generateOffset(vertex.x, vertex.z, 0.15, 0.2);
-	return vertex + vec3(xDistortion, yDistortion, zDistortion);
+	return vertex + vec4(xDistortion, yDistortion, zDistortion, 0.0);
 }
 
 void main(void) {
     vec3 currentVertex = vec3(Position.x, 0.0, Position.y);
-    vec3 vertex1 = currentVertex + vec3(Indicator.x, 0.0, Indicator.y);
-    vec3 vertex2 = currentVertex + vec3(Indicator.z, 0.0, Indicator.w);
+    vec3 neighbourVertex1 = currentVertex + vec3(Indicator.x, 0.0, Indicator.y);
+    vec3 neighbourVertex2 = currentVertex + vec3(Indicator.z, 0.0, Indicator.w);
 
-    currentVertex = (modelMatrix * vec4(currentVertex, 1.0)).xyz;
-    vertex1 = (modelMatrix * vec4(vertex1, 1.0)).xyz;
-    vertex2 = (modelMatrix * vec4(vertex2, 1.0)).xyz;
+    vec4 worldPosition = modelMatrix * vec4(currentVertex, 1.0);
+    vec4 worldNeighbourPosition1 = modelMatrix * vec4(neighbourVertex1, 1.0);
+    vec4 worldNeighbourPosition2 = modelMatrix * vec4(neighbourVertex2, 1.0);
+
     mat4 projectionViewMatrix = projectionMatrix * viewMatrix;
 
-    vClipSpaceGrid = projectionViewMatrix * vec4(currentVertex, 1.0);
+    vClipSpaceGrid = projectionViewMatrix * worldPosition;
 
-    currentVertex = applyDistortion(currentVertex);
-    vertex1 = applyDistortion(vertex1);
-    vertex2 = applyDistortion(vertex2);
+    worldPosition = applyDistortion(worldPosition);
+    worldNeighbourPosition1 = applyDistortion(worldNeighbourPosition1);
+    worldNeighbourPosition2 = applyDistortion(worldNeighbourPosition2);
 
-    vClipSpaceReal = projectionViewMatrix * vec4(currentVertex, 1.0);
-    vec4 viewPosition = viewMatrix * vec4(currentVertex, 1.0);
+    vClipSpaceReal = projectionViewMatrix * worldPosition;
     gl_Position = vClipSpaceReal;
 
-    vNormal = calcNormal(currentVertex, vertex1, vertex2);
-    vToCameraVector = normalize(cameraPosition - currentVertex);
+    vec4 viewPosition = viewMatrix * worldPosition;
+
+    vNormal = calcNormal(worldPosition.xyz, worldNeighbourPosition1.xyz, worldNeighbourPosition2.xyz);
+    vToCameraVector = normalize(cameraPosition - worldPosition.xyz);
     vVisibility = calculateVisibilityFactor(viewPosition.xyz);
 
     vSpecular = vec3(0);
     vDiffuse = vec3(0);
     for (int i = 0; i < MAX_LIGHTS; i++) {
-        vec3 toLightVector = normalize(lights[i].position);
-        vSpecular += calcSpecularLighting(lights[i], vToCameraVector, toLightVector, vNormal);
-        vDiffuse += calculateDiffuseLighting(lights[i], toLightVector, vNormal);
+        vec3 normalizedToLightVector = normalize(lights[i].position - worldPosition.xyz);
+        float attenuationFactor = calculateAttenuationFactor(lights[i], lights[i].position - worldPosition.xyz);
+        vSpecular += calcSpecularLighting(lights[i], vToCameraVector, normalize(lights[i].position), vNormal) / attenuationFactor;
+        vDiffuse += calculateDiffuseLighting(lights[i], normalizedToLightVector, vNormal) / attenuationFactor;
     }
+    vDiffuse = max(vDiffuse, 0.1);
 }
