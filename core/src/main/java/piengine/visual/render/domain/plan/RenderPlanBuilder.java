@@ -9,6 +9,7 @@ import piengine.visual.render.domain.fragment.RenderFragment;
 import piengine.visual.render.domain.fragment.domain.BindFrameBufferPlanContext;
 import piengine.visual.render.domain.fragment.domain.ClearScreenPlanContext;
 import piengine.visual.render.domain.fragment.domain.RenderFragmentType;
+import piengine.visual.skybox.domain.Skybox;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,8 +26,8 @@ public abstract class RenderPlanBuilder<B extends RenderPlanBuilder<B, C>, C ext
         this.context = context;
     }
 
-    public static WorldRenderPlanBuilder createPlan(final Camera camera, final Fog fog) {
-        return new WorldRenderPlanBuilder(camera, fog);
+    public static WorldRenderPlanBuilder createPlan(final Camera camera, final Fog fog, final Skybox skybox) {
+        return new WorldRenderPlanBuilder(camera, fog, skybox);
     }
 
     public static GuiRenderPlanBuilder createPlan(final Vector2i viewport) {

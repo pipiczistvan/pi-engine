@@ -22,6 +22,9 @@ import piengine.object.water.domain.Water;
 import piengine.object.water.domain.WaterKey;
 import piengine.object.water.manager.WaterManager;
 import piengine.visual.camera.asset.CameraAssetArgument;
+import piengine.visual.cubemap.domain.CubeMap;
+import piengine.visual.cubemap.domain.CubeMapKey;
+import piengine.visual.cubemap.manager.CubeMapManager;
 import piengine.visual.fog.Fog;
 import piengine.visual.framebuffer.domain.FrameBuffer;
 import piengine.visual.framebuffer.domain.FrameBufferData;
@@ -29,6 +32,9 @@ import piengine.visual.framebuffer.manager.FrameBufferManager;
 import piengine.visual.render.domain.plan.RenderPlan;
 import piengine.visual.render.domain.plan.RenderPlanBuilder;
 import piengine.visual.render.manager.RenderManager;
+import piengine.visual.skybox.domain.Skybox;
+import piengine.visual.skybox.domain.SkyboxKey;
+import piengine.visual.skybox.manager.SkyboxManager;
 import piengine.visual.window.manager.WindowManager;
 import piengine.visual.writing.font.domain.Font;
 import piengine.visual.writing.font.manager.FontManager;
@@ -66,6 +72,8 @@ public class InitScene extends Scene {
     private final TimeManager timeManager;
     private final FontManager fontManager;
     private final TextManager textManager;
+    private final CubeMapManager cubeMapManager;
+    private final SkyboxManager skyboxManager;
 
     private FrameBuffer frameBuffer;
     private FirstPersonCameraAsset cameraAsset;
@@ -81,6 +89,9 @@ public class InitScene extends Scene {
     private Font font;
     private Text fpsText;
 
+    private CubeMap cubeMap;
+    private Skybox skybox;
+
     private SquareAsset squareAsset;
     private ButtonAsset buttonAsset;
 
@@ -90,7 +101,8 @@ public class InitScene extends Scene {
                      final FrameBufferManager frameBufferManager, final TerrainManager terrainManager,
                      final WaterManager waterManager, final ModelManager modelManager,
                      final TimeManager timeManager, final FontManager fontManager,
-                     final TextManager textManager) {
+                     final TextManager textManager, final CubeMapManager cubeMapManager,
+                     final SkyboxManager skyboxManager) {
         super(renderManager, assetManager);
 
         this.inputManager = inputManager;
@@ -102,6 +114,8 @@ public class InitScene extends Scene {
         this.timeManager = timeManager;
         this.fontManager = fontManager;
         this.textManager = textManager;
+        this.cubeMapManager = cubeMapManager;
+        this.skyboxManager = skyboxManager;
     }
 
     @Override
@@ -139,6 +153,13 @@ public class InitScene extends Scene {
 
         font = fontManager.supply("candara");
         fpsText = textManager.supply(TextConfiguration.textConfig().withFont(font), this);
+
+        cubeMap = cubeMapManager.supply(new CubeMapKey(new String[]{
+                "skybox/nightRight", "skybox/nightLeft",
+                "skybox/nightTop", "skybox/nightBottom",
+                "skybox/nightBack", "skybox/nightFront"
+        }));
+        skybox = skyboxManager.supply(new SkyboxKey(500f, cubeMap));
     }
 
     @Override
@@ -198,7 +219,7 @@ public class InitScene extends Scene {
                 .bindFrameBuffer(
                         frameBuffer,
                         RenderPlanBuilder
-                                .createPlan(cameraAsset.camera, fog)
+                                .createPlan(cameraAsset.camera, fog, skybox)
                                 .loadLights(lampAsset.getLights())
                                 .loadModels(lampAsset.getModels())
                                 .loadModels(cube)

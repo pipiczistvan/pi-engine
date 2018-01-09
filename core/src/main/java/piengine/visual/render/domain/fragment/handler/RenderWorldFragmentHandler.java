@@ -6,6 +6,7 @@ import piengine.visual.framebuffer.service.FrameBufferService;
 import piengine.visual.render.domain.fragment.domain.RenderFragmentType;
 import piengine.visual.render.domain.fragment.domain.RenderWorldPlanContext;
 import piengine.visual.render.service.ClearScreenRenderService;
+import piengine.visual.render.service.SkyboxRenderService;
 import piengine.visual.render.service.TerrainRenderService;
 import piengine.visual.render.service.WaterRenderService;
 import piengine.visual.render.service.WorldRenderService;
@@ -20,16 +21,18 @@ public class RenderWorldFragmentHandler implements FragmentHandler<RenderWorldPl
     private final WorldRenderService worldRenderService;
     private final TerrainRenderService terrainRenderService;
     private final WaterRenderService waterRenderService;
+    private final SkyboxRenderService skyboxRenderService;
     private final FrameBufferService frameBufferService;
     private final ClearScreenRenderService clearScreenRenderService;
 
     @Wire
     public RenderWorldFragmentHandler(final WorldRenderService worldRenderService, final TerrainRenderService terrainRenderService,
-                                      final WaterRenderService waterRenderService, final FrameBufferService frameBufferService,
-                                      final ClearScreenRenderService clearScreenRenderService) {
+                                      final WaterRenderService waterRenderService, final SkyboxRenderService skyboxRenderService,
+                                      final FrameBufferService frameBufferService, final ClearScreenRenderService clearScreenRenderService) {
         this.worldRenderService = worldRenderService;
         this.terrainRenderService = terrainRenderService;
         this.waterRenderService = waterRenderService;
+        this.skyboxRenderService = skyboxRenderService;
         this.frameBufferService = frameBufferService;
         this.clearScreenRenderService = clearScreenRenderService;
     }
@@ -53,6 +56,7 @@ public class RenderWorldFragmentHandler implements FragmentHandler<RenderWorldPl
                 clearScreenRenderService.clearScreen(ColorUtils.WHITE);
                 terrainRenderService.process(context);
                 worldRenderService.process(context);
+                skyboxRenderService.process(context);
 
                 context.camera.addPosition(0, distance, 0);
                 context.camera.addRotation(0, cameraPitch * 2, 0);
@@ -66,6 +70,7 @@ public class RenderWorldFragmentHandler implements FragmentHandler<RenderWorldPl
                 clearScreenRenderService.clearScreen(ColorUtils.WHITE);
                 terrainRenderService.process(context);
                 worldRenderService.process(context);
+                skyboxRenderService.process(context);
             }
             frameBufferService.unbind();
         }
@@ -74,6 +79,7 @@ public class RenderWorldFragmentHandler implements FragmentHandler<RenderWorldPl
         context.viewport.set(context.camera.viewport);
         terrainRenderService.process(context);
         worldRenderService.process(context);
+        skyboxRenderService.process(context);
 
         waterRenderService.process(context);
     }
