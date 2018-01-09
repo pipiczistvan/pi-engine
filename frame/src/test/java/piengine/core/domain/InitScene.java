@@ -209,6 +209,8 @@ public class InitScene extends Scene {
 
         textManager.update(fpsText, TextConfiguration.textConfig().withFont(font).withFontSize(2).withText("FPS: " + timeManager.getFPS()));
 
+        skybox.addRotation((float) (0.5f * delta));
+
         super.update(delta);
     }
 

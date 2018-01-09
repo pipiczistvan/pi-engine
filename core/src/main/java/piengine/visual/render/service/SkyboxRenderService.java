@@ -36,7 +36,8 @@ public class SkyboxRenderService extends AbstractRenderService<SkyboxShader, Ren
 
         shader.start()
                 .loadProjectionMatrix(context.camera.getProjection())
-                .loadViewMatrix(context.camera.getView());
+                .loadViewMatrix(context.skybox.getView(context.camera))
+                .loadFog(context.fog);
 
         textureService.bindCubeMap(context.skybox.cubeMap);
         draw(context.skybox.getDao());
