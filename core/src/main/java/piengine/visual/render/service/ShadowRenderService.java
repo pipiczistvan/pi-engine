@@ -14,6 +14,8 @@ import piengine.visual.shader.service.ShaderService;
 import puppeteer.annotation.premade.Component;
 import puppeteer.annotation.premade.Wire;
 
+import static org.lwjgl.opengl.GL11.GL_FRONT;
+
 @Component
 public class ShadowRenderService extends AbstractRenderService<ShadowShader, RenderWorldPlanContext> {
 
@@ -52,6 +54,7 @@ public class ShadowRenderService extends AbstractRenderService<ShadowShader, Ren
     @Override
     protected RenderConfig createRenderConfig() {
         return RenderConfigBuilder.create()
+                .withCullFace(GL_FRONT)
                 .build();
     }
 

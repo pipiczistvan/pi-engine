@@ -19,7 +19,7 @@ public class Shadow implements Domain<ShadowDao>, Updatable {
 
     private static final Matrix4f OFFSET_MATRIX = createOffset();//todo: temp
     //todo: temporary(dinamikus)
-    private static final float OFFSET = 10;
+    private static final float OFFSET = 1;
     private static final float SHADOW_MAX_DISTANCE = 30;
     private static final float SHADOW_MIN_DISTANCE = 0.1f;//todo: camera nearplane
     private static final Vector4f UP = new Vector4f(0, 1, 0, 0);
