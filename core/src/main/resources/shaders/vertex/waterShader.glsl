@@ -1,6 +1,8 @@
 #version 330 core
 
 const int MAX_LIGHTS = 4;
+const float SHADOW_DISTANCE = 30.0;
+const float TRANSITION_DISTANCE = 5.0;
 
 struct Light {
     vec4 color;
@@ -26,6 +28,7 @@ out vec3 vNormal;
 out vec3 vSpecular;
 out vec3 vDiffuse;
 out float vVisibility;
+out vec4 vShadowCoords;
 
 //////////////
 // UNIFORMS //
@@ -43,9 +46,10 @@ uniform float fogDensity;
 uniform vec3 cameraPosition;
 // WAVE
 uniform float waveFactor;
+// SHADOW
+uniform mat4 shadowMapSpaceMatrix;
 
-float calculateVisibilityFactor(vec3 viewPosition) {
-    float distance = length(viewPosition);
+float calculateVisibilityFactor(float distance) {
     float visiblity = exp(-pow(distance * fogDensity, fogGradient));
     return clamp(visiblity, 0.0, 1.0);
 }
@@ -109,9 +113,12 @@ void main(void) {
 
     vec4 viewPosition = viewMatrix * worldPosition;
 
+    float distance = length(viewPosition);
+
     vNormal = calcNormal(worldPosition.xyz, worldNeighbourPosition1.xyz, worldNeighbourPosition2.xyz);
     vToCameraVector = normalize(cameraPosition - worldPosition.xyz);
-    vVisibility = calculateVisibilityFactor(viewPosition.xyz);
+    vVisibility = calculateVisibilityFactor(distance);
+    vShadowCoords = shadowMapSpaceMatrix * worldPosition;
 
     vSpecular = vec3(0);
     vDiffuse = vec3(0);
@@ -122,4 +129,8 @@ void main(void) {
         vDiffuse += calculateDiffuseLighting(lights[i], normalizedToLightVector, vNormal) / attenuationFactor;
     }
     vDiffuse = max(vDiffuse, 0.1);
+
+    distance = distance - (SHADOW_DISTANCE - TRANSITION_DISTANCE);
+    distance = distance / TRANSITION_DISTANCE;
+    vShadowCoords.w = clamp(1.0 - distance, 0.0, 1.0);
 }

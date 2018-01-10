@@ -16,9 +16,11 @@ import static piengine.visual.camera.domain.ProjectionType.ORTHOGRAPHIC;
 
 public class Shadow implements Domain<ShadowDao>, Updatable {
 
+
+    private static final Matrix4f OFFSET_MATRIX = createOffset();//todo: temp
     //todo: temporary(dinamikus)
     private static final float OFFSET = 10;
-    private static final float SHADOW_MAX_DISTANCE = 100;
+    private static final float SHADOW_MAX_DISTANCE = 30;
     private static final float SHADOW_MIN_DISTANCE = 0.1f;//todo: camera nearplane
     private static final Vector4f UP = new Vector4f(0, 1, 0, 0);
     private static final Vector4f FORWARD = new Vector4f(0, 0, -1, 0);
@@ -29,6 +31,7 @@ public class Shadow implements Domain<ShadowDao>, Updatable {
     private final Vector2i lightViewport;
 
     public final FrameBuffer shadowMap;
+    public final Matrix4f shadowMapSpaceMatrix;
     public final Camera lightCamera;
 
     private float farHeight, farWidth, nearHeight, nearWidth;
@@ -45,7 +48,8 @@ public class Shadow implements Domain<ShadowDao>, Updatable {
         this.light = light;
         this.shadowMap = shadowMap;
 
-        this.lightViewport = new Vector2i(50, 50);
+        this.shadowMapSpaceMatrix = new Matrix4f();
+        this.lightViewport = new Vector2i(0);
         this.lightCamera = new FirstPersonCamera(null, lightViewport, new CameraAttribute(0, -30, 20), ORTHOGRAPHIC);
         //todo: biztos csak 1szer kell?
         calculateWidthsAndHeights();
@@ -53,23 +57,12 @@ public class Shadow implements Domain<ShadowDao>, Updatable {
 
     @Override
     public void update(double delta) {
-        // VIEW UPDATE
-        Vector3f lightPosition = light.getPosition();
-        Vector3f lightDirection = new Vector3f(lightPosition).negate().normalize();
-
-        float yaw = (float) Math.toDegrees(((float) Math.atan(lightDirection.x / -lightDirection.z)));
-        float pitch = (float) Math.toDegrees(Math.asin(lightDirection.y));
-
-//        lightCamera.setPosition(lightPosition.x, lightPosition.y, lightPosition.z);
-        lightCamera.setRotation(yaw, pitch, 0);
-
-        //todo: farplane, nearplane, viewport.x, viewport.y
         // PROJECTION UPDATE
         Vector3f cameraPosition = playerCamera.getPosition();
         Vector3f cameraRotation = playerCamera.getRotation();
 
         Matrix4f rotation = calculateCameraRotationMatrix(cameraRotation);
-        Vector4f forwardVector = new Vector4f();
+        Vector4f forwardVector = new Vector4f(0, 0, 0, 1);
         rotation.transform(FORWARD, forwardVector);
 
         Vector3f toFar = new Vector3f(forwardVector.x, forwardVector.y, forwardVector.z);
@@ -86,7 +79,7 @@ public class Shadow implements Domain<ShadowDao>, Updatable {
         boolean first = true;
         for (Vector4f point : points) {
             if (first) {
-                lightViewport.x = (int) point.x;
+                minX = point.x;
                 maxX = point.x;
                 minY = point.y;
                 maxY = point.y;
@@ -112,15 +105,49 @@ public class Shadow implements Domain<ShadowDao>, Updatable {
             }
         }
         maxZ += OFFSET;
+
         lightViewport.x = (int) (maxX - minX) / 2;
         lightViewport.y = (int) (maxY - minY) / 2;
-        lightCamera.attribute.nearPlane = -(maxZ - minZ) / 2f;
+        lightCamera.attribute.nearPlane = -(maxZ - minZ);
         lightCamera.attribute.farPlane = (maxZ - minZ) / 2f;
 
         lightCamera.recalculateProjection();
 
+        // VIEW UPDATE
+        Vector3f lightPosition = light.getPosition();
+        Vector3f lightDirection = new Vector3f(lightPosition).negate().normalize();
 
-        lightCamera.setPosition((maxX + minX) / 2f, (maxY + minY) / 2f, (maxZ + minZ) / 2f);
+        float yaw = (float) Math.toDegrees(((float) Math.atan(lightDirection.x / -lightDirection.z)));
+        float pitch = (float) Math.toDegrees(Math.asin(lightDirection.y));
+
+        Vector3f center = getCenter(lightCamera.view);
+
+//        lightCamera.setPosition(lightPosition.x, lightPosition.y, lightPosition.z);
+        lightCamera.setRotation(yaw, pitch, 0);
+        lightCamera.setPosition(center.x, center.y, center.z);
+
+        lightCamera.recalculateView();
+
+        lightCamera.getProjection().mul(lightCamera.view, shadowMapSpaceMatrix);
+        OFFSET_MATRIX.mul(shadowMapSpaceMatrix, shadowMapSpaceMatrix);
+    }
+
+    private static Matrix4f createOffset() {
+        Matrix4f offset = new Matrix4f();
+        offset.translate(new Vector3f(0.5f, 0.5f, 0.5f));
+        offset.scale(new Vector3f(0.5f, 0.5f, 0.5f));
+        return offset;
+    }
+
+    private Vector3f getCenter(Matrix4f lightView) {
+        float x = (minX + maxX) / 2f;
+        float y = (minY + maxY) / 2f;
+        float z = (minZ + maxZ) / 2f;
+        Vector4f cen = new Vector4f(x, y, z, 1);
+        Matrix4f invertedLight = new Matrix4f();
+        lightView.invert(invertedLight);
+        invertedLight.transform(cen);
+        return new Vector3f(cen.x, cen.y, cen.z);
     }
 
     @Override
@@ -130,7 +157,7 @@ public class Shadow implements Domain<ShadowDao>, Updatable {
 
     private Vector4f[] calculateFrustumVertices(Matrix4f rotation, Vector3f forwardVector,
                                                 Vector3f centerNear, Vector3f centerFar) {
-        Vector4f upVector = new Vector4f();
+        Vector4f upVector = new Vector4f(0, 0, 0, 1);
         rotation.transform(UP, upVector);
 
         Vector3f rightVector = new Vector3f();
@@ -168,16 +195,15 @@ public class Shadow implements Domain<ShadowDao>, Updatable {
         startPoint.add(direction.x * width, direction.y * width, direction.z * width, point);
 
         Vector4f point4f = new Vector4f(point.x, point.y, point.z, 1f);
-        Matrix4f lightViewMatrix = lightCamera.getView();//todo: redundáns
+        Matrix4f lightViewMatrix = lightCamera.view;
         lightViewMatrix.transform(point4f, point4f);
         return point4f;
     }
 
     private Matrix4f calculateCameraRotationMatrix(final Vector3f cameraRotation) {
         Matrix4f rotation = new Matrix4f();
-        //todo: lehet rossz :(
-        rotation.rotate((float) Math.toRadians(-cameraRotation.y), new Vector3f(0, 1, 0));
-        rotation.rotate((float) Math.toRadians(-cameraRotation.x), new Vector3f(1, 0, 0));
+        rotation.rotate((float) Math.toRadians(-cameraRotation.x), new Vector3f(0, 1, 0));
+        rotation.rotate((float) Math.toRadians(cameraRotation.y), new Vector3f(1, 0, 0));
         return rotation;
     }
 

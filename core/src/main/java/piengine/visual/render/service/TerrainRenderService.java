@@ -8,17 +8,24 @@ import piengine.visual.render.domain.fragment.domain.RenderWorldPlanContext;
 import piengine.visual.render.interpreter.RenderInterpreter;
 import piengine.visual.render.shader.TerrainShader;
 import piengine.visual.shader.service.ShaderService;
+import piengine.visual.texture.service.TextureService;
 import puppeteer.annotation.premade.Component;
 import puppeteer.annotation.premade.Wire;
 
+import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
 import static piengine.visual.render.domain.config.ProvokingVertex.FIRST_VERTEX_CONVENTION;
 
 @Component
 public class TerrainRenderService extends AbstractRenderService<TerrainShader, RenderWorldPlanContext> {
 
+    private final TextureService textureService;
+
     @Wire
-    public TerrainRenderService(final ShaderService shaderService, final RenderInterpreter renderInterpreter) {
+    public TerrainRenderService(final ShaderService shaderService, final RenderInterpreter renderInterpreter,
+                                final TextureService textureService) {
         super(shaderService, renderInterpreter);
+
+        this.textureService = textureService;
     }
 
     @Override
@@ -36,7 +43,11 @@ public class TerrainRenderService extends AbstractRenderService<TerrainShader, R
                 .loadFog(context.fog)
                 .loadProjectionMatrix(context.camera.getProjection())
                 .loadViewMatrix(context.camera.getView())
-                .loadClippingPlane(context.clippingPlane);
+                .loadClippingPlane(context.clippingPlane)
+                .loadShadowMapSpaceMatrix(context.shadows.get(0).shadowMapSpaceMatrix)
+                .loadTextureUnits();//todo: pontosan 1 shadow kell
+
+        textureService.bind(GL_TEXTURE0, context.shadows.get(0).shadowMap);
 
         for (Terrain terrain : context.terrains) {
             shader.loadModelMatrix(terrain.getModelMatrix())

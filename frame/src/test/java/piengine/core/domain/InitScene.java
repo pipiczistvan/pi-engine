@@ -169,9 +169,9 @@ public class InitScene extends Scene {
                 "skybox/nightTop", "skybox/nightBottom",
                 "skybox/nightBack", "skybox/nightFront"
         }));
-        skybox = skyboxManager.supply(new SkyboxKey(500f, cubeMap));
+        skybox = skyboxManager.supply(new SkyboxKey(150f, cubeMap));
 
-        shadow = shadowManager.supply(new ShadowKey(light, cameraAsset.camera, new Vector2i(512)));
+        shadow = shadowManager.supply(new ShadowKey(light, cameraAsset.camera, new Vector2i(2048)));
         shadowMapFrame = createAsset(SquareAsset.class, new SquareAssetArgument(VIEWPORT, shadow.shadowMap));
     }
 
@@ -214,10 +214,9 @@ public class InitScene extends Scene {
         lampAsset.setPosition(lampX, lampY, lampZ);
 
         light.setColor(1, 1, 1);
-        light.setPosition(100, 20, 100);
-        cube.setPosition(100, 20, 100);
+        light.setPosition(100, 200, 300);
 
-        cameraAsset.setPosition(100, 20, 100);
+//        cameraAsset.setPosition(100, 20, 100);
 
         shadowMapFrame.setScale(0.5f);
         shadowMapFrame.setPosition(-0.5f, 0.5f, 0);
@@ -256,7 +255,7 @@ public class InitScene extends Scene {
                                 .render()
                 )
                 .loadModels(squareAsset.getModels())
-                .loadModels(shadowMapFrame.getModels())
+//                .loadModels(shadowMapFrame.getModels())
 //                .loadModels(buttonAsset.getModels())
 //                .loadTexts(buttonAsset.getTexts())
                 .loadTexts(fpsText)

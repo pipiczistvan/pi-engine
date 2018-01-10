@@ -12,7 +12,7 @@ import static piengine.core.utils.MatrixUtils.PERSPECTIVE_PROJECTION_MATRIX;
 public abstract class Camera extends Entity {
 
     private final Matrix4f projection;
-    private final Matrix4f view;
+    public final Matrix4f view;//todo: temporary
     public final Vector2i viewport;
     public final CameraAttribute attribute;
     private final ProjectionType projectionType;
@@ -38,6 +38,10 @@ public abstract class Camera extends Entity {
 
     public void recalculateProjection() {
         this.projection.set(setProjectionMatrix(projectionType));
+    }
+
+    public void recalculateView() {
+        calculateViewMatrix(view);
     }
 
     protected abstract void calculateViewMatrix(final Matrix4f viewMatrix);

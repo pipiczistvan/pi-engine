@@ -37,7 +37,8 @@ public class ShadowRenderService extends AbstractRenderService<ShadowShader, Ren
         for (Terrain terrain : context.terrains) {
             Matrix4f transformationMatrix = createTransformation(projectionViewMatrix, terrain);
             shader.loadTransformationMatrix(transformationMatrix);
-            draw(terrain.getDao());
+//            draw(terrain.getDao());
+            //todo: nem kell
         }
         for (Model model : context.models) {
             Matrix4f transformationMatrix = createTransformation(projectionViewMatrix, model);
@@ -57,7 +58,7 @@ public class ShadowRenderService extends AbstractRenderService<ShadowShader, Ren
     private Matrix4f createProjectionView(final Camera camera) {
         Matrix4f projectionViewMatrix = new Matrix4f();
         Matrix4f projectionMatrix = camera.getProjection();
-        Matrix4f viewMatrix = camera.getView();
+        Matrix4f viewMatrix = camera.view;
         projectionMatrix.mul(viewMatrix, projectionViewMatrix);
 
         return projectionViewMatrix;

@@ -16,12 +16,14 @@ in vec3 vNormal;
 in vec3 vSpecular;
 in vec3 vDiffuse;
 in float vVisibility;
+in vec4 vShadowCoords;
 
 out vec4 fColor;
 
 uniform sampler2D reflectionTexture;
 uniform sampler2D refractionTexture;
 uniform sampler2D depthTexture;
+uniform sampler2D shadowMap;
 uniform vec4 fogColor;
 
 vec3 calculateMurkiness(vec3 refractColor, float waterDepth) {
@@ -73,6 +75,14 @@ void main(void) {
     vec3 finalColor = mix(reflectColor, refractColor, calculateFresnel(vToCameraVector, vNormal));
     finalColor = finalColor * vDiffuse + vSpecular;
 
+    float objectNearestToLight = texture(shadowMap, vShadowCoords.xy).r;
+    float lightFactor = 1.0;
+    if (vShadowCoords.z > objectNearestToLight + 0.0002) {
+        lightFactor = 1.0 - (vShadowCoords.w * 0.6);
+    }
+    finalColor *= lightFactor;
+
     fColor = vec4(finalColor, clamp(waterDepth / edgeSoftness, 0.0, 1.0));
     fColor = mix(fogColor, fColor, vVisibility);
+
 }

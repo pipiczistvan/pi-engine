@@ -19,6 +19,8 @@ public class TerrainShader extends Shader {
     private int location_fogColor;
     private int location_fogDensity;
     private int location_fogGradient;
+    private int location_shadowMapSpaceMatrix;
+    private int location_shadowMap;
     private int[] location_lights_position;
     private int[] location_lights_color;
     private int[] location_lights_attenuation;
@@ -37,6 +39,8 @@ public class TerrainShader extends Shader {
         location_fogColor = getUniformLocation("fogColor");
         location_fogDensity = getUniformLocation("fogDensity");
         location_fogGradient = getUniformLocation("fogGradient");
+        location_shadowMapSpaceMatrix = getUniformLocation("shadowMapSpaceMatrix");
+        location_shadowMap = getUniformLocation("shadowMap");
 
         location_lights_position = new int[MAX_LIGHTS];
         location_lights_color = new int[MAX_LIGHTS];
@@ -111,6 +115,18 @@ public class TerrainShader extends Shader {
         loadUniform(location_fogColor, fog.color);
         loadUniform(location_fogDensity, fog.density);
         loadUniform(location_fogGradient, fog.gradient);
+
+        return this;
+    }
+
+    public TerrainShader loadShadowMapSpaceMatrix(final Matrix4f shadowMapSpaceMatrix) {
+        loadUniform(location_shadowMapSpaceMatrix, shadowMapSpaceMatrix);
+
+        return this;
+    }
+
+    public TerrainShader loadTextureUnits() {
+        loadUniform(location_shadowMap, 0);
 
         return this;
     }

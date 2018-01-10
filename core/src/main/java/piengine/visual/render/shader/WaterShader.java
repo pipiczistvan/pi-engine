@@ -22,6 +22,8 @@ public class WaterShader extends Shader {
     private int location_fogColor;
     private int location_fogDensity;
     private int location_fogGradient;
+    private int location_shadowMapSpaceMatrix;
+    private int location_shadowMap;
     private int[] location_lights_position;
     private int[] location_lights_color;
     private int[] location_lights_bias;
@@ -44,6 +46,8 @@ public class WaterShader extends Shader {
         location_fogColor = getUniformLocation("fogColor");
         location_fogDensity = getUniformLocation("fogDensity");
         location_fogGradient = getUniformLocation("fogGradient");
+        location_shadowMapSpaceMatrix = getUniformLocation("shadowMapSpaceMatrix");
+        location_shadowMap = getUniformLocation("shadowMap");
 
         location_lights_position = new int[MAX_LIGHTS];
         location_lights_color = new int[MAX_LIGHTS];
@@ -86,6 +90,7 @@ public class WaterShader extends Shader {
         loadUniform(location_reflectionTexture, 0);
         loadUniform(location_refractionTexture, 1);
         loadUniform(location_depthTexture, 2);
+        loadUniform(location_shadowMap, 3);
         return this;
     }
 
@@ -117,6 +122,12 @@ public class WaterShader extends Shader {
         loadUniform(location_fogColor, fog.color);
         loadUniform(location_fogDensity, fog.density);
         loadUniform(location_fogGradient, fog.gradient);
+
+        return this;
+    }
+
+    public WaterShader loadShadowMapSpaceMatrix(final Matrix4f shadowMapSpaceMatrix) {
+        loadUniform(location_shadowMapSpaceMatrix, shadowMapSpaceMatrix);
 
         return this;
     }
