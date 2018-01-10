@@ -29,9 +29,13 @@ import piengine.visual.fog.Fog;
 import piengine.visual.framebuffer.domain.FrameBuffer;
 import piengine.visual.framebuffer.domain.FrameBufferData;
 import piengine.visual.framebuffer.manager.FrameBufferManager;
+import piengine.visual.light.Light;
 import piengine.visual.render.domain.plan.RenderPlan;
 import piengine.visual.render.domain.plan.RenderPlanBuilder;
 import piengine.visual.render.manager.RenderManager;
+import piengine.visual.shadow.domain.Shadow;
+import piengine.visual.shadow.domain.ShadowKey;
+import piengine.visual.shadow.manager.ShadowManager;
 import piengine.visual.skybox.domain.Skybox;
 import piengine.visual.skybox.domain.SkyboxKey;
 import piengine.visual.skybox.manager.SkyboxManager;
@@ -74,6 +78,7 @@ public class InitScene extends Scene {
     private final TextManager textManager;
     private final CubeMapManager cubeMapManager;
     private final SkyboxManager skyboxManager;
+    private final ShadowManager shadowManager;
 
     private FrameBuffer frameBuffer;
     private FirstPersonCameraAsset cameraAsset;
@@ -81,6 +86,8 @@ public class InitScene extends Scene {
     private Fog fog;
     private Terrain terrain;
     private Water water;
+    private Light light;
+    private Shadow shadow;
 
     private Model cube;
 
@@ -93,6 +100,7 @@ public class InitScene extends Scene {
     private Skybox skybox;
 
     private SquareAsset squareAsset;
+    private SquareAsset shadowMapFrame;
     private ButtonAsset buttonAsset;
 
     @Wire
@@ -102,7 +110,7 @@ public class InitScene extends Scene {
                      final WaterManager waterManager, final ModelManager modelManager,
                      final TimeManager timeManager, final FontManager fontManager,
                      final TextManager textManager, final CubeMapManager cubeMapManager,
-                     final SkyboxManager skyboxManager) {
+                     final SkyboxManager skyboxManager, final ShadowManager shadowManager) {
         super(renderManager, assetManager);
 
         this.inputManager = inputManager;
@@ -116,6 +124,7 @@ public class InitScene extends Scene {
         this.textManager = textManager;
         this.cubeMapManager = cubeMapManager;
         this.skyboxManager = skyboxManager;
+        this.shadowManager = shadowManager;
     }
 
     @Override
@@ -137,6 +146,7 @@ public class InitScene extends Scene {
                 get(CAMERA_LOOK_SPEED),
                 get(CAMERA_MOVE_SPEED)));
         lampAsset = createAsset(LampAsset.class, new LampAssetArgument());
+        light = new Light(this);
 
         fog = new Fog(ColorUtils.BLACK, 0.015f, 1.5f);
 
@@ -160,6 +170,9 @@ public class InitScene extends Scene {
                 "skybox/nightBack", "skybox/nightFront"
         }));
         skybox = skyboxManager.supply(new SkyboxKey(500f, cubeMap));
+
+        shadow = shadowManager.supply(new ShadowKey(light, cameraAsset.camera, new Vector2i(512)));
+        shadowMapFrame = createAsset(SquareAsset.class, new SquareAssetArgument(VIEWPORT, shadow.shadowMap));
     }
 
     @Override
@@ -199,6 +212,15 @@ public class InitScene extends Scene {
         float lampZ = 0;
         float lampY = terrain.getHeight(lampX, lampZ);
         lampAsset.setPosition(lampX, lampY, lampZ);
+
+        light.setColor(1, 1, 1);
+        light.setPosition(100, 20, 100);
+        cube.setPosition(100, 20, 100);
+
+        cameraAsset.setPosition(100, 20, 100);
+
+        shadowMapFrame.setScale(0.5f);
+        shadowMapFrame.setPosition(-0.5f, 0.5f, 0);
     }
 
     @Override
@@ -222,16 +244,19 @@ public class InitScene extends Scene {
                         frameBuffer,
                         RenderPlanBuilder
                                 .createPlan(cameraAsset.camera, fog, skybox)
-                                .loadLights(lampAsset.getLights())
-                                .loadModels(lampAsset.getModels())
+//                                .loadLights(lampAsset.getLights())
+//                                .loadModels(lampAsset.getModels())
+                                .loadLights(light)
                                 .loadModels(cube)
                                 .loadModels(trees)
                                 .loadTerrains(terrain)
                                 .loadWaters(water)
+                                .loadShadows(shadow)
                                 .clearScreen(ColorUtils.BLACK)
                                 .render()
                 )
                 .loadModels(squareAsset.getModels())
+                .loadModels(shadowMapFrame.getModels())
 //                .loadModels(buttonAsset.getModels())
 //                .loadTexts(buttonAsset.getTexts())
                 .loadTexts(fpsText)

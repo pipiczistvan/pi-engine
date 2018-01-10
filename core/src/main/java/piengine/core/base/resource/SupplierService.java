@@ -8,6 +8,7 @@ import piengine.core.base.domain.Dao;
 import piengine.core.base.domain.Domain;
 import piengine.core.base.domain.ResourceData;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -31,6 +32,10 @@ public abstract class SupplierService<K, R extends ResourceData, D extends Dao, 
     @Override
     public void terminate() {
         resourceMap.values().forEach(domain -> interpreter.free(domain.getDao()));
+    }
+
+    protected Collection<M> getValues() {
+        return resourceMap.values();
     }
 
     protected abstract M createDomain(final D dao, final R resource);

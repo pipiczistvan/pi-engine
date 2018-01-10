@@ -24,6 +24,7 @@ import static org.lwjgl.opengl.GL11.glBindTexture;
 import static org.lwjgl.opengl.GL11.glDeleteTextures;
 import static org.lwjgl.opengl.GL11.glDrawBuffer;
 import static org.lwjgl.opengl.GL11.glGenTextures;
+import static org.lwjgl.opengl.GL11.glReadBuffer;
 import static org.lwjgl.opengl.GL11.glTexImage2D;
 import static org.lwjgl.opengl.GL11.glTexParameteri;
 import static org.lwjgl.opengl.GL14.GL_DEPTH_COMPONENT24;
@@ -47,7 +48,7 @@ public class FrameBufferInterpreter implements Interpreter<FrameBufferData, Fram
 
     @Override
     public FrameBufferDao create(final FrameBufferData frameBufferData) {
-        int fbo = createFrameBuffer();
+        int fbo = createFrameBuffer(frameBufferData.colorAttachment);
 
         Map<FrameBufferAttachment, Integer> attachments = new HashMap<>();
         for (FrameBufferAttachment attachment : frameBufferData.attachments) {
@@ -56,7 +57,7 @@ public class FrameBufferInterpreter implements Interpreter<FrameBufferData, Fram
 
         unbind();
 
-        return new FrameBufferDao(fbo, attachments);
+        return new FrameBufferDao(fbo, attachments, frameBufferData.textureAttachment);
     }
 
     @Override
@@ -80,10 +81,11 @@ public class FrameBufferInterpreter implements Interpreter<FrameBufferData, Fram
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
     }
 
-    private int createFrameBuffer() {
+    private int createFrameBuffer(final int colorAttachment) {
         int frameBuffer = glGenFramebuffers();
         glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer);
-        glDrawBuffer(GL_COLOR_ATTACHMENT0);
+        glDrawBuffer(colorAttachment);
+        glReadBuffer(colorAttachment);
 
         return frameBuffer;
     }
@@ -118,6 +120,8 @@ public class FrameBufferInterpreter implements Interpreter<FrameBufferData, Fram
         glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT24, viewport.x, viewport.y, 0, GL_DEPTH_COMPONENT, GL_FLOAT, (ByteBuffer) null);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+//        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+//        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, texture, 0);
 
         return texture;

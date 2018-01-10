@@ -26,6 +26,7 @@ public class FrameBufferService implements Terminatable {
         this.fboStack = new Stack<>();
     }
 
+    //todo: átírni key-esre
     public FrameBuffer supply(final FrameBufferData frameBufferData) {
         FrameBufferDao dao = frameBufferInterpreter.create(frameBufferData);
         FrameBuffer frameBuffer = new FrameBuffer(dao, frameBufferData.size);

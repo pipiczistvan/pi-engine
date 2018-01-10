@@ -4,7 +4,9 @@ import org.joml.Matrix4f;
 import org.joml.Vector2i;
 import org.joml.Vector3f;
 
-import static piengine.core.utils.VectorUtils.*;
+import static piengine.core.utils.VectorUtils.FORWARD;
+import static piengine.core.utils.VectorUtils.RIGHT;
+import static piengine.core.utils.VectorUtils.UP;
 
 public class MatrixUtils {
 
@@ -54,15 +56,15 @@ public class MatrixUtils {
         return matrix;
     }
 
-    public static Matrix4f ORTHOGRAPHIC_PROJECTION_MATRIX(final Vector2i viewPort, final float farPlane) {
+    public static Matrix4f ORTHOGRAPHIC_PROJECTION_MATRIX(final Vector2i viewPort, final float nearPlane, final float farPlane) {
         Matrix4f matrix = new Matrix4f();
 
         matrix.ortho(
                 (float) -viewPort.x,
                 (float) viewPort.x,
-                (float) viewPort.y,
                 (float) -viewPort.y,
-                -farPlane,
+                (float) viewPort.y,
+                nearPlane,
                 farPlane);
 
         return matrix;
