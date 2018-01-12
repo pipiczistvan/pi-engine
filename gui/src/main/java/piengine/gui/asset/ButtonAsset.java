@@ -5,8 +5,9 @@ import org.lwjgl.glfw.GLFW;
 import piengine.core.input.domain.KeyEventType;
 import piengine.core.input.manager.InputManager;
 import piengine.object.asset.domain.Asset;
-import piengine.object.model.domain.Model;
-import piengine.object.model.manager.ModelManager;
+import piengine.object.canvas.domain.Canvas;
+import piengine.object.canvas.domain.CanvasKey;
+import piengine.object.canvas.manager.CanvasManager;
 import piengine.visual.image.domain.Image;
 import piengine.visual.image.manager.ImageManager;
 import piengine.visual.writing.font.domain.Font;
@@ -23,7 +24,7 @@ public class ButtonAsset extends Asset<ButtonAssetArgument> {
     private static final float SCALE_Y = 0.125f;
 
     private final ImageManager imageManager;
-    private final ModelManager modelManager;
+    private final CanvasManager canvasManager;
     private final InputManager inputManager;
     private final FontManager fontManager;
     private final TextManager textManager;
@@ -31,7 +32,7 @@ public class ButtonAsset extends Asset<ButtonAssetArgument> {
     private Image defaultImage;
     private Image hoverImage;
     private Image pressImage;
-    private Model buttonModel;
+    private Canvas buttonCanvas;
     private Font font;
     private Text label;
 
@@ -40,11 +41,11 @@ public class ButtonAsset extends Asset<ButtonAssetArgument> {
     private boolean pressed = false;
 
     @Wire
-    public ButtonAsset(final ImageManager imageManager, final ModelManager modelManager,
+    public ButtonAsset(final ImageManager imageManager, final CanvasManager canvasManager,
                        final InputManager inputManager, final FontManager fontManager,
                        final TextManager textManager) {
         this.imageManager = imageManager;
-        this.modelManager = modelManager;
+        this.canvasManager = canvasManager;
         this.inputManager = inputManager;
         this.fontManager = fontManager;
         this.textManager = textManager;
@@ -59,8 +60,8 @@ public class ButtonAsset extends Asset<ButtonAssetArgument> {
         font = fontManager.supply("candara");
         label = textManager.supply(textConfig().withFont(font).withFontSize(1.5f).withMaxLineLength(SCALE_X).withText(arguments.text), this);
 
-        buttonModel = modelManager.supply("square", this, defaultImage);
-        buttonModel.setScale(SCALE_X, SCALE_Y, 1.0f);
+        buttonCanvas = canvasManager.supply(new CanvasKey(this, defaultImage));
+        buttonCanvas.setScale(SCALE_X, SCALE_Y, 1.0f);
 
         setupButtonParameters();
 
@@ -68,19 +69,19 @@ public class ButtonAsset extends Asset<ButtonAssetArgument> {
             hover = v.x >= x && v.x <= x + width && v.y >= y && v.y <= y + height;
 
             if (pressed) {
-                buttonModel.attribute.texture = pressImage;
+                buttonCanvas.texture = pressImage;
             } else {
                 if (hover) {
-                    buttonModel.attribute.texture = hoverImage;
+                    buttonCanvas.texture = hoverImage;
                 } else {
-                    buttonModel.attribute.texture = defaultImage;
+                    buttonCanvas.texture = defaultImage;
                 }
             }
         });
         inputManager.addEvent(GLFW.GLFW_MOUSE_BUTTON_1, KeyEventType.PRESS, () -> {
             pressed = hover;
             if (pressed) {
-                buttonModel.attribute.texture = pressImage;
+                buttonCanvas.texture = pressImage;
             }
         });
         inputManager.addEvent(GLFW.GLFW_MOUSE_BUTTON_1, KeyEventType.RELEASE, () -> {
@@ -89,9 +90,9 @@ public class ButtonAsset extends Asset<ButtonAssetArgument> {
             }
             pressed = false;
             if (hover) {
-                buttonModel.attribute.texture = hoverImage;
+                buttonCanvas.texture = hoverImage;
             } else {
-                buttonModel.attribute.texture = defaultImage;
+                buttonCanvas.texture = defaultImage;
             }
         });
     }
@@ -113,22 +114,21 @@ public class ButtonAsset extends Asset<ButtonAssetArgument> {
         setupButtonParameters();
     }
 
-    @Override
-    public Model[] getModels() {
-        return new Model[] {
-                buttonModel
+    public Canvas[] getCanvases() {
+        return new Canvas[]{
+                buttonCanvas
         };
     }
 
     public Text[] getTexts() {
-        return new Text[] {
+        return new Text[]{
                 label
         };
     }
 
     private void setupButtonParameters() {
-        Vector3f scale = buttonModel.getScale();
-        Vector3f position = buttonModel.getPosition();
+        Vector3f scale = buttonCanvas.getScale();
+        Vector3f position = buttonCanvas.getPosition();
 
         width = arguments.viewport.x * scale.x;
         height = arguments.viewport.y * scale.y;

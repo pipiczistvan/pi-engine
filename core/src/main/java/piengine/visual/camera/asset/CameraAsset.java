@@ -33,9 +33,6 @@ public abstract class CameraAsset<C extends Camera> extends Asset<CameraAssetArg
     private boolean isInAir = false;
     private boolean isFlying = false;
 
-    private boolean spacePressed = false;
-    private boolean shiftPressed = false;
-
     private final InputManager inputManager;
     private final WindowManager windowManager;
 
@@ -124,7 +121,6 @@ public abstract class CameraAsset<C extends Camera> extends Asset<CameraAssetArg
         }
     }
 
-    @Override
     public Model[] getModels() {
         return new Model[0];
     }
@@ -132,8 +128,6 @@ public abstract class CameraAsset<C extends Camera> extends Asset<CameraAssetArg
     protected abstract C getCamera();
 
     private void pressSpace() {
-        spacePressed = true;
-
         if (!isInAir) {
             upwardsSpeed = JUMP_POWER;
         } else {
@@ -146,24 +140,18 @@ public abstract class CameraAsset<C extends Camera> extends Asset<CameraAssetArg
     }
 
     private void releaseSpace() {
-        spacePressed = false;
-
         if (isFlying) {
             upwardsSpeed = 0;
         }
     }
 
     private void pressShift() {
-        shiftPressed = true;
-
         if (isInAir && isFlying) {
             upwardsSpeed = -JUMP_POWER;
         }
     }
 
     private void releaseShift() {
-        shiftPressed = false;
-
         if (isFlying) {
             upwardsSpeed = 0;
         }

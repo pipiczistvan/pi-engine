@@ -11,7 +11,7 @@ import piengine.visual.shader.domain.ShaderDao;
 
 import java.util.List;
 
-public class WorldShader extends Shader {
+public class ModelShader extends Shader {
 
     private int location_modelMatrix;
     private int location_viewMatrix;
@@ -26,7 +26,7 @@ public class WorldShader extends Shader {
     private int[] location_lights_color;
     private int[] location_lights_attenuation;
 
-    public WorldShader(final ShaderDao dao) {
+    public ModelShader(final ShaderDao dao) {
         super(dao);
     }
 
@@ -52,37 +52,37 @@ public class WorldShader extends Shader {
         }
     }
 
-    public WorldShader start() {
+    public ModelShader start() {
         startShader();
 
         return this;
     }
 
-    public WorldShader stop() {
+    public ModelShader stop() {
         stopShader();
 
         return this;
     }
 
-    public WorldShader loadModelMatrix(final Matrix4f modelMatrix) {
+    public ModelShader loadModelMatrix(final Matrix4f modelMatrix) {
         loadUniform(location_modelMatrix, modelMatrix);
 
         return this;
     }
 
-    public WorldShader loadViewMatrix(final Matrix4f viewMatrix) {
+    public ModelShader loadViewMatrix(final Matrix4f viewMatrix) {
         loadUniform(location_viewMatrix, viewMatrix);
 
         return this;
     }
 
-    public WorldShader loadProjectionMatrix(final Matrix4f projectionMatrix) {
+    public ModelShader loadProjectionMatrix(final Matrix4f projectionMatrix) {
         loadUniform(location_projectionMatrix, projectionMatrix);
 
         return this;
     }
 
-    public WorldShader loadLights(final List<Light> lights) {
+    public ModelShader loadLights(final List<Light> lights) {
         int lightCount = lights.size();
 
         for (int i = 0; i < MAX_LIGHTS; i++) {
@@ -95,7 +95,7 @@ public class WorldShader extends Shader {
         return this;
     }
 
-    public WorldShader loadColor(final Color color) {
+    public ModelShader loadColor(final Color color) {
         if (color != null) {
             loadUniform(location_color, color);
         } else {
@@ -105,19 +105,19 @@ public class WorldShader extends Shader {
         return this;
     }
 
-    public WorldShader loadTextureEnabled(final boolean value) {
+    public ModelShader loadTextureEnabled(final boolean value) {
         loadUniform(location_textureEnabled, value);
 
         return this;
     }
 
-    public WorldShader loadClippingPlane(final Vector4f clippingPlane) {
+    public ModelShader loadClippingPlane(final Vector4f clippingPlane) {
         loadUniform(location_clippingPlane, clippingPlane);
 
         return this;
     }
 
-    public WorldShader loadFog(final Fog fog) {
+    public ModelShader loadFog(final Fog fog) {
         loadUniform(location_fogColor, fog.color);
         loadUniform(location_fogDensity, fog.density);
         loadUniform(location_fogGradient, fog.gradient);

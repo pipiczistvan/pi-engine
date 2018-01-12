@@ -5,15 +5,17 @@ import piengine.core.architecture.scene.domain.Scene;
 import piengine.core.domain.assets.camera.FirstPersonCameraAsset;
 import piengine.core.domain.assets.object.lamp.LampAsset;
 import piengine.core.domain.assets.object.lamp.LampAssetArgument;
-import piengine.core.domain.assets.object.square.SquareAsset;
-import piengine.core.domain.assets.object.square.SquareAssetArgument;
 import piengine.core.input.manager.InputManager;
 import piengine.core.time.manager.TimeManager;
 import piengine.core.utils.ColorUtils;
 import piengine.gui.asset.ButtonAsset;
 import piengine.gui.asset.ButtonAssetArgument;
 import piengine.object.asset.manager.AssetManager;
+import piengine.object.canvas.domain.Canvas;
+import piengine.object.canvas.domain.CanvasKey;
+import piengine.object.canvas.manager.CanvasManager;
 import piengine.object.model.domain.Model;
+import piengine.object.model.domain.ModelKey;
 import piengine.object.model.manager.ModelManager;
 import piengine.object.terrain.domain.Terrain;
 import piengine.object.terrain.domain.TerrainKey;
@@ -29,6 +31,8 @@ import piengine.visual.fog.Fog;
 import piengine.visual.framebuffer.domain.Framebuffer;
 import piengine.visual.framebuffer.domain.FramebufferKey;
 import piengine.visual.framebuffer.manager.FramebufferManager;
+import piengine.visual.image.domain.Image;
+import piengine.visual.image.manager.ImageManager;
 import piengine.visual.light.Light;
 import piengine.visual.render.domain.plan.RenderPlan;
 import piengine.visual.render.domain.plan.RenderPlanBuilder;
@@ -79,6 +83,8 @@ public class InitScene extends Scene {
     private final CubeMapManager cubeMapManager;
     private final SkyboxManager skyboxManager;
     private final ShadowManager shadowManager;
+    private final CanvasManager canvasManager;
+    private final ImageManager imageManager;
 
     private Framebuffer framebuffer;
     private FirstPersonCameraAsset cameraAsset;
@@ -89,9 +95,9 @@ public class InitScene extends Scene {
     private Light light;
     private Shadow shadow;
 
-    private Model cube;
-
-    private Model[] trees = new Model[40];
+    private Model cubeModel;
+    private Model[] treeModels = new Model[40];
+    private Image treeImage;
 
     private Font font;
     private Text fpsText;
@@ -99,8 +105,7 @@ public class InitScene extends Scene {
     private CubeMap cubeMap;
     private Skybox skybox;
 
-    private SquareAsset squareAsset;
-    private SquareAsset shadowMapFrame;
+    private Canvas mainCanvas;
     private ButtonAsset buttonAsset;
 
     @Wire
@@ -110,7 +115,8 @@ public class InitScene extends Scene {
                      final WaterManager waterManager, final ModelManager modelManager,
                      final TimeManager timeManager, final FontManager fontManager,
                      final TextManager textManager, final CubeMapManager cubeMapManager,
-                     final SkyboxManager skyboxManager, final ShadowManager shadowManager) {
+                     final SkyboxManager skyboxManager, final ShadowManager shadowManager,
+                     final CanvasManager canvasManager, final ImageManager imageManager) {
         super(renderManager, assetManager);
 
         this.inputManager = inputManager;
@@ -125,6 +131,8 @@ public class InitScene extends Scene {
         this.cubeMapManager = cubeMapManager;
         this.skyboxManager = skyboxManager;
         this.shadowManager = shadowManager;
+        this.canvasManager = canvasManager;
+        this.imageManager = imageManager;
     }
 
     @Override
@@ -148,15 +156,14 @@ public class InitScene extends Scene {
         lampAsset = createAsset(LampAsset.class, new LampAssetArgument());
         light = new Light(this);
 
-        fog = new Fog(ColorUtils.BLACK, 0.015f, 1.5f);
+        cubeModel = modelManager.supply(new ModelKey(this, "cube", ColorUtils.RED));
 
-        cube = modelManager.supply("cube", this, ColorUtils.RED);
-
-        for (int i = 0; i < trees.length; i++) {
-            trees[i] = modelManager.supply("lowPolyTree", this, "lowPolyTree");
+        treeImage = imageManager.supply("lowPolyTree");
+        for (int i = 0; i < treeModels.length; i++) {
+            treeModels[i] = modelManager.supply(new ModelKey(this, "lowPolyTree", treeImage));
         }
 
-        squareAsset = createAsset(SquareAsset.class, new SquareAssetArgument(VIEWPORT, framebuffer));
+        mainCanvas = canvasManager.supply(new CanvasKey(this, framebuffer));
         buttonAsset = createAsset(ButtonAsset.class, new ButtonAssetArgument(
                 "buttonDefault", "buttonHover", "buttonPress",
                 VIEWPORT, "Please press me!", () -> System.out.println("Button clicked!")));
@@ -169,15 +176,16 @@ public class InitScene extends Scene {
                 "skybox/nightTop", "skybox/nightBottom",
                 "skybox/nightBack", "skybox/nightFront"
         }));
+
+        fog = new Fog(ColorUtils.BLACK, 0.015f, 1.5f);
         skybox = skyboxManager.supply(new SkyboxKey(150f, cubeMap));
 
         shadow = shadowManager.supply(new ShadowKey(light, cameraAsset.camera, new Vector2i(2048)));
-        shadowMapFrame = createAsset(SquareAsset.class, new SquareAssetArgument(VIEWPORT, shadow.shadowMap));
     }
 
     @Override
     protected void initializeAssets() {
-        cube.setPosition(4, 0f, -14);
+        cubeModel.setPosition(4, 0f, -14);
 
         terrain.setPosition(-64, 0, -64);
         terrain.setScale(128, 5, 128);
@@ -193,7 +201,7 @@ public class InitScene extends Scene {
 
         Random random = new Random();
         float waterHeight = water.getPosition().y;
-        for (Model tree : trees) {
+        for (Model tree : treeModels) {
             float x;
             float y;
             float z;
@@ -215,18 +223,13 @@ public class InitScene extends Scene {
 
         light.setColor(1, 1, 1);
         light.setPosition(100, 200, 300);
-
-//        cameraAsset.setPosition(100, 20, 100);
-
-        shadowMapFrame.setScale(0.5f);
-        shadowMapFrame.setPosition(-0.5f, 0.5f, 0);
     }
 
     @Override
     public void update(double delta) {
         water.waveFactor += WAVE_SPEED * delta;
 
-        cube.addRotation((float) (5f * delta), (float) (10f * delta), (float) (15f * delta));
+        cubeModel.addRotation((float) (5f * delta), (float) (10f * delta), (float) (15f * delta));
 
         textManager.update(fpsText, TextConfiguration.textConfig().withFont(font).withFontSize(2).withText("FPS: " + timeManager.getFPS()));
 
@@ -246,17 +249,16 @@ public class InitScene extends Scene {
 //                                .loadLights(lampAsset.getLights())
 //                                .loadModels(lampAsset.getModels())
                                 .loadLights(light)
-                                .loadModels(cube)
-                                .loadModels(trees)
+                                .loadModels(cubeModel)
+                                .loadModels(treeModels)
                                 .loadTerrains(terrain)
                                 .loadWaters(water)
                                 .loadShadows(shadow)
                                 .clearScreen(ColorUtils.BLACK)
                                 .render()
                 )
-                .loadModels(squareAsset.getModels())
-//                .loadModels(shadowMapFrame.getModels())
-//                .loadModels(buttonAsset.getModels())
+                .loadCanvases(mainCanvas)
+//                .loadCanvases(buttonAsset.getCanvases())
 //                .loadTexts(buttonAsset.getTexts())
                 .loadTexts(fpsText)
                 .clearScreen(ColorUtils.BLACK)

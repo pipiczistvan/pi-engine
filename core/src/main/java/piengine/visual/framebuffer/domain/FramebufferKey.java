@@ -2,9 +2,6 @@ package piengine.visual.framebuffer.domain;
 
 import org.joml.Vector2i;
 
-import java.util.Arrays;
-import java.util.Objects;
-
 public class FramebufferKey {
 
     public final Vector2i resolution;
@@ -24,22 +21,5 @@ public class FramebufferKey {
         for (int i = 0; i < attachments.length; i++) {
             this.attachments[i + 1] = attachments[i];
         }
-    }
-
-    @Override
-    public boolean equals(final Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        FramebufferKey that = (FramebufferKey) o;
-        return drawingEnabled == that.drawingEnabled &&
-                Objects.equals(resolution, that.resolution) &&
-                Arrays.equals(attachments, that.attachments);
-    }
-
-    @Override
-    public int hashCode() {
-        int result = Objects.hash(resolution, drawingEnabled);
-        result = 31 * result + Arrays.hashCode(attachments);
-        return result;
     }
 }

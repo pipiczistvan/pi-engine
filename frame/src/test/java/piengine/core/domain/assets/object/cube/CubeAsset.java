@@ -2,6 +2,7 @@ package piengine.core.domain.assets.object.cube;
 
 import piengine.object.asset.domain.Asset;
 import piengine.object.model.domain.Model;
+import piengine.object.model.domain.ModelKey;
 import piengine.object.model.manager.ModelManager;
 import puppeteer.annotation.premade.Wire;
 
@@ -18,10 +19,9 @@ public class CubeAsset extends Asset<CubeAssetArgument> {
 
     @Override
     public void initialize() {
-        cubeModel = modelManager.supply("cube", this);
+        cubeModel = modelManager.supply(new ModelKey(this, "cube"));
     }
 
-    @Override
     public Model[] getModels() {
         return new Model[]{
                 cubeModel

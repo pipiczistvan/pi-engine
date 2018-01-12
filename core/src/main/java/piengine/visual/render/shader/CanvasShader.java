@@ -6,13 +6,13 @@ import piengine.core.utils.ColorUtils;
 import piengine.visual.shader.domain.Shader;
 import piengine.visual.shader.domain.ShaderDao;
 
-public class GuiShader extends Shader {
+public class CanvasShader extends Shader {
 
     private int location_modelMatrix;
     private int location_color;
     private int location_textureEnabled;
 
-    public GuiShader(final ShaderDao dao) {
+    public CanvasShader(final ShaderDao dao) {
         super(dao);
     }
 
@@ -23,25 +23,25 @@ public class GuiShader extends Shader {
         location_textureEnabled = getUniformLocation("textureEnabled");
     }
 
-    public GuiShader start() {
+    public CanvasShader start() {
         startShader();
 
         return this;
     }
 
-    public GuiShader stop() {
+    public CanvasShader stop() {
         stopShader();
 
         return this;
     }
 
-    public GuiShader loadModelMatrix(final Matrix4f modelMatrix) {
+    public CanvasShader loadModelMatrix(final Matrix4f modelMatrix) {
         loadUniform(location_modelMatrix, modelMatrix);
 
         return this;
     }
 
-    public GuiShader loadColor(final Color color) {
+    public CanvasShader loadColor(final Color color) {
         if (color != null) {
             loadUniform(location_color, color);
         } else {
@@ -51,7 +51,7 @@ public class GuiShader extends Shader {
         return this;
     }
 
-    public GuiShader loadTextureEnabled(final boolean value) {
+    public CanvasShader loadTextureEnabled(final boolean value) {
         loadUniform(location_textureEnabled, value);
 
         return this;

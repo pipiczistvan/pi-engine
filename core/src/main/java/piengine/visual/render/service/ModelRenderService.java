@@ -5,7 +5,7 @@ import piengine.visual.render.domain.config.RenderConfig;
 import piengine.visual.render.domain.config.RenderConfigBuilder;
 import piengine.visual.render.domain.fragment.domain.RenderWorldPlanContext;
 import piengine.visual.render.interpreter.RenderInterpreter;
-import piengine.visual.render.shader.WorldShader;
+import piengine.visual.render.shader.ModelShader;
 import piengine.visual.shader.service.ShaderService;
 import piengine.visual.texture.service.TextureService;
 import puppeteer.annotation.premade.Component;
@@ -14,12 +14,12 @@ import puppeteer.annotation.premade.Wire;
 import static piengine.visual.render.domain.config.ProvokingVertex.FIRST_VERTEX_CONVENTION;
 
 @Component
-public class WorldRenderService extends AbstractRenderService<WorldShader, RenderWorldPlanContext> {
+public class ModelRenderService extends AbstractRenderService<ModelShader, RenderWorldPlanContext> {
 
     private final TextureService textureService;
 
     @Wire
-    public WorldRenderService(final ShaderService shaderService,
+    public ModelRenderService(final ShaderService shaderService,
                               final TextureService textureService,
                               final RenderInterpreter renderInterpreter) {
         super(shaderService, renderInterpreter);
@@ -28,8 +28,8 @@ public class WorldRenderService extends AbstractRenderService<WorldShader, Rende
     }
 
     @Override
-    protected WorldShader createShader(final ShaderService shaderService) {
-        return shaderService.supply("worldShader").castTo(WorldShader.class);
+    protected ModelShader createShader(final ShaderService shaderService) {
+        return shaderService.supply("modelShader").castTo(ModelShader.class);
     }
 
     @Override
@@ -46,11 +46,11 @@ public class WorldRenderService extends AbstractRenderService<WorldShader, Rende
 
         for (Model model : context.models) {
             shader.loadModelMatrix(model.getModelMatrix())
-                    .loadColor(model.attribute.color);
+                    .loadColor(model.color);
 
-            if (model.attribute.texture != null) {
+            if (model.texture != null) {
                 shader.loadTextureEnabled(true);
-                textureService.bind(model.attribute.texture);
+                textureService.bind(model.texture);
             } else {
                 shader.loadTextureEnabled(false);
             }

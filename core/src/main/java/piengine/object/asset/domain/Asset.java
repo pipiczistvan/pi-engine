@@ -3,7 +3,6 @@ package piengine.object.asset.domain;
 import piengine.core.base.api.Initializable;
 import piengine.core.base.api.Updatable;
 import piengine.object.entity.domain.Entity;
-import piengine.object.model.domain.Model;
 
 public abstract class Asset<T extends AssetArgument> extends Entity implements Initializable, Updatable {
 
@@ -16,6 +15,4 @@ public abstract class Asset<T extends AssetArgument> extends Entity implements I
     @Override
     public void update(double delta) {
     }
-
-    public abstract Model[] getModels();
 }

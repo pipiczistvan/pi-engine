@@ -46,7 +46,7 @@ public class MeshTest extends TestBase {
         ArgumentCaptor<MeshData> argumentCaptor = ArgumentCaptor.forClass(MeshData.class);
         when(meshInterpreter.create(argumentCaptor.capture())).thenReturn(dao);
 
-        Mesh mesh = meshManager.supply("square");
+        Mesh mesh = meshManager.supply("canvas");
         MeshData meshData = argumentCaptor.getValue();
 
         assertThat(mesh.getDao(), equalTo(dao));

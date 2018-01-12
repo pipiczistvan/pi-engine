@@ -7,11 +7,11 @@ import piengine.visual.framebuffer.service.FramebufferService;
 import piengine.visual.render.domain.fragment.domain.RenderFragmentType;
 import piengine.visual.render.domain.fragment.domain.RenderWorldPlanContext;
 import piengine.visual.render.service.ClearScreenRenderService;
+import piengine.visual.render.service.ModelRenderService;
 import piengine.visual.render.service.ShadowRenderService;
 import piengine.visual.render.service.SkyboxRenderService;
 import piengine.visual.render.service.TerrainRenderService;
 import piengine.visual.render.service.WaterRenderService;
-import piengine.visual.render.service.WorldRenderService;
 import piengine.visual.shadow.domain.Shadow;
 import puppeteer.annotation.premade.Component;
 import puppeteer.annotation.premade.Wire;
@@ -21,7 +21,7 @@ import static piengine.visual.render.domain.fragment.domain.RenderFragmentType.R
 @Component
 public class RenderWorldFragmentHandler implements FragmentHandler<RenderWorldPlanContext> {
 
-    private final WorldRenderService worldRenderService;
+    private final ModelRenderService modelRenderService;
     private final TerrainRenderService terrainRenderService;
     private final WaterRenderService waterRenderService;
     private final ShadowRenderService shadowRenderService;
@@ -30,11 +30,11 @@ public class RenderWorldFragmentHandler implements FragmentHandler<RenderWorldPl
     private final ClearScreenRenderService clearScreenRenderService;
 
     @Wire
-    public RenderWorldFragmentHandler(final WorldRenderService worldRenderService, final TerrainRenderService terrainRenderService,
+    public RenderWorldFragmentHandler(final ModelRenderService modelRenderService, final TerrainRenderService terrainRenderService,
                                       final WaterRenderService waterRenderService, final ShadowRenderService shadowRenderService,
                                       final SkyboxRenderService skyboxRenderService, final FramebufferService framebufferService,
                                       final ClearScreenRenderService clearScreenRenderService) {
-        this.worldRenderService = worldRenderService;
+        this.modelRenderService = modelRenderService;
         this.terrainRenderService = terrainRenderService;
         this.waterRenderService = waterRenderService;
         this.shadowRenderService = shadowRenderService;
@@ -89,7 +89,7 @@ public class RenderWorldFragmentHandler implements FragmentHandler<RenderWorldPl
                 context.viewport.set(water.reflectionBuffer.resolution);
                 clearScreenRenderService.clearScreen(ColorUtils.BLACK);
                 terrainRenderService.process(context);
-                worldRenderService.process(context);
+                modelRenderService.process(context);
                 skyboxRenderService.process(context);
 
                 context.camera.addPosition(0, distance, 0);
@@ -103,7 +103,7 @@ public class RenderWorldFragmentHandler implements FragmentHandler<RenderWorldPl
                 context.viewport.set(water.refractionBuffer.resolution);
                 clearScreenRenderService.clearScreen(ColorUtils.BLACK);
                 terrainRenderService.process(context);
-                worldRenderService.process(context);
+                modelRenderService.process(context);
                 skyboxRenderService.process(context);
             }
             framebufferService.unbind();
@@ -114,7 +114,7 @@ public class RenderWorldFragmentHandler implements FragmentHandler<RenderWorldPl
         context.clippingPlane.set(0, 0, 0, 0);
         context.viewport.set(context.camera.viewport);
         terrainRenderService.process(context);
-        worldRenderService.process(context);
+        modelRenderService.process(context);
         skyboxRenderService.process(context);
         waterRenderService.process(context);
     }
