@@ -1,6 +1,6 @@
 package piengine.core.domain.assets.object.lamp;
 
-import piengine.object.asset.domain.Asset;
+import piengine.object.asset.domain.WorldAsset;
 import piengine.object.model.domain.Model;
 import piengine.object.model.domain.ModelKey;
 import piengine.object.model.manager.ModelManager;
@@ -9,7 +9,7 @@ import piengine.visual.image.manager.ImageManager;
 import piengine.visual.light.Light;
 import puppeteer.annotation.premade.Wire;
 
-public class LampAsset extends Asset<LampAssetArgument> {
+public class LampAsset extends WorldAsset<LampAssetArgument> {
 
     private final ModelManager modelManager;
     private final ImageManager imageManager;
@@ -37,10 +37,12 @@ public class LampAsset extends Asset<LampAssetArgument> {
         lampLight.setAttenuation(1f, 0.01f, 0.002f);
     }
 
+    @Override
     public Model[] getModels() {
         return new Model[]{lampModel};
     }
 
+    @Override
     public Light[] getLights() {
         return new Light[]{lampLight};
     }

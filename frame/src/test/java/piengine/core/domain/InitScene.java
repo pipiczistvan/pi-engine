@@ -3,10 +3,13 @@ package piengine.core.domain;
 import org.joml.Vector2i;
 import piengine.core.architecture.scene.domain.Scene;
 import piengine.core.domain.assets.camera.FirstPersonCameraAsset;
+import piengine.core.domain.assets.object.fps.FpsAsset;
+import piengine.core.domain.assets.object.fps.FpsAssetArgument;
 import piengine.core.domain.assets.object.lamp.LampAsset;
 import piengine.core.domain.assets.object.lamp.LampAssetArgument;
+import piengine.core.domain.assets.object.map.MapAsset;
+import piengine.core.domain.assets.object.map.MapAssetArgument;
 import piengine.core.input.manager.InputManager;
-import piengine.core.time.manager.TimeManager;
 import piengine.core.utils.ColorUtils;
 import piengine.gui.asset.ButtonAsset;
 import piengine.gui.asset.ButtonAssetArgument;
@@ -14,16 +17,9 @@ import piengine.object.asset.manager.AssetManager;
 import piengine.object.canvas.domain.Canvas;
 import piengine.object.canvas.domain.CanvasKey;
 import piengine.object.canvas.manager.CanvasManager;
-import piengine.object.model.domain.Model;
-import piengine.object.model.domain.ModelKey;
-import piengine.object.model.manager.ModelManager;
-import piengine.object.terrain.domain.Terrain;
-import piengine.object.terrain.domain.TerrainKey;
-import piengine.object.terrain.manager.TerrainManager;
-import piengine.object.water.domain.Water;
-import piengine.object.water.domain.WaterKey;
-import piengine.object.water.manager.WaterManager;
 import piengine.visual.camera.asset.CameraAssetArgument;
+import piengine.visual.camera.domain.CameraAttribute;
+import piengine.visual.camera.domain.FirstPersonCamera;
 import piengine.visual.cubemap.domain.CubeMap;
 import piengine.visual.cubemap.domain.CubeMapKey;
 import piengine.visual.cubemap.manager.CubeMapManager;
@@ -31,108 +27,69 @@ import piengine.visual.fog.Fog;
 import piengine.visual.framebuffer.domain.Framebuffer;
 import piengine.visual.framebuffer.domain.FramebufferKey;
 import piengine.visual.framebuffer.manager.FramebufferManager;
-import piengine.visual.image.domain.Image;
-import piengine.visual.image.manager.ImageManager;
-import piengine.visual.light.Light;
 import piengine.visual.render.domain.plan.RenderPlan;
 import piengine.visual.render.domain.plan.RenderPlanBuilder;
 import piengine.visual.render.manager.RenderManager;
-import piengine.visual.shadow.domain.Shadow;
-import piengine.visual.shadow.domain.ShadowKey;
-import piengine.visual.shadow.manager.ShadowManager;
 import piengine.visual.skybox.domain.Skybox;
 import piengine.visual.skybox.domain.SkyboxKey;
 import piengine.visual.skybox.manager.SkyboxManager;
 import piengine.visual.window.manager.WindowManager;
-import piengine.visual.writing.font.domain.Font;
-import piengine.visual.writing.font.manager.FontManager;
-import piengine.visual.writing.text.domain.Text;
-import piengine.visual.writing.text.domain.TextConfiguration;
-import piengine.visual.writing.text.manager.TextManager;
 import puppeteer.annotation.premade.Wire;
-
-import java.util.Random;
 
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_RIGHT_CONTROL;
 import static piengine.core.base.type.property.ApplicationProperties.get;
+import static piengine.core.base.type.property.PropertyKeys.CAMERA_FAR_PLANE;
+import static piengine.core.base.type.property.PropertyKeys.CAMERA_FOV;
 import static piengine.core.base.type.property.PropertyKeys.CAMERA_LOOK_DOWN_LIMIT;
 import static piengine.core.base.type.property.PropertyKeys.CAMERA_LOOK_SPEED;
 import static piengine.core.base.type.property.PropertyKeys.CAMERA_LOOK_UP_LIMIT;
 import static piengine.core.base.type.property.PropertyKeys.CAMERA_MOVE_SPEED;
+import static piengine.core.base.type.property.PropertyKeys.CAMERA_NEAR_PLANE;
 import static piengine.core.base.type.property.PropertyKeys.CAMERA_VIEWPORT_HEIGHT;
 import static piengine.core.base.type.property.PropertyKeys.CAMERA_VIEWPORT_WIDTH;
 import static piengine.core.input.domain.KeyEventType.PRESS;
+import static piengine.visual.camera.domain.ProjectionType.PERSPECTIVE;
 import static piengine.visual.framebuffer.domain.FramebufferAttachment.COLOR_ATTACHMENT;
 import static piengine.visual.framebuffer.domain.FramebufferAttachment.RENDER_BUFFER_ATTACHMENT;
 
 public class InitScene extends Scene {
 
-    private static final float WAVE_SPEED = 0.2f;
     private static final Vector2i VIEWPORT = new Vector2i(get(CAMERA_VIEWPORT_WIDTH), get(CAMERA_VIEWPORT_HEIGHT));
 
     private final InputManager inputManager;
     private final WindowManager windowManager;
     private final FramebufferManager framebufferManager;
-    private final TerrainManager terrainManager;
-    private final WaterManager waterManager;
-    private final ModelManager modelManager;
-    private final TimeManager timeManager;
-    private final FontManager fontManager;
-    private final TextManager textManager;
     private final CubeMapManager cubeMapManager;
     private final SkyboxManager skyboxManager;
-    private final ShadowManager shadowManager;
     private final CanvasManager canvasManager;
-    private final ImageManager imageManager;
 
     private Framebuffer framebuffer;
-    private FirstPersonCameraAsset cameraAsset;
-    private LampAsset lampAsset;
     private Fog fog;
-    private Terrain terrain;
-    private Water water;
-    private Light light;
-    private Shadow shadow;
-
-    private Model cubeModel;
-    private Model[] treeModels = new Model[40];
-    private Image treeImage;
-
-    private Font font;
-    private Text fpsText;
-
     private CubeMap cubeMap;
     private Skybox skybox;
-
     private Canvas mainCanvas;
+    private FirstPersonCamera camera;
+
+    private FirstPersonCameraAsset cameraAsset;
+    private LampAsset lampAsset;
+    private MapAsset mapAsset;
     private ButtonAsset buttonAsset;
+    private FpsAsset fpsAsset;
 
     @Wire
     public InitScene(final RenderManager renderManager, final AssetManager assetManager,
                      final InputManager inputManager, final WindowManager windowManager,
-                     final FramebufferManager framebufferManager, final TerrainManager terrainManager,
-                     final WaterManager waterManager, final ModelManager modelManager,
-                     final TimeManager timeManager, final FontManager fontManager,
-                     final TextManager textManager, final CubeMapManager cubeMapManager,
-                     final SkyboxManager skyboxManager, final ShadowManager shadowManager,
-                     final CanvasManager canvasManager, final ImageManager imageManager) {
+                     final FramebufferManager framebufferManager, final CubeMapManager cubeMapManager,
+                     final SkyboxManager skyboxManager, final CanvasManager canvasManager) {
         super(renderManager, assetManager);
 
         this.inputManager = inputManager;
         this.windowManager = windowManager;
         this.framebufferManager = framebufferManager;
-        this.terrainManager = terrainManager;
-        this.waterManager = waterManager;
-        this.modelManager = modelManager;
-        this.timeManager = timeManager;
-        this.fontManager = fontManager;
-        this.textManager = textManager;
         this.cubeMapManager = cubeMapManager;
         this.skyboxManager = skyboxManager;
-        this.shadowManager = shadowManager;
         this.canvasManager = canvasManager;
-        this.imageManager = imageManager;
     }
 
     @Override
@@ -144,95 +101,52 @@ public class InitScene extends Scene {
 
     @Override
     protected void createAssets() {
-        framebuffer = framebufferManager.supply(new FramebufferKey(VIEWPORT, COLOR_ATTACHMENT, RENDER_BUFFER_ATTACHMENT));
-        terrain = terrainManager.supply(new TerrainKey(this, "heightmap2"));
-        water = waterManager.supply(new WaterKey(this, VIEWPORT, new Vector2i(128, 128)));
-        cameraAsset = createAsset(FirstPersonCameraAsset.class, new CameraAssetArgument(
-                terrain,
+        camera = new FirstPersonCamera(this, VIEWPORT, new CameraAttribute(get(CAMERA_FOV), get(CAMERA_NEAR_PLANE), get(CAMERA_FAR_PLANE)), PERSPECTIVE);
+
+        mapAsset = createAsset(MapAsset.class, new MapAssetArgument(VIEWPORT, camera));
+
+        cameraAsset = createAsset(FirstPersonCameraAsset.class, new CameraAssetArgument<>(
+                camera,
+                mapAsset.getTerrains()[0],
                 get(CAMERA_LOOK_UP_LIMIT),
                 get(CAMERA_LOOK_DOWN_LIMIT),
                 get(CAMERA_LOOK_SPEED),
                 get(CAMERA_MOVE_SPEED)));
+
         lampAsset = createAsset(LampAsset.class, new LampAssetArgument());
-        light = new Light(this);
 
-        cubeModel = modelManager.supply(new ModelKey(this, "cube", ColorUtils.RED));
-
-        treeImage = imageManager.supply("lowPolyTree");
-        for (int i = 0; i < treeModels.length; i++) {
-            treeModels[i] = modelManager.supply(new ModelKey(this, "lowPolyTree", treeImage));
-        }
-
+        framebuffer = framebufferManager.supply(new FramebufferKey(VIEWPORT, COLOR_ATTACHMENT, RENDER_BUFFER_ATTACHMENT));
         mainCanvas = canvasManager.supply(new CanvasKey(this, framebuffer));
+
         buttonAsset = createAsset(ButtonAsset.class, new ButtonAssetArgument(
                 "buttonDefault", "buttonHover", "buttonPress",
                 VIEWPORT, "Please press me!", () -> System.out.println("Button clicked!")));
-
-        font = fontManager.supply("candara");
-        fpsText = textManager.supply(TextConfiguration.textConfig().withFont(font), this);
+        fpsAsset = createAsset(FpsAsset.class, new FpsAssetArgument());
 
         cubeMap = cubeMapManager.supply(new CubeMapKey(new String[]{
                 "skybox/nightRight", "skybox/nightLeft",
                 "skybox/nightTop", "skybox/nightBottom",
                 "skybox/nightBack", "skybox/nightFront"
         }));
-
-        fog = new Fog(ColorUtils.BLACK, 0.015f, 1.5f);
         skybox = skyboxManager.supply(new SkyboxKey(150f, cubeMap));
 
-        shadow = shadowManager.supply(new ShadowKey(light, cameraAsset.camera, new Vector2i(2048)));
+        fog = new Fog(ColorUtils.BLACK, 0.015f, 1.5f);
     }
 
     @Override
     protected void initializeAssets() {
-        cubeModel.setPosition(4, 0f, -14);
-
-        terrain.setPosition(-64, 0, -64);
-        terrain.setScale(128, 5, 128);
-
-        water.setScale(128, 0, 128);
-        water.setPosition(-64, -2.0f, -64);
-
         buttonAsset.setPosition(-0.75f, 0.875f, 0);
-
-        fpsText.setPosition(0.85f, 0.85f, 0);
 
         cameraAsset.setPosition(-2, 0, 0);
 
-        Random random = new Random();
-        float waterHeight = water.getPosition().y;
-        for (Model tree : treeModels) {
-            float x;
-            float y;
-            float z;
-            do {
-                x = random.nextFloat() * 128 - 64;
-                z = random.nextFloat() * 128 - 64;
-                y = terrain.getHeight(x, z) - 0.1f;
-            } while (y < waterHeight - 0.2);
-            float scale = random.nextFloat() * 0.05f + 0.1f;
-
-            tree.setScale(scale);
-            tree.setPosition(x, y, z);
-        }
-
         float lampX = 0;
         float lampZ = 0;
-        float lampY = terrain.getHeight(lampX, lampZ);
+        float lampY = mapAsset.getTerrains()[0].getHeight(lampX, lampZ);
         lampAsset.setPosition(lampX, lampY, lampZ);
-
-        light.setColor(1, 1, 1);
-        light.setPosition(100, 200, 300);
     }
 
     @Override
     public void update(double delta) {
-        water.waveFactor += WAVE_SPEED * delta;
-
-        cubeModel.addRotation((float) (5f * delta), (float) (10f * delta), (float) (15f * delta));
-
-        textManager.update(fpsText, TextConfiguration.textConfig().withFont(font).withFontSize(2).withText("FPS: " + timeManager.getFPS()));
-
         skybox.addRotation((float) (0.5f * delta));
 
         super.update(delta);
@@ -245,22 +159,13 @@ public class InitScene extends Scene {
                 .bindFrameBuffer(
                         framebuffer,
                         RenderPlanBuilder
-                                .createPlan(cameraAsset.camera, fog, skybox)
-//                                .loadLights(lampAsset.getLights())
-//                                .loadModels(lampAsset.getModels())
-                                .loadLights(light)
-                                .loadModels(cubeModel)
-                                .loadModels(treeModels)
-                                .loadTerrains(terrain)
-                                .loadWaters(water)
-                                .loadShadows(shadow)
+                                .createPlan(camera, fog, skybox)
+                                .loadAssets(mapAsset)
                                 .clearScreen(ColorUtils.BLACK)
                                 .render()
                 )
                 .loadCanvases(mainCanvas)
-//                .loadCanvases(buttonAsset.getCanvases())
-//                .loadTexts(buttonAsset.getTexts())
-                .loadTexts(fpsText)
+                .loadAssets(fpsAsset)
                 .clearScreen(ColorUtils.BLACK)
                 .render();
     }

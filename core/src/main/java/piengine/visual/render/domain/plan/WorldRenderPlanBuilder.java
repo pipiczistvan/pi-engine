@@ -2,6 +2,7 @@ package piengine.visual.render.domain.plan;
 
 import org.joml.Vector2i;
 import org.joml.Vector4f;
+import piengine.object.asset.domain.WorldAsset;
 import piengine.object.model.domain.Model;
 import piengine.object.terrain.domain.Terrain;
 import piengine.object.water.domain.Water;
@@ -35,28 +36,39 @@ public class WorldRenderPlanBuilder extends RenderPlanBuilder<WorldRenderPlanBui
         ));
     }
 
-    public WorldRenderPlanBuilder loadModels(Model... models) {
+    public WorldRenderPlanBuilder loadModels(final Model... models) {
         this.context.models.addAll(Arrays.asList(models));
         return this;
     }
 
-    public WorldRenderPlanBuilder loadTerrains(Terrain... terrains) {
+    public WorldRenderPlanBuilder loadTerrains(final Terrain... terrains) {
         this.context.terrains.addAll(Arrays.asList(terrains));
         return this;
     }
 
-    public WorldRenderPlanBuilder loadWaters(Water... waters) {
+    public WorldRenderPlanBuilder loadWaters(final Water... waters) {
         this.context.waters.addAll(Arrays.asList(waters));
         return this;
     }
 
-    public WorldRenderPlanBuilder loadLights(Light... lights) {
+    public WorldRenderPlanBuilder loadLights(final Light... lights) {
         this.context.lights.addAll(Arrays.asList(lights));
         return this;
     }
 
-    public WorldRenderPlanBuilder loadShadows(Shadow... shadows) {
+    public WorldRenderPlanBuilder loadShadows(final Shadow... shadows) {
         this.context.shadows.addAll(Arrays.asList(shadows));
+        return this;
+    }
+
+    public WorldRenderPlanBuilder loadAssets(final WorldAsset... assets) {
+        for (WorldAsset asset : assets) {
+            loadModels(asset.getModels());
+            loadLights(asset.getLights());
+            loadTerrains(asset.getTerrains());
+            loadShadows(asset.getShadows());
+            loadWaters(asset.getWaters());
+        }
         return this;
     }
 

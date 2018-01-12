@@ -1,6 +1,7 @@
 package piengine.visual.render.domain.plan;
 
 import org.joml.Vector2i;
+import piengine.object.asset.domain.GuiAsset;
 import piengine.object.canvas.domain.Canvas;
 import piengine.visual.render.domain.fragment.domain.RenderFragmentType;
 import piengine.visual.render.domain.fragment.domain.RenderGuiPlanContext;
@@ -28,6 +29,14 @@ public class GuiRenderPlanBuilder extends RenderPlanBuilder<GuiRenderPlanBuilder
 
     public GuiRenderPlanBuilder loadTexts(final Text... texts) {
         this.context.texts.addAll(Arrays.asList(texts));
+        return this;
+    }
+
+    public GuiRenderPlanBuilder loadAssets(final GuiAsset... assets) {
+        for (GuiAsset asset : assets) {
+            loadCanvases(asset.getCanvases());
+            loadTexts(asset.getTexts());
+        }
         return this;
     }
 
