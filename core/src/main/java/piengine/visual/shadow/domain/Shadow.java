@@ -9,7 +9,7 @@ import piengine.core.base.domain.Domain;
 import piengine.visual.camera.domain.Camera;
 import piengine.visual.camera.domain.CameraAttribute;
 import piengine.visual.camera.domain.FirstPersonCamera;
-import piengine.visual.framebuffer.domain.FrameBuffer;
+import piengine.visual.framebuffer.domain.Framebuffer;
 import piengine.visual.light.Light;
 
 import static piengine.visual.camera.domain.ProjectionType.ORTHOGRAPHIC;
@@ -30,7 +30,7 @@ public class Shadow implements Domain<ShadowDao>, Updatable {
     private final Light light;
     private final Vector2i lightViewport;
 
-    public final FrameBuffer shadowMap;
+    public final Framebuffer shadowMap;
     public final Matrix4f shadowMapSpaceMatrix;
     public final Camera lightCamera;
 
@@ -42,7 +42,7 @@ public class Shadow implements Domain<ShadowDao>, Updatable {
     float maxZ = 0;
     float minZ = 0;
 
-    public Shadow(final ShadowDao dao, final Camera playerCamera, final Light light, final FrameBuffer shadowMap) {
+    public Shadow(final ShadowDao dao, final Camera playerCamera, final Light light, final Framebuffer shadowMap) {
         this.dao = dao;
         this.playerCamera = playerCamera;
         this.light = light;
@@ -108,7 +108,7 @@ public class Shadow implements Domain<ShadowDao>, Updatable {
 
         lightViewport.x = (int) (maxX - minX) / 2;
         lightViewport.y = (int) (maxY - minY) / 2;
-        lightCamera.attribute.nearPlane = -(maxZ - minZ);
+        lightCamera.attribute.nearPlane = -(maxZ - minZ) / 2f;
         lightCamera.attribute.farPlane = (maxZ - minZ) / 2f;
 
         lightCamera.recalculateProjection();

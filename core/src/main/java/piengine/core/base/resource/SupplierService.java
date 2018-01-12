@@ -14,7 +14,7 @@ import java.util.Map;
 
 public abstract class SupplierService<K, R extends ResourceData, D extends Dao, M extends Domain<D>> implements Service, Terminatable {
 
-    protected final Interpreter<R, D> interpreter;
+    private final Interpreter<R, D> interpreter;
     private final Accessor<K, R> accessor;
     private final Map<K, M> resourceMap;
 

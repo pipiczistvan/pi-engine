@@ -8,27 +8,27 @@ import piengine.object.water.domain.WaterDao;
 import piengine.object.water.domain.WaterData;
 import piengine.object.water.domain.WaterKey;
 import piengine.object.water.interpreter.WaterInterpreter;
-import piengine.visual.framebuffer.domain.FrameBuffer;
-import piengine.visual.framebuffer.domain.FrameBufferData;
-import piengine.visual.framebuffer.service.FrameBufferService;
+import piengine.visual.framebuffer.domain.Framebuffer;
+import piengine.visual.framebuffer.domain.FramebufferKey;
+import piengine.visual.framebuffer.service.FramebufferService;
 import puppeteer.annotation.premade.Component;
 import puppeteer.annotation.premade.Wire;
 
-import static piengine.visual.framebuffer.domain.FrameBufferAttachment.COLOR_ATTACHMENT;
-import static piengine.visual.framebuffer.domain.FrameBufferAttachment.DEPTH_TEXTURE_ATTACHMENT;
-import static piengine.visual.framebuffer.domain.FrameBufferAttachment.RENDER_BUFFER_ATTACHMENT;
+import static piengine.visual.framebuffer.domain.FramebufferAttachment.COLOR_ATTACHMENT;
+import static piengine.visual.framebuffer.domain.FramebufferAttachment.DEPTH_TEXTURE_ATTACHMENT;
+import static piengine.visual.framebuffer.domain.FramebufferAttachment.RENDER_BUFFER_ATTACHMENT;
 
 @Component
 public class WaterService extends SupplierService<WaterKey, WaterData, WaterDao, Water> {
 
-    private final FrameBufferService frameBufferService;
+    private final FramebufferService framebufferService;
 
     @Wire
     public WaterService(final WaterAccessor waterAccessor, final WaterInterpreter waterInterpreter,
-                        final FrameBufferService frameBufferService) {
+                        final FramebufferService framebufferService) {
         super(waterAccessor, waterInterpreter);
 
-        this.frameBufferService = frameBufferService;
+        this.framebufferService = framebufferService;
     }
 
     @Override
@@ -42,10 +42,10 @@ public class WaterService extends SupplierService<WaterKey, WaterData, WaterDao,
                 resource.resolution.y / 2
         );
 
-        FrameBuffer reflectionBuffer = frameBufferService.supply(new FrameBufferData(reflectionResolution,
+        Framebuffer reflectionBuffer = framebufferService.supply(new FramebufferKey(reflectionResolution,
                 COLOR_ATTACHMENT, RENDER_BUFFER_ATTACHMENT
         ));
-        FrameBuffer refractionBuffer = frameBufferService.supply(new FrameBufferData(refractionResolution,
+        Framebuffer refractionBuffer = framebufferService.supply(new FramebufferKey(refractionResolution,
                 COLOR_ATTACHMENT, DEPTH_TEXTURE_ATTACHMENT
         ));
 

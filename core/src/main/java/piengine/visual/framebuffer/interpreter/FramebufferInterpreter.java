@@ -3,9 +3,9 @@ package piengine.visual.framebuffer.interpreter;
 import org.joml.Vector2i;
 import piengine.core.base.api.Interpreter;
 import piengine.core.base.exception.PIEngineException;
-import piengine.visual.framebuffer.domain.FrameBufferAttachment;
-import piengine.visual.framebuffer.domain.FrameBufferDao;
-import piengine.visual.framebuffer.domain.FrameBufferData;
+import piengine.visual.framebuffer.domain.FramebufferAttachment;
+import piengine.visual.framebuffer.domain.FramebufferDao;
+import piengine.visual.framebuffer.domain.FramebufferData;
 import puppeteer.annotation.premade.Component;
 
 import java.nio.ByteBuffer;
@@ -15,6 +15,7 @@ import java.util.Map;
 import static org.lwjgl.opengl.GL11.GL_DEPTH_COMPONENT;
 import static org.lwjgl.opengl.GL11.GL_FLOAT;
 import static org.lwjgl.opengl.GL11.GL_LINEAR;
+import static org.lwjgl.opengl.GL11.GL_NONE;
 import static org.lwjgl.opengl.GL11.GL_RGB;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_MAG_FILTER;
@@ -41,30 +42,31 @@ import static org.lwjgl.opengl.GL30.glFramebufferTexture2D;
 import static org.lwjgl.opengl.GL30.glGenFramebuffers;
 import static org.lwjgl.opengl.GL30.glGenRenderbuffers;
 import static org.lwjgl.opengl.GL30.glRenderbufferStorage;
-import static piengine.visual.framebuffer.domain.FrameBufferAttachment.RENDER_BUFFER_ATTACHMENT;
+import static piengine.visual.framebuffer.domain.FramebufferAttachment.RENDER_BUFFER_ATTACHMENT;
 
 @Component
-public class FrameBufferInterpreter implements Interpreter<FrameBufferData, FrameBufferDao> {
+public class FramebufferInterpreter implements Interpreter<FramebufferData, FramebufferDao> {
 
     @Override
-    public FrameBufferDao create(final FrameBufferData frameBufferData) {
-        int fbo = createFrameBuffer(frameBufferData.colorAttachment);
+    public FramebufferDao create(final FramebufferData framebufferData) {
+        int drawBuffer = framebufferData.drawingEnabled ? GL_COLOR_ATTACHMENT0 : GL_NONE;
+        int fbo = createFrameBuffer(drawBuffer);
 
-        Map<FrameBufferAttachment, Integer> attachments = new HashMap<>();
-        for (FrameBufferAttachment attachment : frameBufferData.attachments) {
-            attachments.put(attachment, createAttachment(attachment, frameBufferData.size));
+        Map<FramebufferAttachment, Integer> attachments = new HashMap<>();
+        for (FramebufferAttachment attachment : framebufferData.attachments) {
+            attachments.put(attachment, createAttachment(attachment, framebufferData.resolution));
         }
 
         unbind();
 
-        return new FrameBufferDao(fbo, attachments, frameBufferData.textureAttachment);
+        return new FramebufferDao(fbo, attachments, framebufferData.textureAttachment);
     }
 
     @Override
-    public void free(final FrameBufferDao dao) {
+    public void free(final FramebufferDao dao) {
         glDeleteFramebuffers(dao.fbo);
 
-        for (Map.Entry<FrameBufferAttachment, Integer> attachment : dao.attachments.entrySet()) {
+        for (Map.Entry<FramebufferAttachment, Integer> attachment : dao.attachments.entrySet()) {
             if (attachment.getKey().equals(RENDER_BUFFER_ATTACHMENT)) {
                 glDeleteRenderbuffers(attachment.getValue());
             } else {
@@ -73,7 +75,7 @@ public class FrameBufferInterpreter implements Interpreter<FrameBufferData, Fram
         }
     }
 
-    public void bind(final FrameBufferDao dao) {
+    public void bind(final FramebufferDao dao) {
         glBindFramebuffer(GL_FRAMEBUFFER, dao.fbo);
     }
 
@@ -81,16 +83,16 @@ public class FrameBufferInterpreter implements Interpreter<FrameBufferData, Fram
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
     }
 
-    private int createFrameBuffer(final int colorAttachment) {
+    private int createFrameBuffer(final int buffer) {
         int frameBuffer = glGenFramebuffers();
         glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer);
-        glDrawBuffer(colorAttachment);
-        glReadBuffer(colorAttachment);
+        glDrawBuffer(buffer);
+        glReadBuffer(buffer);
 
         return frameBuffer;
     }
 
-    private int createAttachment(final FrameBufferAttachment attachment, final Vector2i viewport) {
+    private int createAttachment(final FramebufferAttachment attachment, final Vector2i viewport) {
         switch (attachment) {
             case COLOR_ATTACHMENT:
                 return createColorAttachment(viewport);
@@ -120,8 +122,6 @@ public class FrameBufferInterpreter implements Interpreter<FrameBufferData, Fram
         glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT24, viewport.x, viewport.y, 0, GL_DEPTH_COMPONENT, GL_FLOAT, (ByteBuffer) null);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-//        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-//        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, texture, 0);
 
         return texture;

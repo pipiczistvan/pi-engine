@@ -1,7 +1,7 @@
 package piengine.visual.render.service;
 
 import piengine.object.water.domain.Water;
-import piengine.visual.framebuffer.domain.FrameBufferAttachment;
+import piengine.visual.framebuffer.domain.FramebufferAttachment;
 import piengine.visual.render.domain.config.RenderConfig;
 import piengine.visual.render.domain.config.RenderConfigBuilder;
 import piengine.visual.render.domain.fragment.domain.RenderWorldPlanContext;
@@ -56,7 +56,7 @@ public class WaterRenderService extends AbstractRenderService<WaterShader, Rende
             textureService.bind(GL_TEXTURE0, water.reflectionBuffer);
             textureService.bind(GL_TEXTURE1, water.refractionBuffer);
             textureService.bind(GL_TEXTURE2,
-                    water.refractionBuffer.getDao().attachments.get(FrameBufferAttachment.DEPTH_TEXTURE_ATTACHMENT)
+                    water.refractionBuffer.getDao().attachments.get(FramebufferAttachment.DEPTH_TEXTURE_ATTACHMENT)
             );
             textureService.bind(GL_TEXTURE3, context.shadows.get(0).shadowMap);
 

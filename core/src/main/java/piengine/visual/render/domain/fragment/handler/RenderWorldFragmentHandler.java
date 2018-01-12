@@ -3,7 +3,7 @@ package piengine.visual.render.domain.fragment.handler;
 import piengine.core.utils.ColorUtils;
 import piengine.object.water.domain.Water;
 import piengine.visual.camera.domain.Camera;
-import piengine.visual.framebuffer.service.FrameBufferService;
+import piengine.visual.framebuffer.service.FramebufferService;
 import piengine.visual.render.domain.fragment.domain.RenderFragmentType;
 import piengine.visual.render.domain.fragment.domain.RenderWorldPlanContext;
 import piengine.visual.render.service.ClearScreenRenderService;
@@ -26,20 +26,20 @@ public class RenderWorldFragmentHandler implements FragmentHandler<RenderWorldPl
     private final WaterRenderService waterRenderService;
     private final ShadowRenderService shadowRenderService;
     private final SkyboxRenderService skyboxRenderService;
-    private final FrameBufferService frameBufferService;
+    private final FramebufferService framebufferService;
     private final ClearScreenRenderService clearScreenRenderService;
 
     @Wire
     public RenderWorldFragmentHandler(final WorldRenderService worldRenderService, final TerrainRenderService terrainRenderService,
                                       final WaterRenderService waterRenderService, final ShadowRenderService shadowRenderService,
-                                      final SkyboxRenderService skyboxRenderService, final FrameBufferService frameBufferService,
+                                      final SkyboxRenderService skyboxRenderService, final FramebufferService framebufferService,
                                       final ClearScreenRenderService clearScreenRenderService) {
         this.worldRenderService = worldRenderService;
         this.terrainRenderService = terrainRenderService;
         this.waterRenderService = waterRenderService;
         this.shadowRenderService = shadowRenderService;
         this.skyboxRenderService = skyboxRenderService;
-        this.frameBufferService = frameBufferService;
+        this.framebufferService = framebufferService;
         this.clearScreenRenderService = clearScreenRenderService;
     }
 
@@ -59,7 +59,7 @@ public class RenderWorldFragmentHandler implements FragmentHandler<RenderWorldPl
         Camera camera = context.camera;
 
         for (Shadow shadow : context.shadows) {
-            frameBufferService.bind(shadow.shadowMap);
+            framebufferService.bind(shadow.shadowMap);
             {
                 context.camera = shadow.lightCamera;
                 context.clippingPlane.set(0, 0, 0, 0);
@@ -67,7 +67,7 @@ public class RenderWorldFragmentHandler implements FragmentHandler<RenderWorldPl
                 clearScreenRenderService.clearScreen(ColorUtils.BLACK);
                 shadowRenderService.process(context);
             }
-            frameBufferService.unbind();
+            framebufferService.unbind();
         }
 
         context.camera = camera;
@@ -80,7 +80,7 @@ public class RenderWorldFragmentHandler implements FragmentHandler<RenderWorldPl
             float waterHeight = water.getPosition().y;
             float distance = 2 * (cameraHeight - waterHeight);
 
-            frameBufferService.bind(water.reflectionBuffer);
+            framebufferService.bind(water.reflectionBuffer);
             {
                 context.camera.addPosition(0, -distance, 0);
                 context.camera.addRotation(0, -cameraPitch * 2, 0);
@@ -95,9 +95,9 @@ public class RenderWorldFragmentHandler implements FragmentHandler<RenderWorldPl
                 context.camera.addPosition(0, distance, 0);
                 context.camera.addRotation(0, cameraPitch * 2, 0);
             }
-            frameBufferService.unbind();
+            framebufferService.unbind();
 
-            frameBufferService.bind(water.refractionBuffer);
+            framebufferService.bind(water.refractionBuffer);
             {
                 context.clippingPlane.set(0, -1, 0, waterHeight + 1);
                 context.viewport.set(water.refractionBuffer.resolution);
@@ -106,7 +106,7 @@ public class RenderWorldFragmentHandler implements FragmentHandler<RenderWorldPl
                 worldRenderService.process(context);
                 skyboxRenderService.process(context);
             }
-            frameBufferService.unbind();
+            framebufferService.unbind();
         }
     }
 

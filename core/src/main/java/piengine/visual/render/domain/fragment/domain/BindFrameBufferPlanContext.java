@@ -1,17 +1,17 @@
 package piengine.visual.render.domain.fragment.domain;
 
-import piengine.visual.framebuffer.domain.FrameBuffer;
+import piengine.visual.framebuffer.domain.Framebuffer;
 import piengine.visual.render.domain.plan.PlanContext;
 
 public class BindFrameBufferPlanContext implements PlanContext {
 
-    public final FrameBuffer frameBuffer;
+    public final Framebuffer framebuffer;
 
-    public BindFrameBufferPlanContext(final FrameBuffer frameBuffer) {
-        this.frameBuffer = frameBuffer;
+    public BindFrameBufferPlanContext(final Framebuffer framebuffer) {
+        this.framebuffer = framebuffer;
     }
 
     public BindFrameBufferPlanContext() {
-        this.frameBuffer = null;
+        this.framebuffer = null;
     }
 }

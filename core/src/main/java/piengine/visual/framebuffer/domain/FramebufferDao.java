@@ -4,13 +4,13 @@ import piengine.visual.texture.domain.TextureDao;
 
 import java.util.Map;
 
-public class FrameBufferDao extends TextureDao {
+public class FramebufferDao extends TextureDao {
 
     public final int fbo;
-    public final Map<FrameBufferAttachment, Integer> attachments;
-    public final FrameBufferAttachment textureAttachment;
+    public final Map<FramebufferAttachment, Integer> attachments;
+    public final FramebufferAttachment textureAttachment;
 
-    public FrameBufferDao(final int fbo, final Map<FrameBufferAttachment, Integer> attachments, final FrameBufferAttachment textureAttachment) {
+    public FramebufferDao(final int fbo, final Map<FramebufferAttachment, Integer> attachments, final FramebufferAttachment textureAttachment) {
         this.fbo = fbo;
         this.attachments = attachments;
         this.textureAttachment = textureAttachment;

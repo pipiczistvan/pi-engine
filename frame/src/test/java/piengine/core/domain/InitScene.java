@@ -26,9 +26,9 @@ import piengine.visual.cubemap.domain.CubeMap;
 import piengine.visual.cubemap.domain.CubeMapKey;
 import piengine.visual.cubemap.manager.CubeMapManager;
 import piengine.visual.fog.Fog;
-import piengine.visual.framebuffer.domain.FrameBuffer;
-import piengine.visual.framebuffer.domain.FrameBufferData;
-import piengine.visual.framebuffer.manager.FrameBufferManager;
+import piengine.visual.framebuffer.domain.Framebuffer;
+import piengine.visual.framebuffer.domain.FramebufferKey;
+import piengine.visual.framebuffer.manager.FramebufferManager;
 import piengine.visual.light.Light;
 import piengine.visual.render.domain.plan.RenderPlan;
 import piengine.visual.render.domain.plan.RenderPlanBuilder;
@@ -59,8 +59,8 @@ import static piengine.core.base.type.property.PropertyKeys.CAMERA_MOVE_SPEED;
 import static piengine.core.base.type.property.PropertyKeys.CAMERA_VIEWPORT_HEIGHT;
 import static piengine.core.base.type.property.PropertyKeys.CAMERA_VIEWPORT_WIDTH;
 import static piengine.core.input.domain.KeyEventType.PRESS;
-import static piengine.visual.framebuffer.domain.FrameBufferAttachment.COLOR_ATTACHMENT;
-import static piengine.visual.framebuffer.domain.FrameBufferAttachment.RENDER_BUFFER_ATTACHMENT;
+import static piengine.visual.framebuffer.domain.FramebufferAttachment.COLOR_ATTACHMENT;
+import static piengine.visual.framebuffer.domain.FramebufferAttachment.RENDER_BUFFER_ATTACHMENT;
 
 public class InitScene extends Scene {
 
@@ -69,7 +69,7 @@ public class InitScene extends Scene {
 
     private final InputManager inputManager;
     private final WindowManager windowManager;
-    private final FrameBufferManager frameBufferManager;
+    private final FramebufferManager framebufferManager;
     private final TerrainManager terrainManager;
     private final WaterManager waterManager;
     private final ModelManager modelManager;
@@ -80,7 +80,7 @@ public class InitScene extends Scene {
     private final SkyboxManager skyboxManager;
     private final ShadowManager shadowManager;
 
-    private FrameBuffer frameBuffer;
+    private Framebuffer framebuffer;
     private FirstPersonCameraAsset cameraAsset;
     private LampAsset lampAsset;
     private Fog fog;
@@ -106,7 +106,7 @@ public class InitScene extends Scene {
     @Wire
     public InitScene(final RenderManager renderManager, final AssetManager assetManager,
                      final InputManager inputManager, final WindowManager windowManager,
-                     final FrameBufferManager frameBufferManager, final TerrainManager terrainManager,
+                     final FramebufferManager framebufferManager, final TerrainManager terrainManager,
                      final WaterManager waterManager, final ModelManager modelManager,
                      final TimeManager timeManager, final FontManager fontManager,
                      final TextManager textManager, final CubeMapManager cubeMapManager,
@@ -115,7 +115,7 @@ public class InitScene extends Scene {
 
         this.inputManager = inputManager;
         this.windowManager = windowManager;
-        this.frameBufferManager = frameBufferManager;
+        this.framebufferManager = framebufferManager;
         this.terrainManager = terrainManager;
         this.waterManager = waterManager;
         this.modelManager = modelManager;
@@ -136,7 +136,7 @@ public class InitScene extends Scene {
 
     @Override
     protected void createAssets() {
-        frameBuffer = frameBufferManager.supply(new FrameBufferData(VIEWPORT, COLOR_ATTACHMENT, RENDER_BUFFER_ATTACHMENT));
+        framebuffer = framebufferManager.supply(new FramebufferKey(VIEWPORT, COLOR_ATTACHMENT, RENDER_BUFFER_ATTACHMENT));
         terrain = terrainManager.supply(new TerrainKey(this, "heightmap2"));
         water = waterManager.supply(new WaterKey(this, VIEWPORT, new Vector2i(128, 128)));
         cameraAsset = createAsset(FirstPersonCameraAsset.class, new CameraAssetArgument(
@@ -156,7 +156,7 @@ public class InitScene extends Scene {
             trees[i] = modelManager.supply("lowPolyTree", this, "lowPolyTree");
         }
 
-        squareAsset = createAsset(SquareAsset.class, new SquareAssetArgument(VIEWPORT, frameBuffer));
+        squareAsset = createAsset(SquareAsset.class, new SquareAssetArgument(VIEWPORT, framebuffer));
         buttonAsset = createAsset(ButtonAsset.class, new ButtonAssetArgument(
                 "buttonDefault", "buttonHover", "buttonPress",
                 VIEWPORT, "Please press me!", () -> System.out.println("Button clicked!")));
@@ -240,7 +240,7 @@ public class InitScene extends Scene {
         return RenderPlanBuilder
                 .createPlan(VIEWPORT)
                 .bindFrameBuffer(
-                        frameBuffer,
+                        framebuffer,
                         RenderPlanBuilder
                                 .createPlan(cameraAsset.camera, fog, skybox)
 //                                .loadLights(lampAsset.getLights())

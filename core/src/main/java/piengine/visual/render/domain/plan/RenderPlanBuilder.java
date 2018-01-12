@@ -4,7 +4,7 @@ import org.joml.Vector2i;
 import piengine.core.base.type.color.Color;
 import piengine.visual.camera.domain.Camera;
 import piengine.visual.fog.Fog;
-import piengine.visual.framebuffer.domain.FrameBuffer;
+import piengine.visual.framebuffer.domain.Framebuffer;
 import piengine.visual.render.domain.fragment.RenderFragment;
 import piengine.visual.render.domain.fragment.domain.BindFrameBufferPlanContext;
 import piengine.visual.render.domain.fragment.domain.ClearScreenPlanContext;
@@ -39,8 +39,8 @@ public abstract class RenderPlanBuilder<B extends RenderPlanBuilder<B, C>, C ext
         return thiz();
     }
 
-    public B bindFrameBuffer(final FrameBuffer frameBuffer, final RenderPlan renderPlan) {
-        fragments.add(new RenderFragment<>(BIND_FRAME_BUFFER, new BindFrameBufferPlanContext(frameBuffer)));
+    public B bindFrameBuffer(final Framebuffer framebuffer, final RenderPlan renderPlan) {
+        fragments.add(new RenderFragment<>(BIND_FRAME_BUFFER, new BindFrameBufferPlanContext(framebuffer)));
         fragments.addAll(renderPlan.fragments);
         fragments.add(new RenderFragment<>(BIND_FRAME_BUFFER, new BindFrameBufferPlanContext()));
         return thiz();

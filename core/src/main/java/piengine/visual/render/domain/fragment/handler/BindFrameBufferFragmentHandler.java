@@ -1,6 +1,6 @@
 package piengine.visual.render.domain.fragment.handler;
 
-import piengine.visual.framebuffer.service.FrameBufferService;
+import piengine.visual.framebuffer.service.FramebufferService;
 import piengine.visual.render.domain.fragment.domain.BindFrameBufferPlanContext;
 import piengine.visual.render.domain.fragment.domain.RenderFragmentType;
 import puppeteer.annotation.premade.Component;
@@ -11,19 +11,19 @@ import static piengine.visual.render.domain.fragment.domain.RenderFragmentType.B
 @Component
 public class BindFrameBufferFragmentHandler implements FragmentHandler<BindFrameBufferPlanContext> {
 
-    private final FrameBufferService frameBufferService;
+    private final FramebufferService framebufferService;
 
     @Wire
-    public BindFrameBufferFragmentHandler(final FrameBufferService frameBufferService) {
-        this.frameBufferService = frameBufferService;
+    public BindFrameBufferFragmentHandler(final FramebufferService framebufferService) {
+        this.framebufferService = framebufferService;
     }
 
     @Override
     public void handle(final BindFrameBufferPlanContext context) {
-        if (context.frameBuffer != null) {
-            frameBufferService.bind(context.frameBuffer);
+        if (context.framebuffer != null) {
+            framebufferService.bind(context.framebuffer);
         } else {
-            frameBufferService.unbind();
+            framebufferService.unbind();
         }
     }
 
