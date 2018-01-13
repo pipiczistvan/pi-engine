@@ -6,6 +6,7 @@ import piengine.visual.render.domain.config.RenderConfigBuilder;
 import piengine.visual.render.domain.fragment.domain.RenderGuiPlanContext;
 import piengine.visual.render.interpreter.RenderInterpreter;
 import piengine.visual.render.shader.CanvasShader;
+import piengine.visual.shader.domain.ShaderKey;
 import piengine.visual.shader.service.ShaderService;
 import piengine.visual.texture.service.TextureService;
 import puppeteer.annotation.premade.Component;
@@ -29,7 +30,7 @@ public class CanvasRenderService extends AbstractRenderService<CanvasShader, Ren
 
     @Override
     protected CanvasShader createShader(final ShaderService shaderService) {
-        return shaderService.supply("canvasShader").castTo(CanvasShader.class);
+        return shaderService.supply(new ShaderKey("canvasShader")).castTo(CanvasShader.class);
     }
 
     @Override

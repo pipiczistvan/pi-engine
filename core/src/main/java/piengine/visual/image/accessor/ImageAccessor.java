@@ -5,6 +5,7 @@ import piengine.core.base.api.Accessor;
 import piengine.core.base.exception.PIEngineException;
 import piengine.core.base.resource.ResourceLoader;
 import piengine.visual.image.domain.ImageData;
+import piengine.visual.image.domain.ImageKey;
 import puppeteer.annotation.premade.Component;
 
 import java.io.IOException;
@@ -21,7 +22,7 @@ import static piengine.core.base.type.property.ApplicationProperties.get;
 import static piengine.core.base.type.property.PropertyKeys.IMAGES_LOCATION;
 
 @Component
-public class ImageAccessor implements Accessor<String, ImageData> {
+public class ImageAccessor implements Accessor<ImageKey, ImageData> {
 
     private static final String ROOT = get(IMAGES_LOCATION);
     private static final String PNG_EXT = "png";
@@ -34,12 +35,12 @@ public class ImageAccessor implements Accessor<String, ImageData> {
     }
 
     @Override
-    public ImageData access(final String file) {
+    public ImageData access(final ImageKey key) {
         ByteBuffer imageBuffer;
         try {
-            imageBuffer = loader.loadByteBuffer(file, BUFFER_LIMIT);
+            imageBuffer = loader.loadByteBuffer(key.file, BUFFER_LIMIT);
         } catch (IOException | URISyntaxException e) {
-            throw new PIEngineException("Could not load image %s!", file, e);
+            throw new PIEngineException("Could not load image %s!", key.file, e);
         }
 
         IntBuffer w = BufferUtils.createIntBuffer(1);

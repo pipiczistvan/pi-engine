@@ -11,7 +11,7 @@ public abstract class RenderPlanner<T extends RenderPlan> extends Entity impleme
     private final RenderManager renderManager;
 
     public RenderPlanner(final RenderManager renderManager) {
-        super();
+        super(null);
         this.renderManager = renderManager;
     }
 

@@ -23,7 +23,7 @@ public class AssetService {
             asset.passArguments(arguments);
         }
         asset.initialize();
-        asset.setParent(parent);
+        parent.addChild(asset);
 
         return asset;
     }

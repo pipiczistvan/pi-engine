@@ -101,17 +101,19 @@ public class InitScene extends Scene {
 
     @Override
     protected void createAssets() {
-        camera = new FirstPersonCamera(this, VIEWPORT, new CameraAttribute(get(CAMERA_FOV), get(CAMERA_NEAR_PLANE), get(CAMERA_FAR_PLANE)), PERSPECTIVE);
+        camera = new FirstPersonCamera(null, VIEWPORT, new CameraAttribute(get(CAMERA_FOV), get(CAMERA_NEAR_PLANE), get(CAMERA_FAR_PLANE)), PERSPECTIVE);
 
         mapAsset = createAsset(MapAsset.class, new MapAssetArgument(VIEWPORT, camera));
 
-        cameraAsset = createAsset(FirstPersonCameraAsset.class, new CameraAssetArgument<>(
-                camera,
+        cameraAsset = createAsset(FirstPersonCameraAsset.class, new CameraAssetArgument(
                 mapAsset.getTerrains()[0],
                 get(CAMERA_LOOK_UP_LIMIT),
                 get(CAMERA_LOOK_DOWN_LIMIT),
                 get(CAMERA_LOOK_SPEED),
                 get(CAMERA_MOVE_SPEED)));
+
+        //todo: ugly
+        cameraAsset.addChild(camera);
 
         lampAsset = createAsset(LampAsset.class, new LampAssetArgument());
 

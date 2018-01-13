@@ -5,12 +5,13 @@ import piengine.visual.image.accessor.ImageAccessor;
 import piengine.visual.image.domain.Image;
 import piengine.visual.image.domain.ImageDao;
 import piengine.visual.image.domain.ImageData;
+import piengine.visual.image.domain.ImageKey;
 import piengine.visual.image.interpreter.ImageInterpreter;
 import puppeteer.annotation.premade.Component;
 import puppeteer.annotation.premade.Wire;
 
 @Component
-public class ImageService extends SupplierService<String, ImageData, ImageDao, Image> {
+public class ImageService extends SupplierService<ImageKey, ImageData, ImageDao, Image> {
 
     @Wire
     public ImageService(final ImageAccessor imageAccessor, final ImageInterpreter imageInterpreter) {

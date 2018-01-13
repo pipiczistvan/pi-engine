@@ -7,10 +7,6 @@ public abstract class EntityDomain<D extends Dao> extends Entity implements Doma
 
     private final D dao;
 
-    public EntityDomain(final D dao) {
-        this.dao = dao;
-    }
-
     public EntityDomain(final Entity parent, final D dao) {
         super(parent);
         this.dao = dao;

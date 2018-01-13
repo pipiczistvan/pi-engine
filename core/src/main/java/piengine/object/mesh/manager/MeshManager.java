@@ -1,6 +1,7 @@
 package piengine.object.mesh.manager;
 
 import piengine.object.mesh.domain.Mesh;
+import piengine.object.mesh.domain.MeshKey;
 import piengine.object.mesh.service.MeshService;
 import puppeteer.annotation.premade.Component;
 import puppeteer.annotation.premade.Wire;
@@ -16,7 +17,7 @@ public class MeshManager {
     }
 
     public Mesh supply(final String file) {
-        return meshService.supply(file);
+        return meshService.supply(new MeshKey(file));
     }
 
 }

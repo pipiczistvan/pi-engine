@@ -70,7 +70,7 @@ public class MapAsset extends WorldAsset<MapAssetArgument> {
     public void update(final double delta) {
         water.waveFactor += WAVE_SPEED * delta;
 
-        cubeModel.addRotation((float) (5f * delta), (float) (10f * delta), (float) (15f * delta));
+        cubeModel.rotate((float) (5f * delta), (float) (10f * delta), (float) (15f * delta));
     }
 
     @Override
@@ -86,28 +86,28 @@ public class MapAsset extends WorldAsset<MapAssetArgument> {
 
     @Override
     public Light[] getLights() {
-        return new Light[] {
+        return new Light[]{
                 light
         };
     }
 
     @Override
     public Terrain[] getTerrains() {
-        return new Terrain[] {
+        return new Terrain[]{
                 terrain
         };
     }
 
     @Override
     public Shadow[] getShadows() {
-        return new Shadow[] {
+        return new Shadow[]{
                 shadow
         };
     }
 
     @Override
     public Water[] getWaters() {
-        return new Water[] {
+        return new Water[]{
                 water
         };
     }

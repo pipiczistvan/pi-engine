@@ -8,6 +8,10 @@ public abstract class Asset<T extends AssetArgument> extends Entity implements I
 
     protected T arguments;
 
+    public Asset() {
+        super(null);
+    }
+
     public void passArguments(final T arguments) {
         this.arguments = arguments;
     }

@@ -6,6 +6,7 @@ import piengine.visual.render.domain.config.RenderFunction;
 import piengine.visual.render.domain.fragment.domain.RenderGuiPlanContext;
 import piengine.visual.render.interpreter.RenderInterpreter;
 import piengine.visual.render.service.AbstractRenderService;
+import piengine.visual.shader.domain.ShaderKey;
 import piengine.visual.shader.service.ShaderService;
 import piengine.visual.writing.font.service.FontService;
 import piengine.visual.writing.text.domain.Text;
@@ -29,7 +30,7 @@ public class TextRenderService extends AbstractRenderService<TextShader, RenderG
 
     @Override
     protected TextShader createShader(final ShaderService shaderService) {
-        return shaderService.supply("textShader").castTo(TextShader.class);
+        return shaderService.supply(new ShaderKey("textShader")).castTo(TextShader.class);
     }
 
     @Override

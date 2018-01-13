@@ -7,6 +7,7 @@ import piengine.visual.render.domain.config.RenderConfigBuilder;
 import piengine.visual.render.domain.fragment.domain.RenderWorldPlanContext;
 import piengine.visual.render.interpreter.RenderInterpreter;
 import piengine.visual.render.shader.TerrainShader;
+import piengine.visual.shader.domain.ShaderKey;
 import piengine.visual.shader.service.ShaderService;
 import piengine.visual.texture.service.TextureService;
 import puppeteer.annotation.premade.Component;
@@ -30,7 +31,7 @@ public class TerrainRenderService extends AbstractRenderService<TerrainShader, R
 
     @Override
     protected TerrainShader createShader(final ShaderService shaderService) {
-        return shaderService.supply("terrainShader").castTo(TerrainShader.class);
+        return shaderService.supply(new ShaderKey("terrainShader")).castTo(TerrainShader.class);
     }
 
     @Override

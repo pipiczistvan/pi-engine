@@ -1,10 +1,11 @@
 package piengine.visual.skybox.domain;
 
+import piengine.core.base.domain.Key;
 import piengine.visual.cubemap.domain.CubeMap;
 
 import java.util.Objects;
 
-public class SkyboxKey {
+public class SkyboxKey implements Key {
 
     public final float size;
     public final CubeMap cubeMap;

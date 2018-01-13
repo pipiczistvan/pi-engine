@@ -1,12 +1,13 @@
 package piengine.visual.shadow.domain;
 
 import org.joml.Vector2i;
+import piengine.core.base.domain.Key;
 import piengine.visual.camera.domain.Camera;
 import piengine.visual.light.Light;
 
 import java.util.Objects;
 
-public class ShadowKey {
+public class ShadowKey implements Key {
 
     public final Light light;
     public final Camera playerCamera;

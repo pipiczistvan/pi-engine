@@ -58,10 +58,7 @@ public class Shadow implements Domain<ShadowDao>, Updatable {
     @Override
     public void update(double delta) {
         // PROJECTION UPDATE
-        Vector3f cameraPosition = playerCamera.getPosition();
-        Vector3f cameraRotation = playerCamera.getRotation();
-
-        Matrix4f rotation = calculateCameraRotationMatrix(cameraRotation);
+        Matrix4f rotation = calculateCameraRotationMatrix(playerCamera.getRotation());
         Vector4f forwardVector = new Vector4f(0, 0, 0, 1);
         rotation.transform(FORWARD, forwardVector);
 
@@ -70,9 +67,9 @@ public class Shadow implements Domain<ShadowDao>, Updatable {
         Vector3f toNear = new Vector3f(forwardVector.x, forwardVector.y, forwardVector.z);
         toNear.mul(SHADOW_MIN_DISTANCE);
         Vector3f centerNear = new Vector3f();
-        toNear.add(cameraPosition, centerNear);
+        toNear.add(playerCamera.getPosition(), centerNear);
         Vector3f centerFar = new Vector3f();
-        toFar.add(cameraPosition, centerFar);
+        toFar.add(playerCamera.getPosition(), centerFar);
 
         Vector4f[] points = calculateFrustumVertices(rotation, new Vector3f(forwardVector.x, forwardVector.y, forwardVector.z), centerNear, centerFar);
 
@@ -114,8 +111,7 @@ public class Shadow implements Domain<ShadowDao>, Updatable {
         lightCamera.recalculateProjection();
 
         // VIEW UPDATE
-        Vector3f lightPosition = light.getPosition();
-        Vector3f lightDirection = new Vector3f(lightPosition).negate().normalize();
+        Vector3f lightDirection = new Vector3f(light.getPosition()).negate().normalize();
 
         float yaw = (float) Math.toDegrees(((float) Math.atan(lightDirection.x / -lightDirection.z)));
         float pitch = (float) Math.toDegrees(Math.asin(lightDirection.y));
@@ -124,7 +120,7 @@ public class Shadow implements Domain<ShadowDao>, Updatable {
 
 //        lightCamera.setPosition(lightPosition.x, lightPosition.y, lightPosition.z);
         lightCamera.setRotation(yaw, pitch, 0);
-        lightCamera.setPosition(center.x, center.y, center.z);
+        lightCamera.setPosition(center);
 
         lightCamera.recalculateView();
 
@@ -202,8 +198,8 @@ public class Shadow implements Domain<ShadowDao>, Updatable {
 
     private Matrix4f calculateCameraRotationMatrix(final Vector3f cameraRotation) {
         Matrix4f rotation = new Matrix4f();
-        rotation.rotate((float) Math.toRadians(-cameraRotation.x), new Vector3f(0, 1, 0));
-        rotation.rotate((float) Math.toRadians(cameraRotation.y), new Vector3f(1, 0, 0));
+        rotation.rotate((float) Math.toRadians(cameraRotation.x), new Vector3f(1, 0, 0));
+        rotation.rotate((float) Math.toRadians(cameraRotation.y), new Vector3f(0, 1, 0));
         return rotation;
     }
 

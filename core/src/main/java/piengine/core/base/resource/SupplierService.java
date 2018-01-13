@@ -6,13 +6,14 @@ import piengine.core.base.api.Service;
 import piengine.core.base.api.Terminatable;
 import piengine.core.base.domain.Dao;
 import piengine.core.base.domain.Domain;
+import piengine.core.base.domain.Key;
 import piengine.core.base.domain.ResourceData;
 
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-public abstract class SupplierService<K, R extends ResourceData, D extends Dao, M extends Domain<D>> implements Service, Terminatable {
+public abstract class SupplierService<K extends Key, R extends ResourceData, D extends Dao, M extends Domain<D>> implements Service, Terminatable {
 
     private final Interpreter<R, D> interpreter;
     private final Accessor<K, R> accessor;

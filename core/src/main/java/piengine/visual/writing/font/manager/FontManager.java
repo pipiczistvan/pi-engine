@@ -1,6 +1,7 @@
 package piengine.visual.writing.font.manager;
 
 import piengine.visual.writing.font.domain.Font;
+import piengine.visual.writing.font.domain.FontKey;
 import piengine.visual.writing.font.service.FontService;
 import puppeteer.annotation.premade.Component;
 import puppeteer.annotation.premade.Wire;
@@ -16,7 +17,6 @@ public class FontManager {
     }
 
     public Font supply(final String file) {
-        return fontService.supply(file);
+        return fontService.supply(new FontKey(file));
     }
-
 }

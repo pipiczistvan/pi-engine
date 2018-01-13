@@ -1,6 +1,6 @@
 package piengine.object.terrain.service;
 
-import piengine.core.base.resource.SupplierService;
+import piengine.core.base.resource.EntitySupplierService;
 import piengine.object.terrain.accessor.TerrainAccessor;
 import piengine.object.terrain.domain.Terrain;
 import piengine.object.terrain.domain.TerrainDao;
@@ -11,7 +11,7 @@ import puppeteer.annotation.premade.Component;
 import puppeteer.annotation.premade.Wire;
 
 @Component
-public class TerrainService extends SupplierService<TerrainKey, TerrainData, TerrainDao, Terrain> {
+public class TerrainService extends EntitySupplierService<TerrainKey, TerrainData, TerrainDao, Terrain> {
 
     @Wire
     public TerrainService(final TerrainAccessor terrainAccessor, final TerrainInterpreter terrainInterpreter) {

@@ -5,13 +5,14 @@ import piengine.core.base.api.Accessor;
 import piengine.core.base.exception.PIEngineException;
 import piengine.core.base.resource.ResourceLoader;
 import piengine.visual.shader.domain.ShaderData;
+import piengine.visual.shader.domain.ShaderKey;
 import puppeteer.annotation.premade.Component;
 
 import static piengine.core.base.type.property.ApplicationProperties.get;
 import static piengine.core.base.type.property.PropertyKeys.SHADERS_LOCATION;
 
 @Component
-public class ShaderAccessor implements Accessor<String, ShaderData> {
+public class ShaderAccessor implements Accessor<ShaderKey, ShaderData> {
 
     private static final String ROOT = get(SHADERS_LOCATION);
     private static final String SHADER_EXT = "glsl";
@@ -25,12 +26,12 @@ public class ShaderAccessor implements Accessor<String, ShaderData> {
     }
 
     @Override
-    public ShaderData access(String file) {
-        final String vertexSource = tryToReadFile("vertex", file);
-        final String tessControlSource = tryToReadFile("tessellation/control", file);
-        final String tessEvalSource = tryToReadFile("tessellation/evaluation", file);
-        final String geometrySource = tryToReadFile("geometry", file);
-        final String fragmentSource = tryToReadFile("fragment", file);
+    public ShaderData access(final ShaderKey key) {
+        final String vertexSource = tryToReadFile("vertex", key.file);
+        final String tessControlSource = tryToReadFile("tessellation/control", key.file);
+        final String tessEvalSource = tryToReadFile("tessellation/evaluation", key.file);
+        final String geometrySource = tryToReadFile("geometry", key.file);
+        final String fragmentSource = tryToReadFile("fragment", key.file);
         return new ShaderData(vertexSource, tessControlSource, tessEvalSource, geometrySource, fragmentSource);
     }
 

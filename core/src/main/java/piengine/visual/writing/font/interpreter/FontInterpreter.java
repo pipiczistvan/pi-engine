@@ -7,6 +7,7 @@ import org.lwjgl.opengl.GL30;
 import piengine.core.base.api.Interpreter;
 import piengine.visual.image.accessor.ImageAccessor;
 import piengine.visual.image.domain.ImageData;
+import piengine.visual.image.domain.ImageKey;
 import piengine.visual.writing.font.domain.FontDao;
 import piengine.visual.writing.font.domain.FontData;
 import puppeteer.annotation.premade.Component;
@@ -24,7 +25,8 @@ public class FontInterpreter implements Interpreter<FontData, FontDao> {
 
     @Override
     public FontDao create(final FontData fontData) {
-        ImageData imageData = imageAccessor.access(fontData.file);
+        //todo: biztos így kéne?
+        ImageData imageData = imageAccessor.access(new ImageKey(fontData.file));
 
         FontDao dao = new FontDao(GL11.glGenTextures());
         bind(dao);

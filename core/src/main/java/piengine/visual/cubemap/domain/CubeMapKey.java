@@ -1,8 +1,10 @@
 package piengine.visual.cubemap.domain;
 
+import piengine.core.base.domain.Key;
+
 import java.util.Arrays;
 
-public class CubeMapKey {
+public class CubeMapKey implements Key {
 
     public final String[] textures;
 

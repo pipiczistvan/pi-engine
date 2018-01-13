@@ -14,7 +14,6 @@ public class Light extends Entity {
 
     public Light(final Entity parent) {
         super(parent);
-
         this.color = new Color(ColorUtils.BLACK);
         this.bias = new Vector2f(0.3f, 0.8f);
         this.attenuation = new Vector3f(1, 0, 0);

@@ -5,12 +5,13 @@ import piengine.visual.writing.font.accessor.FontAccessor;
 import piengine.visual.writing.font.domain.Font;
 import piengine.visual.writing.font.domain.FontDao;
 import piengine.visual.writing.font.domain.FontData;
+import piengine.visual.writing.font.domain.FontKey;
 import piengine.visual.writing.font.interpreter.FontInterpreter;
 import puppeteer.annotation.premade.Component;
 import puppeteer.annotation.premade.Wire;
 
 @Component
-public class FontService extends SupplierService<String, FontData, FontDao, Font> {
+public class FontService extends SupplierService<FontKey, FontData, FontDao, Font> {
 
     private final FontInterpreter fontInterpreter;
 

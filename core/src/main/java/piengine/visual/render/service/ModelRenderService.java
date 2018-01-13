@@ -6,6 +6,7 @@ import piengine.visual.render.domain.config.RenderConfigBuilder;
 import piengine.visual.render.domain.fragment.domain.RenderWorldPlanContext;
 import piengine.visual.render.interpreter.RenderInterpreter;
 import piengine.visual.render.shader.ModelShader;
+import piengine.visual.shader.domain.ShaderKey;
 import piengine.visual.shader.service.ShaderService;
 import piengine.visual.texture.service.TextureService;
 import puppeteer.annotation.premade.Component;
@@ -29,7 +30,7 @@ public class ModelRenderService extends AbstractRenderService<ModelShader, Rende
 
     @Override
     protected ModelShader createShader(final ShaderService shaderService) {
-        return shaderService.supply("modelShader").castTo(ModelShader.class);
+        return shaderService.supply(new ShaderKey("modelShader")).castTo(ModelShader.class);
     }
 
     @Override

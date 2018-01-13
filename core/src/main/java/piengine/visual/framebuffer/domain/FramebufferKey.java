@@ -1,8 +1,9 @@
 package piengine.visual.framebuffer.domain;
 
 import org.joml.Vector2i;
+import piengine.core.base.domain.Key;
 
-public class FramebufferKey {
+public class FramebufferKey implements Key {
 
     public final Vector2i resolution;
     public final boolean drawingEnabled;

@@ -49,6 +49,6 @@ public class WaterService extends SupplierService<WaterKey, WaterData, WaterDao,
                 COLOR_ATTACHMENT, DEPTH_TEXTURE_ATTACHMENT
         ));
 
-        return new Water(resource.parent, dao, reflectionBuffer, refractionBuffer);
+        return new Water(null, dao, reflectionBuffer, refractionBuffer);
     }
 }

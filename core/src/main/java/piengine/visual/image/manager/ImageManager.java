@@ -1,6 +1,7 @@
 package piengine.visual.image.manager;
 
 import piengine.visual.image.domain.Image;
+import piengine.visual.image.domain.ImageKey;
 import piengine.visual.image.service.ImageService;
 import puppeteer.annotation.premade.Component;
 import puppeteer.annotation.premade.Wire;
@@ -16,6 +17,6 @@ public class ImageManager {
     }
 
     public Image supply(final String file) {
-        return imageService.supply(file);
+        return imageService.supply(new ImageKey(file));
     }
 }

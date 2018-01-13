@@ -7,6 +7,7 @@ import piengine.visual.render.domain.config.RenderConfigBuilder;
 import piengine.visual.render.domain.fragment.domain.RenderWorldPlanContext;
 import piengine.visual.render.interpreter.RenderInterpreter;
 import piengine.visual.render.shader.WaterShader;
+import piengine.visual.shader.domain.ShaderKey;
 import piengine.visual.shader.service.ShaderService;
 import piengine.visual.texture.service.TextureService;
 import puppeteer.annotation.premade.Component;
@@ -33,7 +34,7 @@ public class WaterRenderService extends AbstractRenderService<WaterShader, Rende
 
     @Override
     protected WaterShader createShader(final ShaderService shaderService) {
-        return shaderService.supply("waterShader").castTo(WaterShader.class);
+        return shaderService.supply(new ShaderKey("waterShader")).castTo(WaterShader.class);
     }
 
     @Override

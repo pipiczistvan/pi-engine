@@ -11,12 +11,13 @@ import piengine.visual.shader.accessor.ShaderAccessor;
 import piengine.visual.shader.domain.Shader;
 import piengine.visual.shader.domain.ShaderDao;
 import piengine.visual.shader.domain.ShaderData;
+import piengine.visual.shader.domain.ShaderKey;
 import piengine.visual.shader.interpreter.ShaderInterpreter;
 import puppeteer.annotation.premade.Component;
 import puppeteer.annotation.premade.Wire;
 
 @Component
-public class ShaderService extends SupplierService<String, ShaderData, ShaderDao, Shader> {
+public class ShaderService extends SupplierService<ShaderKey, ShaderData, ShaderDao, Shader> {
 
     private final ShaderInterpreter shaderInterpreter;
 

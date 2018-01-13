@@ -10,6 +10,7 @@ import piengine.visual.render.domain.config.RenderConfigBuilder;
 import piengine.visual.render.domain.fragment.domain.RenderWorldPlanContext;
 import piengine.visual.render.interpreter.RenderInterpreter;
 import piengine.visual.render.shader.ShadowShader;
+import piengine.visual.shader.domain.ShaderKey;
 import piengine.visual.shader.service.ShaderService;
 import puppeteer.annotation.premade.Component;
 import puppeteer.annotation.premade.Wire;
@@ -26,7 +27,7 @@ public class ShadowRenderService extends AbstractRenderService<ShadowShader, Ren
 
     @Override
     protected ShadowShader createShader(final ShaderService shaderService) {
-        return shaderService.supply("shadowShader").castTo(ShadowShader.class);
+        return shaderService.supply(new ShaderKey("shadowShader")).castTo(ShadowShader.class);
     }
 
     @Override

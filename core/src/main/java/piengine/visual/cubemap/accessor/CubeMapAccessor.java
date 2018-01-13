@@ -5,6 +5,7 @@ import piengine.visual.cubemap.domain.CubeMapData;
 import piengine.visual.cubemap.domain.CubeMapKey;
 import piengine.visual.image.accessor.ImageAccessor;
 import piengine.visual.image.domain.ImageData;
+import piengine.visual.image.domain.ImageKey;
 import puppeteer.annotation.premade.Component;
 import puppeteer.annotation.premade.Wire;
 
@@ -24,7 +25,11 @@ public class CubeMapAccessor implements Accessor<CubeMapKey, CubeMapData> {
 
     @Override
     public CubeMapData access(final CubeMapKey key) {
-        List<ImageData> imageData = Arrays.stream(key.textures).map(imageAccessor::access).collect(Collectors.toList());
+        //todo: ne itt
+        List<ImageData> imageData = Arrays.stream(key.textures)
+                .map(ImageKey::new)
+                .map(imageAccessor::access)
+                .collect(Collectors.toList());
 
         return new CubeMapData(imageData);
     }

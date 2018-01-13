@@ -17,25 +17,25 @@ public class MatrixUtils {
         return new Matrix4f();
     }
 
-    public static Matrix4f MODEL_MATRIX(final Vector3f position, final Vector3f rotation, final Vector3f scale) {
+    public static Matrix4f MODEL_MATRIX(final Vector3f translation, final Vector3f rotation, final Vector3f scale) {
         Matrix4f matrix = new Matrix4f();
-        MODEL_MATRIX(position, rotation, scale, matrix);
+        MODEL_MATRIX(translation, rotation, scale, matrix);
 
         return matrix;
     }
 
-    public static void MODEL_MATRIX(final Vector3f position, final Vector3f rotation, final Vector3f scale, final Matrix4f destination) {
+    public static void MODEL_MATRIX(final Vector3f translation, final Vector3f rotation, final Vector3f scale, final Matrix4f destination) {
         destination.identity();
-        destination.translate(position);
+        destination.translate(translation);
         destination.rotate((float) Math.toRadians(rotation.x), RIGHT);
         destination.rotate((float) Math.toRadians(rotation.y), UP);
         destination.rotate((float) Math.toRadians(rotation.z), FORWARD);
         destination.scale(scale);
     }
 
-    public static Matrix4f VIEW_MATRIX(final Vector3f position, final Vector3f rotation) {
+    public static Matrix4f VIEW_MATRIX(final Vector3f translation, final Vector3f rotation) {
         Matrix4f matrix = new Matrix4f();
-        Vector3f cameraPos = new Vector3f(position);
+        Vector3f cameraPos = new Vector3f(translation);
 
         matrix.rotate((float) Math.toRadians(-rotation.y), RIGHT);
         matrix.rotate((float) Math.toRadians(rotation.x), UP);

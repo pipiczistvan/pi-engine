@@ -4,7 +4,6 @@ import org.joml.Vector2f;
 import org.joml.Vector3f;
 import piengine.core.input.manager.InputManager;
 import piengine.object.asset.domain.Asset;
-import piengine.visual.camera.domain.Camera;
 import piengine.visual.window.manager.WindowManager;
 
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_A;
@@ -16,7 +15,7 @@ import static org.lwjgl.glfw.GLFW.GLFW_KEY_W;
 import static piengine.core.input.domain.KeyEventType.PRESS;
 import static piengine.core.input.domain.KeyEventType.RELEASE;
 
-public abstract class CameraAsset<C extends Camera> extends Asset<CameraAssetArgument<C>> {
+public abstract class CameraAsset extends Asset<CameraAssetArgument> {
 
     public boolean movingEnabled = true;
     public boolean lookingEnabled = true;
@@ -30,7 +29,6 @@ public abstract class CameraAsset<C extends Camera> extends Asset<CameraAssetArg
     private float upwardsSpeed = 0;
     private boolean isInAir = false;
     private boolean isFlying = false;
-    private C camera;
 
     private final InputManager inputManager;
     private final WindowManager windowManager;
@@ -44,8 +42,6 @@ public abstract class CameraAsset<C extends Camera> extends Asset<CameraAssetArg
 
     @Override
     public void initialize() {
-        camera = arguments.camera;
-
         inputManager.addEvent(GLFW_KEY_SPACE, PRESS, this::pressSpace);
         inputManager.addEvent(GLFW_KEY_SPACE, RELEASE, this::releaseSpace);
         inputManager.addEvent(GLFW_KEY_LEFT_SHIFT, PRESS, this::pressShift);
@@ -76,7 +72,7 @@ public abstract class CameraAsset<C extends Camera> extends Asset<CameraAssetArg
         // HORIZONTAL MOVEMENT
         float translateX = 0;
         float translateZ = 0;
-        Vector3f rotation = camera.getRotation();
+        Vector3f rotation = getRotation();
 
         float multiplier;
         if (movement.x != 0 && movement.y != 0) {
@@ -101,23 +97,21 @@ public abstract class CameraAsset<C extends Camera> extends Asset<CameraAssetArg
             translateZ += Math.cos(Math.toRadians(rotation.x));
         }
 
-        camera.addPosition(translateX * (float) delta * multiplier, 0, translateZ * (float) delta * multiplier);
-
         // VERTICAL MOVEMENT
         if (!isFlying) {
             upwardsSpeed += GRAVITY * delta;
         }
 
-        camera.addPosition(0, upwardsSpeed * (float) delta, 0);
+        translate(translateX * (float) delta * multiplier, upwardsSpeed * (float) delta, translateZ * (float) delta * multiplier);
 
-        Vector3f position = camera.getPosition();
+        Vector3f position = getPosition();
         float terrainHeight = arguments.terrain != null ? arguments.terrain.getHeight(position.x, position.z) + CAMERA_HEIGHT : 0;
 
         if (position.y < terrainHeight) {
             upwardsSpeed = 0;
             isInAir = false;
             isFlying = false;
-            camera.setPosition(position.x, terrainHeight, position.z);
+            setPosition(position.x, terrainHeight, position.z);
         }
     }
 
@@ -184,27 +178,28 @@ public abstract class CameraAsset<C extends Camera> extends Asset<CameraAssetArg
     }
 
     private void lookAt(final Vector2f lookAt) {
-        camera.addRotation(lookAt.x * arguments.lookSpeed, -lookAt.y * arguments.lookSpeed, 0.0f);
+        rotate(lookAt.x * arguments.lookSpeed, -lookAt.y * arguments.lookSpeed, 0.0f);
 
-        Vector3f rotation = camera.getRotation();
+        Vector3f rotation = getRotation();
 
         clampYaw(rotation.x);
         clampPitch(rotation);
     }
 
+    //todo: translation+rotation 1szerre
     private void clampYaw(final float yaw) {
         if (yaw > 360) {
-            camera.addRotation(-360, 0, 0);
+            rotate(-360, 0, 0);
         } else if (yaw < 0) {
-            camera.addRotation(360, 0, 0);
+            rotate(360, 0, 0);
         }
     }
 
     private void clampPitch(final Vector3f rotation) {
         if (rotation.y > arguments.lookUpLimit) {
-            camera.setRotation(rotation.x, arguments.lookUpLimit, rotation.z);
+            setRotation(rotation.x, arguments.lookUpLimit, rotation.z);
         } else if (rotation.y < arguments.lookDownLimit) {
-            camera.setRotation(rotation.x, arguments.lookDownLimit, rotation.z);
+            setRotation(rotation.x, arguments.lookDownLimit, rotation.z);
         }
     }
 }

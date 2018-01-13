@@ -5,6 +5,7 @@ import piengine.core.base.resource.ResourceLoader;
 import piengine.core.base.type.property.ApplicationProperties;
 import piengine.core.base.type.property.PropertyKeys;
 import piengine.visual.writing.font.domain.FontData;
+import piengine.visual.writing.font.domain.FontKey;
 import piengine.visual.writing.text.accessor.TextAccessor;
 import piengine.visual.writing.text.domain.Character;
 import puppeteer.annotation.premade.Component;
@@ -13,7 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Component
-public class FontAccessor implements Accessor<String, FontData> {
+public class FontAccessor implements Accessor<FontKey, FontData> {
 
     private static final String ROOT = ApplicationProperties.get(PropertyKeys.FONTS_LOCATION);
     private static final String FONT_EXT = "fnt";
@@ -38,11 +39,11 @@ public class FontAccessor implements Accessor<String, FontData> {
     }
 
     @Override
-    public FontData access(final String file) {
-        final String fontSource = loader.load(file);
+    public FontData access(final FontKey key) {
+        final String fontSource = loader.load(key.file);
         final FontContext context = new FontContext(fontSource.split("\n"));
 
-        return new FontData(file, parseSource(context), context.spaceWidth);
+        return new FontData(key.file, parseSource(context), context.spaceWidth);
     }
 
     private Map<Integer, Character> parseSource(final FontContext context) {
