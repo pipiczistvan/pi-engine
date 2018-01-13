@@ -46,7 +46,7 @@ public class ModelRenderService extends AbstractRenderService<ModelShader, Rende
                 .loadClippingPlane(context.clippingPlane);
 
         for (Model model : context.models) {
-            shader.loadModelMatrix(model.getModelMatrix())
+            shader.loadModelMatrix(model.getTransformation())
                     .loadColor(model.color);
 
             if (model.texture != null) {

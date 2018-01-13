@@ -35,14 +35,19 @@ public class MatrixUtils {
 
     public static Matrix4f VIEW_MATRIX(final Vector3f translation, final Vector3f rotation) {
         Matrix4f matrix = new Matrix4f();
-        Vector3f cameraPos = new Vector3f(translation);
-
-        matrix.rotate((float) Math.toRadians(-rotation.y), RIGHT);
-        matrix.rotate((float) Math.toRadians(rotation.x), UP);
-
-        matrix.translate(cameraPos.negate());
+        VIEW_MATRIX(translation, rotation, matrix);
 
         return matrix;
+    }
+
+    public static void VIEW_MATRIX(final Vector3f translation, final Vector3f rotation, final Matrix4f destination) {
+        destination.identity();
+
+        Vector3f cameraPos = new Vector3f(translation);
+
+        destination.rotate((float) Math.toRadians(-rotation.y), RIGHT);
+        destination.rotate((float) Math.toRadians(rotation.x), UP);
+        destination.translate(cameraPos.negate());
     }
 
     public static Matrix4f PERSPECTIVE_PROJECTION_MATRIX(final Vector2i viewPort, final float fieldOfView, final float nearPlane, final float farPlane) {

@@ -8,8 +8,6 @@ import java.util.List;
 
 import static piengine.core.utils.MatrixUtils.MODEL_MATRIX;
 
-//todo#3 Camera translateRotate() egyszerre
-//todo#4 Camera nem entity -> modelMatrix helyett viewMatrix, vagy lehessen felülírni a mátrixszámítást
 //todo#5 Uniform caching
 
 public abstract class Entity {
@@ -20,7 +18,7 @@ public abstract class Entity {
     private final Vector3f position;
     private final Vector3f rotation;
     private final Vector3f scale;
-    private final Matrix4f modelMatrix;
+    private final Matrix4f transformation;
 
     private final Entity parent;
     private final List<Entity> children;
@@ -29,7 +27,7 @@ public abstract class Entity {
         this.position = new Vector3f(ZERO);
         this.rotation = new Vector3f(ZERO);
         this.scale = new Vector3f(ONE);
-        this.modelMatrix = new Matrix4f();
+        this.transformation = new Matrix4f();
         this.children = new ArrayList<>();
 
         this.parent = parent;
@@ -49,11 +47,9 @@ public abstract class Entity {
     }
 
     public void setPosition(final float x, final float y, final float z) {
-        Vector3f parentPosition = parent == null ? ZERO : parent.position;
-
         position.set(x, y, z);
-        position.add(parentPosition);
-        updateModelMatrix();
+        position.add(getParentPosition());
+        updateTransformation(transformation);
         children.forEach(entity -> entity.setPosition(x, y, z));
     }
 
@@ -63,7 +59,7 @@ public abstract class Entity {
 
     public void translate(final float x, final float y, final float z) {
         position.add(x, y, z);
-        updateModelMatrix();
+        updateTransformation(transformation);
         children.forEach(entity -> entity.translate(x, y, z));
     }
 
@@ -77,11 +73,9 @@ public abstract class Entity {
     }
 
     public void setRotation(final float yaw, final float pitch, final float roll) {
-        Vector3f parentRotation = parent == null ? ZERO : parent.rotation;
-
         rotation.set(yaw, pitch, roll);
-        rotation.add(parentRotation);
-        updateModelMatrix();
+        rotation.add(getParentRotation());
+        updateTransformation(transformation);
         children.forEach(entity -> entity.setRotation(yaw, pitch, roll));
     }
 
@@ -91,7 +85,7 @@ public abstract class Entity {
 
     public void rotate(final float yaw, final float pitch, final float roll) {
         rotation.add(yaw, pitch, roll);
-        updateModelMatrix();
+        updateTransformation(transformation);
         children.forEach(entity -> entity.rotate(yaw, pitch, roll));
     }
 
@@ -105,11 +99,9 @@ public abstract class Entity {
     }
 
     public void setScale(final float x, final float y, final float z) {
-        Vector3f parentScale = parent == null ? ONE : parent.scale;
-
         scale.set(x, y, z);
-        scale.mul(parentScale);
-        updateModelMatrix();
+        scale.mul(getParentScale());
+        updateTransformation(transformation);
         children.forEach(entity -> entity.setScale(x, y, z));
     }
 
@@ -123,7 +115,7 @@ public abstract class Entity {
 
     public void scale(final float x, final float y, final float z) {
         scale.mul(x, y, z);
-        updateModelMatrix();
+        updateTransformation(transformation);
         children.forEach(entity -> entity.scale(x, y, z));
     }
 
@@ -131,20 +123,62 @@ public abstract class Entity {
         scale(vector.x, vector.y, vector.z);
     }
 
+    // MULTI
+    public void setPositionRotation(final float x, final float y, final float z,
+                                    final float yaw, final float pitch, final float roll) {
+        position.set(x, y, z);
+        position.add(getParentPosition());
+        rotation.set(yaw, pitch, roll);
+        rotation.add(getParentRotation());
+        updateTransformation(transformation);
+        children.forEach(entity -> entity.setPositionRotation(x, y, z, yaw, pitch, roll));
+    }
+
+    public void setPositionRotation(final Vector3f position, final Vector3f rotation) {
+        setPositionRotation(position.x, position.y, position.z, rotation.x, rotation.y, rotation.z);
+    }
+
+    public void translateRotate(final float x, final float y, final float z,
+                                final float yaw, final float pitch, final float roll) {
+        translateRotateScale(x, y, z, yaw, pitch, roll, 1, 1, 1);
+    }
+
     public void translateRotateScale(final Vector3f translation, final Vector3f rotation, final Vector3f scale) {
-        this.position.add(translation);
-        this.rotation.add(rotation);
-        this.scale.mul(scale);
-        updateModelMatrix();
-        children.forEach(entity -> entity.translateRotateScale(translation, rotation, scale));
+        translateRotateScale(
+                translation.x, translation.y, translation.z,
+                rotation.x, rotation.y, rotation.z,
+                scale.x, scale.y, scale.z
+        );
+    }
+
+    public void translateRotateScale(final float x, final float y, final float z,
+                                     final float yaw, final float pitch, final float roll,
+                                     final float width, final float height, final float depth) {
+        this.position.add(x, y, z);
+        this.rotation.add(yaw, pitch, roll);
+        this.scale.mul(width, height, depth);
+        updateTransformation(transformation);
+        children.forEach(entity -> entity.translateRotateScale(x, y, z, yaw, pitch, roll, width, height, depth));
     }
 
     // MODEL MATRIX
-    public Matrix4f getModelMatrix() {
-        return modelMatrix;
+    public Matrix4f getTransformation() {
+        return transformation;
     }
 
-    private void updateModelMatrix() {
-        MODEL_MATRIX(position, rotation, scale, modelMatrix);
+    protected void updateTransformation(final Matrix4f transformation) {
+        MODEL_MATRIX(position, rotation, scale, transformation);
+    }
+
+    private Vector3f getParentPosition() {
+        return parent == null ? ZERO : parent.position;
+    }
+
+    private Vector3f getParentRotation() {
+        return parent == null ? ZERO : parent.rotation;
+    }
+
+    private Vector3f getParentScale() {
+        return parent == null ? ONE : parent.scale;
     }
 }

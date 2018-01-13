@@ -22,7 +22,6 @@ public class Skybox implements Domain<SkyboxDao> {
         return dao;
     }
 
-    // todo
     public Matrix4f getView(final Camera camera) {
         Matrix4f viewMatrix = new Matrix4f(camera.getView());
 

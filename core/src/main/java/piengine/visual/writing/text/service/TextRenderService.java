@@ -39,7 +39,7 @@ public class TextRenderService extends AbstractRenderService<TextShader, RenderG
 
         shader.start();
         for (Text text : context.texts) {
-            shader.loadModelMatrix(text.getModelMatrix())
+            shader.loadModelMatrix(text.getTransformation())
                     .loadColor(text.color);
             fontService.bind(text.font);
 

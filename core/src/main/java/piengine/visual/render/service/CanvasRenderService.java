@@ -40,7 +40,7 @@ public class CanvasRenderService extends AbstractRenderService<CanvasShader, Ren
         shader.start();
 
         for (Canvas canvas : context.canvases) {
-            shader.loadModelMatrix(canvas.getModelMatrix())
+            shader.loadModelMatrix(canvas.getTransformation())
                     .loadColor(canvas.color);
 
             if (canvas.texture != null) {

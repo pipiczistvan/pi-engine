@@ -82,8 +82,7 @@ public class RenderWorldFragmentHandler implements FragmentHandler<RenderWorldPl
 
             framebufferService.bind(water.reflectionBuffer);
             {
-                context.camera.translate(0, -distance, 0);
-                context.camera.rotate(0, -cameraPitch * 2, 0);
+                context.camera.translateRotate(0, -distance, 0, 0, -cameraPitch * 2, 0);
 
                 context.clippingPlane.set(0, 1, 0, -waterHeight + 0.1f);
                 context.viewport.set(water.reflectionBuffer.resolution);
@@ -92,9 +91,7 @@ public class RenderWorldFragmentHandler implements FragmentHandler<RenderWorldPl
                 modelRenderService.process(context);
                 skyboxRenderService.process(context);
 
-                //todo: egyszerre
-                context.camera.translate(0, distance, 0);
-                context.camera.rotate(0, cameraPitch * 2, 0);
+                context.camera.translateRotate(0, distance, 0, 0, cameraPitch * 2, 0);
             }
             framebufferService.unbind();
 

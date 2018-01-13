@@ -5,14 +5,12 @@ import org.joml.Vector2i;
 import piengine.core.base.exception.PIEngineException;
 import piengine.object.entity.domain.Entity;
 
-import static piengine.core.utils.MatrixUtils.IDENTITY_MATRIX;
 import static piengine.core.utils.MatrixUtils.ORTHOGRAPHIC_PROJECTION_MATRIX;
 import static piengine.core.utils.MatrixUtils.PERSPECTIVE_PROJECTION_MATRIX;
 
 public abstract class Camera extends Entity {
 
     private final Matrix4f projection;
-    public final Matrix4f view;//todo: temporary
     public final Vector2i viewport;
     public final CameraAttribute attribute;
     private final ProjectionType projectionType;
@@ -24,7 +22,6 @@ public abstract class Camera extends Entity {
         this.attribute = attribute;
         this.projectionType = projectionType;
         this.projection = setProjectionMatrix(projectionType);
-        this.view = IDENTITY_MATRIX();
     }
 
     public Matrix4f getProjection() {
@@ -32,19 +29,19 @@ public abstract class Camera extends Entity {
     }
 
     public Matrix4f getView() {
-        calculateViewMatrix(view);
-        return view;
+        return getTransformation();
     }
 
     public void recalculateProjection() {
         this.projection.set(setProjectionMatrix(projectionType));
     }
 
-    public void recalculateView() {
-        calculateViewMatrix(view);
-    }
-
     protected abstract void calculateViewMatrix(final Matrix4f viewMatrix);
+
+    @Override
+    protected void updateTransformation(final Matrix4f transformation) {
+        calculateViewMatrix(transformation);
+    }
 
     private Matrix4f setProjectionMatrix(final ProjectionType projectionType) {
         switch (projectionType) {

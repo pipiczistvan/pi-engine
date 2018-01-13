@@ -35,7 +35,7 @@ public class ThirdPersonCamera extends Camera {
         cameraPosition.y = position.y + verticalDistance;
         cameraPosition.z = position.z + offsetZ;
 
-        viewMatrix.set(VIEW_MATRIX(cameraPosition, rotation));
+        VIEW_MATRIX(cameraPosition, rotation, viewMatrix);
     }
 
     private float calculateHorizontalDistance(final float pitch) {

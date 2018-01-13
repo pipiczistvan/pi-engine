@@ -51,7 +51,7 @@ public class TerrainRenderService extends AbstractRenderService<TerrainShader, R
         textureService.bind(GL_TEXTURE0, context.shadows.get(0).shadowMap);
 
         for (Terrain terrain : context.terrains) {
-            shader.loadModelMatrix(terrain.getModelMatrix())
+            shader.loadModelMatrix(terrain.getTransformation())
                     .loadColor(new Vector4f(1));
 
             draw(terrain.getDao());

@@ -55,7 +55,7 @@ public class ShadowRenderService extends AbstractRenderService<ShadowShader, Ren
     private Matrix4f createProjectionView(final Camera camera) {
         Matrix4f projectionViewMatrix = new Matrix4f();
         Matrix4f projectionMatrix = camera.getProjection();
-        Matrix4f viewMatrix = camera.view;
+        Matrix4f viewMatrix = camera.getView();
         projectionMatrix.mul(viewMatrix, projectionViewMatrix);
 
         return projectionViewMatrix;
@@ -63,7 +63,7 @@ public class ShadowRenderService extends AbstractRenderService<ShadowShader, Ren
 
     private Matrix4f createTransformation(final Matrix4f projectionView, final Entity entity) {
         Matrix4f transformationMatrix = new Matrix4f();
-        Matrix4f modelMatrix = entity.getModelMatrix();
+        Matrix4f modelMatrix = entity.getTransformation();
         projectionView.mul(modelMatrix, transformationMatrix);
 
         return transformationMatrix;

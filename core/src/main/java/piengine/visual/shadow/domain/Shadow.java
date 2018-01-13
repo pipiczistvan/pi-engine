@@ -12,16 +12,19 @@ import piengine.visual.camera.domain.FirstPersonCamera;
 import piengine.visual.framebuffer.domain.Framebuffer;
 import piengine.visual.light.Light;
 
+import static piengine.core.base.type.property.ApplicationProperties.get;
+import static piengine.core.base.type.property.PropertyKeys.CAMERA_NEAR_PLANE;
+import static piengine.core.base.type.property.PropertyKeys.SHADOW_DISTANCE;
+import static piengine.core.base.type.property.PropertyKeys.SHADOW_OFFSET;
 import static piengine.visual.camera.domain.ProjectionType.ORTHOGRAPHIC;
 
 public class Shadow implements Domain<ShadowDao>, Updatable {
 
 
     private static final Matrix4f OFFSET_MATRIX = createOffset();
-    //todo: temporary(dinamikus)
-    private static final float OFFSET = 1;
-    private static final float SHADOW_MAX_DISTANCE = 30;
-    private static final float SHADOW_MIN_DISTANCE = 0.1f;//todo: camera nearplane
+    private static final float OFFSET = get(SHADOW_OFFSET);
+    private static final float SHADOW_MAX_DISTANCE = get(SHADOW_DISTANCE);
+    private static final float SHADOW_MIN_DISTANCE = get(CAMERA_NEAR_PLANE);
     private static final Vector4f UP = new Vector4f(0, 1, 0, 0);
     private static final Vector4f FORWARD = new Vector4f(0, 0, -1, 0);
 
@@ -35,12 +38,12 @@ public class Shadow implements Domain<ShadowDao>, Updatable {
     public final Camera lightCamera;
 
     private float farHeight, farWidth, nearHeight, nearWidth;
-    float maxX = 0;
-    float minX = 0;
-    float maxY = 0;
-    float minY = 0;
-    float maxZ = 0;
-    float minZ = 0;
+    private float maxX = 0;
+    private float minX = 0;
+    private float maxY = 0;
+    private float minY = 0;
+    private float maxZ = 0;
+    private float minZ = 0;
 
     public Shadow(final ShadowDao dao, final Camera playerCamera, final Light light, final Framebuffer shadowMap) {
         this.dao = dao;
@@ -51,7 +54,6 @@ public class Shadow implements Domain<ShadowDao>, Updatable {
         this.shadowMapSpaceMatrix = new Matrix4f();
         this.lightViewport = new Vector2i(0);
         this.lightCamera = new FirstPersonCamera(null, lightViewport, new CameraAttribute(0, -30, 20), ORTHOGRAPHIC);
-        //todo: biztos csak 1szer kell?
         calculateWidthsAndHeights();
     }
 
@@ -116,15 +118,11 @@ public class Shadow implements Domain<ShadowDao>, Updatable {
         float yaw = (float) Math.toDegrees(((float) Math.atan(lightDirection.x / -lightDirection.z)));
         float pitch = (float) Math.toDegrees(Math.asin(lightDirection.y));
 
-        Vector3f center = getCenter(lightCamera.view);
+        Vector3f center = getCenter(lightCamera.getView());
 
-//        lightCamera.setPosition(lightPosition.x, lightPosition.y, lightPosition.z);
-        lightCamera.setRotation(yaw, pitch, 0);
-        lightCamera.setPosition(center);
+        lightCamera.setPositionRotation(center.x, center.y, center.z, yaw, pitch, 0);
 
-        lightCamera.recalculateView();
-
-        lightCamera.getProjection().mul(lightCamera.view, shadowMapSpaceMatrix);
+        lightCamera.getProjection().mul(lightCamera.getView(), shadowMapSpaceMatrix);
         OFFSET_MATRIX.mul(shadowMapSpaceMatrix, shadowMapSpaceMatrix);
     }
 
@@ -191,7 +189,7 @@ public class Shadow implements Domain<ShadowDao>, Updatable {
         startPoint.add(direction.x * width, direction.y * width, direction.z * width, point);
 
         Vector4f point4f = new Vector4f(point.x, point.y, point.z, 1f);
-        Matrix4f lightViewMatrix = lightCamera.view;
+        Matrix4f lightViewMatrix = lightCamera.getView();
         lightViewMatrix.transform(point4f, point4f);
         return point4f;
     }

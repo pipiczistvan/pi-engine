@@ -34,4 +34,7 @@ public class PropertyKeys {
     public static final FloatProperty CAMERA_MOVE_SPEED = new FloatProperty("camera.move.speed");
     public static final FloatProperty CAMERA_DISTANCE = new FloatProperty("camera.distance");
 
+    public static final FloatProperty SHADOW_OFFSET = new FloatProperty("shadow.offset");
+    public static final FloatProperty SHADOW_DISTANCE = new FloatProperty("shadow.distance");
+
 }

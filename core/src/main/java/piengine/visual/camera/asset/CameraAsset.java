@@ -5,7 +5,11 @@ import org.joml.Vector3f;
 import piengine.core.input.manager.InputManager;
 import piengine.object.asset.domain.Asset;
 import piengine.visual.window.manager.WindowManager;
+import puppeteer.annotation.premade.Wire;
 
+import static java.lang.Math.cos;
+import static java.lang.Math.sin;
+import static java.lang.Math.toRadians;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_A;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_D;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_LEFT_SHIFT;
@@ -26,6 +30,7 @@ public class CameraAsset extends Asset<CameraAssetArgument> {
     private static final float CAMERA_HEIGHT = 3;
 
     private final Vector2f movement;
+    private final Vector2f looking;
     private float upwardsSpeed = 0;
     private boolean isInAir = false;
     private boolean isFlying = false;
@@ -33,11 +38,13 @@ public class CameraAsset extends Asset<CameraAssetArgument> {
     private final InputManager inputManager;
     private final WindowManager windowManager;
 
+    @Wire
     public CameraAsset(final InputManager inputManager, final WindowManager windowManager) {
         this.inputManager = inputManager;
         this.windowManager = windowManager;
 
         this.movement = new Vector2f();
+        this.looking = new Vector2f();
     }
 
     @Override
@@ -60,7 +67,7 @@ public class CameraAsset extends Asset<CameraAssetArgument> {
                 Vector2f windowCenter = windowManager.getWindowCenter();
                 v.sub(windowCenter, delta);
                 if (Math.abs(delta.x) >= 1 || Math.abs(delta.y) >= 1) {
-                    lookAt(delta);
+                    looking.set(delta);
                     windowManager.setPointer(windowCenter);
                 }
             }
@@ -68,51 +75,13 @@ public class CameraAsset extends Asset<CameraAssetArgument> {
     }
 
     @Override
-    public void update(double delta) {
-        // HORIZONTAL MOVEMENT
-        float translateX = 0;
-        float translateZ = 0;
-        Vector3f rotation = getRotation();
+    public void update(final double delta) {
+        Vector3f newPosition = calculatePosition(delta);
+        Vector3f newRotation = calculateRotation(delta);
 
-        float multiplier;
-        if (movement.x != 0 && movement.y != 0) {
-            multiplier = arguments.strafeSpeed;
-        } else {
-            multiplier = arguments.moveSpeed;
-        }
+        setPositionRotation(newPosition, newRotation);
 
-        if (movement.x < 0) {
-            translateX += Math.sin(Math.toRadians(rotation.x - 90));
-            translateZ -= Math.cos(Math.toRadians(rotation.x - 90));
-        } else if (movement.x > 0) {
-            translateX -= Math.sin(Math.toRadians(rotation.x - 90));
-            translateZ += Math.cos(Math.toRadians(rotation.x - 90));
-        }
-
-        if (movement.y < 0) {
-            translateX += Math.sin(Math.toRadians(rotation.x));
-            translateZ -= Math.cos(Math.toRadians(rotation.x));
-        } else if (movement.y > 0) {
-            translateX -= Math.sin(Math.toRadians(rotation.x));
-            translateZ += Math.cos(Math.toRadians(rotation.x));
-        }
-
-        // VERTICAL MOVEMENT
-        if (!isFlying) {
-            upwardsSpeed += GRAVITY * delta;
-        }
-
-        translate(translateX * (float) delta * multiplier, upwardsSpeed * (float) delta, translateZ * (float) delta * multiplier);
-
-        Vector3f position = getPosition();
-        float terrainHeight = arguments.terrain != null ? arguments.terrain.getHeight(position.x, position.z) + CAMERA_HEIGHT : 0;
-
-        if (position.y < terrainHeight) {
-            upwardsSpeed = 0;
-            isInAir = false;
-            isFlying = false;
-            setPosition(position.x, terrainHeight, position.z);
-        }
+        looking.set(0, 0);
     }
 
     private void pressSpace() {
@@ -177,29 +146,66 @@ public class CameraAsset extends Asset<CameraAssetArgument> {
         movement.y += movement.y == direction ? 0 : direction;
     }
 
-    private void lookAt(final Vector2f lookAt) {
-        rotate(lookAt.x * arguments.lookSpeed, -lookAt.y * arguments.lookSpeed, 0.0f);
-
+    private Vector3f calculatePosition(final double delta) {
+        // HORIZONTAL MOVEMENT
+        Vector3f newPosition = new Vector3f(getPosition());
         Vector3f rotation = getRotation();
 
-        clampYaw(rotation.x);
-        clampPitch(rotation);
+        float multiplier;
+        if (movement.x != 0 && movement.y != 0) {
+            multiplier = arguments.strafeSpeed * (float) delta;
+        } else {
+            multiplier = arguments.moveSpeed * (float) delta;
+        }
+
+        if (movement.x < 0) {
+            newPosition.add((float) (multiplier * sin(toRadians(rotation.x - 90))), 0, (float) (multiplier * -cos(toRadians(rotation.x - 90))));
+        } else if (movement.x > 0) {
+            newPosition.sub((float) (multiplier * sin(toRadians(rotation.x - 90))), 0, (float) (multiplier * -cos(toRadians(rotation.x - 90))));
+        }
+
+        if (movement.y < 0) {
+            newPosition.add((float) (multiplier * sin(toRadians(rotation.x))), 0, (float) (multiplier * -cos(toRadians(rotation.x))));
+        } else if (movement.y > 0) {
+            newPosition.sub((float) (multiplier * sin(toRadians(rotation.x))), 0, (float) (multiplier * -cos(toRadians(rotation.x))));
+        }
+
+        // VERTICAL MOVEMENT
+        if (!isFlying) {
+            upwardsSpeed += GRAVITY * delta;
+        }
+
+        newPosition.add(0, upwardsSpeed * (float) delta, 0);
+
+        float terrainHeight = arguments.terrain != null ? arguments.terrain.getHeight(newPosition.x, newPosition.z) + CAMERA_HEIGHT : 0;
+
+        if (newPosition.y < terrainHeight) {
+            upwardsSpeed = 0;
+            isInAir = false;
+            isFlying = false;
+            newPosition.set(newPosition.x, terrainHeight, newPosition.z);
+        }
+
+        return newPosition;
     }
 
-    //todo: translation+rotation 1szerre
-    private void clampYaw(final float yaw) {
-        if (yaw > 360) {
-            rotate(-360, 0, 0);
-        } else if (yaw < 0) {
-            rotate(360, 0, 0);
-        }
-    }
+    private Vector3f calculateRotation(final double delta) {
+        Vector3f newRotation = new Vector3f(getRotation());
 
-    private void clampPitch(final Vector3f rotation) {
-        if (rotation.y > arguments.lookUpLimit) {
-            setRotation(rotation.x, arguments.lookUpLimit, rotation.z);
-        } else if (rotation.y < arguments.lookDownLimit) {
-            setRotation(rotation.x, arguments.lookDownLimit, rotation.z);
+        newRotation.add((float) delta * looking.x * arguments.lookSpeed, (float) delta * -looking.y * arguments.lookSpeed, 0.0f);
+
+        if (newRotation.x > 360) {
+            newRotation.sub(360, 0, 0);
+        } else if (newRotation.x < 0) {
+            newRotation.add(360, 0, 0);
         }
+
+        if (newRotation.y > arguments.lookUpLimit) {
+            newRotation.set(newRotation.x, arguments.lookUpLimit, newRotation.z);
+        } else if (newRotation.y < arguments.lookDownLimit) {
+            newRotation.set(newRotation.x, arguments.lookDownLimit, newRotation.z);
+        }
+
+        return newRotation;
     }
 }
