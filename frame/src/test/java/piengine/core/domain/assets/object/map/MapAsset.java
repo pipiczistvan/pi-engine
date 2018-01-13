@@ -1,22 +1,15 @@
 package piengine.core.domain.assets.object.map;
 
 import org.joml.Vector2i;
-import piengine.core.utils.ColorUtils;
 import piengine.object.asset.domain.WorldAsset;
 import piengine.object.model.domain.Model;
-import piengine.object.model.domain.ModelKey;
 import piengine.object.model.manager.ModelManager;
 import piengine.object.terrain.domain.Terrain;
-import piengine.object.terrain.domain.TerrainKey;
 import piengine.object.terrain.manager.TerrainManager;
 import piengine.object.water.domain.Water;
-import piengine.object.water.domain.WaterKey;
 import piengine.object.water.manager.WaterManager;
-import piengine.visual.image.domain.Image;
-import piengine.visual.image.manager.ImageManager;
 import piengine.visual.light.Light;
 import piengine.visual.shadow.domain.Shadow;
-import piengine.visual.shadow.domain.ShadowKey;
 import piengine.visual.shadow.manager.ShadowManager;
 import puppeteer.annotation.premade.Wire;
 
@@ -30,37 +23,32 @@ public class MapAsset extends WorldAsset<MapAssetArgument> {
     private final WaterManager waterManager;
     private final ShadowManager shadowManager;
     private final ModelManager modelManager;
-    private final ImageManager imageManager;
 
     private Terrain terrain;
     private Water water;
     private Light light;
     private Shadow shadow;
     private Model cubeModel;
-    private Image treeImage;
     private Model[] treeModels = new Model[40];
 
     @Wire
     public MapAsset(final TerrainManager terrainManager, final WaterManager waterManager,
-                    final ShadowManager shadowManager, final ModelManager modelManager,
-                    final ImageManager imageManager) {
+                    final ShadowManager shadowManager, final ModelManager modelManager) {
         this.terrainManager = terrainManager;
         this.waterManager = waterManager;
         this.shadowManager = shadowManager;
         this.modelManager = modelManager;
-        this.imageManager = imageManager;
     }
 
     @Override
     public void initialize() {
-        terrain = terrainManager.supply(new TerrainKey(this, "heightmap2"));
-        water = waterManager.supply(new WaterKey(this, arguments.viewport, new Vector2i(128, 128)));
+        terrain = terrainManager.supply(this, "heightmap2");
+        water = waterManager.supply(this, arguments.viewport, new Vector2i(128, 128));
         light = new Light(this);
-        shadow = shadowManager.supply(new ShadowKey(light, arguments.camera, new Vector2i(2048)));
-        cubeModel = modelManager.supply(new ModelKey(this, "cube", ColorUtils.RED));
-        treeImage = imageManager.supply("lowPolyTree");
+        shadow = shadowManager.supply(light, arguments.camera, new Vector2i(2048));
+        cubeModel = modelManager.supply(this, "cube");
         for (int i = 0; i < treeModels.length; i++) {
-            treeModels[i] = modelManager.supply(new ModelKey(this, "lowPolyTree", treeImage));
+            treeModels[i] = modelManager.supply(this, "lowPolyTree", "lowPolyTree");
         }
 
         initializeAssets();

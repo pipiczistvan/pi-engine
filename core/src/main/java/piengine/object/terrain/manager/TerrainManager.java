@@ -1,5 +1,6 @@
 package piengine.object.terrain.manager;
 
+import piengine.object.entity.domain.Entity;
 import piengine.object.terrain.domain.Terrain;
 import piengine.object.terrain.domain.TerrainKey;
 import piengine.object.terrain.service.TerrainService;
@@ -16,7 +17,7 @@ public class TerrainManager {
         this.terrainService = terrainService;
     }
 
-    public Terrain supply(final TerrainKey key) {
-        return terrainService.supply(key);
+    public Terrain supply(final Entity parent, final String heightmap) {
+        return terrainService.supply(new TerrainKey(parent, heightmap));
     }
 }

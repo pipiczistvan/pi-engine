@@ -6,7 +6,6 @@ import piengine.core.input.domain.KeyEventType;
 import piengine.core.input.manager.InputManager;
 import piengine.object.asset.domain.Asset;
 import piengine.object.canvas.domain.Canvas;
-import piengine.object.canvas.domain.CanvasKey;
 import piengine.object.canvas.manager.CanvasManager;
 import piengine.visual.image.domain.Image;
 import piengine.visual.image.manager.ImageManager;
@@ -60,7 +59,7 @@ public class ButtonAsset extends Asset<ButtonAssetArgument> {
         font = fontManager.supply("candara");
         label = textManager.supply(textConfig().withFont(font).withFontSize(1.5f).withMaxLineLength(SCALE_X).withText(arguments.text), this);
 
-        buttonCanvas = canvasManager.supply(new CanvasKey(this, defaultImage));
+        buttonCanvas = canvasManager.supply(this, defaultImage);
         buttonCanvas.setScale(SCALE_X, SCALE_Y, 1.0f);
 
         setupButtonParameters();

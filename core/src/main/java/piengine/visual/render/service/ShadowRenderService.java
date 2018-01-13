@@ -3,7 +3,6 @@ package piengine.visual.render.service;
 import org.joml.Matrix4f;
 import piengine.object.entity.domain.Entity;
 import piengine.object.model.domain.Model;
-import piengine.object.terrain.domain.Terrain;
 import piengine.visual.camera.domain.Camera;
 import piengine.visual.render.domain.config.RenderConfig;
 import piengine.visual.render.domain.config.RenderConfigBuilder;
@@ -37,12 +36,6 @@ public class ShadowRenderService extends AbstractRenderService<ShadowShader, Ren
         renderInterpreter.setViewport(context.viewport);
         shader.start();
 
-        for (Terrain terrain : context.terrains) {
-            Matrix4f transformationMatrix = createTransformation(projectionViewMatrix, terrain);
-            shader.loadTransformationMatrix(transformationMatrix);
-//            draw(terrain.getDao());
-            //todo: nem kell
-        }
         for (Model model : context.models) {
             Matrix4f transformationMatrix = createTransformation(projectionViewMatrix, model);
             shader.loadTransformationMatrix(transformationMatrix);

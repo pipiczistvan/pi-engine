@@ -2,33 +2,25 @@ package piengine.core.domain.assets.object.lamp;
 
 import piengine.object.asset.domain.WorldAsset;
 import piengine.object.model.domain.Model;
-import piengine.object.model.domain.ModelKey;
 import piengine.object.model.manager.ModelManager;
-import piengine.visual.image.domain.Image;
-import piengine.visual.image.manager.ImageManager;
 import piengine.visual.light.Light;
 import puppeteer.annotation.premade.Wire;
 
 public class LampAsset extends WorldAsset<LampAssetArgument> {
 
     private final ModelManager modelManager;
-    private final ImageManager imageManager;
 
     private Model lampModel;
-    private Image lampImage;
     private Light lampLight;
 
     @Wire
-    public LampAsset(final ModelManager modelManager, final ImageManager imageManager) {
+    public LampAsset(final ModelManager modelManager) {
         this.modelManager = modelManager;
-        this.imageManager = imageManager;
     }
 
     @Override
     public void initialize() {
-        lampImage = imageManager.supply("lamp");
-
-        lampModel = modelManager.supply(new ModelKey(this, "lamp", lampImage));
+        lampModel = modelManager.supply(this, "lamp", "lamp");
         lampModel.setScale(0.5f);
 
         lampLight = new Light(this);

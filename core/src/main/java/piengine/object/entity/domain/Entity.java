@@ -8,8 +8,6 @@ import java.util.List;
 
 import static piengine.core.utils.MatrixUtils.MODEL_MATRIX;
 
-//todo#1 Key létrehozás managerben, accessorokban, assetekben nem kell
-//todo#2 CameraAssetből nem kell külön
 //todo#3 Camera translateRotate() egyszerre
 //todo#4 Camera nem entity -> modelMatrix helyett viewMatrix, vagy lehessen felülírni a mátrixszámítást
 //todo#5 Uniform caching

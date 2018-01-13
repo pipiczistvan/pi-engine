@@ -1,15 +1,16 @@
 package piengine.visual.writing.font.domain;
 
 import piengine.core.base.domain.Key;
+import piengine.visual.image.domain.ImageKey;
 
 import java.util.Objects;
 
 public class FontKey implements Key {
 
-    public final String file;
+    public final ImageKey imageKey;
 
-    public FontKey(final String file) {
-        this.file = file;
+    public FontKey(final ImageKey imageKey) {
+        this.imageKey = imageKey;
     }
 
     @Override
@@ -17,11 +18,11 @@ public class FontKey implements Key {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         FontKey fontKey = (FontKey) o;
-        return Objects.equals(file, fontKey.file);
+        return Objects.equals(imageKey, fontKey.imageKey);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(file);
+        return Objects.hash(imageKey);
     }
 }

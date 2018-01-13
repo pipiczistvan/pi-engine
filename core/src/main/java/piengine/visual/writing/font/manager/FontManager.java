@@ -1,5 +1,6 @@
 package piengine.visual.writing.font.manager;
 
+import piengine.visual.image.domain.ImageKey;
 import piengine.visual.writing.font.domain.Font;
 import piengine.visual.writing.font.domain.FontKey;
 import piengine.visual.writing.font.service.FontService;
@@ -17,6 +18,6 @@ public class FontManager {
     }
 
     public Font supply(final String file) {
-        return fontService.supply(new FontKey(file));
+        return fontService.supply(new FontKey(new ImageKey(file)));
     }
 }

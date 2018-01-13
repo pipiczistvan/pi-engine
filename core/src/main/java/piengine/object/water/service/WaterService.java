@@ -9,8 +9,7 @@ import piengine.object.water.domain.WaterData;
 import piengine.object.water.domain.WaterKey;
 import piengine.object.water.interpreter.WaterInterpreter;
 import piengine.visual.framebuffer.domain.Framebuffer;
-import piengine.visual.framebuffer.domain.FramebufferKey;
-import piengine.visual.framebuffer.service.FramebufferService;
+import piengine.visual.framebuffer.manager.FramebufferManager;
 import puppeteer.annotation.premade.Component;
 import puppeteer.annotation.premade.Wire;
 
@@ -21,14 +20,14 @@ import static piengine.visual.framebuffer.domain.FramebufferAttachment.RENDER_BU
 @Component
 public class WaterService extends SupplierService<WaterKey, WaterData, WaterDao, Water> {
 
-    private final FramebufferService framebufferService;
+    private final FramebufferManager framebufferManager;
 
     @Wire
     public WaterService(final WaterAccessor waterAccessor, final WaterInterpreter waterInterpreter,
-                        final FramebufferService framebufferService) {
+                        final FramebufferManager framebufferManager) {
         super(waterAccessor, waterInterpreter);
 
-        this.framebufferService = framebufferService;
+        this.framebufferManager = framebufferManager;
     }
 
     @Override
@@ -42,12 +41,8 @@ public class WaterService extends SupplierService<WaterKey, WaterData, WaterDao,
                 resource.resolution.y / 2
         );
 
-        Framebuffer reflectionBuffer = framebufferService.supply(new FramebufferKey(reflectionResolution,
-                COLOR_ATTACHMENT, RENDER_BUFFER_ATTACHMENT
-        ));
-        Framebuffer refractionBuffer = framebufferService.supply(new FramebufferKey(refractionResolution,
-                COLOR_ATTACHMENT, DEPTH_TEXTURE_ATTACHMENT
-        ));
+        Framebuffer reflectionBuffer = framebufferManager.supply(reflectionResolution, COLOR_ATTACHMENT, RENDER_BUFFER_ATTACHMENT);
+        Framebuffer refractionBuffer = framebufferManager.supply(refractionResolution, COLOR_ATTACHMENT, DEPTH_TEXTURE_ATTACHMENT);
 
         return new Water(null, dao, reflectionBuffer, refractionBuffer);
     }

@@ -1,15 +1,16 @@
 package piengine.visual.cubemap.domain;
 
 import piengine.core.base.domain.Key;
+import piengine.visual.image.domain.ImageKey;
 
 import java.util.Arrays;
 
 public class CubeMapKey implements Key {
 
-    public final String[] textures;
+    public final ImageKey[] images;
 
-    public CubeMapKey(final String[] textures) {
-        this.textures = textures;
+    public CubeMapKey(final ImageKey... images) {
+        this.images = images;
     }
 
     @Override
@@ -17,11 +18,11 @@ public class CubeMapKey implements Key {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         CubeMapKey that = (CubeMapKey) o;
-        return Arrays.equals(textures, that.textures);
+        return Arrays.equals(images, that.images);
     }
 
     @Override
     public int hashCode() {
-        return Arrays.hashCode(textures);
+        return Arrays.hashCode(images);
     }
 }

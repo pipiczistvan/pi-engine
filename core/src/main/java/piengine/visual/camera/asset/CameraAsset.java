@@ -15,7 +15,7 @@ import static org.lwjgl.glfw.GLFW.GLFW_KEY_W;
 import static piengine.core.input.domain.KeyEventType.PRESS;
 import static piengine.core.input.domain.KeyEventType.RELEASE;
 
-public abstract class CameraAsset extends Asset<CameraAssetArgument> {
+public class CameraAsset extends Asset<CameraAssetArgument> {
 
     public boolean movingEnabled = true;
     public boolean lookingEnabled = true;

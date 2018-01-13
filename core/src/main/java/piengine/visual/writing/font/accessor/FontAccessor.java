@@ -40,10 +40,10 @@ public class FontAccessor implements Accessor<FontKey, FontData> {
 
     @Override
     public FontData access(final FontKey key) {
-        final String fontSource = loader.load(key.file);
+        final String fontSource = loader.load(key.imageKey.file);
         final FontContext context = new FontContext(fontSource.split("\n"));
 
-        return new FontData(key.file, parseSource(context), context.spaceWidth);
+        return new FontData(key.imageKey, parseSource(context), context.spaceWidth);
     }
 
     private Map<Integer, Character> parseSource(final FontContext context) {

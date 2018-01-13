@@ -9,10 +9,6 @@ public class FramebufferKey implements Key {
     public final boolean drawingEnabled;
     public final FramebufferAttachment[] attachments;
 
-    public FramebufferKey(final Vector2i resolution, final FramebufferAttachment textureAttachment, final FramebufferAttachment... attachments) {
-        this(resolution, true, textureAttachment, attachments);
-    }
-
     public FramebufferKey(final Vector2i resolution, final boolean drawingEnabled, final FramebufferAttachment textureAttachment, final FramebufferAttachment... attachments) {
         this.resolution = resolution;
         this.drawingEnabled = drawingEnabled;

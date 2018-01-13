@@ -2,7 +2,6 @@ package piengine.core.domain;
 
 import org.joml.Vector2i;
 import piengine.core.architecture.scene.domain.Scene;
-import piengine.core.domain.assets.camera.FirstPersonCameraAsset;
 import piengine.core.domain.assets.object.fps.FpsAsset;
 import piengine.core.domain.assets.object.fps.FpsAssetArgument;
 import piengine.core.domain.assets.object.lamp.LampAsset;
@@ -15,23 +14,18 @@ import piengine.gui.asset.ButtonAsset;
 import piengine.gui.asset.ButtonAssetArgument;
 import piengine.object.asset.manager.AssetManager;
 import piengine.object.canvas.domain.Canvas;
-import piengine.object.canvas.domain.CanvasKey;
 import piengine.object.canvas.manager.CanvasManager;
+import piengine.visual.camera.asset.CameraAsset;
 import piengine.visual.camera.asset.CameraAssetArgument;
 import piengine.visual.camera.domain.CameraAttribute;
 import piengine.visual.camera.domain.FirstPersonCamera;
-import piengine.visual.cubemap.domain.CubeMap;
-import piengine.visual.cubemap.domain.CubeMapKey;
-import piengine.visual.cubemap.manager.CubeMapManager;
 import piengine.visual.fog.Fog;
 import piengine.visual.framebuffer.domain.Framebuffer;
-import piengine.visual.framebuffer.domain.FramebufferKey;
 import piengine.visual.framebuffer.manager.FramebufferManager;
 import piengine.visual.render.domain.plan.RenderPlan;
 import piengine.visual.render.domain.plan.RenderPlanBuilder;
 import piengine.visual.render.manager.RenderManager;
 import piengine.visual.skybox.domain.Skybox;
-import piengine.visual.skybox.domain.SkyboxKey;
 import piengine.visual.skybox.manager.SkyboxManager;
 import piengine.visual.window.manager.WindowManager;
 import puppeteer.annotation.premade.Wire;
@@ -60,18 +54,16 @@ public class InitScene extends Scene {
     private final InputManager inputManager;
     private final WindowManager windowManager;
     private final FramebufferManager framebufferManager;
-    private final CubeMapManager cubeMapManager;
     private final SkyboxManager skyboxManager;
     private final CanvasManager canvasManager;
 
     private Framebuffer framebuffer;
     private Fog fog;
-    private CubeMap cubeMap;
     private Skybox skybox;
     private Canvas mainCanvas;
     private FirstPersonCamera camera;
 
-    private FirstPersonCameraAsset cameraAsset;
+    private CameraAsset cameraAsset;
     private LampAsset lampAsset;
     private MapAsset mapAsset;
     private ButtonAsset buttonAsset;
@@ -80,14 +72,13 @@ public class InitScene extends Scene {
     @Wire
     public InitScene(final RenderManager renderManager, final AssetManager assetManager,
                      final InputManager inputManager, final WindowManager windowManager,
-                     final FramebufferManager framebufferManager, final CubeMapManager cubeMapManager,
-                     final SkyboxManager skyboxManager, final CanvasManager canvasManager) {
+                     final FramebufferManager framebufferManager, final SkyboxManager skyboxManager,
+                     final CanvasManager canvasManager) {
         super(renderManager, assetManager);
 
         this.inputManager = inputManager;
         this.windowManager = windowManager;
         this.framebufferManager = framebufferManager;
-        this.cubeMapManager = cubeMapManager;
         this.skyboxManager = skyboxManager;
         this.canvasManager = canvasManager;
     }
@@ -105,7 +96,7 @@ public class InitScene extends Scene {
 
         mapAsset = createAsset(MapAsset.class, new MapAssetArgument(VIEWPORT, camera));
 
-        cameraAsset = createAsset(FirstPersonCameraAsset.class, new CameraAssetArgument(
+        cameraAsset = createAsset(CameraAsset.class, new CameraAssetArgument(
                 mapAsset.getTerrains()[0],
                 get(CAMERA_LOOK_UP_LIMIT),
                 get(CAMERA_LOOK_DOWN_LIMIT),
@@ -117,20 +108,17 @@ public class InitScene extends Scene {
 
         lampAsset = createAsset(LampAsset.class, new LampAssetArgument());
 
-        framebuffer = framebufferManager.supply(new FramebufferKey(VIEWPORT, COLOR_ATTACHMENT, RENDER_BUFFER_ATTACHMENT));
-        mainCanvas = canvasManager.supply(new CanvasKey(this, framebuffer));
+        framebuffer = framebufferManager.supply(VIEWPORT, COLOR_ATTACHMENT, RENDER_BUFFER_ATTACHMENT);
+        mainCanvas = canvasManager.supply(this, framebuffer);
 
         buttonAsset = createAsset(ButtonAsset.class, new ButtonAssetArgument(
                 "buttonDefault", "buttonHover", "buttonPress",
                 VIEWPORT, "Please press me!", () -> System.out.println("Button clicked!")));
         fpsAsset = createAsset(FpsAsset.class, new FpsAssetArgument());
 
-        cubeMap = cubeMapManager.supply(new CubeMapKey(new String[]{
-                "skybox/nightRight", "skybox/nightLeft",
-                "skybox/nightTop", "skybox/nightBottom",
-                "skybox/nightBack", "skybox/nightFront"
-        }));
-        skybox = skyboxManager.supply(new SkyboxKey(150f, cubeMap));
+        skybox = skyboxManager.supply(150f,
+                "skybox/nightRight", "skybox/nightLeft", "skybox/nightTop",
+                "skybox/nightBottom", "skybox/nightBack", "skybox/nightFront");
 
         fog = new Fog(ColorUtils.BLACK, 0.015f, 1.5f);
     }
