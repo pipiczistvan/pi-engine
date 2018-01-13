@@ -2,23 +2,30 @@ package piengine.object.terrain.domain;
 
 import org.joml.Vector2f;
 import org.joml.Vector3f;
-import piengine.object.entity.domain.Entity;
-import piengine.object.entity.domain.EntityDomain;
+import piengine.core.base.domain.Domain;
 
-public class Terrain extends EntityDomain<TerrainDao> {
+public class Terrain implements Domain<TerrainDao> {
 
+    private final TerrainDao dao;
     private final float[][] heights;
+    private final Vector3f position;
+    private final Vector3f rotation;
+    private final Vector3f scale;
 
-    public Terrain(final Entity parent, final TerrainDao dao, final float[][] heights) {
-        super(parent, dao);
-
+    public Terrain(final TerrainDao dao, final float[][] heights, final Vector3f position, final Vector3f rotation, final Vector3f scale) {
+        this.dao = dao;
         this.heights = heights;
+        this.position = position;
+        this.rotation = rotation;
+        this.scale = scale;
+    }
+
+    @Override
+    public TerrainDao getDao() {
+        return dao;
     }
 
     public float getHeight(final float x, final float z) {
-        Vector3f position = getPosition();
-        Vector3f scale = getScale();
-
         float terrainX = x - position.x;
         float terrainZ = z - position.z;
 
@@ -53,6 +60,7 @@ public class Terrain extends EntityDomain<TerrainDao> {
                     new Vector2f(xCoord, zCoord));
         }
 
+        //todo: rotation nincs figyelembe véve
         return terrainHeight * scale.y + position.y;
     }
 

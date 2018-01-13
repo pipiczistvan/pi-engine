@@ -11,7 +11,6 @@ import java.util.List;
 
 public class WaterShader extends Shader {
 
-    private int location_modelMatrix;
     private int location_viewMatrix;
     private int location_projectionMatrix;
     private int location_reflectionTexture;
@@ -35,7 +34,6 @@ public class WaterShader extends Shader {
 
     @Override
     protected void getUniformLocations() {
-        location_modelMatrix = getUniformLocation("modelMatrix");
         location_viewMatrix = getUniformLocation("viewMatrix");
         location_projectionMatrix = getUniformLocation("projectionMatrix");
         location_reflectionTexture = getUniformLocation("reflectionTexture");
@@ -68,11 +66,6 @@ public class WaterShader extends Shader {
 
     public WaterShader stop() {
         stopShader();
-        return this;
-    }
-
-    public WaterShader loadModelMatrix(final Matrix4f modelMatrix) {
-        loadUniform(location_modelMatrix, modelMatrix);
         return this;
     }
 

@@ -18,7 +18,7 @@ const float waveAmplitude = 0.2;
 const float specularReflectivity = 0.4;
 const float shineDamper = 20.0;
 
-layout (location = 0) in vec2 Position;
+layout (location = 0) in vec3 Position;
 layout (location = 4) in vec4 Indicator;
 
 out vec4 vClipSpaceGrid;
@@ -34,7 +34,6 @@ out vec4 vShadowCoords;
 // UNIFORMS //
 //////////////
 // TRANSFORMATION
-uniform mat4 modelMatrix;
 uniform mat4 viewMatrix;
 uniform mat4 projectionMatrix;
 // LIGHT
@@ -92,13 +91,9 @@ vec4 applyDistortion(vec4 vertex){
 }
 
 void main(void) {
-    vec3 currentVertex = vec3(Position.x, 0.0, Position.y);
-    vec3 neighbourVertex1 = currentVertex + vec3(Indicator.x, 0.0, Indicator.y);
-    vec3 neighbourVertex2 = currentVertex + vec3(Indicator.z, 0.0, Indicator.w);
-
-    vec4 worldPosition = modelMatrix * vec4(currentVertex, 1.0);
-    vec4 worldNeighbourPosition1 = modelMatrix * vec4(neighbourVertex1, 1.0);
-    vec4 worldNeighbourPosition2 = modelMatrix * vec4(neighbourVertex2, 1.0);
+    vec4 worldPosition = vec4(Position, 1.0);
+    vec4 worldNeighbourPosition1 = worldPosition + vec4(Indicator.x, 0.0, Indicator.y, 0.0);
+    vec4 worldNeighbourPosition2 = worldPosition + vec4(Indicator.z, 0.0, Indicator.w, 0.0);
 
     mat4 projectionViewMatrix = projectionMatrix * viewMatrix;
 

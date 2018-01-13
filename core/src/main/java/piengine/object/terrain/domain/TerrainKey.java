@@ -1,14 +1,19 @@
 package piengine.object.terrain.domain;
 
-import piengine.core.base.domain.EntityKey;
-import piengine.object.entity.domain.Entity;
+import org.joml.Vector3f;
+import piengine.core.base.domain.Key;
 
-public class TerrainKey extends EntityKey {
+public class TerrainKey implements Key {
 
+    public final Vector3f position;
+    public final Vector3f rotation;
+    public final Vector3f scale;
     public final String heightmap;
 
-    public TerrainKey(final Entity parent, final String heightmap) {
-        super(parent);
+    public TerrainKey(final Vector3f position, final Vector3f rotation, final Vector3f scale, final String heightmap) {
+        this.position = position;
+        this.rotation = rotation;
+        this.scale = scale;
         this.heightmap = heightmap;
     }
 }

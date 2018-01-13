@@ -1,6 +1,7 @@
 package piengine.core.domain.assets.object.map;
 
 import org.joml.Vector2i;
+import org.joml.Vector3f;
 import piengine.object.asset.domain.WorldAsset;
 import piengine.object.model.domain.Model;
 import piengine.object.model.manager.ModelManager;
@@ -42,8 +43,8 @@ public class MapAsset extends WorldAsset<MapAssetArgument> {
 
     @Override
     public void initialize() {
-        terrain = terrainManager.supply(this, "heightmap2");
-        water = waterManager.supply(this, arguments.viewport, new Vector2i(128, 128));
+        terrain = terrainManager.supply(new Vector3f(-64, 0, -64), new Vector3f(128, 5, 128), "heightmap2");
+        water = waterManager.supply(arguments.viewport, new Vector2i(128, 128), new Vector3f(-64, -2, -64), new Vector3f(128, 0, 128));
         light = new Light(this);
         shadow = shadowManager.supply(light, arguments.camera, new Vector2i(2048));
         cubeModel = modelManager.supply(this, "cube");
@@ -101,12 +102,7 @@ public class MapAsset extends WorldAsset<MapAssetArgument> {
     }
 
     private void initializeAssets() {
-        terrain.setPosition(-64, 0, -64);
-        terrain.setScale(128, 5, 128);
-
-        water.setScale(128, 0, 128);
-        water.setPosition(-64, -2.0f, -64);
-        float waterHeight = water.getPosition().y;
+        float waterHeight = water.position.y;
 
         light.setColor(1, 1, 1);
         light.setPosition(100, 200, 300);

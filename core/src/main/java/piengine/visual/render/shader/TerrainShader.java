@@ -11,10 +11,8 @@ import java.util.List;
 
 public class TerrainShader extends Shader {
 
-    private int location_modelMatrix;
     private int location_viewMatrix;
     private int location_projectionMatrix;
-    private int location_color;
     private int location_clippingPlane;
     private int location_fogColor;
     private int location_fogDensity;
@@ -31,10 +29,8 @@ public class TerrainShader extends Shader {
 
     @Override
     protected void getUniformLocations() {
-        location_modelMatrix = getUniformLocation("modelMatrix");
         location_viewMatrix = getUniformLocation("viewMatrix");
         location_projectionMatrix = getUniformLocation("projectionMatrix");
-        location_color = getUniformLocation("color");
         location_clippingPlane = getUniformLocation("clippingPlane");
         location_fogColor = getUniformLocation("fogColor");
         location_fogDensity = getUniformLocation("fogDensity");
@@ -64,12 +60,6 @@ public class TerrainShader extends Shader {
         return this;
     }
 
-    public TerrainShader loadModelMatrix(final Matrix4f modelMatrix) {
-        loadUniform(location_modelMatrix, modelMatrix);
-
-        return this;
-    }
-
     public TerrainShader loadViewMatrix(final Matrix4f viewMatrix) {
         loadUniform(location_viewMatrix, viewMatrix);
 
@@ -90,16 +80,6 @@ public class TerrainShader extends Shader {
             loadUniform(location_lights_position[i], light.getPosition());
             loadUniform(location_lights_color[i], light.getColor());
             loadUniform(location_lights_attenuation[i], light.getAttenuation());
-        }
-
-        return this;
-    }
-
-    public TerrainShader loadColor(final Vector4f color) {
-        if (color != null) {
-            loadUniform(location_color, color);
-        } else {
-            loadUniform(location_color, new Vector4f(1));
         }
 
         return this;

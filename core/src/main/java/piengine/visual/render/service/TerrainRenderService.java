@@ -1,6 +1,5 @@
 package piengine.visual.render.service;
 
-import org.joml.Vector4f;
 import piengine.object.terrain.domain.Terrain;
 import piengine.visual.render.domain.config.RenderConfig;
 import piengine.visual.render.domain.config.RenderConfigBuilder;
@@ -51,9 +50,6 @@ public class TerrainRenderService extends AbstractRenderService<TerrainShader, R
         textureService.bind(GL_TEXTURE0, context.shadows.get(0).shadowMap);
 
         for (Terrain terrain : context.terrains) {
-            shader.loadModelMatrix(terrain.getTransformation())
-                    .loadColor(new Vector4f(1));
-
             draw(terrain.getDao());
         }
 

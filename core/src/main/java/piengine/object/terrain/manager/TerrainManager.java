@@ -1,6 +1,6 @@
 package piengine.object.terrain.manager;
 
-import piengine.object.entity.domain.Entity;
+import org.joml.Vector3f;
 import piengine.object.terrain.domain.Terrain;
 import piengine.object.terrain.domain.TerrainKey;
 import piengine.object.terrain.service.TerrainService;
@@ -17,7 +17,11 @@ public class TerrainManager {
         this.terrainService = terrainService;
     }
 
-    public Terrain supply(final Entity parent, final String heightmap) {
-        return terrainService.supply(new TerrainKey(parent, heightmap));
+    public Terrain supply(final Vector3f position, final Vector3f rotation, final Vector3f scale, final String heightmap) {
+        return terrainService.supply(new TerrainKey(position, rotation, scale, heightmap));
+    }
+
+    public Terrain supply(final Vector3f position, final Vector3f scale, final String heightmap) {
+        return supply(position, new Vector3f(0), scale, heightmap);
     }
 }

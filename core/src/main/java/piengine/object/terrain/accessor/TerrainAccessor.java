@@ -64,10 +64,12 @@ public class TerrainAccessor implements Accessor<TerrainKey, TerrainData> {
             }
         }
 
-        TerrainGrid grid = gridGenerator.generate(heights, colors);
+        TerrainGrid grid = gridGenerator.generate(key.position, key.rotation, key.scale, heights, colors);
 
         return new TerrainData(
-                key.parent,
+                key.position,
+                key.rotation,
+                key.scale,
                 grid.positions,
                 grid.indices,
                 grid.colors,

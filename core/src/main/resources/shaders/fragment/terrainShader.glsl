@@ -9,7 +9,6 @@ in vec4 vShadowCoords;
 
 out vec4 fColor;
 
-uniform vec4 color;
 uniform vec4 fogColor;
 uniform sampler2D shadowMap;
 
@@ -30,6 +29,6 @@ void main(void) {
     float lightFactor = max(1.0 - (total * vShadowCoords.w), 0.4);
 
     // FINAL OUTPUT
-    fColor = vColor * color * lightFactor;
+    fColor = vColor * lightFactor;
     fColor = mix(fogColor, fColor, vVisibility);
 }

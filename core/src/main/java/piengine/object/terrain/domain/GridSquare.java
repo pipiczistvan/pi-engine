@@ -1,8 +1,10 @@
 package piengine.object.terrain.domain;
 
+import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import piengine.core.base.type.color.Color;
 import piengine.core.utils.MathUtils;
+import piengine.core.utils.MatrixUtils;
 
 import java.util.List;
 
@@ -17,8 +19,10 @@ public class GridSquare {
     private final Vector3f normalLeft;
     private final Vector3f normalRight;
 
-    public GridSquare(final int row, final int col, final float[][] heights, final Color[][] colors) {
-        this.positions = calculateCornerPositions(col, row, heights);
+    public GridSquare(final Vector3f position, final Vector3f rotation, final Vector3f scale, final int row, final int col, final float[][] heights, final Color[][] colors) {
+        Matrix4f transformation = MatrixUtils.MODEL_MATRIX(position, rotation, scale);
+
+        this.positions = calculateCornerPositions(transformation, col, row, heights);
         this.colors = calculateCornerColours(col, row, colors);
         this.lastRowIndex = heights.length - 2;
         this.lastColIndex = heights[0].length - 2;
@@ -52,7 +56,7 @@ public class GridSquare {
         return cornerCols;
     }
 
-    private Vector3f[] calculateCornerPositions(final int col, final int row, final float[][] heights) {
+    private Vector3f[] calculateCornerPositions(final Matrix4f transformation, final int col, final int row, final float[][] heights) {
         Vector3f[] vertices = new Vector3f[4];
         float width = (float) heights[0].length;
         float height = (float) heights.length;
@@ -61,6 +65,11 @@ public class GridSquare {
         vertices[1] = new Vector3f(col / width, heights[row + 1][col], (row + 1) / height);
         vertices[2] = new Vector3f((col + 1) / width, heights[row][col + 1], row / height);
         vertices[3] = new Vector3f((col + 1) / width, heights[row + 1][col + 1], (row + 1) / height);
+
+        for (Vector3f vertex : vertices) {
+            transformation.transformPosition(vertex);
+        }
+
         return vertices;
     }
 

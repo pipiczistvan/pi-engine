@@ -1,20 +1,25 @@
 package piengine.object.terrain.domain;
 
+import org.joml.Vector3f;
 import piengine.core.base.domain.ResourceData;
-import piengine.object.entity.domain.Entity;
 
 public class TerrainData implements ResourceData {
 
-    public final Entity parent;
+    public final Vector3f position;
+    public final Vector3f rotation;
+    public final Vector3f scale;
     public final float[] vertices;
     public final int[] indices;
     public final float[] colors;
     public final float[] normals;
     public final float[][] heights;
 
-    public TerrainData(final Entity parent, final float[] vertices, final int[] indices,
-                       final float[] colors, final float[] normals, final float[][] heights) {
-        this.parent = parent;
+    public TerrainData(final Vector3f position, final Vector3f rotation, final Vector3f scale,
+                       final float[] vertices, final int[] indices, final float[] colors,
+                       final float[] normals, final float[][] heights) {
+        this.position = position;
+        this.rotation = rotation;
+        this.scale = scale;
         this.vertices = vertices;
         this.indices = indices;
         this.colors = colors;

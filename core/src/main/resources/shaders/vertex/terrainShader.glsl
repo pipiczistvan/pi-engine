@@ -22,7 +22,6 @@ out vec4 vShadowCoords;
 // UNIFORMS //
 //////////////
 // TRANSFORMATION
-uniform mat4 modelMatrix;
 uniform mat4 viewMatrix;
 uniform mat4 projectionMatrix;
 // LIGHT
@@ -53,9 +52,9 @@ vec4 calculateLightFactor(Light light, vec3 vertexPosition, vec3 vertexNormal) {
 }
 
 void main(void) {
-    vec4 worldPosition = modelMatrix * vec4(Position, 1.0);
+    vec4 worldPosition = vec4(Position, 1.0);
     vec4 viewPosition = viewMatrix * worldPosition;
-    vec4 worldNormal = modelMatrix * vec4(Normal, 0.0);
+    vec4 worldNormal = vec4(Normal, 0.0);
     gl_ClipDistance[0] = dot(worldPosition, clippingPlane);
 
     vec3 normalizedVertexNormal = normalize(worldNormal.xyz);

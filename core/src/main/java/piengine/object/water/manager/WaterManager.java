@@ -1,7 +1,7 @@
 package piengine.object.water.manager;
 
 import org.joml.Vector2i;
-import piengine.object.entity.domain.Entity;
+import org.joml.Vector3f;
 import piengine.object.water.domain.Water;
 import piengine.object.water.domain.WaterKey;
 import piengine.object.water.service.WaterService;
@@ -18,7 +18,11 @@ public class WaterManager {
         this.waterService = waterService;
     }
 
-    public Water supply(final Entity parent, final Vector2i resolution, final Vector2i size) {
-        return waterService.supply(new WaterKey(parent, resolution, size));
+    public Water supply(final Vector2i resolution, final Vector2i size, final Vector3f position, final Vector3f rotation, final Vector3f scale) {
+        return waterService.supply(new WaterKey(resolution, size, position, rotation, scale));
+    }
+
+    public Water supply(final Vector2i resolution, final Vector2i size, final Vector3f position, final Vector3f scale) {
+        return supply(resolution, size, position, new Vector3f(0), scale);
     }
 }

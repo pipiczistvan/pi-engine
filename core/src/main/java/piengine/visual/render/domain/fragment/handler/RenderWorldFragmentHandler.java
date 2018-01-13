@@ -77,7 +77,7 @@ public class RenderWorldFragmentHandler implements FragmentHandler<RenderWorldPl
         float cameraHeight = context.camera.getPosition().y;
         float cameraPitch = context.camera.getRotation().y;
         for (Water water : context.waters) {
-            float waterHeight = water.getPosition().y;
+            float waterHeight = water.position.y;
             float distance = 2 * (cameraHeight - waterHeight);
 
             framebufferService.bind(water.reflectionBuffer);

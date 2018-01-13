@@ -32,7 +32,7 @@ public class WaterInterpreter implements Interpreter<WaterData, WaterDao> {
         final WaterDao dao = new WaterDao(glGenVertexArrays(), new ArrayList<>(), waterData.vertices.length * 2);
         bind(dao);
 
-        dao.vboIds.add(createVbo(VERTEX.value, waterData.vertices, 2));
+        dao.vboIds.add(createVbo(VERTEX.value, waterData.vertices, 3));
         dao.vboIds.add(createVbo(INDICATOR.value, waterData.indicators, 4));
 
         unbind();
