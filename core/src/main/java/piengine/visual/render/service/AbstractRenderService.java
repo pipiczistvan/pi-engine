@@ -3,7 +3,6 @@ package piengine.visual.render.service;
 import piengine.core.base.api.Initializable;
 import piengine.core.base.api.Service;
 import piengine.object.mesh.domain.MeshDao;
-import piengine.object.mesh.domain.MeshDataType;
 import piengine.visual.render.domain.config.RenderConfig;
 import piengine.visual.render.domain.context.RenderContext;
 import piengine.visual.render.interpreter.RenderInterpreter;
@@ -36,7 +35,7 @@ public abstract class AbstractRenderService<S extends Shader, C extends RenderCo
 
     protected void draw(final MeshDao dao) {
         renderInterpreter.bindVertexArray(dao.vaoId);
-        renderInterpreter.enableVertexAttribArray(MeshDataType.values());
+        renderInterpreter.enableVertexAttribArray(dao.getVertexAttribs());
 
         switch (renderConfig.renderFunction) {
             case DRAW_ARRAYS:
@@ -47,7 +46,7 @@ public abstract class AbstractRenderService<S extends Shader, C extends RenderCo
                 break;
         }
 
-        renderInterpreter.disableVertexAttribArray(MeshDataType.values());
+        renderInterpreter.disableVertexAttribArray(dao.getVertexAttribs());
         renderInterpreter.unbindVertexArray();
     }
 

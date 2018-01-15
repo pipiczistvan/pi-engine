@@ -4,7 +4,6 @@ import piengine.core.architecture.scene.domain.Scene;
 import piengine.core.base.type.property.ApplicationProperties;
 import piengine.core.engine.service.EngineService;
 import puppeteer.Puppeteer;
-import puppeteer.annotation.premade.Wire;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -23,8 +22,7 @@ public class piEngine {
     );
     private static final String ENGINE_PROPERTIES = "engine";
 
-    @Wire
-    private static EngineService engineService;
+    private final EngineService engineService;
 
     public piEngine(final String applicationProperties, final Collection<String> libraries, final Collection<String> packages) {
         ApplicationProperties.load(ENGINE_PROPERTIES, applicationProperties);
@@ -35,6 +33,8 @@ public class piEngine {
         Puppeteer puppeteer = new Puppeteer(libraries, combinedPackages);
         puppeteer.useDefaultAnnotations();
         puppeteer.processAnnotations();
+
+        engineService = puppeteer.getInstanceOf(EngineService.class);
     }
 
     public void start(Class<? extends Scene> sceneClass) {

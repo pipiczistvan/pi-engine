@@ -77,7 +77,7 @@ public class CameraAsset extends Asset<CameraAssetArgument> {
     @Override
     public void update(final double delta) {
         Vector3f newPosition = calculatePosition(delta);
-        Vector3f newRotation = calculateRotation(delta);
+        Vector3f newRotation = calculateRotation();
 
         setPositionRotation(newPosition, newRotation);
 
@@ -189,10 +189,10 @@ public class CameraAsset extends Asset<CameraAssetArgument> {
         return newPosition;
     }
 
-    private Vector3f calculateRotation(final double delta) {
+    private Vector3f calculateRotation() {
         Vector3f newRotation = new Vector3f(getRotation());
 
-        newRotation.add((float) delta * looking.x * arguments.lookSpeed, (float) delta * -looking.y * arguments.lookSpeed, 0.0f);
+        newRotation.add(looking.x * arguments.lookSpeed, -looking.y * arguments.lookSpeed, 0.0f);
 
         if (newRotation.x > 360) {
             newRotation.sub(360, 0, 0);
