@@ -20,8 +20,4 @@ public class CameraAssetArgument implements AssetArgument {
         this.moveSpeed = moveSpeed;
         this.strafeSpeed = moveSpeed / (float) Math.sqrt(2);
     }
-
-    public CameraAssetArgument(final float lookUpLimit, final float lookDownLimit, final float lookSpeed, final float moveSpeed) {
-        this(null, lookUpLimit, lookDownLimit, lookSpeed, moveSpeed);
-    }
 }

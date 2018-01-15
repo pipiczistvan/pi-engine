@@ -6,8 +6,8 @@ import piengine.core.base.api.Updatable;
 import piengine.object.asset.domain.Asset;
 import piengine.object.asset.domain.AssetArgument;
 import piengine.object.asset.manager.AssetManager;
+import piengine.object.asset.plan.RenderAssetContext;
 import piengine.visual.render.domain.plan.RenderPlan;
-import piengine.visual.render.domain.plan.RenderPlanBuilder;
 import piengine.visual.render.manager.RenderManager;
 
 import java.util.ArrayList;
@@ -25,7 +25,7 @@ public abstract class Scene extends RenderPlanner<RenderPlan> implements Initial
         this.assets = new ArrayList<>();
     }
 
-    protected <T extends Asset<A, B>, A extends AssetArgument, B extends RenderPlanBuilder> T createAsset(final Class<T> assetClass, final A arguments) {
+    protected <T extends Asset<A, C>, A extends AssetArgument, C extends RenderAssetContext> T createAsset(final Class<T> assetClass, final A arguments) {
         final T asset = assetManager.supply(assetClass, this, arguments);
         assets.add(asset);
         return asset;

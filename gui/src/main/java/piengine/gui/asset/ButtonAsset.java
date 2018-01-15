@@ -5,11 +5,12 @@ import org.lwjgl.glfw.GLFW;
 import piengine.core.input.domain.KeyEventType;
 import piengine.core.input.manager.InputManager;
 import piengine.object.asset.domain.Asset;
+import piengine.object.asset.plan.GuiRenderAssetContext;
+import piengine.object.asset.plan.GuiRenderAssetContextBuilder;
 import piengine.object.canvas.domain.Canvas;
 import piengine.object.canvas.manager.CanvasManager;
 import piengine.visual.image.domain.Image;
 import piengine.visual.image.manager.ImageManager;
-import piengine.visual.render.domain.plan.GuiRenderPlanBuilder;
 import piengine.visual.writing.font.domain.Font;
 import piengine.visual.writing.font.manager.FontManager;
 import piengine.visual.writing.text.domain.Text;
@@ -18,7 +19,7 @@ import puppeteer.annotation.premade.Wire;
 
 import static piengine.visual.writing.text.domain.TextConfiguration.textConfig;
 
-public class ButtonAsset extends Asset<ButtonAssetArgument, GuiRenderPlanBuilder> {
+public class ButtonAsset extends Asset<ButtonAssetArgument, GuiRenderAssetContext> {
 
     private static final float SCALE_X = 0.25f;
     private static final float SCALE_Y = 0.125f;
@@ -103,8 +104,11 @@ public class ButtonAsset extends Asset<ButtonAssetArgument, GuiRenderPlanBuilder
     }
 
     @Override
-    public GuiRenderPlanBuilder getAssetPlan() {
-        return null;
+    public GuiRenderAssetContext getAssetContext() {
+        return GuiRenderAssetContextBuilder.create()
+                .loadCanvases(buttonCanvas)
+                .loadTexts(label)
+                .build();
     }
 
     @Override
@@ -117,18 +121,6 @@ public class ButtonAsset extends Asset<ButtonAssetArgument, GuiRenderPlanBuilder
     public void setScale(float x, float y, float z) {
         super.setScale(x, y, z);
         setupButtonParameters();
-    }
-
-    public Canvas[] getCanvases() {
-        return new Canvas[]{
-                buttonCanvas
-        };
-    }
-
-    public Text[] getTexts() {
-        return new Text[]{
-                label
-        };
     }
 
     private void setupButtonParameters() {

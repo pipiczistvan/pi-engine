@@ -5,7 +5,7 @@ const float SHADOW_DISTANCE = 30.0;
 const float TRANSITION_DISTANCE = 5.0;
 const float PI = 3.1415926535897932384626433832795;
 const float waveLength = 10.0;
-const float waveAmplitude = 0.2;
+const float waveAmplitude = 0.3;
 const float specularReflectivity = 0.4;
 const float shineDamper = 20.0;
 

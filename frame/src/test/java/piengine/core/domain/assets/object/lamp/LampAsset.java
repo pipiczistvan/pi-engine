@@ -1,10 +1,11 @@
 package piengine.core.domain.assets.object.lamp;
 
 import piengine.object.asset.domain.WorldAsset;
+import piengine.object.asset.plan.WorldRenderAssetContext;
+import piengine.object.asset.plan.WorldRenderAssetContextBuilder;
 import piengine.object.model.domain.Model;
 import piengine.object.model.manager.ModelManager;
 import piengine.visual.light.domain.Light;
-import piengine.visual.render.domain.plan.WorldRenderPlanBuilder;
 import puppeteer.annotation.premade.Wire;
 
 public class LampAsset extends WorldAsset<LampAssetArgument> {
@@ -31,17 +32,10 @@ public class LampAsset extends WorldAsset<LampAssetArgument> {
     }
 
     @Override
-    public WorldRenderPlanBuilder getAssetPlan() {
-        return null;
-    }
-
-    @Override
-    public Model[] getModels() {
-        return new Model[]{lampModel};
-    }
-
-    @Override
-    public Light[] getLights() {
-        return new Light[]{lampLight};
+    public WorldRenderAssetContext getAssetContext() {
+        return WorldRenderAssetContextBuilder.create()
+                .loadModels(lampModel)
+                .loadLights(lampLight)
+                .build();
     }
 }

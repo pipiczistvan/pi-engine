@@ -3,14 +3,14 @@ package piengine.core.domain.assets.object.map;
 import org.joml.Vector2i;
 import org.joml.Vector3f;
 import piengine.object.asset.domain.WorldAsset;
+import piengine.object.asset.plan.WorldRenderAssetContext;
+import piengine.object.asset.plan.WorldRenderAssetContextBuilder;
 import piengine.object.model.domain.Model;
 import piengine.object.model.manager.ModelManager;
 import piengine.object.terrain.domain.Terrain;
-import piengine.object.terrain.manager.TerrainManager;
 import piengine.object.water.domain.Water;
 import piengine.object.water.manager.WaterManager;
 import piengine.visual.light.domain.Light;
-import piengine.visual.render.domain.plan.WorldRenderPlanBuilder;
 import piengine.visual.shadow.domain.Shadow;
 import piengine.visual.shadow.manager.ShadowManager;
 import puppeteer.annotation.premade.Wire;
@@ -21,7 +21,6 @@ public class MapAsset extends WorldAsset<MapAssetArgument> {
 
     private static final float WAVE_SPEED = 0.2f;
 
-    private final TerrainManager terrainManager;
     private final WaterManager waterManager;
     private final ShadowManager shadowManager;
     private final ModelManager modelManager;
@@ -34,9 +33,7 @@ public class MapAsset extends WorldAsset<MapAssetArgument> {
     private Model[] treeModels = new Model[40];
 
     @Wire
-    public MapAsset(final TerrainManager terrainManager, final WaterManager waterManager,
-                    final ShadowManager shadowManager, final ModelManager modelManager) {
-        this.terrainManager = terrainManager;
+    public MapAsset(final WaterManager waterManager, final ShadowManager shadowManager, final ModelManager modelManager) {
         this.waterManager = waterManager;
         this.shadowManager = shadowManager;
         this.modelManager = modelManager;
@@ -44,8 +41,8 @@ public class MapAsset extends WorldAsset<MapAssetArgument> {
 
     @Override
     public void initialize() {
-        terrain = terrainManager.supply(new Vector3f(-64, 0, -64), new Vector3f(128, 5, 128), "heightmap2");
-        water = waterManager.supply(arguments.viewport, new Vector2i(128, 128), new Vector3f(-64, -2, -64), new Vector3f(128, 0, 128));
+        terrain = arguments.terrain;
+        water = waterManager.supply(arguments.viewport, new Vector2i(128, 128), new Vector3f(-128, -4, -128), new Vector3f(256, 0, 256));
         light = new Light(this);
         shadow = shadowManager.supply(light, arguments.camera, new Vector2i(2048));
         cubeModel = modelManager.supply(this, "cube");
@@ -64,47 +61,15 @@ public class MapAsset extends WorldAsset<MapAssetArgument> {
     }
 
     @Override
-    public WorldRenderPlanBuilder getAssetPlan() {
-        return null;
-    }
-
-    @Override
-    public Model[] getModels() {
-        Model[] models = new Model[treeModels.length + 1];
-        models[0] = cubeModel;
-        for (int i = 0; i < treeModels.length; i++) {
-            models[i + 1] = treeModels[i];
-        }
-
-        return models;
-    }
-
-    @Override
-    public Light[] getLights() {
-        return new Light[]{
-                light
-        };
-    }
-
-    @Override
-    public Terrain[] getTerrains() {
-        return new Terrain[]{
-                terrain
-        };
-    }
-
-    @Override
-    public Shadow[] getShadows() {
-        return new Shadow[]{
-                shadow
-        };
-    }
-
-    @Override
-    public Water[] getWaters() {
-        return new Water[]{
-                water
-        };
+    public WorldRenderAssetContext getAssetContext() {
+        return WorldRenderAssetContextBuilder.create()
+                .loadModels(treeModels)
+                .loadModels(cubeModel)
+                .loadTerrains(terrain)
+                .loadWaters(water)
+                .loadLights(light)
+                .loadShadows(shadow)
+                .build();
     }
 
     private void initializeAssets() {
@@ -121,11 +86,11 @@ public class MapAsset extends WorldAsset<MapAssetArgument> {
             float y;
             float z;
             do {
-                x = random.nextFloat() * 128 - 64;
-                z = random.nextFloat() * 128 - 64;
-                y = terrain.getHeight(x, z) - 0.1f;
+                x = random.nextFloat() * 256 - 128;
+                z = random.nextFloat() * 256 - 128;
+                y = terrain.getHeight(x, z) - 0.2f;
             } while (y < waterHeight - 0.2);
-            float scale = random.nextFloat() * 0.05f + 0.1f;
+            float scale = random.nextFloat() * 0.1f + 0.2f;
 
             tree.setScale(scale);
             tree.setPosition(x, y, z);

@@ -5,10 +5,10 @@ const vec3 waterColor = vec3(0.604, 0.867, 0.851);
 const float fresnelReflective = 0.5;
 const float edgeSoftness = 2.0;
 const float nearPlane = 0.1;
-const float farPlane = 1000;
+const float farPlane = 200;
 const float minBlueness = 0.4;
 const float maxBlueness = 0.75;
-const float murkyDepth = 5.0;
+const float murkyDepth = 20.0;
 const int PCF_COUNT = 1;
 const float TOTAL_TEXELS = (PCF_COUNT * 2.0 + 1.0) * (PCF_COUNT * 2.0 + 1.0);
 

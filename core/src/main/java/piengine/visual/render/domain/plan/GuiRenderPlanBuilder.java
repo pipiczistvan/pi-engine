@@ -2,13 +2,11 @@ package piengine.visual.render.domain.plan;
 
 import org.joml.Vector2i;
 import piengine.object.asset.domain.GuiAsset;
-import piengine.object.canvas.domain.Canvas;
+import piengine.object.asset.plan.GuiRenderAssetContext;
 import piengine.visual.render.domain.fragment.domain.RenderFragmentType;
 import piengine.visual.render.domain.fragment.domain.RenderGuiPlanContext;
-import piengine.visual.writing.text.domain.Text;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 import static piengine.visual.render.domain.fragment.domain.RenderFragmentType.RENDER_GUI;
 
@@ -22,20 +20,17 @@ public class GuiRenderPlanBuilder extends RenderPlanBuilder<GuiRenderPlanBuilder
         ));
     }
 
-    public GuiRenderPlanBuilder loadCanvases(final Canvas... canvases) {
-        this.context.canvases.addAll(Arrays.asList(canvases));
-        return this;
-    }
-
-    public GuiRenderPlanBuilder loadTexts(final Text... texts) {
-        this.context.texts.addAll(Arrays.asList(texts));
-        return this;
-    }
-
     public GuiRenderPlanBuilder loadAssets(final GuiAsset... assets) {
         for (GuiAsset asset : assets) {
-            loadCanvases(asset.getCanvases());
-            loadTexts(asset.getTexts());
+            loadAssetContext((GuiRenderAssetContext) asset.getAssetContext());
+        }
+        return this;
+    }
+
+    public GuiRenderPlanBuilder loadAssetContext(final GuiRenderAssetContext... assetContexts) {
+        for (GuiRenderAssetContext assetContext : assetContexts) {
+            this.context.canvases.addAll(assetContext.canvases);
+            this.context.texts.addAll(assetContext.texts);
         }
         return this;
     }

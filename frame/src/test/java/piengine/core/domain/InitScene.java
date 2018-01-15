@@ -1,6 +1,7 @@
 package piengine.core.domain;
 
 import org.joml.Vector2i;
+import org.joml.Vector3f;
 import piengine.core.architecture.scene.domain.Scene;
 import piengine.core.domain.assets.object.fps.FpsAsset;
 import piengine.core.domain.assets.object.fps.FpsAssetArgument;
@@ -13,8 +14,11 @@ import piengine.core.utils.ColorUtils;
 import piengine.gui.asset.ButtonAsset;
 import piengine.gui.asset.ButtonAssetArgument;
 import piengine.object.asset.manager.AssetManager;
+import piengine.object.asset.plan.GuiRenderAssetContextBuilder;
 import piengine.object.canvas.domain.Canvas;
 import piengine.object.canvas.manager.CanvasManager;
+import piengine.object.terrain.domain.Terrain;
+import piengine.object.terrain.manager.TerrainManager;
 import piengine.visual.camera.asset.CameraAsset;
 import piengine.visual.camera.asset.CameraAssetArgument;
 import piengine.visual.camera.domain.CameraAttribute;
@@ -56,10 +60,12 @@ public class InitScene extends Scene {
     private final FramebufferManager framebufferManager;
     private final SkyboxManager skyboxManager;
     private final CanvasManager canvasManager;
+    private final TerrainManager terrainManager;
 
     private Framebuffer framebuffer;
     private Fog fog;
     private Skybox skybox;
+    private Terrain terrain;
     private Canvas mainCanvas;
     private FirstPersonCamera camera;
 
@@ -73,7 +79,7 @@ public class InitScene extends Scene {
     public InitScene(final RenderManager renderManager, final AssetManager assetManager,
                      final InputManager inputManager, final WindowManager windowManager,
                      final FramebufferManager framebufferManager, final SkyboxManager skyboxManager,
-                     final CanvasManager canvasManager) {
+                     final CanvasManager canvasManager, final TerrainManager terrainManager) {
         super(renderManager, assetManager);
 
         this.inputManager = inputManager;
@@ -81,6 +87,7 @@ public class InitScene extends Scene {
         this.framebufferManager = framebufferManager;
         this.skyboxManager = skyboxManager;
         this.canvasManager = canvasManager;
+        this.terrainManager = terrainManager;
     }
 
     @Override
@@ -92,19 +99,18 @@ public class InitScene extends Scene {
 
     @Override
     protected void createAssets() {
-        camera = new FirstPersonCamera(null, VIEWPORT, new CameraAttribute(get(CAMERA_FOV), get(CAMERA_NEAR_PLANE), get(CAMERA_FAR_PLANE)), PERSPECTIVE);
-
-        mapAsset = createAsset(MapAsset.class, new MapAssetArgument(VIEWPORT, camera));
+        terrain = terrainManager.supply(new Vector3f(-128, 0, -128), new Vector3f(256, 10, 256), "heightmap2");
 
         cameraAsset = createAsset(CameraAsset.class, new CameraAssetArgument(
-                mapAsset.getTerrains()[0],
+                terrain,
                 get(CAMERA_LOOK_UP_LIMIT),
                 get(CAMERA_LOOK_DOWN_LIMIT),
                 get(CAMERA_LOOK_SPEED),
                 get(CAMERA_MOVE_SPEED)));
 
-        //todo: ugly
-        cameraAsset.addChild(camera);
+        camera = new FirstPersonCamera(cameraAsset, VIEWPORT, new CameraAttribute(get(CAMERA_FOV), get(CAMERA_NEAR_PLANE), get(CAMERA_FAR_PLANE)), PERSPECTIVE);
+
+        mapAsset = createAsset(MapAsset.class, new MapAssetArgument(VIEWPORT, camera, terrain));
 
         lampAsset = createAsset(LampAsset.class, new LampAssetArgument());
 
@@ -131,7 +137,7 @@ public class InitScene extends Scene {
 
         float lampX = 0;
         float lampZ = 0;
-        float lampY = mapAsset.getTerrains()[0].getHeight(lampX, lampZ);
+        float lampY = terrain.getHeight(lampX, lampZ);
         lampAsset.setPosition(lampX, lampY, lampZ);
     }
 
@@ -154,7 +160,11 @@ public class InitScene extends Scene {
                                 .clearScreen(ColorUtils.BLACK)
                                 .render()
                 )
-                .loadCanvases(mainCanvas)
+                .loadAssetContext(GuiRenderAssetContextBuilder
+                        .create()
+                        .loadCanvases(mainCanvas)
+                        .build()
+                )
                 .loadAssets(fpsAsset)
                 .clearScreen(ColorUtils.BLACK)
                 .render();

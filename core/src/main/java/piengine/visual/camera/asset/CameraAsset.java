@@ -4,7 +4,7 @@ import org.joml.Vector2f;
 import org.joml.Vector3f;
 import piengine.core.input.manager.InputManager;
 import piengine.object.asset.domain.Asset;
-import piengine.visual.render.domain.plan.WorldRenderPlanBuilder;
+import piengine.object.asset.plan.RenderAssetContext;
 import piengine.visual.window.manager.WindowManager;
 import puppeteer.annotation.premade.Wire;
 
@@ -20,7 +20,7 @@ import static org.lwjgl.glfw.GLFW.GLFW_KEY_W;
 import static piengine.core.input.domain.KeyEventType.PRESS;
 import static piengine.core.input.domain.KeyEventType.RELEASE;
 
-public class CameraAsset extends Asset<CameraAssetArgument, WorldRenderPlanBuilder> {
+public class CameraAsset extends Asset<CameraAssetArgument, RenderAssetContext> {
 
     public boolean movingEnabled = true;
     public boolean lookingEnabled = true;
@@ -86,7 +86,7 @@ public class CameraAsset extends Asset<CameraAssetArgument, WorldRenderPlanBuild
     }
 
     @Override
-    public WorldRenderPlanBuilder getAssetPlan() {
+    public RenderAssetContext getAssetContext() {
         return null;
     }
 

@@ -2,18 +2,18 @@ package piengine.object.asset.domain;
 
 import piengine.core.base.api.Initializable;
 import piengine.core.base.api.Updatable;
+import piengine.object.asset.plan.RenderAssetContext;
 import piengine.object.entity.domain.Entity;
-import piengine.visual.render.domain.plan.RenderPlanBuilder;
 
-public abstract class Asset<T extends AssetArgument, B extends RenderPlanBuilder> extends Entity implements Initializable, Updatable {
+public abstract class Asset<A extends AssetArgument, C extends RenderAssetContext> extends Entity implements Initializable, Updatable {
 
-    protected T arguments;
+    protected A arguments;
 
-    public Asset() {
+    protected Asset() {
         super(null);
     }
 
-    public void passArguments(final T arguments) {
+    public void passArguments(final A arguments) {
         this.arguments = arguments;
     }
 
@@ -21,5 +21,5 @@ public abstract class Asset<T extends AssetArgument, B extends RenderPlanBuilder
     public void update(double delta) {
     }
 
-    public abstract B getAssetPlan();
+    public abstract C getAssetContext();
 }
