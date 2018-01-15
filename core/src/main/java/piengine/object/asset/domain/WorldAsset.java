@@ -3,10 +3,11 @@ package piengine.object.asset.domain;
 import piengine.object.model.domain.Model;
 import piengine.object.terrain.domain.Terrain;
 import piengine.object.water.domain.Water;
-import piengine.visual.light.Light;
+import piengine.visual.light.domain.Light;
+import piengine.visual.render.domain.plan.WorldRenderPlanBuilder;
 import piengine.visual.shadow.domain.Shadow;
 
-public abstract class WorldAsset<T extends AssetArgument> extends Asset<T> {
+public abstract class WorldAsset<T extends AssetArgument> extends Asset<T, WorldRenderPlanBuilder> {
 
     public Model[] getModels() {
         return new Model[0];

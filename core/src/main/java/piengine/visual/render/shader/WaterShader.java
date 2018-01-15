@@ -3,9 +3,10 @@ package piengine.visual.render.shader;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import piengine.visual.fog.Fog;
-import piengine.visual.light.Light;
+import piengine.visual.light.domain.Light;
 import piengine.visual.shader.domain.Shader;
 import piengine.visual.shader.domain.ShaderDao;
+import piengine.visual.shadow.domain.Shadow;
 
 import java.util.List;
 
@@ -21,12 +22,14 @@ public class WaterShader extends Shader {
     private int location_fogColor;
     private int location_fogDensity;
     private int location_fogGradient;
-    private int location_shadowMapSpaceMatrix;
-    private int location_shadowMap;
     private int[] location_lights_position;
     private int[] location_lights_color;
     private int[] location_lights_bias;
     private int[] location_lights_attenuation;
+
+    private int[] location_shadows_enabled;
+    private int[] location_shadows_shadowMap;
+    private int[] location_shadows_spaceMatrix;
 
     public WaterShader(final ShaderDao dao) {
         super(dao);
@@ -44,8 +47,6 @@ public class WaterShader extends Shader {
         location_fogColor = getUniformLocation("fogColor");
         location_fogDensity = getUniformLocation("fogDensity");
         location_fogGradient = getUniformLocation("fogGradient");
-        location_shadowMapSpaceMatrix = getUniformLocation("shadowMapSpaceMatrix");
-        location_shadowMap = getUniformLocation("shadowMap");
 
         location_lights_position = new int[MAX_LIGHTS];
         location_lights_color = new int[MAX_LIGHTS];
@@ -56,6 +57,15 @@ public class WaterShader extends Shader {
             location_lights_color[i] = getUniformLocation("lights[" + i + "].color");
             location_lights_bias[i] = getUniformLocation("lights[" + i + "].bias");
             location_lights_attenuation[i] = getUniformLocation("lights[" + i + "].attenuation");
+        }
+
+        location_shadows_enabled = new int[MAX_LIGHTS];
+        location_shadows_shadowMap = new int[MAX_LIGHTS];
+        location_shadows_spaceMatrix = new int[MAX_LIGHTS];
+        for (int i = 0; i < MAX_LIGHTS; i++) {
+            location_shadows_enabled[i] = getUniformLocation("shadows[" + i + "].enabled");
+            location_shadows_shadowMap[i] = getUniformLocation("shadows[" + i + "].shadowMap");
+            location_shadows_spaceMatrix[i] = getUniformLocation("shadows[" + i + "].spaceMatrix");
         }
     }
 
@@ -79,11 +89,15 @@ public class WaterShader extends Shader {
         return this;
     }
 
-    public WaterShader loadTextureUnits() {
-        loadUniform(location_reflectionTexture, 0);
-        loadUniform(location_refractionTexture, 1);
-        loadUniform(location_depthTexture, 2);
-        loadUniform(location_shadowMap, 3);
+    public WaterShader loadTextureUnits(final List<Shadow> shadows) {
+        int textureIndex = 0;
+
+        while (textureIndex < shadows.size() && textureIndex < MAX_LIGHTS) {
+            loadUniform(location_shadows_shadowMap[textureIndex], textureIndex++);
+        }
+        loadUniform(location_reflectionTexture, textureIndex++);
+        loadUniform(location_refractionTexture, textureIndex++);
+        loadUniform(location_depthTexture, textureIndex++);
         return this;
     }
 
@@ -111,16 +125,25 @@ public class WaterShader extends Shader {
         return this;
     }
 
-    public WaterShader loadFog(final Fog fog) {
-        loadUniform(location_fogColor, fog.color);
-        loadUniform(location_fogDensity, fog.density);
-        loadUniform(location_fogGradient, fog.gradient);
+    public WaterShader loadShadows(final List<Shadow> shadows) {
+        int shadowCount = shadows.size();
+
+        for (int i = 0; i < MAX_LIGHTS; i++) {
+            if (i < shadowCount) {
+                loadUniform(location_shadows_enabled[i], true);
+                loadUniform(location_shadows_spaceMatrix[i], shadows.get(i).spaceMatrix);
+            } else {
+                loadUniform(location_shadows_enabled[i], false);
+            }
+        }
 
         return this;
     }
 
-    public WaterShader loadShadowMapSpaceMatrix(final Matrix4f shadowMapSpaceMatrix) {
-        loadUniform(location_shadowMapSpaceMatrix, shadowMapSpaceMatrix);
+    public WaterShader loadFog(final Fog fog) {
+        loadUniform(location_fogColor, fog.color);
+        loadUniform(location_fogDensity, fog.density);
+        loadUniform(location_fogGradient, fog.gradient);
 
         return this;
     }

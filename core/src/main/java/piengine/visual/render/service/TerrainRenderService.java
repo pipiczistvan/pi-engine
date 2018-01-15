@@ -8,6 +8,7 @@ import piengine.visual.render.interpreter.RenderInterpreter;
 import piengine.visual.render.shader.TerrainShader;
 import piengine.visual.shader.domain.ShaderKey;
 import piengine.visual.shader.service.ShaderService;
+import piengine.visual.shadow.domain.Shadow;
 import piengine.visual.texture.service.TextureService;
 import puppeteer.annotation.premade.Component;
 import puppeteer.annotation.premade.Wire;
@@ -40,14 +41,17 @@ public class TerrainRenderService extends AbstractRenderService<TerrainShader, R
 
         shader.start()
                 .loadLights(context.lights)
+                .loadShadows(context.shadows)
                 .loadFog(context.fog)
                 .loadProjectionMatrix(context.camera.getProjection())
                 .loadViewMatrix(context.camera.getView())
                 .loadClippingPlane(context.clippingPlane)
-                .loadShadowMapSpaceMatrix(context.shadows.get(0).shadowMapSpaceMatrix)
-                .loadTextureUnits();//todo: pontosan 1 shadow kell
+                .loadTextureUnits(context.shadows);
 
-        textureService.bind(GL_TEXTURE0, context.shadows.get(0).shadowMap);
+        int textureIndex = 0;
+        for (Shadow shadow : context.shadows) {
+            textureService.bind(GL_TEXTURE0 + textureIndex++, shadow.shadowMap);
+        }
 
         for (Terrain terrain : context.terrains) {
             draw(terrain.getDao());

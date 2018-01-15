@@ -5,7 +5,7 @@ import org.joml.Vector4f;
 import piengine.core.base.type.color.Color;
 import piengine.core.utils.ColorUtils;
 import piengine.visual.fog.Fog;
-import piengine.visual.light.Light;
+import piengine.visual.light.domain.Light;
 import piengine.visual.shader.domain.Shader;
 import piengine.visual.shader.domain.ShaderDao;
 

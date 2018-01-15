@@ -3,6 +3,11 @@
 const int MAX_LIGHTS = 4;
 const float SHADOW_DISTANCE = 30.0;
 const float TRANSITION_DISTANCE = 5.0;
+const float PI = 3.1415926535897932384626433832795;
+const float waveLength = 10.0;
+const float waveAmplitude = 0.2;
+const float specularReflectivity = 0.4;
+const float shineDamper = 20.0;
 
 struct Light {
     vec4 color;
@@ -11,12 +16,11 @@ struct Light {
     vec3 attenuation;
 };
 
-const float PI = 3.1415926535897932384626433832795;
-
-const float waveLength = 10.0;
-const float waveAmplitude = 0.2;
-const float specularReflectivity = 0.4;
-const float shineDamper = 20.0;
+struct Shadow {
+    float enabled;
+    sampler2D shadowMap;
+    mat4 spaceMatrix;
+};
 
 layout (location = 0) in vec3 Position;
 layout (location = 4) in vec4 Indicator;
@@ -28,7 +32,7 @@ out vec3 vNormal;
 out vec3 vSpecular;
 out vec3 vDiffuse;
 out float vVisibility;
-out vec4 vShadowCoords;
+out vec4 vShadowCoords[MAX_LIGHTS];
 
 //////////////
 // UNIFORMS //
@@ -38,6 +42,7 @@ uniform mat4 viewMatrix;
 uniform mat4 projectionMatrix;
 // LIGHT
 uniform Light lights[MAX_LIGHTS];
+uniform Shadow shadows[MAX_LIGHTS];
 // FOG
 uniform float fogGradient;
 uniform float fogDensity;
@@ -45,8 +50,6 @@ uniform float fogDensity;
 uniform vec3 cameraPosition;
 // WAVE
 uniform float waveFactor;
-// SHADOW
-uniform mat4 shadowMapSpaceMatrix;
 
 float calculateVisibilityFactor(float distance) {
     float visiblity = exp(-pow(distance * fogDensity, fogGradient));
@@ -113,7 +116,6 @@ void main(void) {
     vNormal = calcNormal(worldPosition.xyz, worldNeighbourPosition1.xyz, worldNeighbourPosition2.xyz);
     vToCameraVector = normalize(cameraPosition - worldPosition.xyz);
     vVisibility = calculateVisibilityFactor(distance);
-    vShadowCoords = shadowMapSpaceMatrix * worldPosition;
 
     vSpecular = vec3(0);
     vDiffuse = vec3(0);
@@ -127,5 +129,9 @@ void main(void) {
 
     distance = distance - (SHADOW_DISTANCE - TRANSITION_DISTANCE);
     distance = distance / TRANSITION_DISTANCE;
-    vShadowCoords.w = clamp(1.0 - distance, 0.0, 1.0);
+
+    for (int i = 0; i < MAX_LIGHTS; i++) {
+        vShadowCoords[i] = shadows[i].spaceMatrix * worldPosition;
+        vShadowCoords[i].w = clamp(1.0 - distance, 0.0, 1.0);
+    }
 }

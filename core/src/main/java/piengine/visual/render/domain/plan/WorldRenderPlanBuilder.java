@@ -8,7 +8,7 @@ import piengine.object.terrain.domain.Terrain;
 import piengine.object.water.domain.Water;
 import piengine.visual.camera.domain.Camera;
 import piengine.visual.fog.Fog;
-import piengine.visual.light.Light;
+import piengine.visual.light.domain.Light;
 import piengine.visual.render.domain.fragment.domain.RenderFragmentType;
 import piengine.visual.render.domain.fragment.domain.RenderWorldPlanContext;
 import piengine.visual.shadow.domain.Shadow;

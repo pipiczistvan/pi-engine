@@ -3,9 +3,7 @@ package piengine.visual.shadow.domain;
 import org.joml.Vector2i;
 import piengine.core.base.domain.Key;
 import piengine.visual.camera.domain.Camera;
-import piengine.visual.light.Light;
-
-import java.util.Objects;
+import piengine.visual.light.domain.Light;
 
 public class ShadowKey implements Key {
 
@@ -17,21 +15,5 @@ public class ShadowKey implements Key {
         this.light = light;
         this.playerCamera = playerCamera;
         this.resolution = resolution;
-    }
-
-    @Override
-    public boolean equals(final Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        ShadowKey shadowKey = (ShadowKey) o;
-        return Objects.equals(light, shadowKey.light) &&
-                Objects.equals(playerCamera, shadowKey.playerCamera) &&
-                Objects.equals(resolution, shadowKey.resolution);
-    }
-
-    @Override
-    public int hashCode() {
-
-        return Objects.hash(light, playerCamera, resolution);
     }
 }

@@ -61,7 +61,7 @@ public class RenderWorldFragmentHandler implements FragmentHandler<RenderWorldPl
         for (Shadow shadow : context.shadows) {
             framebufferService.bind(shadow.shadowMap);
             {
-                context.camera = shadow.lightCamera;
+                context.camera = shadow.getLightCamera();
                 context.clippingPlane.set(0, 0, 0, 0);
                 context.viewport.set(shadow.shadowMap.resolution);
                 clearScreenRenderService.clearScreen(ColorUtils.BLACK);

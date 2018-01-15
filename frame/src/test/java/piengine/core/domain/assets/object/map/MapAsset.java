@@ -9,7 +9,8 @@ import piengine.object.terrain.domain.Terrain;
 import piengine.object.terrain.manager.TerrainManager;
 import piengine.object.water.domain.Water;
 import piengine.object.water.manager.WaterManager;
-import piengine.visual.light.Light;
+import piengine.visual.light.domain.Light;
+import piengine.visual.render.domain.plan.WorldRenderPlanBuilder;
 import piengine.visual.shadow.domain.Shadow;
 import piengine.visual.shadow.manager.ShadowManager;
 import puppeteer.annotation.premade.Wire;
@@ -60,6 +61,11 @@ public class MapAsset extends WorldAsset<MapAssetArgument> {
         water.waveFactor += WAVE_SPEED * delta;
 
         cubeModel.rotate((float) (5f * delta), (float) (10f * delta), (float) (15f * delta));
+    }
+
+    @Override
+    public WorldRenderPlanBuilder getAssetPlan() {
+        return null;
     }
 
     @Override

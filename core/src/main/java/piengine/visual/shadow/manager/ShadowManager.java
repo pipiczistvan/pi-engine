@@ -2,7 +2,7 @@ package piengine.visual.shadow.manager;
 
 import org.joml.Vector2i;
 import piengine.visual.camera.domain.Camera;
-import piengine.visual.light.Light;
+import piengine.visual.light.domain.Light;
 import piengine.visual.shadow.domain.Shadow;
 import piengine.visual.shadow.domain.ShadowKey;
 import piengine.visual.shadow.service.ShadowService;

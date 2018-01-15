@@ -3,7 +3,7 @@ package piengine.visual.shadow.domain;
 import org.joml.Vector2i;
 import piengine.core.base.domain.ResourceData;
 import piengine.visual.camera.domain.Camera;
-import piengine.visual.light.Light;
+import piengine.visual.light.domain.Light;
 
 public class ShadowData implements ResourceData {
 

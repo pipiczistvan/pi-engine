@@ -10,13 +10,19 @@ struct Light {
     vec3 attenuation;
 };
 
+struct Shadow {
+    float enabled;
+    sampler2D shadowMap;
+    mat4 spaceMatrix;
+};
+
 layout (location = 0) in vec3 Position;
 layout (location = 2) in vec3 Color;
 layout (location = 3) in vec3 Normal;
 
 flat out vec4 vColor;
 out float vVisibility;
-out vec4 vShadowCoords;
+out vec4 vShadowCoords[MAX_LIGHTS];
 
 //////////////
 // UNIFORMS //
@@ -26,13 +32,12 @@ uniform mat4 viewMatrix;
 uniform mat4 projectionMatrix;
 // LIGHT
 uniform Light lights[MAX_LIGHTS];
+uniform Shadow shadows[MAX_LIGHTS];
 // FOG
 uniform float fogGradient;
 uniform float fogDensity;
 // CLIPPING PLANE
 uniform vec4 clippingPlane;
-// SHADOW
-uniform mat4 shadowMapSpaceMatrix;
 
 float calculateVisibilityFactor(float distance) {
     float visiblity = exp(-pow(distance * fogDensity, fogGradient));
@@ -68,10 +73,13 @@ void main(void) {
 
     vColor = lightFactor * vec4(Color, 1.0);
     vVisibility = calculateVisibilityFactor(distance);
-    vShadowCoords = shadowMapSpaceMatrix * worldPosition;
     gl_Position = projectionMatrix * viewPosition;
 
     distance = distance - (SHADOW_DISTANCE - TRANSITION_DISTANCE);
     distance = distance / TRANSITION_DISTANCE;
-    vShadowCoords.w = clamp(1.0 - distance, 0.0, 1.0);
+
+    for (int i = 0; i < MAX_LIGHTS; i++) {
+        vShadowCoords[i] = shadows[i].spaceMatrix * worldPosition;
+        vShadowCoords[i].w = clamp(1.0 - distance, 0.0, 1.0);
+    }
 }

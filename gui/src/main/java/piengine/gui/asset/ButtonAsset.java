@@ -9,6 +9,7 @@ import piengine.object.canvas.domain.Canvas;
 import piengine.object.canvas.manager.CanvasManager;
 import piengine.visual.image.domain.Image;
 import piengine.visual.image.manager.ImageManager;
+import piengine.visual.render.domain.plan.GuiRenderPlanBuilder;
 import piengine.visual.writing.font.domain.Font;
 import piengine.visual.writing.font.manager.FontManager;
 import piengine.visual.writing.text.domain.Text;
@@ -17,7 +18,7 @@ import puppeteer.annotation.premade.Wire;
 
 import static piengine.visual.writing.text.domain.TextConfiguration.textConfig;
 
-public class ButtonAsset extends Asset<ButtonAssetArgument> {
+public class ButtonAsset extends Asset<ButtonAssetArgument, GuiRenderPlanBuilder> {
 
     private static final float SCALE_X = 0.25f;
     private static final float SCALE_Y = 0.125f;
@@ -99,6 +100,11 @@ public class ButtonAsset extends Asset<ButtonAssetArgument> {
     @Override
     public void update(double delta) {
 
+    }
+
+    @Override
+    public GuiRenderPlanBuilder getAssetPlan() {
+        return null;
     }
 
     @Override

@@ -3,7 +3,8 @@ package piengine.core.domain.assets.object.lamp;
 import piengine.object.asset.domain.WorldAsset;
 import piengine.object.model.domain.Model;
 import piengine.object.model.manager.ModelManager;
-import piengine.visual.light.Light;
+import piengine.visual.light.domain.Light;
+import piengine.visual.render.domain.plan.WorldRenderPlanBuilder;
 import puppeteer.annotation.premade.Wire;
 
 public class LampAsset extends WorldAsset<LampAssetArgument> {
@@ -27,6 +28,11 @@ public class LampAsset extends WorldAsset<LampAssetArgument> {
         lampLight.setPosition(0, 5.5f, 0);
         lampLight.setColor(0.9568627451f, 0.96862745098f, 0.67843137255f);
         lampLight.setAttenuation(1f, 0.01f, 0.002f);
+    }
+
+    @Override
+    public WorldRenderPlanBuilder getAssetPlan() {
+        return null;
     }
 
     @Override

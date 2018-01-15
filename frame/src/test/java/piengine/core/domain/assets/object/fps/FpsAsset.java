@@ -2,6 +2,7 @@ package piengine.core.domain.assets.object.fps;
 
 import piengine.core.time.manager.TimeManager;
 import piengine.object.asset.domain.GuiAsset;
+import piengine.visual.render.domain.plan.GuiRenderPlanBuilder;
 import piengine.visual.writing.font.domain.Font;
 import piengine.visual.writing.font.manager.FontManager;
 import piengine.visual.writing.text.domain.Text;
@@ -36,6 +37,11 @@ public class FpsAsset extends GuiAsset<FpsAssetArgument> {
     @Override
     public void update(final double delta) {
         textManager.update(fpsText, TextConfiguration.textConfig().withFont(font).withFontSize(2).withText("FPS: " + timeManager.getFPS()));
+    }
+
+    @Override
+    public GuiRenderPlanBuilder getAssetPlan() {
+        return null;
     }
 
     @Override

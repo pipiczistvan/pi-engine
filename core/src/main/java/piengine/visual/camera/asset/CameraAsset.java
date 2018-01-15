@@ -4,6 +4,7 @@ import org.joml.Vector2f;
 import org.joml.Vector3f;
 import piengine.core.input.manager.InputManager;
 import piengine.object.asset.domain.Asset;
+import piengine.visual.render.domain.plan.WorldRenderPlanBuilder;
 import piengine.visual.window.manager.WindowManager;
 import puppeteer.annotation.premade.Wire;
 
@@ -19,7 +20,7 @@ import static org.lwjgl.glfw.GLFW.GLFW_KEY_W;
 import static piengine.core.input.domain.KeyEventType.PRESS;
 import static piengine.core.input.domain.KeyEventType.RELEASE;
 
-public class CameraAsset extends Asset<CameraAssetArgument> {
+public class CameraAsset extends Asset<CameraAssetArgument, WorldRenderPlanBuilder> {
 
     public boolean movingEnabled = true;
     public boolean lookingEnabled = true;
@@ -82,6 +83,11 @@ public class CameraAsset extends Asset<CameraAssetArgument> {
         setPositionRotation(newPosition, newRotation);
 
         looking.set(0, 0);
+    }
+
+    @Override
+    public WorldRenderPlanBuilder getAssetPlan() {
+        return null;
     }
 
     private void pressSpace() {

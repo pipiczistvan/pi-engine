@@ -64,9 +64,9 @@ public class FramebufferInterpreter implements Interpreter<FramebufferData, Fram
 
     @Override
     public void free(final FramebufferDao dao) {
-        glDeleteFramebuffers(dao.fbo);
+        glDeleteFramebuffers(dao.getFbo());
 
-        for (Map.Entry<FramebufferAttachment, Integer> attachment : dao.attachments.entrySet()) {
+        for (Map.Entry<FramebufferAttachment, Integer> attachment : dao.getAttachments().entrySet()) {
             if (attachment.getKey().equals(RENDER_BUFFER_ATTACHMENT)) {
                 glDeleteRenderbuffers(attachment.getValue());
             } else {
@@ -76,7 +76,7 @@ public class FramebufferInterpreter implements Interpreter<FramebufferData, Fram
     }
 
     public void bind(final FramebufferDao dao) {
-        glBindFramebuffer(GL_FRAMEBUFFER, dao.fbo);
+        glBindFramebuffer(GL_FRAMEBUFFER, dao.getFbo());
     }
 
     public void unbind() {

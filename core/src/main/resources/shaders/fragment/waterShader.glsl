@@ -1,5 +1,6 @@
 #version 330 core
 
+const int MAX_LIGHTS = 4;
 const vec3 waterColor = vec3(0.604, 0.867, 0.851);
 const float fresnelReflective = 0.5;
 const float edgeSoftness = 2.0;
@@ -11,6 +12,12 @@ const float murkyDepth = 5.0;
 const int PCF_COUNT = 1;
 const float TOTAL_TEXELS = (PCF_COUNT * 2.0 + 1.0) * (PCF_COUNT * 2.0 + 1.0);
 
+struct Shadow {
+    float enabled;
+    sampler2D shadowMap;
+    mat4 spaceMatrix;
+};
+
 in vec4 vClipSpaceGrid;
 in vec4 vClipSpaceReal;
 in vec3 vToCameraVector;
@@ -18,14 +25,14 @@ in vec3 vNormal;
 in vec3 vSpecular;
 in vec3 vDiffuse;
 in float vVisibility;
-in vec4 vShadowCoords;
+in vec4 vShadowCoords[MAX_LIGHTS];
 
 out vec4 fColor;
 
+uniform Shadow shadows[MAX_LIGHTS];
 uniform sampler2D reflectionTexture;
 uniform sampler2D refractionTexture;
 uniform sampler2D depthTexture;
-uniform sampler2D shadowMap;
 uniform vec4 fogColor;
 
 vec3 calculateMurkiness(vec3 refractColor, float waterDepth) {
@@ -77,21 +84,25 @@ void main(void) {
     vec3 finalColor = mix(reflectColor, refractColor, calculateFresnel(vToCameraVector, vNormal));
     finalColor = finalColor * vDiffuse + vSpecular;
 
-    float mapSize = 2048.0;
-    float texelSize = 1.0 / mapSize;
-    float total = 0.0;
+    for (int i = 0; i < MAX_LIGHTS; i++) {
+        if (shadows[i].enabled > 0.5) {
+            float mapSize = 2048.0;
+            float texelSize = 1.0 / mapSize;
+            float total = 0.0;
 
-    for (int x = -PCF_COUNT; x <= PCF_COUNT; x++) {
-        for (int y = -PCF_COUNT; y <= PCF_COUNT; y++) {
-            float objectNearestToLight = texture(shadowMap, vShadowCoords.xy + vec2(x, y) * texelSize).r;
-            if (vShadowCoords.z > objectNearestToLight) {
-                total += 1.0;
+            for (int x = -PCF_COUNT; x <= PCF_COUNT; x++) {
+                for (int y = -PCF_COUNT; y <= PCF_COUNT; y++) {
+                    float objectNearestToLight = texture(shadows[i].shadowMap, vShadowCoords[i].xy + vec2(x, y) * texelSize).r;
+                    if (vShadowCoords[i].z > objectNearestToLight) {
+                        total += 1.0;
+                    }
+                }
             }
+            total /= TOTAL_TEXELS;
+            float lightFactor = max(1.0 - (total * vShadowCoords[i].w), 0.4);
+            finalColor *= lightFactor;
         }
     }
-    total /= TOTAL_TEXELS;
-    float lightFactor = max(1.0 - (total * vShadowCoords.w), 0.4);
-    finalColor *= lightFactor;
 
     fColor = vec4(finalColor, clamp(waterDepth / edgeSoftness, 0.0, 1.0));
     fColor = mix(fogColor, fColor, vVisibility);
