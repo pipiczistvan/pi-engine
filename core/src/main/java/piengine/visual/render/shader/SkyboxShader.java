@@ -4,22 +4,17 @@ import org.joml.Matrix4f;
 import piengine.visual.fog.Fog;
 import piengine.visual.shader.domain.Shader;
 import piengine.visual.shader.domain.ShaderDao;
+import piengine.visual.shader.domain.uniform.UniformColor;
+import piengine.visual.shader.domain.uniform.UniformMatrix4f;
 
 public class SkyboxShader extends Shader {
 
-    private int location_projectionMatrix;
-    private int location_viewMatrix;
-    private int location_fogColor;
+    private final UniformMatrix4f projectionMatrix = new UniformMatrix4f(this, "projectionMatrix");
+    private final UniformMatrix4f viewMatrix = new UniformMatrix4f(this, "viewMatrix");
+    private final UniformColor fogColor = new UniformColor(this, "fogColor");
 
     public SkyboxShader(final ShaderDao dao) {
         super(dao);
-    }
-
-    @Override
-    protected void getUniformLocations() {
-        location_projectionMatrix = getUniformLocation("projectionMatrix");
-        location_viewMatrix = getUniformLocation("viewMatrix");
-        location_fogColor = getUniformLocation("fogColor");
     }
 
     public SkyboxShader start() {
@@ -34,20 +29,20 @@ public class SkyboxShader extends Shader {
         return this;
     }
 
-    public SkyboxShader loadProjectionMatrix(final Matrix4f projectionMatrix) {
-        loadUniform(location_projectionMatrix, projectionMatrix);
+    public SkyboxShader loadProjectionMatrix(final Matrix4f value) {
+        projectionMatrix.load(value);
 
         return this;
     }
 
-    public SkyboxShader loadViewMatrix(final Matrix4f viewMatrix) {
-        loadUniform(location_viewMatrix, viewMatrix);
+    public SkyboxShader loadViewMatrix(final Matrix4f value) {
+        viewMatrix.load(value);
 
         return this;
     }
 
     public SkyboxShader loadFog(final Fog fog) {
-        loadUniform(location_fogColor, fog.color);
+        fogColor.load(fog.color);
 
         return this;
     }

@@ -1,15 +1,20 @@
 package piengine.visual.shader.domain;
 
-import org.joml.Matrix4f;
-import org.joml.Vector2f;
-import org.joml.Vector3f;
-import org.joml.Vector4f;
 import piengine.core.base.domain.Domain;
 import piengine.core.base.exception.PIEngineException;
-import piengine.core.base.type.color.Color;
+import piengine.visual.shader.domain.uniform.Uniform;
+import piengine.visual.shader.domain.uniform.UniformBoolean;
+import piengine.visual.shader.domain.uniform.UniformColor;
+import piengine.visual.shader.domain.uniform.UniformFloat;
+import piengine.visual.shader.domain.uniform.UniformInteger;
+import piengine.visual.shader.domain.uniform.UniformMatrix4f;
+import piengine.visual.shader.domain.uniform.UniformVector2f;
+import piengine.visual.shader.domain.uniform.UniformVector3f;
 import piengine.visual.shader.service.ShaderService;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Shader implements Domain<ShaderDao> {
 
@@ -18,9 +23,11 @@ public class Shader implements Domain<ShaderDao> {
 
     private ShaderService shaderService;
     private final ShaderDao dao;
+    private final List<Uniform> uniforms;
 
     public Shader(final ShaderDao dao) {
         this.dao = dao;
+        this.uniforms = new ArrayList<>();
     }
 
     public void initialize(final ShaderService shaderService) {
@@ -28,11 +35,81 @@ public class Shader implements Domain<ShaderDao> {
         getUniformLocations();
     }
 
+    public void registerUniform(final Uniform uniform) {
+        this.uniforms.add(uniform);
+    }
+
     protected void getUniformLocations() {
+        for (Uniform uniform : uniforms) {
+            uniform.initialize(this, shaderService);
+        }
     }
 
     protected int getUniformLocation(String variable) {
         return shaderService.getUniformLocation(this, variable);
+    }
+
+    protected UniformVector2f[] uniformVector2fArray(final String struct, final String variable, final int count) {
+        UniformVector2f[] uniformArray = new UniformVector2f[count];
+        for (int i = 0; i < count; i++) {
+            uniformArray[i] = new UniformVector2f(this, struct + "[" + i + "]." + variable);
+        }
+
+        return uniformArray;
+    }
+
+    protected UniformVector3f[] uniformVector3fArray(final String struct, final String variable, final int count) {
+        UniformVector3f[] uniformArray = new UniformVector3f[count];
+        for (int i = 0; i < count; i++) {
+            uniformArray[i] = new UniformVector3f(this, struct + "[" + i + "]." + variable);
+        }
+
+        return uniformArray;
+    }
+
+    protected UniformColor[] uniformColorArray(final String struct, final String variable, final int count) {
+        UniformColor[] uniformArray = new UniformColor[count];
+        for (int i = 0; i < count; i++) {
+            uniformArray[i] = new UniformColor(this, struct + "[" + i + "]." + variable);
+        }
+
+        return uniformArray;
+    }
+
+    protected UniformFloat[] uniformFloatArray(final String struct, final String variable, final int count) {
+        UniformFloat[] uniformArray = new UniformFloat[count];
+        for (int i = 0; i < count; i++) {
+            uniformArray[i] = new UniformFloat(this, struct + "[" + i + "]." + variable);
+        }
+
+        return uniformArray;
+    }
+
+    protected UniformBoolean[] uniformBooleanArray(final String struct, final String variable, final int count) {
+        UniformBoolean[] uniformArray = new UniformBoolean[count];
+        for (int i = 0; i < count; i++) {
+            uniformArray[i] = new UniformBoolean(this, struct + "[" + i + "]." + variable);
+        }
+
+        return uniformArray;
+    }
+
+    protected UniformInteger[] uniformIntegerArray(final String struct, final String variable, final int count) {
+        UniformInteger[] uniformArray = new UniformInteger[count];
+        for (int i = 0; i < count; i++) {
+            uniformArray[i] = new UniformInteger(this, struct + "[" + i + "]." + variable);
+        }
+
+        return uniformArray;
+    }
+
+    protected UniformMatrix4f[] uniformMatrix4fArray(final String struct, final String variable, final int count) {
+        UniformMatrix4f[] uniformArray = new UniformMatrix4f[count];
+        for (int i = 0; i < count; i++) {
+            uniformArray[i] = new UniformMatrix4f(this, struct + "[" + i + "]." + variable);
+        }
+
+        return uniformArray;
     }
 
     protected void startShader() {
@@ -41,38 +118,6 @@ public class Shader implements Domain<ShaderDao> {
 
     protected void stopShader() {
         shaderService.stop();
-    }
-
-    protected void loadUniform(int location, Matrix4f value) {
-        shaderService.loadUniform(location, value);
-    }
-
-    protected void loadUniform(int location, Vector4f value) {
-        shaderService.loadUniform(location, value);
-    }
-
-    protected void loadUniform(int location, Vector3f value) {
-        shaderService.loadUniform(location, value);
-    }
-
-    protected void loadUniform(int location, Vector2f value) {
-        shaderService.loadUniform(location, value);
-    }
-
-    protected void loadUniform(int location, Color color) {
-        shaderService.loadUniform(location, color);
-    }
-
-    protected void loadUniform(int location, float value) {
-        shaderService.loadUniform(location, value);
-    }
-
-    protected void loadUniform(int location, int value) {
-        shaderService.loadUniform(location, value);
-    }
-
-    protected void loadUniform(int location, boolean value) {
-        shaderService.loadUniform(location, value);
     }
 
     public <T extends Shader> T castTo(final Class<T> shaderClass) {

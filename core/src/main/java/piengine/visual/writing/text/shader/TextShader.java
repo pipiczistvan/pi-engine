@@ -5,20 +5,16 @@ import org.joml.Matrix4f;
 import piengine.core.base.type.color.Color;
 import piengine.visual.shader.domain.Shader;
 import piengine.visual.shader.domain.ShaderDao;
+import piengine.visual.shader.domain.uniform.UniformColor;
+import piengine.visual.shader.domain.uniform.UniformMatrix4f;
 
 public class TextShader extends Shader {
 
-    private int location_modelMatrix;
-    private int location_color;
+    private final UniformMatrix4f modelMatrix = new UniformMatrix4f(this, "modelMatrix");
+    private final UniformColor color = new UniformColor(this, "color");
 
     public TextShader(final ShaderDao dao) {
         super(dao);
-    }
-
-    @Override
-    protected void getUniformLocations() {
-        location_modelMatrix = super.getUniformLocation("modelMatrix");
-        location_color = super.getUniformLocation("color");
     }
 
     public TextShader start() {
@@ -34,14 +30,14 @@ public class TextShader extends Shader {
     }
 
 
-    public TextShader loadModelMatrix(final Matrix4f modelMatrix) {
-        loadUniform(location_modelMatrix, modelMatrix);
+    public TextShader loadModelMatrix(final Matrix4f value) {
+        modelMatrix.load(value);
 
         return this;
     }
 
-    public TextShader loadColor(final Color color) {
-        super.loadUniform(location_color, color);
+    public TextShader loadColor(final Color value) {
+        color.load(value);
 
         return this;
     }

@@ -3,53 +3,36 @@ package piengine.visual.render.shader;
 import org.joml.Matrix4f;
 import org.joml.Vector4f;
 import piengine.core.base.type.color.Color;
-import piengine.core.utils.ColorUtils;
 import piengine.visual.fog.Fog;
 import piengine.visual.light.domain.Light;
 import piengine.visual.shader.domain.Shader;
 import piengine.visual.shader.domain.ShaderDao;
+import piengine.visual.shader.domain.uniform.UniformBoolean;
+import piengine.visual.shader.domain.uniform.UniformColor;
+import piengine.visual.shader.domain.uniform.UniformFloat;
+import piengine.visual.shader.domain.uniform.UniformMatrix4f;
+import piengine.visual.shader.domain.uniform.UniformVector3f;
+import piengine.visual.shader.domain.uniform.UniformVector4f;
 
 import java.util.List;
 
 public class ModelShader extends Shader {
 
-    private int location_modelMatrix;
-    private int location_viewMatrix;
-    private int location_projectionMatrix;
-    private int location_color;
-    private int location_textureEnabled;
-    private int location_clippingPlane;
-    private int location_fogColor;
-    private int location_fogDensity;
-    private int location_fogGradient;
-    private int[] location_lights_position;
-    private int[] location_lights_color;
-    private int[] location_lights_attenuation;
+    private final UniformMatrix4f modelMatrix = new UniformMatrix4f(this, "modelMatrix");
+    private final UniformMatrix4f viewMatrix = new UniformMatrix4f(this, "viewMatrix");
+    private final UniformMatrix4f projectionMatrix = new UniformMatrix4f(this, "projectionMatrix");
+    private final UniformColor color = new UniformColor(this, "color");
+    private final UniformBoolean textureEnabled = new UniformBoolean(this, "textureEnabled");
+    private final UniformVector4f clippingPlane = new UniformVector4f(this, "clippingPlane");
+    private final UniformColor fogColor = new UniformColor(this, "fogColor");
+    private final UniformFloat fogDensity = new UniformFloat(this, "fogDensity");
+    private final UniformFloat fogGradient = new UniformFloat(this, "fogGradient");
+    private final UniformVector3f[] lightPositions = uniformVector3fArray("lights", "position", MAX_LIGHTS);
+    private final UniformColor[] lightColors = uniformColorArray("lights", "color", MAX_LIGHTS);
+    private final UniformVector3f[] lightAttenuations = uniformVector3fArray("lights", "attenuation", MAX_LIGHTS);
 
     public ModelShader(final ShaderDao dao) {
         super(dao);
-    }
-
-    @Override
-    protected void getUniformLocations() {
-        location_modelMatrix = getUniformLocation("modelMatrix");
-        location_viewMatrix = getUniformLocation("viewMatrix");
-        location_projectionMatrix = getUniformLocation("projectionMatrix");
-        location_color = getUniformLocation("color");
-        location_textureEnabled = getUniformLocation("textureEnabled");
-        location_clippingPlane = getUniformLocation("clippingPlane");
-        location_fogColor = getUniformLocation("fogColor");
-        location_fogDensity = getUniformLocation("fogDensity");
-        location_fogGradient = getUniformLocation("fogGradient");
-
-        location_lights_position = new int[MAX_LIGHTS];
-        location_lights_color = new int[MAX_LIGHTS];
-        location_lights_attenuation = new int[MAX_LIGHTS];
-        for (int i = 0; i < MAX_LIGHTS; i++) {
-            location_lights_position[i] = getUniformLocation("lights[" + i + "].position");
-            location_lights_color[i] = getUniformLocation("lights[" + i + "].color");
-            location_lights_attenuation[i] = getUniformLocation("lights[" + i + "].attenuation");
-        }
     }
 
     public ModelShader start() {
@@ -64,20 +47,20 @@ public class ModelShader extends Shader {
         return this;
     }
 
-    public ModelShader loadModelMatrix(final Matrix4f modelMatrix) {
-        loadUniform(location_modelMatrix, modelMatrix);
+    public ModelShader loadModelMatrix(final Matrix4f value) {
+        modelMatrix.load(value);
 
         return this;
     }
 
-    public ModelShader loadViewMatrix(final Matrix4f viewMatrix) {
-        loadUniform(location_viewMatrix, viewMatrix);
+    public ModelShader loadViewMatrix(final Matrix4f value) {
+        viewMatrix.load(value);
 
         return this;
     }
 
-    public ModelShader loadProjectionMatrix(final Matrix4f projectionMatrix) {
-        loadUniform(location_projectionMatrix, projectionMatrix);
+    public ModelShader loadProjectionMatrix(final Matrix4f value) {
+        projectionMatrix.load(value);
 
         return this;
     }
@@ -87,40 +70,36 @@ public class ModelShader extends Shader {
 
         for (int i = 0; i < MAX_LIGHTS; i++) {
             Light light = i < lightCount ? lights.get(i) : new Light(null);
-            loadUniform(location_lights_position[i], light.getPosition());
-            loadUniform(location_lights_color[i], light.getColor());
-            loadUniform(location_lights_attenuation[i], light.getAttenuation());
+            lightPositions[i].load(light.getPosition());
+            lightColors[i].load(light.getColor());
+            lightAttenuations[i].load(light.getAttenuation());
         }
 
         return this;
     }
 
-    public ModelShader loadColor(final Color color) {
-        if (color != null) {
-            loadUniform(location_color, color);
-        } else {
-            loadUniform(location_color, ColorUtils.WHITE);
-        }
+    public ModelShader loadColor(final Color value) {
+        color.load(value);
 
         return this;
     }
 
     public ModelShader loadTextureEnabled(final boolean value) {
-        loadUniform(location_textureEnabled, value);
+        textureEnabled.load(value);
 
         return this;
     }
 
-    public ModelShader loadClippingPlane(final Vector4f clippingPlane) {
-        loadUniform(location_clippingPlane, clippingPlane);
+    public ModelShader loadClippingPlane(final Vector4f value) {
+        clippingPlane.load(value);
 
         return this;
     }
 
     public ModelShader loadFog(final Fog fog) {
-        loadUniform(location_fogColor, fog.color);
-        loadUniform(location_fogDensity, fog.density);
-        loadUniform(location_fogGradient, fog.gradient);
+        fogColor.load(fog.color);
+        fogDensity.load(fog.density);
+        fogGradient.load(fog.gradient);
 
         return this;
     }

@@ -6,56 +6,34 @@ import piengine.visual.fog.Fog;
 import piengine.visual.light.domain.Light;
 import piengine.visual.shader.domain.Shader;
 import piengine.visual.shader.domain.ShaderDao;
+import piengine.visual.shader.domain.uniform.UniformBoolean;
+import piengine.visual.shader.domain.uniform.UniformColor;
+import piengine.visual.shader.domain.uniform.UniformFloat;
+import piengine.visual.shader.domain.uniform.UniformInteger;
+import piengine.visual.shader.domain.uniform.UniformMatrix4f;
+import piengine.visual.shader.domain.uniform.UniformVector3f;
+import piengine.visual.shader.domain.uniform.UniformVector4f;
 import piengine.visual.shadow.domain.Shadow;
 
 import java.util.List;
 
 public class TerrainShader extends Shader {
 
-    private int location_viewMatrix;
-    private int location_projectionMatrix;
-    private int location_clippingPlane;
-    private int location_fogColor;
-    private int location_fogDensity;
-    private int location_fogGradient;
-    private int[] location_lights_position;
-    private int[] location_lights_color;
-    private int[] location_lights_attenuation;
-
-    private int[] location_shadows_enabled;
-    private int[] location_shadows_shadowMap;
-    private int[] location_shadows_spaceMatrix;
+    private final UniformMatrix4f viewMatrix = new UniformMatrix4f(this, "viewMatrix");
+    private final UniformMatrix4f projectionMatrix = new UniformMatrix4f(this, "projectionMatrix");
+    private final UniformVector4f clippingPlane = new UniformVector4f(this, "clippingPlane");
+    private final UniformColor fogColor = new UniformColor(this, "fogColor");
+    private final UniformFloat fogDensity = new UniformFloat(this, "fogDensity");
+    private final UniformFloat fogGradient = new UniformFloat(this, "fogGradient");
+    private final UniformVector3f[] lightPositions = uniformVector3fArray("lights", "position", MAX_LIGHTS);
+    private final UniformColor[] lightColors = uniformColorArray("lights", "color", MAX_LIGHTS);
+    private final UniformVector3f[] lightAttenuations = uniformVector3fArray("lights", "attenuation", MAX_LIGHTS);
+    private final UniformBoolean[] shadowEnableds = uniformBooleanArray("shadows", "enabled", MAX_LIGHTS);
+    private final UniformInteger[] shadowShadowMaps = uniformIntegerArray("shadows", "shadowMap", MAX_LIGHTS);
+    private final UniformMatrix4f[] shadowSpaceMatrices = uniformMatrix4fArray("shadows", "spaceMatrix", MAX_LIGHTS);
 
     public TerrainShader(final ShaderDao dao) {
         super(dao);
-    }
-
-    @Override
-    protected void getUniformLocations() {
-        location_viewMatrix = getUniformLocation("viewMatrix");
-        location_projectionMatrix = getUniformLocation("projectionMatrix");
-        location_clippingPlane = getUniformLocation("clippingPlane");
-        location_fogColor = getUniformLocation("fogColor");
-        location_fogDensity = getUniformLocation("fogDensity");
-        location_fogGradient = getUniformLocation("fogGradient");
-
-        location_lights_position = new int[MAX_LIGHTS];
-        location_lights_color = new int[MAX_LIGHTS];
-        location_lights_attenuation = new int[MAX_LIGHTS];
-        for (int i = 0; i < MAX_LIGHTS; i++) {
-            location_lights_position[i] = getUniformLocation("lights[" + i + "].position");
-            location_lights_color[i] = getUniformLocation("lights[" + i + "].color");
-            location_lights_attenuation[i] = getUniformLocation("lights[" + i + "].attenuation");
-        }
-
-        location_shadows_enabled = new int[MAX_LIGHTS];
-        location_shadows_shadowMap = new int[MAX_LIGHTS];
-        location_shadows_spaceMatrix = new int[MAX_LIGHTS];
-        for (int i = 0; i < MAX_LIGHTS; i++) {
-            location_shadows_enabled[i] = getUniformLocation("shadows[" + i + "].enabled");
-            location_shadows_shadowMap[i] = getUniformLocation("shadows[" + i + "].shadowMap");
-            location_shadows_spaceMatrix[i] = getUniformLocation("shadows[" + i + "].spaceMatrix");
-        }
     }
 
     public TerrainShader start() {
@@ -70,14 +48,14 @@ public class TerrainShader extends Shader {
         return this;
     }
 
-    public TerrainShader loadViewMatrix(final Matrix4f viewMatrix) {
-        loadUniform(location_viewMatrix, viewMatrix);
+    public TerrainShader loadViewMatrix(final Matrix4f value) {
+        viewMatrix.load(value);
 
         return this;
     }
 
-    public TerrainShader loadProjectionMatrix(final Matrix4f projectionMatrix) {
-        loadUniform(location_projectionMatrix, projectionMatrix);
+    public TerrainShader loadProjectionMatrix(final Matrix4f value) {
+        projectionMatrix.load(value);
 
         return this;
     }
@@ -87,24 +65,24 @@ public class TerrainShader extends Shader {
 
         for (int i = 0; i < MAX_LIGHTS; i++) {
             Light light = i < lightCount ? lights.get(i) : new Light(null);
-            loadUniform(location_lights_position[i], light.getPosition());
-            loadUniform(location_lights_color[i], light.getColor());
-            loadUniform(location_lights_attenuation[i], light.getAttenuation());
+            lightPositions[i].load(light.getPosition());
+            lightColors[i].load(light.getColor());
+            lightAttenuations[i].load(light.getAttenuation());
         }
 
         return this;
     }
 
-    public TerrainShader loadClippingPlane(final Vector4f clippingPlane) {
-        loadUniform(location_clippingPlane, clippingPlane);
+    public TerrainShader loadClippingPlane(final Vector4f value) {
+        clippingPlane.load(value);
 
         return this;
     }
 
     public TerrainShader loadFog(final Fog fog) {
-        loadUniform(location_fogColor, fog.color);
-        loadUniform(location_fogDensity, fog.density);
-        loadUniform(location_fogGradient, fog.gradient);
+        fogColor.load(fog.color);
+        fogDensity.load(fog.density);
+        fogGradient.load(fog.gradient);
 
         return this;
     }
@@ -114,10 +92,10 @@ public class TerrainShader extends Shader {
 
         for (int i = 0; i < MAX_LIGHTS; i++) {
             if (i < shadowCount) {
-                loadUniform(location_shadows_enabled[i], true);
-                loadUniform(location_shadows_spaceMatrix[i], shadows.get(i).spaceMatrix);
+                shadowEnableds[i].load(true);
+                shadowSpaceMatrices[i].load(shadows.get(i).spaceMatrix);
             } else {
-                loadUniform(location_shadows_enabled[i], false);
+                shadowEnableds[i].load(false);
             }
         }
 
@@ -128,7 +106,7 @@ public class TerrainShader extends Shader {
         int textureIndex = 0;
 
         while (textureIndex < shadows.size() && textureIndex < MAX_LIGHTS) {
-            loadUniform(location_shadows_shadowMap[textureIndex], textureIndex++);
+            shadowShadowMaps[textureIndex].load(textureIndex++);
         }
 
         return this;
