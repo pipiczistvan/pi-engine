@@ -10,7 +10,12 @@ public class UniformColor extends Uniform<Color> {
     }
 
     @Override
-    public void load(final Color value) {
+    protected void loadToShader(final Color value) {
         shaderService.loadUniform(location, value);
+    }
+
+    @Override
+    protected Color copyValue(final Color value) {
+        return new Color(value);
     }
 }

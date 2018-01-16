@@ -10,7 +10,12 @@ public class UniformVector2f extends Uniform<Vector2f> {
     }
 
     @Override
-    public void load(final Vector2f value) {
+    protected void loadToShader(final Vector2f value) {
         shaderService.loadUniform(location, value);
+    }
+
+    @Override
+    protected Vector2f copyValue(final Vector2f value) {
+        return new Vector2f(value);
     }
 }

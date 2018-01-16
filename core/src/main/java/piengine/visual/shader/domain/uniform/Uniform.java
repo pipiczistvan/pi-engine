@@ -9,6 +9,7 @@ public abstract class Uniform<T> {
     private final String variable;
     protected ShaderService shaderService;
     protected int location;
+    private T cachedValue;
 
     public Uniform(final Shader shader, final String variable) {
         shader.registerUniform(this);
@@ -20,5 +21,14 @@ public abstract class Uniform<T> {
         this.location = shaderService.getUniformLocation(shader, variable);
     }
 
-    public abstract void load(final T value);
+    public void load(final T value) {
+        if (!value.equals(cachedValue)) {
+            cachedValue = copyValue(value);
+            loadToShader(value);
+        }
+    }
+
+    protected abstract void loadToShader(final T value);
+
+    protected abstract T copyValue(final T value);
 }

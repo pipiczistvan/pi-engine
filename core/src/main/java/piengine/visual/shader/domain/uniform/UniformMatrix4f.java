@@ -10,7 +10,12 @@ public class UniformMatrix4f extends Uniform<Matrix4f> {
     }
 
     @Override
-    public void load(final Matrix4f value) {
+    protected void loadToShader(final Matrix4f value) {
         shaderService.loadUniform(location, value);
+    }
+
+    @Override
+    protected Matrix4f copyValue(final Matrix4f value) {
+        return new Matrix4f(value);
     }
 }

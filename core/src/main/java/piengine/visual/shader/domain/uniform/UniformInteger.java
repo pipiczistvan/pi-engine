@@ -9,7 +9,12 @@ public class UniformInteger extends Uniform<Integer> {
     }
 
     @Override
-    public void load(final Integer value) {
+    protected void loadToShader(final Integer value) {
         shaderService.loadUniform(location, value);
+    }
+
+    @Override
+    protected Integer copyValue(final Integer value) {
+        return value;
     }
 }

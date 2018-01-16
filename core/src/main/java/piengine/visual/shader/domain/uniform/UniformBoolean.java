@@ -9,7 +9,12 @@ public class UniformBoolean extends Uniform<Boolean> {
     }
 
     @Override
-    public void load(final Boolean value) {
+    protected void loadToShader(final Boolean value) {
         shaderService.loadUniform(location, value);
+    }
+
+    @Override
+    protected Boolean copyValue(final Boolean value) {
+        return value;
     }
 }

@@ -9,7 +9,12 @@ public class UniformFloat extends Uniform<Float> {
     }
 
     @Override
-    public void load(final Float value) {
+    protected void loadToShader(final Float value) {
         shaderService.loadUniform(location, value);
+    }
+
+    @Override
+    protected Float copyValue(final Float value) {
+        return value;
     }
 }
