@@ -9,33 +9,39 @@ import static piengine.core.utils.MatrixUtils.VIEW_MATRIX;
 
 public class ThirdPersonCamera extends Camera {
 
-    private final Vector3f cameraPosition;
+    private final Vector3f cameraPosition = new Vector3f();
     private final float distance;
 
     public ThirdPersonCamera(final Entity parent, final Vector2i viewport, final CameraAttribute attribute, final float distance, final ProjectionType projectionType) {
         super(parent, viewport, attribute, projectionType);
 
-        this.cameraPosition = new Vector3f();
         this.distance = distance;
     }
 
     @Override
     protected void calculateViewMatrix(final Matrix4f viewMatrix) {
-        Vector3f position = getPosition();
-        Vector3f rotation = getRotation();
+        if (cameraPosition != null) {
+            Vector3f position = getProtectedPosition();
+            Vector3f rotation = getRotation();
 
-        float horizontalDistance = calculateHorizontalDistance(-rotation.y);
-        float verticalDistance = calculateVerticalDistance(-rotation.y);
+            float horizontalDistance = calculateHorizontalDistance(-rotation.y);
+            float verticalDistance = calculateVerticalDistance(-rotation.y);
 
-        float theta = -rotation.x;
-        float offsetX = (float) (horizontalDistance * Math.sin(Math.toRadians(theta)));
-        float offsetZ = (float) (horizontalDistance * Math.cos(Math.toRadians(theta)));
+            float theta = -rotation.x;
+            float offsetX = (float) (horizontalDistance * Math.sin(Math.toRadians(theta)));
+            float offsetZ = (float) (horizontalDistance * Math.cos(Math.toRadians(theta)));
 
-        cameraPosition.x = position.x + offsetX;
-        cameraPosition.y = position.y + verticalDistance;
-        cameraPosition.z = position.z + offsetZ;
+            cameraPosition.x = position.x + offsetX;
+            cameraPosition.y = position.y + verticalDistance;
+            cameraPosition.z = position.z + offsetZ;
 
-        VIEW_MATRIX(cameraPosition, rotation, viewMatrix);
+            VIEW_MATRIX(cameraPosition, rotation, viewMatrix);
+        }
+    }
+
+    @Override
+    public Vector3f getPosition() {
+        return cameraPosition;
     }
 
     private float calculateHorizontalDistance(final float pitch) {

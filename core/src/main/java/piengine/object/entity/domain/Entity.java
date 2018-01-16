@@ -8,8 +8,6 @@ import java.util.List;
 
 import static piengine.core.utils.MatrixUtils.MODEL_MATRIX;
 
-//todo#5 Uniform caching
-
 public abstract class Entity {
 
     private static final Vector3f ZERO = new Vector3f(0);
@@ -42,6 +40,10 @@ public abstract class Entity {
     }
 
     // POSITION
+    protected Vector3f getProtectedPosition() {
+        return position;
+    }
+
     public Vector3f getPosition() {
         return position;
     }

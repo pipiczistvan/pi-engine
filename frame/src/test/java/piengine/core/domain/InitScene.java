@@ -21,6 +21,7 @@ import piengine.object.terrain.domain.Terrain;
 import piengine.object.terrain.manager.TerrainManager;
 import piengine.visual.camera.asset.CameraAsset;
 import piengine.visual.camera.asset.CameraAssetArgument;
+import piengine.visual.camera.domain.Camera;
 import piengine.visual.camera.domain.CameraAttribute;
 import piengine.visual.camera.domain.FirstPersonCamera;
 import piengine.visual.fog.Fog;
@@ -67,7 +68,7 @@ public class InitScene extends Scene {
     private Skybox skybox;
     private Terrain terrain;
     private Canvas mainCanvas;
-    private FirstPersonCamera camera;
+    private Camera camera;
 
     private CameraAsset cameraAsset;
     private LampAsset lampAsset;
