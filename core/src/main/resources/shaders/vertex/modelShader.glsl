@@ -1,6 +1,6 @@
 #version 330 core
 
-const int MAX_LIGHTS = 4;
+const int LIGHT_COUNT = ${light.count};
 
 struct Light {
     vec4 color;
@@ -24,7 +24,7 @@ uniform mat4 modelMatrix;
 uniform mat4 viewMatrix;
 uniform mat4 projectionMatrix;
 // LIGHT
-uniform Light lights[MAX_LIGHTS];
+uniform Light lights[LIGHT_COUNT];
 // FOG
 uniform float fogGradient;
 uniform float fogDensity;
@@ -57,7 +57,7 @@ void main(void) {
 
     vec3 normalizedVertexNormal = normalize(worldNormal.xyz);
     vec4 lightFactor = vec4(0);
-    for(int i = 0; i < MAX_LIGHTS; i++) {
+    for(int i = 0; i < LIGHT_COUNT; i++) {
         lightFactor += calculateLightFactor(lights[i], worldPosition.xyz, normalizedVertexNormal);
     }
     lightFactor = max(lightFactor, 0.1);

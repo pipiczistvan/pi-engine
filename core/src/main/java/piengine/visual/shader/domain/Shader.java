@@ -18,9 +18,6 @@ import java.util.List;
 
 public class Shader implements Domain<ShaderDao> {
 
-    // todo: temporary
-    protected static final int MAX_LIGHTS = 4;
-
     private ShaderService shaderService;
     private final ShaderDao dao;
     private final List<Uniform> uniforms;
@@ -39,14 +36,10 @@ public class Shader implements Domain<ShaderDao> {
         this.uniforms.add(uniform);
     }
 
-    protected void getUniformLocations() {
+    private void getUniformLocations() {
         for (Uniform uniform : uniforms) {
             uniform.initialize(this, shaderService);
         }
-    }
-
-    protected int getUniformLocation(String variable) {
-        return shaderService.getUniformLocation(this, variable);
     }
 
     protected UniformVector2f[] uniformVector2fArray(final String struct, final String variable, final int count) {

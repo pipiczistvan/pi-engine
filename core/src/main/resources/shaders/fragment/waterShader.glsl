@@ -1,6 +1,6 @@
 #version 330 core
 
-const int MAX_LIGHTS = 4;
+const int LIGHT_COUNT = ${light.count};
 const vec3 waterColor = vec3(0.604, 0.867, 0.851);
 const float fresnelReflective = 0.5;
 const float edgeSoftness = 2.0;
@@ -9,7 +9,7 @@ const float farPlane = 200;
 const float minBlueness = 0.4;
 const float maxBlueness = 0.75;
 const float murkyDepth = 20.0;
-const int PCF_COUNT = 1;
+const int PCF_COUNT = ${shadow.pcf.count};
 const float TOTAL_TEXELS = (PCF_COUNT * 2.0 + 1.0) * (PCF_COUNT * 2.0 + 1.0);
 
 struct Shadow {
@@ -25,11 +25,11 @@ in vec3 vNormal;
 in vec3 vSpecular;
 in vec3 vDiffuse;
 in float vVisibility;
-in vec4 vShadowCoords[MAX_LIGHTS];
+in vec4 vShadowCoords[LIGHT_COUNT];
 
 out vec4 fColor;
 
-uniform Shadow shadows[MAX_LIGHTS];
+uniform Shadow shadows[LIGHT_COUNT];
 uniform sampler2D reflectionTexture;
 uniform sampler2D refractionTexture;
 uniform sampler2D depthTexture;
@@ -84,7 +84,7 @@ void main(void) {
     vec3 finalColor = mix(reflectColor, refractColor, calculateFresnel(vToCameraVector, vNormal));
     finalColor = finalColor * vDiffuse + vSpecular;
 
-    for (int i = 0; i < MAX_LIGHTS; i++) {
+    for (int i = 0; i < LIGHT_COUNT; i++) {
         if (shadows[i].enabled > 0.5) {
             float mapSize = 2048.0;
             float texelSize = 1.0 / mapSize;

@@ -30,6 +30,10 @@ public class ApplicationProperties {
         return property.getValue(PROPERTIES);
     }
 
+    public static String get(final String key) {
+        return PROPERTIES.getProperty(key);
+    }
+
     private static Properties mergeProperties(final Properties engineProperties, final Properties applicationProperties) {
         final Properties properties = new Properties();
         properties.putAll(engineProperties);

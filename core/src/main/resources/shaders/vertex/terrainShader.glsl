@@ -1,6 +1,6 @@
 #version 330 core
 
-const int MAX_LIGHTS = 4;
+const int LIGHT_COUNT = ${light.count};
 const float SHADOW_DISTANCE = 30.0;
 const float TRANSITION_DISTANCE = 5.0;
 
@@ -22,7 +22,7 @@ layout (location = 3) in vec3 Normal;
 
 flat out vec4 vColor;
 out float vVisibility;
-out vec4 vShadowCoords[MAX_LIGHTS];
+out vec4 vShadowCoords[LIGHT_COUNT];
 
 //////////////
 // UNIFORMS //
@@ -31,8 +31,8 @@ out vec4 vShadowCoords[MAX_LIGHTS];
 uniform mat4 viewMatrix;
 uniform mat4 projectionMatrix;
 // LIGHT
-uniform Light lights[MAX_LIGHTS];
-uniform Shadow shadows[MAX_LIGHTS];
+uniform Light lights[LIGHT_COUNT];
+uniform Shadow shadows[LIGHT_COUNT];
 // FOG
 uniform float fogGradient;
 uniform float fogDensity;
@@ -64,7 +64,7 @@ void main(void) {
 
     vec3 normalizedVertexNormal = normalize(worldNormal.xyz);
     vec4 lightFactor = vec4(0);
-    for(int i = 0; i < MAX_LIGHTS; i++) {
+    for(int i = 0; i < LIGHT_COUNT; i++) {
         lightFactor += calculateLightFactor(lights[i], worldPosition.xyz, normalizedVertexNormal);
     }
     lightFactor = max(lightFactor, 0.1);
@@ -78,7 +78,7 @@ void main(void) {
     distance = distance - (SHADOW_DISTANCE - TRANSITION_DISTANCE);
     distance = distance / TRANSITION_DISTANCE;
 
-    for (int i = 0; i < MAX_LIGHTS; i++) {
+    for (int i = 0; i < LIGHT_COUNT; i++) {
         vShadowCoords[i] = shadows[i].spaceMatrix * worldPosition;
         vShadowCoords[i].w = clamp(1.0 - distance, 0.0, 1.0);
     }

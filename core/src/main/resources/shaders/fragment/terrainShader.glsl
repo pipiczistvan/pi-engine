@@ -1,7 +1,7 @@
 #version 330 core
 
-const int MAX_LIGHTS = 4;
-const int PCF_COUNT = 1;
+const int LIGHT_COUNT = ${light.count};
+const int PCF_COUNT = ${shadow.pcf.count};
 const float TOTAL_TEXELS = (PCF_COUNT * 2.0 + 1.0) * (PCF_COUNT * 2.0 + 1.0);
 
 struct Shadow {
@@ -12,17 +12,17 @@ struct Shadow {
 
 flat in vec4 vColor;
 in float vVisibility;
-in vec4 vShadowCoords[MAX_LIGHTS];
+in vec4 vShadowCoords[LIGHT_COUNT];
 
 out vec4 fColor;
 
-uniform Shadow shadows[MAX_LIGHTS];
+uniform Shadow shadows[LIGHT_COUNT];
 uniform vec4 fogColor;
 
 void main(void) {
     fColor = vColor;
 
-    for (int i = 0; i < MAX_LIGHTS; i++) {
+    for (int i = 0; i < LIGHT_COUNT; i++) {
         if (shadows[i].enabled > 0.5) {
             float mapSize = 2048.0;
             float texelSize = 1.0 / mapSize;
