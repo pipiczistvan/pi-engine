@@ -17,34 +17,44 @@ public abstract class SupplierService<K extends Key, R extends ResourceData, D e
 
     private final Interpreter<R, D> interpreter;
     private final Accessor<K, R> accessor;
-    private final Map<K, M> resourceMap;
+    private final Map<K, R> resourceMap;
+    private final Map<K, M> domainMap;
 
     public SupplierService(final Accessor<K, R> accessor, final Interpreter<R, D> interpreter) {
         this.accessor = accessor;
         this.interpreter = interpreter;
 
         this.resourceMap = new HashMap<>();
+        this.domainMap = new HashMap<>();
     }
 
     public M supply(final K key) {
-        return resourceMap.computeIfAbsent(key, this::compute);
+        return domainMap.computeIfAbsent(key, this::computeDomain);
+    }
+
+    public R load(final K key) {
+        return resourceMap.computeIfAbsent(key, this::computeResource);
     }
 
     @Override
     public void terminate() {
-        resourceMap.values().forEach(domain -> interpreter.free(domain.getDao()));
+        resourceMap.values().forEach(accessor::free);
+        domainMap.values().forEach(domain -> interpreter.free(domain.getDao()));
     }
 
-    protected Collection<M> getValues() {
-        return resourceMap.values();
+    protected Collection<M> getDomainValues() {
+        return domainMap.values();
     }
 
     protected abstract M createDomain(final D dao, final R resource);
 
-    private M compute(final K key) {
-        R resourceData = accessor.access(key);
+    private M computeDomain(final K key) {
+        R resourceData = load(key);
         D dao = interpreter.create(resourceData);
-        accessor.free(resourceData);
         return createDomain(dao, resourceData);
+    }
+
+    private R computeResource(final K key) {
+        return accessor.access(key);
     }
 }

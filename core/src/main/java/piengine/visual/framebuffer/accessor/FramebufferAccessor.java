@@ -10,6 +10,6 @@ public class FramebufferAccessor implements Accessor<FramebufferKey, Framebuffer
 
     @Override
     public FramebufferData access(final FramebufferKey key) {
-        return new FramebufferData(key.resolution, key.drawingEnabled, key.attachments[0], key.attachments);
+        return new FramebufferData(key.resolution, key.texture, key.drawingEnabled, key.attachments[0], key.attachments);
     }
 }

@@ -3,7 +3,7 @@ package piengine.visual.cubemap.interpreter;
 import piengine.core.base.api.Interpreter;
 import piengine.visual.cubemap.domain.CubeMapDao;
 import piengine.visual.cubemap.domain.CubeMapData;
-import piengine.visual.image.domain.ImageData;
+import piengine.visual.texture.domain.TextureData;
 import puppeteer.annotation.premade.Component;
 
 import static org.lwjgl.opengl.GL11.GL_LINEAR;
@@ -37,9 +37,9 @@ public class CubeMapInterpreter implements Interpreter<CubeMapData, CubeMapDao> 
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_CUBE_MAP, dao.getTexture());
 
-        for (int i = 0; i < cubeMapData.imageData.size(); i++) {
-            ImageData imageData = cubeMapData.imageData.get(i);
-            glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB, imageData.width, imageData.height, 0, GL_RGB, GL_UNSIGNED_BYTE, imageData.buffer);
+        for (int i = 0; i < cubeMapData.textureData.length; i++) {
+            TextureData textureData = cubeMapData.textureData[i];
+            glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB, textureData.width, textureData.height, 0, GL_RGB, GL_UNSIGNED_BYTE, textureData.buffer);
         }
 
         glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);

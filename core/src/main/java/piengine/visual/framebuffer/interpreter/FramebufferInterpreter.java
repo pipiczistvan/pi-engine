@@ -6,6 +6,7 @@ import piengine.core.base.exception.PIEngineException;
 import piengine.visual.framebuffer.domain.FramebufferAttachment;
 import piengine.visual.framebuffer.domain.FramebufferDao;
 import piengine.visual.framebuffer.domain.FramebufferData;
+import piengine.visual.texture.domain.Texture;
 import puppeteer.annotation.premade.Component;
 
 import java.nio.ByteBuffer;
@@ -54,7 +55,7 @@ public class FramebufferInterpreter implements Interpreter<FramebufferData, Fram
 
         Map<FramebufferAttachment, Integer> attachments = new HashMap<>();
         for (FramebufferAttachment attachment : framebufferData.attachments) {
-            attachments.put(attachment, createAttachment(attachment, framebufferData.resolution));
+            attachments.put(attachment, createAttachment(attachment, framebufferData.resolution, framebufferData.texture));
         }
 
         unbind();
@@ -92,47 +93,51 @@ public class FramebufferInterpreter implements Interpreter<FramebufferData, Fram
         return frameBuffer;
     }
 
-    private int createAttachment(final FramebufferAttachment attachment, final Vector2i viewport) {
+    private int createColorAttachment(final Vector2i resolution, final Texture texture) {
+        int textureId = texture != null ? texture.getDao().getTexture() :
+                generateTexture(resolution, GL_RGB, GL_RGB, GL_UNSIGNED_BYTE);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textureId, 0);
+
+        return textureId;
+    }
+
+    private int createDepthTextureAttachment(final Vector2i resolution, final Texture texture) {
+        int textureId = texture != null ? texture.getDao().getTexture() :
+                generateTexture(resolution, GL_DEPTH_COMPONENT24, GL_DEPTH_COMPONENT, GL_FLOAT);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, textureId, 0);
+
+        return textureId;
+    }
+
+    private int createAttachment(final FramebufferAttachment attachment, final Vector2i resolution, final Texture texture) {
         switch (attachment) {
             case COLOR_ATTACHMENT:
-                return createColorAttachment(viewport);
+                return createColorAttachment(resolution, texture);
             case DEPTH_TEXTURE_ATTACHMENT:
-                return createDepthTextureAttachment(viewport);
+                return createDepthTextureAttachment(resolution, texture);
             case RENDER_BUFFER_ATTACHMENT:
-                return createRenderBufferAttachment(viewport);
+                return createRenderBufferAttachment(resolution);
             default:
                 throw new PIEngineException("Invalid framebuffer attachment: %s", attachment.name());
         }
     }
 
-    private int createColorAttachment(final Vector2i viewport) {
-        int texture = glGenTextures();
-        glBindTexture(GL_TEXTURE_2D, texture);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, viewport.x, viewport.y, 0, GL_RGB, GL_UNSIGNED_BYTE, (ByteBuffer) null);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0);
-
-        return texture;
-    }
-
-    private int createDepthTextureAttachment(final Vector2i viewport) {
-        int texture = glGenTextures();
-        glBindTexture(GL_TEXTURE_2D, texture);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT24, viewport.x, viewport.y, 0, GL_DEPTH_COMPONENT, GL_FLOAT, (ByteBuffer) null);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, texture, 0);
-
-        return texture;
-    }
-
-    private int createRenderBufferAttachment(final Vector2i viewPort) {
+    private int createRenderBufferAttachment(final Vector2i resolution) {
         int rbo = glGenRenderbuffers();
         glBindRenderbuffer(GL_RENDERBUFFER, rbo);
-        glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, viewPort.x, viewPort.y);
+        glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, resolution.x, resolution.y);
         glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, rbo);
 
         return rbo;
+    }
+
+    private int generateTexture(final Vector2i resolution, final int internalFormat, final int format, final int type) {
+        int texture = glGenTextures();
+        glBindTexture(GL_TEXTURE_2D, texture);
+        glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, resolution.x, resolution.y, 0, format, type, (ByteBuffer) null);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+
+        return texture;
     }
 }
