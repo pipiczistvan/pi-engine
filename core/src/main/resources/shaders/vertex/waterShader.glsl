@@ -18,7 +18,6 @@ struct Light {
 
 struct Shadow {
     float enabled;
-    sampler2D shadowMap;
     mat4 spaceMatrix;
 };
 

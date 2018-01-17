@@ -96,6 +96,15 @@ public class Shader implements Domain<ShaderDao> {
         return uniformArray;
     }
 
+    protected UniformInteger[] uniformIntegerArray(final String variable, final int count) {
+        UniformInteger[] uniformArray = new UniformInteger[count];
+        for (int i = 0; i < count; i++) {
+            uniformArray[i] = new UniformInteger(this, variable + "[" + i + "]");
+        }
+
+        return uniformArray;
+    }
+
     protected UniformMatrix4f[] uniformMatrix4fArray(final String struct, final String variable, final int count) {
         UniformMatrix4f[] uniformArray = new UniformMatrix4f[count];
         for (int i = 0; i < count; i++) {

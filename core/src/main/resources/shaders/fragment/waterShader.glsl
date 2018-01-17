@@ -14,7 +14,6 @@ const float TOTAL_TEXELS = (PCF_COUNT * 2.0 + 1.0) * (PCF_COUNT * 2.0 + 1.0);
 
 struct Shadow {
     float enabled;
-    sampler2D shadowMap;
     mat4 spaceMatrix;
 };
 
@@ -30,6 +29,7 @@ in vec4 vShadowCoords[LIGHT_COUNT];
 out vec4 fColor;
 
 uniform Shadow shadows[LIGHT_COUNT];
+uniform sampler2D shadowMaps[LIGHT_COUNT];
 uniform sampler2D reflectionTexture;
 uniform sampler2D refractionTexture;
 uniform sampler2D depthTexture;
@@ -92,7 +92,7 @@ void main(void) {
 
             for (int x = -PCF_COUNT; x <= PCF_COUNT; x++) {
                 for (int y = -PCF_COUNT; y <= PCF_COUNT; y++) {
-                    float objectNearestToLight = texture(shadows[i].shadowMap, vShadowCoords[i].xy + vec2(x, y) * texelSize).r;
+                    float objectNearestToLight = texture(shadowMaps[i], vShadowCoords[i].xy + vec2(x, y) * texelSize).r;
                     if (vShadowCoords[i].z > objectNearestToLight) {
                         total += 1.0;
                     }

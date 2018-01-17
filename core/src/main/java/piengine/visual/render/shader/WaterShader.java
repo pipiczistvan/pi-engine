@@ -38,8 +38,8 @@ public class WaterShader extends Shader {
     private final UniformColor[] lightColors = uniformColorArray("lights", "color", LIGHT_COUNT);
     private final UniformVector2f[] lightBiases = uniformVector2fArray("lights", "bias", LIGHT_COUNT);
     private final UniformVector3f[] lightAttenuations = uniformVector3fArray("lights", "attenuation", LIGHT_COUNT);
+    private final UniformInteger[] shadowMaps = uniformIntegerArray("shadowMaps", LIGHT_COUNT);
     private final UniformBoolean[] shadowEnableds = uniformBooleanArray("shadows", "enabled", LIGHT_COUNT);
-    private final UniformInteger[] shadowShadowMaps = uniformIntegerArray("shadows", "shadowMap", LIGHT_COUNT);
     private final UniformMatrix4f[] shadowSpaceMatrices = uniformMatrix4fArray("shadows", "spaceMatrix", LIGHT_COUNT);
 
     public WaterShader(final ShaderDao dao) {
@@ -70,7 +70,7 @@ public class WaterShader extends Shader {
         int textureIndex = 0;
 
         while (textureIndex < shadows.size() && textureIndex < LIGHT_COUNT) {
-            shadowShadowMaps[textureIndex].load(textureIndex++);
+            shadowMaps[textureIndex].load(textureIndex++);
         }
         reflectionTexture.load(textureIndex++);
         refractionTexture.load(textureIndex++);

@@ -33,8 +33,8 @@ public class TerrainShader extends Shader {
     private final UniformVector3f[] lightPositions = uniformVector3fArray("lights", "position", LIGHT_COUNT);
     private final UniformColor[] lightColors = uniformColorArray("lights", "color", LIGHT_COUNT);
     private final UniformVector3f[] lightAttenuations = uniformVector3fArray("lights", "attenuation", LIGHT_COUNT);
+    private final UniformInteger[] shadowMaps = uniformIntegerArray("shadowMaps", LIGHT_COUNT);
     private final UniformBoolean[] shadowEnableds = uniformBooleanArray("shadows", "enabled", LIGHT_COUNT);
-    private final UniformInteger[] shadowShadowMaps = uniformIntegerArray("shadows", "shadowMap", LIGHT_COUNT);
     private final UniformMatrix4f[] shadowSpaceMatrices = uniformMatrix4fArray("shadows", "spaceMatrix", LIGHT_COUNT);
 
     public TerrainShader(final ShaderDao dao) {
@@ -111,7 +111,7 @@ public class TerrainShader extends Shader {
         int textureIndex = 0;
 
         while (textureIndex < shadows.size() && textureIndex < LIGHT_COUNT) {
-            shadowShadowMaps[textureIndex].load(textureIndex++);
+            shadowMaps[textureIndex].load(textureIndex++);
         }
 
         return this;
