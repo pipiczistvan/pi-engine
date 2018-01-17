@@ -17,6 +17,7 @@ public class EngineTester {
     public void run() {
         piEngine engine = new piEngine(
                 APPLICATION_PROPERTIES,
+                emptyList(),
                 singletonList("^.*/target/.*$"),
                 emptyList()
         );

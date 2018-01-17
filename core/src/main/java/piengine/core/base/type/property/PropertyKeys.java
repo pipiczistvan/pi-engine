@@ -18,6 +18,7 @@ public class PropertyKeys {
 
     public static final IntegerProperty TIME_FPS_CAP = new IntegerProperty("time.fps.cap");
 
+    public static final StringProperty RESOURCES_LOCATION = new StringProperty("engine.resources.root");
     public static final StringProperty SHADERS_LOCATION = new StringProperty("engine.resources.root.shaders");
     public static final StringProperty MESHES_LOCATION = new StringProperty("engine.resources.root.meshes");
     public static final StringProperty IMAGES_LOCATION = new StringProperty("engine.resources.root.images");

@@ -5,6 +5,7 @@ import piengine.core.base.type.property.ApplicationProperties;
 import piengine.core.engine.service.EngineService;
 import puppeteer.Puppeteer;
 
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -24,13 +25,13 @@ public class piEngine {
 
     private final EngineService engineService;
 
-    public piEngine(final String applicationProperties, final Collection<String> libraries, final Collection<String> packages) {
+    public piEngine(final String applicationProperties, final Collection<URL> libraries, final Collection<String> libraryPatterns, final Collection<String> packagePatterns) {
         ApplicationProperties.load(ENGINE_PROPERTIES, applicationProperties);
 
         Collection<String> combinedPackages = new ArrayList<>(PACKAGES);
-        combinedPackages.addAll(packages);
+        combinedPackages.addAll(packagePatterns);
 
-        Puppeteer puppeteer = new Puppeteer(libraries, combinedPackages);
+        Puppeteer puppeteer = new Puppeteer(libraries, libraryPatterns, combinedPackages);
         puppeteer.useDefaultAnnotations();
         puppeteer.processAnnotations();
 

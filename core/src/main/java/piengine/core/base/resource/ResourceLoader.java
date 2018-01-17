@@ -7,8 +7,10 @@ import piengine.core.base.exception.PIEngineException;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.ByteBuffer;
@@ -18,10 +20,15 @@ import java.nio.channels.SeekableByteChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Objects;
 
 import static org.lwjgl.BufferUtils.createByteBuffer;
+import static piengine.core.base.type.property.ApplicationProperties.get;
+import static piengine.core.base.type.property.PropertyKeys.RESOURCES_LOCATION;
 
 public class ResourceLoader {
+
+    private static final String USER_DIR = Objects.requireNonNull(ResourceLoader.class.getClassLoader().getResource("")).getPath();
 
     private final String root;
     private final String extension;
@@ -86,8 +93,23 @@ public class ResourceLoader {
     }
 
     public URL getUrl(final String file) {
-        String fullPath = createFilePath(root, file, extension);
-        return getClass().getResource(fullPath);
+        String classPathFilePath = createFilePath(root, file, extension);
+        URL classPathFileUrl = getClass().getResource(classPathFilePath);
+        if (classPathFileUrl != null) {
+            return classPathFileUrl;
+        }
+
+        String resourceFileFullPath = String.format("%s%s/%s/%s.%s", USER_DIR, get(RESOURCES_LOCATION), root, file, extension);
+        File f = new File(resourceFileFullPath);
+        if (f.exists()) {
+            try {
+                return f.toURI().toURL();
+            } catch (MalformedURLException e) {
+                throw new PIEngineException(e);
+            }
+        }
+
+        throw new PIEngineException("Could not find file: %s", f.getAbsolutePath());
     }
 
     private static String createFilePath(final String root, final String file, final String extension) {
