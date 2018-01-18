@@ -52,7 +52,7 @@ public abstract class Entity {
         position.set(x, y, z);
         position.add(getParentPosition());
         updateTransformation(transformation);
-        children.forEach(entity -> entity.setPosition(x - position.x, y - position.y, z - position.z));
+        children.forEach(entity -> entity.translate(x, y, z));
     }
 
     public void setPosition(final Vector3f vector) {
@@ -78,7 +78,7 @@ public abstract class Entity {
         rotation.set(yaw, pitch, roll);
         rotation.add(getParentRotation());
         updateTransformation(transformation);
-        children.forEach(entity -> entity.setRotation(yaw - rotation.x, pitch - rotation.y, roll - rotation.z));
+        children.forEach(entity -> entity.rotate(yaw, pitch, roll));
     }
 
     public void setRotation(final Vector3f vector) {
@@ -104,7 +104,7 @@ public abstract class Entity {
         scale.set(x, y, z);
         scale.mul(getParentScale());
         updateTransformation(transformation);
-        children.forEach(entity -> entity.setScale(x, y, z));
+        children.forEach(entity -> entity.scale(x, y, z));
     }
 
     public void setScale(final Vector3f vector) {

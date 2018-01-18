@@ -20,7 +20,6 @@ import static piengine.visual.camera.domain.ProjectionType.ORTHOGRAPHIC;
 
 public class Shadow implements Domain<ShadowDao>, Updatable {
 
-
     private static final Matrix4f OFFSET_MATRIX = createOffset();
     private static final float OFFSET = get(SHADOW_OFFSET);
     private static final float SHADOW_MAX_DISTANCE = get(SHADOW_DISTANCE);

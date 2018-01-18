@@ -1,5 +1,6 @@
 package piengine.visual.cubemap.manager;
 
+import org.joml.Vector2i;
 import piengine.visual.cubemap.domain.CubeMap;
 import piengine.visual.cubemap.domain.CubeMapKey;
 import piengine.visual.cubemap.service.CubeMapService;
@@ -8,6 +9,8 @@ import piengine.visual.image.manager.ImageManager;
 import piengine.visual.texture.domain.TextureData;
 import puppeteer.annotation.premade.Component;
 import puppeteer.annotation.premade.Wire;
+
+import static org.lwjgl.opengl.GL11.GL_RGB;
 
 @Component
 public class CubeMapManager {
@@ -30,16 +33,16 @@ public class CubeMapManager {
         ImageData back = imageManager.load(backImage);
         ImageData front = imageManager.load(frontImage);
 
-        return supply(right, left, top, bottom, back, front);
+        return supply(GL_RGB, right, left, top, bottom, back, front);
     }
 
-    public CubeMap supply(final TextureData right, final TextureData left, final TextureData top,
+    public CubeMap supply(final int format, final TextureData right, final TextureData left, final TextureData top,
                           final TextureData bottom, final TextureData back, final TextureData front) {
-        return cubeMapService.supply(new CubeMapKey(right, left, top, bottom, back, front));
+        return cubeMapService.supply(new CubeMapKey(format, right, left, top, bottom, back, front));
     }
 
-    public CubeMap supply(final int width, final int height) {
-        TextureData textureData = new TextureData(width, height, null);
-        return supply(textureData, textureData, textureData, textureData, textureData, textureData);
+    public CubeMap supply(final int format, final Vector2i resolution) {
+        TextureData textureData = new TextureData(resolution.x, resolution.y, null);
+        return supply(format, textureData, textureData, textureData, textureData, textureData, textureData);
     }
 }

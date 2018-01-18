@@ -24,8 +24,6 @@ import piengine.visual.camera.asset.CameraAssetArgument;
 import piengine.visual.camera.domain.Camera;
 import piengine.visual.camera.domain.CameraAttribute;
 import piengine.visual.camera.domain.FirstPersonCamera;
-import piengine.visual.cubemap.domain.CubeMap;
-import piengine.visual.cubemap.manager.CubeMapManager;
 import piengine.visual.fog.Fog;
 import piengine.visual.framebuffer.domain.Framebuffer;
 import piengine.visual.framebuffer.manager.FramebufferManager;
@@ -52,7 +50,6 @@ import static piengine.core.base.type.property.PropertyKeys.CAMERA_VIEWPORT_WIDT
 import static piengine.core.input.domain.KeyEventType.PRESS;
 import static piengine.visual.camera.domain.ProjectionType.PERSPECTIVE;
 import static piengine.visual.framebuffer.domain.FramebufferAttachment.COLOR_ATTACHMENT;
-import static piengine.visual.framebuffer.domain.FramebufferAttachment.DEPTH_TEXTURE_ATTACHMENT;
 import static piengine.visual.framebuffer.domain.FramebufferAttachment.RENDER_BUFFER_ATTACHMENT;
 
 public class InitScene extends Scene {
@@ -65,10 +62,8 @@ public class InitScene extends Scene {
     private final SkyboxManager skyboxManager;
     private final CanvasManager canvasManager;
     private final TerrainManager terrainManager;
-    private final CubeMapManager cubeMapManager;
 
-    private Framebuffer framebuffer, pointShadowFbo;
-    private CubeMap pointShadowCubeMap;
+    private Framebuffer framebuffer;
     private Fog fog;
     private Skybox skybox;
     private Terrain terrain;
@@ -85,8 +80,7 @@ public class InitScene extends Scene {
     public InitScene(final RenderManager renderManager, final AssetManager assetManager,
                      final InputManager inputManager, final WindowManager windowManager,
                      final FramebufferManager framebufferManager, final SkyboxManager skyboxManager,
-                     final CanvasManager canvasManager, final TerrainManager terrainManager,
-                     final CubeMapManager cubeMapManager) {
+                     final CanvasManager canvasManager, final TerrainManager terrainManager) {
         super(renderManager, assetManager);
 
         this.inputManager = inputManager;
@@ -95,7 +89,6 @@ public class InitScene extends Scene {
         this.skyboxManager = skyboxManager;
         this.canvasManager = canvasManager;
         this.terrainManager = terrainManager;
-        this.cubeMapManager = cubeMapManager;
     }
 
     @Override
@@ -133,9 +126,6 @@ public class InitScene extends Scene {
         skybox = skyboxManager.supply(150f,
                 "skybox/nightRight", "skybox/nightLeft", "skybox/nightTop",
                 "skybox/nightBottom", "skybox/nightBack", "skybox/nightFront");
-
-        pointShadowCubeMap = cubeMapManager.supply(400, 400);
-        pointShadowFbo = framebufferManager.supply(VIEWPORT, pointShadowCubeMap, true, DEPTH_TEXTURE_ATTACHMENT);
 
         fog = new Fog(ColorUtils.BLACK, 0.015f, 1.5f);
     }

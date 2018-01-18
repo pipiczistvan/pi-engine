@@ -10,19 +10,12 @@ import piengine.visual.render.domain.fragment.domain.RenderFragmentType;
 import piengine.visual.render.domain.fragment.domain.RenderWorldPlanContext;
 import piengine.visual.skybox.domain.Skybox;
 
-import java.util.ArrayList;
-
 import static piengine.visual.render.domain.fragment.domain.RenderFragmentType.RENDER_WORLD;
 
 public class WorldRenderPlanBuilder extends RenderPlanBuilder<WorldRenderPlanBuilder, RenderWorldPlanContext> {
 
     WorldRenderPlanBuilder(final Camera camera, final Fog fog, final Skybox skybox) {
         super(new RenderWorldPlanContext(
-                new ArrayList<>(),
-                new ArrayList<>(),
-                new ArrayList<>(),
-                new ArrayList<>(),
-                new ArrayList<>(),
                 new Vector4f(),
                 new Vector2i(camera.viewport),
                 camera,
@@ -45,6 +38,7 @@ public class WorldRenderPlanBuilder extends RenderPlanBuilder<WorldRenderPlanBui
             this.context.waters.addAll(assetContext.waters);
             this.context.lights.addAll(assetContext.lights);
             this.context.shadows.addAll(assetContext.shadows);
+            this.context.pointShadows.addAll(assetContext.pointShadows);
         }
         return this;
     }

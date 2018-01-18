@@ -1,6 +1,5 @@
 package piengine.visual.shadow.service;
 
-import org.joml.Vector2i;
 import piengine.core.base.api.Updatable;
 import piengine.core.base.resource.SupplierService;
 import piengine.visual.framebuffer.domain.Framebuffer;
@@ -31,8 +30,7 @@ public class ShadowService extends SupplierService<ShadowKey, ShadowData, Shadow
 
     @Override
     protected Shadow createDomain(final ShadowDao dao, final ShadowData resource) {
-        Framebuffer shadowMap = framebufferManager.supply(
-                new Vector2i(resource.resolution), false, DEPTH_TEXTURE_ATTACHMENT);
+        Framebuffer shadowMap = framebufferManager.supply(resource.resolution, false, DEPTH_TEXTURE_ATTACHMENT);
 
         return new Shadow(dao, resource.playerCamera, resource.light, shadowMap);
     }

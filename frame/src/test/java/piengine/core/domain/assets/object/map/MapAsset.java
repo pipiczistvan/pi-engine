@@ -2,7 +2,10 @@ package piengine.core.domain.assets.object.map;
 
 import org.joml.Vector2i;
 import org.joml.Vector3f;
+import piengine.core.domain.assets.object.lamp.LampAsset;
+import piengine.core.domain.assets.object.lamp.LampAssetArgument;
 import piengine.object.asset.domain.WorldAsset;
+import piengine.object.asset.manager.AssetManager;
 import piengine.object.asset.plan.WorldRenderAssetContext;
 import piengine.object.asset.plan.WorldRenderAssetContextBuilder;
 import piengine.object.model.domain.Model;
@@ -10,8 +13,6 @@ import piengine.object.model.manager.ModelManager;
 import piengine.object.terrain.domain.Terrain;
 import piengine.object.water.domain.Water;
 import piengine.object.water.manager.WaterManager;
-import piengine.visual.light.domain.Light;
-import piengine.visual.shadow.domain.Shadow;
 import piengine.visual.shadow.manager.ShadowManager;
 import puppeteer.annotation.premade.Wire;
 
@@ -24,27 +25,31 @@ public class MapAsset extends WorldAsset<MapAssetArgument> {
     private final WaterManager waterManager;
     private final ShadowManager shadowManager;
     private final ModelManager modelManager;
+    private final AssetManager assetManager;
 
     private Terrain terrain;
     private Water water;
-    private Light light;
-    private Shadow shadow;
+    private LampAsset lampAsset;
+//    private Light light;
+//    private Shadow shadow;
     private Model cubeModel;
     private Model[] treeModels = new Model[40];
 
     @Wire
-    public MapAsset(final WaterManager waterManager, final ShadowManager shadowManager, final ModelManager modelManager) {
+    public MapAsset(final WaterManager waterManager, final ShadowManager shadowManager, final ModelManager modelManager, final AssetManager assetManager) {
         this.waterManager = waterManager;
         this.shadowManager = shadowManager;
         this.modelManager = modelManager;
+        this.assetManager = assetManager;
     }
 
     @Override
     public void initialize() {
         terrain = arguments.terrain;
         water = waterManager.supply(arguments.viewport, new Vector2i(128, 128), new Vector3f(-128, -4, -128), new Vector3f(256, 0, 256));
-        light = new Light(this);
-        shadow = shadowManager.supply(light, arguments.camera, new Vector2i(2048));
+//        light = new Light(this);
+//        shadow = shadowManager.supply(light, arguments.camera, new Vector2i(2048));
+        lampAsset = assetManager.supply(LampAsset.class, this, new LampAssetArgument());
         cubeModel = modelManager.supply(this, "cube");
         for (int i = 0; i < treeModels.length; i++) {
             treeModels[i] = modelManager.supply(this, "lowPolyTree", "lowPolyTree");
@@ -67,18 +72,21 @@ public class MapAsset extends WorldAsset<MapAssetArgument> {
                 .loadModels(cubeModel)
                 .loadTerrains(terrain)
                 .loadWaters(water)
-                .loadLights(light)
-                .loadShadows(shadow)
+                .loadAssets(lampAsset)
+//                .loadLights(light)
+//                .loadShadows(shadow)
                 .build();
     }
 
     private void initializeAssets() {
         float waterHeight = water.position.y;
 
-        light.setColor(1, 1, 1);
-        light.setPosition(100, 200, 300);
+//        light.setColor(1, 1, 1);
+//        light.setPosition(100, 200, 300);
 
         cubeModel.setPosition(4, 0f, -14);
+
+        lampAsset.setPosition(0, terrain.getHeight(0, 0), 0);
 
         Random random = new Random();
         for (Model tree : treeModels) {
