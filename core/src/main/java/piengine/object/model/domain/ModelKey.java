@@ -10,11 +10,13 @@ public class ModelKey {
     public final String file;
     public final Texture texture;
     public final Color color;
+    public final boolean lightEmitter;
 
-    public ModelKey(final Entity parent, final String file, final Texture texture, final Color color) {
+    public ModelKey(final Entity parent, final String file, final Texture texture, final Color color, final boolean lightEmitter) {
         this.parent = parent;
         this.file = file;
         this.texture = texture;
         this.color = color;
+        this.lightEmitter = lightEmitter;
     }
 }

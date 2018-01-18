@@ -47,6 +47,7 @@ public class ModelRenderService extends AbstractRenderService<ModelShader, Rende
 
         for (Model model : context.models) {
             shader.loadModelMatrix(model.getTransformation())
+                    .loadLightEmitter(model.lightEmitter)
                     .loadColor(model.color);
 
             if (model.texture != null) {

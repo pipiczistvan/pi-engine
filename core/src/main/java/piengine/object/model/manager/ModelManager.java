@@ -24,24 +24,24 @@ public class ModelManager {
         this.imageManager = imageManager;
     }
 
-    public Model supply(final Entity parent, final String meshFile, final Texture texture, final Color color) {
-        return modelService.supply(new ModelKey(parent, meshFile, texture, color));
+    public Model supply(final Entity parent, final String meshFile, final Texture texture, final Color color, final boolean lightEmitter) {
+        return modelService.supply(new ModelKey(parent, meshFile, texture, color, lightEmitter));
     }
 
-    public Model supply(final Entity parent, final String meshFile, final Texture texture) {
-        return supply(parent, meshFile, texture, ColorUtils.WHITE);
+    public Model supply(final Entity parent, final String meshFile, final Texture texture, final boolean lightEmitter) {
+        return supply(parent, meshFile, texture, ColorUtils.WHITE, lightEmitter);
     }
 
-    public Model supply(final Entity parent, final String meshFile, final Color color, final String imageFile) {
+    public Model supply(final Entity parent, final String meshFile, final Color color, final String imageFile, final boolean lightEmitter) {
         Image image = imageManager.supply(imageFile);
-        return supply(parent, meshFile, image, color);
+        return supply(parent, meshFile, image, color, lightEmitter);
     }
 
-    public Model supply(final Entity parent, final String meshFile, final String imageFile) {
-        return supply(parent, meshFile, ColorUtils.WHITE, imageFile);
+    public Model supply(final Entity parent, final String meshFile, final String imageFile, final boolean lightEmitter) {
+        return supply(parent, meshFile, ColorUtils.WHITE, imageFile, lightEmitter);
     }
 
-    public Model supply(final Entity parent, final String meshFile) {
-        return supply(parent, meshFile, null, ColorUtils.WHITE);
+    public Model supply(final Entity parent, final String meshFile, final boolean lightEmitter) {
+        return supply(parent, meshFile, null, ColorUtils.WHITE, lightEmitter);
     }
 }

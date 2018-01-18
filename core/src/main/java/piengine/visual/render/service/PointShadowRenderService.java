@@ -46,8 +46,10 @@ public class PointShadowRenderService extends AbstractRenderService<PointShadowS
                 .loadLightPosition(pointShadow.getLight().getPosition());
 
         for (Model model : context.models) {
-            shader.loadModelMatrix(model.getTransformation());
-            draw(model.mesh.getDao());
+            if (!model.lightEmitter) {
+                shader.loadModelMatrix(model.getTransformation());
+                draw(model.mesh.getDao());
+            }
         }
 
         shader.stop();

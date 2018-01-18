@@ -35,6 +35,7 @@ public class ModelShader extends Shader {
     private final UniformVector3f[] lightPositions = uniformVector3fArray("lights", "position", LIGHT_COUNT);
     private final UniformColor[] lightColors = uniformColorArray("lights", "color", LIGHT_COUNT);
     private final UniformVector3f[] lightAttenuations = uniformVector3fArray("lights", "attenuation", LIGHT_COUNT);
+    private final UniformBoolean lightEmitter = new UniformBoolean(this, "lightEmitter");
 
     public ModelShader(final ShaderDao dao) {
         super(dao);
@@ -105,6 +106,12 @@ public class ModelShader extends Shader {
         fogColor.load(fog.color);
         fogDensity.load(fog.density);
         fogGradient.load(fog.gradient);
+
+        return this;
+    }
+
+    public ModelShader loadLightEmitter(final boolean value) {
+        lightEmitter.load(value);
 
         return this;
     }

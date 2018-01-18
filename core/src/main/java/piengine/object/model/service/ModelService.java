@@ -19,6 +19,6 @@ public class ModelService {
 
     public Model supply(final ModelKey key) {
         Mesh mesh = meshManager.supply(key.file);
-        return new Model(key.parent, mesh, key.texture, key.color);
+        return new Model(key.parent, mesh, key.texture, key.color, key.lightEmitter);
     }
 }

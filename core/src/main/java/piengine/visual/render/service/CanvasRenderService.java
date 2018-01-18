@@ -61,6 +61,7 @@ public class CanvasRenderService extends AbstractRenderService<CanvasShader, Ren
         return RenderConfigBuilder.create()
                 .withDepthTest(false)
                 .withCullFace(GL_NONE)
+                .withWireFrameMode(false)
                 .build();
     }
 }

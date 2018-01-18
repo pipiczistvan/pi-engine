@@ -30,6 +30,7 @@ uniform float fogGradient;
 uniform float fogDensity;
 // CLIPPING PLANE
 uniform vec4 clippingPlane;
+uniform float lightEmitter;
 
 float calculateVisibilityFactor(vec3 viewPosition) {
     float distance = length(viewPosition);
@@ -56,11 +57,16 @@ void main(void) {
     gl_ClipDistance[0] = dot(worldPosition, clippingPlane);
 
     vec3 normalizedVertexNormal = normalize(worldNormal.xyz);
+
     vec4 lightFactor = vec4(0);
-    for(int i = 0; i < LIGHT_COUNT; i++) {
-        lightFactor += calculateLightFactor(lights[i], worldPosition.xyz, normalizedVertexNormal);
+    if (lightEmitter > 0.5) {
+        lightFactor = vec4(1);
+    } else {
+        for(int i = 0; i < LIGHT_COUNT; i++) {
+            lightFactor += calculateLightFactor(lights[i], worldPosition.xyz, normalizedVertexNormal);
+        }
+        lightFactor = max(lightFactor, 0.1);
     }
-    lightFactor = max(lightFactor, 0.1);
 
     vColor = lightFactor;
     vTextureCoord = TextureCoord;

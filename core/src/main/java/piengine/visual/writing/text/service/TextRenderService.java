@@ -53,6 +53,7 @@ public class TextRenderService extends AbstractRenderService<TextShader, RenderG
         return RenderConfigBuilder.create()
                 .withDepthTest(false)
                 .withBlendTest(true)
+                .withWireFrameMode(false)
                 .withRenderFunction(RenderFunction.DRAW_ARRAYS)
                 .build();
     }

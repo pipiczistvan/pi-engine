@@ -28,7 +28,7 @@ public class LampAsset extends WorldAsset<LampAssetArgument> {
 
     @Override
     public void initialize() {
-        lampModel = modelManager.supply(this, "lamp", "lamp");
+        lampModel = modelManager.supply(this, "lamp", "lamp", true);
 
         lampLight = new Light(this);
         lampLight.setPosition(0, 10, 0);
