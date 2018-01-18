@@ -12,12 +12,24 @@ struct Shadow {
 flat in vec4 vColor;
 in float vVisibility;
 in vec4 vShadowCoords[LIGHT_COUNT];
+in vec4 vPosition;
 
 out vec4 fColor;
 
 uniform Shadow shadows[LIGHT_COUNT];
 uniform sampler2D shadowMaps[LIGHT_COUNT];
+uniform samplerCube pointShadowMap;
+uniform vec3 pointShadowPosition;
 uniform vec4 fogColor;
+
+float pointShadowCalculation(vec3 fragPos) {
+    vec3 fragToLight = fragPos - pointShadowPosition;
+    float currentDepth = length(fragToLight);
+
+    float closestDepth = texture(pointShadowMap, fragToLight).r;
+
+    return 1.0 > closestDepth ? 0.6 : 0.0;
+}
 
 void main(void) {
     fColor = vColor;
@@ -41,6 +53,9 @@ void main(void) {
             fColor *= lightFactor;
         }
     }
+
+    float pointShadowFactor = pointShadowCalculation(vPosition.xyz);
+    fColor *= (1 - pointShadowFactor);
 
     // FINAL OUTPUT
     fColor = mix(fogColor, fColor, vVisibility);

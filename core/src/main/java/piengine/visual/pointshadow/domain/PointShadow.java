@@ -12,24 +12,29 @@ import static piengine.visual.camera.domain.ProjectionType.PERSPECTIVE;
 
 public class PointShadow implements Domain<PointShadowDao> {
 
+    public static final int CAMERA_COUNT = 6;
+    private static final float FAR_PLANE = 30;
+
     private final PointShadowDao dao;
     private final Framebuffer shadowMap;
-    private final Camera[] lightCameras = new Camera[6];
+    private final Light light;
+    public static final Camera[] lightCameras = new Camera[CAMERA_COUNT];
 
     public PointShadow(final PointShadowDao dao, final Light light, final Framebuffer shadowMap, final Vector2i resolution) {
         this.dao = dao;
         this.shadowMap = shadowMap;
+        this.light = light;
 
         for (int i = 0; i < lightCameras.length; i++) {
-            lightCameras[i] = new FirstPersonCamera(light, resolution, new CameraAttribute(90, 0.1f, 25), PERSPECTIVE);
+            lightCameras[i] = new FirstPersonCamera(light, resolution, new CameraAttribute(90, 1, FAR_PLANE), PERSPECTIVE);
         }
 
-        lightCameras[0].setRotation(90, 0, 0);
-        lightCameras[1].setRotation(-90, 0, 0);
-        lightCameras[2].setRotation(0, 90, 0);
-        lightCameras[3].setRotation(0, -90, 0);
-        lightCameras[4].setRotation(180, 0, 0);
-        lightCameras[5].setRotation(0, 0, 0);
+        lightCameras[0].setRotation(90, 0, 180); // RIGHT
+        lightCameras[1].setRotation(-90, 0, 180); // LEFT
+        lightCameras[2].setRotation(0, 90, 0); // TOP
+        lightCameras[3].setRotation(0, -90, 0); // BOTTOM
+        lightCameras[4].setRotation(180, 0, 180); // FORWARD
+        lightCameras[5].setRotation(0, 0, 180); // BACKWARD
     }
 
     @Override
@@ -43,5 +48,13 @@ public class PointShadow implements Domain<PointShadowDao> {
 
     public Camera getCamera(final int index) {
         return lightCameras[index];
+    }
+
+    public float getFarPlane() {
+        return FAR_PLANE;
+    }
+
+    public Light getLight() {
+        return light;
     }
 }

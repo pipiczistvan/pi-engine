@@ -39,10 +39,10 @@ import static org.lwjgl.opengl.GL30.glBindRenderbuffer;
 import static org.lwjgl.opengl.GL30.glDeleteFramebuffers;
 import static org.lwjgl.opengl.GL30.glDeleteRenderbuffers;
 import static org.lwjgl.opengl.GL30.glFramebufferRenderbuffer;
-import static org.lwjgl.opengl.GL30.glFramebufferTexture2D;
 import static org.lwjgl.opengl.GL30.glGenFramebuffers;
 import static org.lwjgl.opengl.GL30.glGenRenderbuffers;
 import static org.lwjgl.opengl.GL30.glRenderbufferStorage;
+import static org.lwjgl.opengl.GL32.glFramebufferTexture;
 import static piengine.visual.framebuffer.domain.FramebufferAttachment.RENDER_BUFFER_ATTACHMENT;
 
 @Component
@@ -96,7 +96,7 @@ public class FramebufferInterpreter implements Interpreter<FramebufferData, Fram
     private int createColorAttachment(final Vector2i resolution, final Texture texture) {
         int textureId = texture != null ? texture.getDao().getTexture() :
                 generateTexture(resolution, GL_RGB, GL_RGB, GL_UNSIGNED_BYTE);
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textureId, 0);
+        glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, textureId, 0);
 
         return textureId;
     }
@@ -104,7 +104,7 @@ public class FramebufferInterpreter implements Interpreter<FramebufferData, Fram
     private int createDepthTextureAttachment(final Vector2i resolution, final Texture texture) {
         int textureId = texture != null ? texture.getDao().getTexture() :
                 generateTexture(resolution, GL_DEPTH_COMPONENT24, GL_DEPTH_COMPONENT, GL_FLOAT);
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, textureId, 0);
+        glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, textureId, 0);
 
         return textureId;
     }
@@ -125,7 +125,7 @@ public class FramebufferInterpreter implements Interpreter<FramebufferData, Fram
     private int createRenderBufferAttachment(final Vector2i resolution) {
         int rbo = glGenRenderbuffers();
         glBindRenderbuffer(GL_RENDERBUFFER, rbo);
-        glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, resolution.x, resolution.y);
+        glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, resolution.x, resolution.y);
         glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, rbo);
 
         return rbo;

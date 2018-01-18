@@ -39,6 +39,6 @@ public class TextureService {
     }
 
     public void bindCubeMap(final int textureBank, final int textureId) {
-        textureInterpreter.bindCubemap(textureBank, textureId);
+        textureInterpreter.bindCubeMap(textureBank, textureId);
     }
 }

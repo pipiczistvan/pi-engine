@@ -2,8 +2,8 @@
 
 layout (location = 0) in vec3 Position;
 
-uniform mat4 transformationMatrix;
+uniform mat4 modelMatrix;
 
 void main(void) {
-    gl_Position = transformationMatrix * vec4(Position, 1.0);
+    gl_Position = modelMatrix * vec4(Position, 1.0);
 }

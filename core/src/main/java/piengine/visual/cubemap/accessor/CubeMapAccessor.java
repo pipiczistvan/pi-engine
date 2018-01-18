@@ -10,6 +10,6 @@ public class CubeMapAccessor implements Accessor<CubeMapKey, CubeMapData> {
 
     @Override
     public CubeMapData access(final CubeMapKey key) {
-        return new CubeMapData(key.format, key.textureData);
+        return new CubeMapData(key.format, key.type, key.textureData);
     }
 }

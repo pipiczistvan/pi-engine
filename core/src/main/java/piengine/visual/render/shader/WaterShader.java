@@ -41,6 +41,8 @@ public class WaterShader extends Shader {
     private final UniformInteger[] shadowMaps = uniformIntegerArray("shadowMaps", LIGHT_COUNT);
     private final UniformBoolean[] shadowEnableds = uniformBooleanArray("shadows", "enabled", LIGHT_COUNT);
     private final UniformMatrix4f[] shadowSpaceMatrices = uniformMatrix4fArray("shadows", "spaceMatrix", LIGHT_COUNT);
+    private final UniformInteger pointShadowMap = new UniformInteger(this, "pointShadowMap");
+    private final UniformVector3f pointShadowPosition = new UniformVector3f(this, "pointShadowPosition");
 
     public WaterShader(final ShaderDao dao) {
         super(dao);
@@ -113,6 +115,14 @@ public class WaterShader extends Shader {
                 shadowEnableds[i].load(false);
             }
         }
+
+        pointShadowMap.load(16);
+
+        return this;
+    }
+
+    public WaterShader loadPointShadowPosition(final Vector3f value) {
+        pointShadowPosition.load(value);
 
         return this;
     }

@@ -1,6 +1,7 @@
 package piengine.visual.render.service;
 
 import piengine.object.terrain.domain.Terrain;
+import piengine.visual.pointshadow.domain.PointShadow;
 import piengine.visual.render.domain.config.RenderConfig;
 import piengine.visual.render.domain.config.RenderConfigBuilder;
 import piengine.visual.render.domain.fragment.domain.RenderWorldPlanContext;
@@ -14,6 +15,7 @@ import puppeteer.annotation.premade.Component;
 import puppeteer.annotation.premade.Wire;
 
 import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
+import static org.lwjgl.opengl.GL13.GL_TEXTURE16;
 import static piengine.visual.render.domain.config.ProvokingVertex.FIRST_VERTEX_CONVENTION;
 
 @Component
@@ -52,6 +54,11 @@ public class TerrainRenderService extends AbstractRenderService<TerrainShader, R
         for (Shadow shadow : context.shadows) {
             textureService.bind(GL_TEXTURE0 + textureIndex++, shadow.shadowMap);
         }
+
+        PointShadow pointShadow = context.pointShadows.get(0);//todo: only 1
+        textureService.bindCubeMap(GL_TEXTURE16, pointShadow.getShadowMap());
+
+        shader.loadPointShadowPosition(pointShadow.getLight().getPosition());
 
         for (Terrain terrain : context.terrains) {
             draw(terrain.getDao());

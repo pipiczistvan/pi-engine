@@ -35,7 +35,7 @@ public class LampAsset extends WorldAsset<LampAssetArgument> {
         lampLight.setColor(0.9568627451f, 0.96862745098f, 0.67843137255f);
         lampLight.setAttenuation(1f, 0.01f, 0.002f);
 
-        lampPointShadow = pointShadowManager.supply(lampLight, new Vector2i(512));
+        lampPointShadow = pointShadowManager.supply(lampLight, new Vector2i(1024));
     }
 
     @Override

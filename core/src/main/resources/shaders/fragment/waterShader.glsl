@@ -25,6 +25,7 @@ in vec3 vSpecular;
 in vec3 vDiffuse;
 in float vVisibility;
 in vec4 vShadowCoords[LIGHT_COUNT];
+in vec4 vPosition;
 
 out vec4 fColor;
 
@@ -33,7 +34,18 @@ uniform sampler2D shadowMaps[LIGHT_COUNT];
 uniform sampler2D reflectionTexture;
 uniform sampler2D refractionTexture;
 uniform sampler2D depthTexture;
+uniform samplerCube pointShadowMap;
+uniform vec3 pointShadowPosition;
 uniform vec4 fogColor;
+
+float pointShadowCalculation(vec3 fragPos) {
+    vec3 fragToLight = fragPos - pointShadowPosition;
+    float currentDepth = length(fragToLight);
+
+    float closestDepth = texture(pointShadowMap, fragToLight).r;
+
+    return 1.0 > closestDepth ? 0.6 : 0.0;
+}
 
 vec3 calculateMurkiness(vec3 refractColor, float waterDepth) {
     float murkyFactor = smoothstep(0, murkyDepth, waterDepth);
@@ -103,6 +115,9 @@ void main(void) {
             finalColor *= lightFactor;
         }
     }
+
+    float pointShadowFactor = pointShadowCalculation(vPosition.xyz);
+    finalColor *= (1 - pointShadowFactor);
 
     fColor = vec4(finalColor, clamp(waterDepth / edgeSoftness, 0.0, 1.0));
     fColor = mix(fogColor, fColor, vVisibility);

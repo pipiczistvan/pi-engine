@@ -15,6 +15,7 @@ import puppeteer.annotation.premade.Component;
 import puppeteer.annotation.premade.Wire;
 
 import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
+import static org.lwjgl.opengl.GL13.GL_TEXTURE16;
 import static piengine.visual.render.domain.config.RenderFunction.DRAW_ARRAYS;
 
 @Component
@@ -46,15 +47,19 @@ public class WaterRenderService extends AbstractRenderService<WaterShader, Rende
                 .loadLights(context.lights)
                 .loadShadows(context.shadows)
                 .loadFog(context.fog)
+                .loadPointShadowPosition(context.pointShadows.get(0).getLight().getPosition())
                 .loadTextureUnits(context.shadows);
+
+
+        int textureIndex = 0;
+        for (Shadow shadow : context.shadows) {
+            textureService.bind(GL_TEXTURE0 + textureIndex++, shadow.shadowMap);
+        }
+
+        textureService.bind(GL_TEXTURE16, context.pointShadows.get(0).getShadowMap());
 
         for (Water water : context.waters) {
             shader.loadWaveFactor(water.waveFactor);
-
-            int textureIndex = 0;
-            for (Shadow shadow : context.shadows) {
-                textureService.bind(GL_TEXTURE0 + textureIndex++, shadow.shadowMap);
-            }
             textureService.bind(GL_TEXTURE0 + textureIndex++, water.reflectionBuffer);
             textureService.bind(GL_TEXTURE0 + textureIndex++, water.refractionBuffer);
             textureService.bind(GL_TEXTURE0 + textureIndex++, water.refractionBuffer.getDao().getAttachment(FramebufferAttachment.DEPTH_TEXTURE_ATTACHMENT));

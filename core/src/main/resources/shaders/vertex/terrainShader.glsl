@@ -22,6 +22,7 @@ layout (location = 3) in vec3 Normal;
 flat out vec4 vColor;
 out float vVisibility;
 out vec4 vShadowCoords[LIGHT_COUNT];
+out vec4 vPosition;
 
 //////////////
 // UNIFORMS //
@@ -72,6 +73,7 @@ void main(void) {
 
     vColor = lightFactor * vec4(Color, 1.0);
     vVisibility = calculateVisibilityFactor(distance);
+    vPosition = worldPosition;
     gl_Position = projectionMatrix * viewPosition;
 
     distance = distance - (SHADOW_DISTANCE - TRANSITION_DISTANCE);

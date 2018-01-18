@@ -33,7 +33,7 @@ public class MapAsset extends WorldAsset<MapAssetArgument> {
 //    private Light light;
 //    private Shadow shadow;
     private Model cubeModel;
-    private Model[] treeModels = new Model[40];
+    private Model[] treeModels = new Model[100];
 
     @Wire
     public MapAsset(final WaterManager waterManager, final ShadowManager shadowManager, final ModelManager modelManager, final AssetManager assetManager) {
@@ -84,7 +84,7 @@ public class MapAsset extends WorldAsset<MapAssetArgument> {
 //        light.setColor(1, 1, 1);
 //        light.setPosition(100, 200, 300);
 
-        cubeModel.setPosition(4, 0f, -14);
+        cubeModel.setPosition(4, 0f, -4);
 
         lampAsset.setPosition(0, terrain.getHeight(0, 0), 0);
 

@@ -1,6 +1,7 @@
 package piengine.visual.render.shader;
 
 import org.joml.Matrix4f;
+import org.joml.Vector3f;
 import org.joml.Vector4f;
 import piengine.core.base.type.property.PropertyKeys;
 import piengine.visual.fog.Fog;
@@ -36,6 +37,8 @@ public class TerrainShader extends Shader {
     private final UniformInteger[] shadowMaps = uniformIntegerArray("shadowMaps", LIGHT_COUNT);
     private final UniformBoolean[] shadowEnableds = uniformBooleanArray("shadows", "enabled", LIGHT_COUNT);
     private final UniformMatrix4f[] shadowSpaceMatrices = uniformMatrix4fArray("shadows", "spaceMatrix", LIGHT_COUNT);
+    private final UniformInteger pointShadowMap = new UniformInteger(this, "pointShadowMap");
+    private final UniformVector3f pointShadowPosition = new UniformVector3f(this, "pointShadowPosition");
 
     public TerrainShader(final ShaderDao dao) {
         super(dao);
@@ -110,9 +113,21 @@ public class TerrainShader extends Shader {
     public TerrainShader loadTextureUnits(final List<Shadow> shadows) {
         int textureIndex = 0;
 
-        while (textureIndex < shadows.size() && textureIndex < LIGHT_COUNT) {
-            shadowMaps[textureIndex].load(textureIndex++);
+        for (int i = 0; i < LIGHT_COUNT; i++) {
+            if (textureIndex < shadows.size()) {
+                shadowMaps[i].load(textureIndex++);
+            } else {
+                shadowMaps[i].load(-1);
+            }
         }
+
+        pointShadowMap.load(16);
+
+        return this;
+    }
+
+    public TerrainShader loadPointShadowPosition(final Vector3f value) {
+        pointShadowPosition.load(value);
 
         return this;
     }

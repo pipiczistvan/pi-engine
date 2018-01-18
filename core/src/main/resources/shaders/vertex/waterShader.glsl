@@ -32,6 +32,7 @@ out vec3 vSpecular;
 out vec3 vDiffuse;
 out float vVisibility;
 out vec4 vShadowCoords[LIGHT_COUNT];
+out vec4 vPosition;
 
 //////////////
 // UNIFORMS //
@@ -115,6 +116,7 @@ void main(void) {
     vNormal = calcNormal(worldPosition.xyz, worldNeighbourPosition1.xyz, worldNeighbourPosition2.xyz);
     vToCameraVector = normalize(cameraPosition - worldPosition.xyz);
     vVisibility = calculateVisibilityFactor(distance);
+    vPosition = worldPosition;
 
     vSpecular = vec3(0);
     vDiffuse = vec3(0);

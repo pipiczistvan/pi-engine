@@ -45,6 +45,7 @@ public class MatrixUtils {
 
         Vector3f cameraPos = new Vector3f(translation);
 
+        destination.rotate((float) Math.toRadians(rotation.z), FORWARD);
         destination.rotate((float) Math.toRadians(-rotation.y), RIGHT);
         destination.rotate((float) Math.toRadians(rotation.x), UP);
         destination.translate(cameraPos.negate());

@@ -17,8 +17,8 @@ public class TextureInterpreter {
         glBindTexture(GL_TEXTURE_2D, texture);
     }
 
-    public void bindCubemap(final int bank, final int texture) {
-        glEnable(GL_TEXTURE_2D);
+    public void bindCubeMap(final int bank, final int texture) {
+        glEnable(GL_TEXTURE_CUBE_MAP);
         glActiveTexture(bank);
         glBindTexture(GL_TEXTURE_CUBE_MAP, texture);
     }

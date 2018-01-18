@@ -114,6 +114,15 @@ public class Shader implements Domain<ShaderDao> {
         return uniformArray;
     }
 
+    protected UniformMatrix4f[] uniformMatrix4fArray(final String variable, final int count) {
+        UniformMatrix4f[] uniformArray = new UniformMatrix4f[count];
+        for (int i = 0; i < count; i++) {
+            uniformArray[i] = new UniformMatrix4f(this, variable + "[" + i + "]");
+        }
+
+        return uniformArray;
+    }
+
     protected void startShader() {
         shaderService.start(this);
     }

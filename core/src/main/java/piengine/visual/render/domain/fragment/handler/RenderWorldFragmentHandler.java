@@ -86,11 +86,8 @@ public class RenderWorldFragmentHandler implements FragmentHandler<RenderWorldPl
             {
                 context.clippingPlane.set(0, 0, 0, 0);
                 context.viewport.set(pointShadow.getShadowMap().resolution);
-                for (int i = 0; i < 6; i++) {
-                    context.camera = pointShadow.getCamera(i);
-                    clearScreenRenderService.clearScreen(ColorUtils.BLACK);
-                    pointShadowRenderService.process(context);
-                }
+                clearScreenRenderService.clearScreen(ColorUtils.BLACK);
+                pointShadowRenderService.process(context);
             }
             framebufferService.unbind();
         }

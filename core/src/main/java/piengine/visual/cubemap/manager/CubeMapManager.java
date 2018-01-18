@@ -11,6 +11,7 @@ import puppeteer.annotation.premade.Component;
 import puppeteer.annotation.premade.Wire;
 
 import static org.lwjgl.opengl.GL11.GL_RGB;
+import static org.lwjgl.opengl.GL11.GL_UNSIGNED_BYTE;
 
 @Component
 public class CubeMapManager {
@@ -33,16 +34,16 @@ public class CubeMapManager {
         ImageData back = imageManager.load(backImage);
         ImageData front = imageManager.load(frontImage);
 
-        return supply(GL_RGB, right, left, top, bottom, back, front);
+        return supply(GL_RGB, GL_UNSIGNED_BYTE, right, left, top, bottom, back, front);
     }
 
-    public CubeMap supply(final int format, final TextureData right, final TextureData left, final TextureData top,
+    public CubeMap supply(final int format, final int type, final TextureData right, final TextureData left, final TextureData top,
                           final TextureData bottom, final TextureData back, final TextureData front) {
-        return cubeMapService.supply(new CubeMapKey(format, right, left, top, bottom, back, front));
+        return cubeMapService.supply(new CubeMapKey(format, type, right, left, top, bottom, back, front));
     }
 
-    public CubeMap supply(final int format, final Vector2i resolution) {
+    public CubeMap supply(final int format, final int type, final Vector2i resolution) {
         TextureData textureData = new TextureData(resolution.x, resolution.y, null);
-        return supply(format, textureData, textureData, textureData, textureData, textureData, textureData);
+        return supply(format, type, textureData, textureData, textureData, textureData, textureData, textureData);
     }
 }
