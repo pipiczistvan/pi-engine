@@ -12,6 +12,15 @@ const float murkyDepth = 20.0;
 const int PCF_COUNT = ${shadow.pcf.count};
 const float TOTAL_TEXELS = (PCF_COUNT * 2.0 + 1.0) * (PCF_COUNT * 2.0 + 1.0);
 const float POINT_SHADOW_FAR_PLANE = ${point.shadow.far.plane};
+const float specularReflectivity = 0.4;
+const float shineDamper = 20.0;
+
+struct Light {
+    vec4 color;
+    vec3 position;
+    vec2 bias;
+    vec3 attenuation;
+};
 
 struct Shadow {
     float enabled;
@@ -26,15 +35,14 @@ struct PointShadow {
 in vec4 vClipSpaceGrid;
 in vec4 vClipSpaceReal;
 in vec3 vToCameraVector;
-in vec3 vNormal;
-in vec3 vSpecular;
-in vec3 vDiffuse;
+flat in vec3 vNormal;
 in float vVisibility;
 in vec4 vShadowCoords[LIGHT_COUNT];
 in vec4 vPosition;
 
 out vec4 fColor;
 
+uniform Light lights[LIGHT_COUNT];
 uniform Shadow shadows[LIGHT_COUNT];
 uniform sampler2D shadowMaps[LIGHT_COUNT];
 uniform PointShadow pointShadows[LIGHT_COUNT];
@@ -86,6 +94,36 @@ vec2 clipSpaceToTextureCoords(vec4 clipSpace) {
     return clamp(texCoords, 0.002, 0.998);
 }
 
+//todo: diffuse
+vec3 calculateAmbientLight(Light light, vec3 vertexPosition, vec3 vertexNormal, float shadowFactor) {
+    vec3 toLightVector = light.position - vertexPosition;
+    float distance = length(toLightVector);
+    float attenuationFactor = light.attenuation.x +
+                (light.attenuation.y * distance) +
+                (light.attenuation.z * distance * distance);
+
+    float nDot1 = dot(normalize(toLightVector), vertexNormal);
+    float brightness = clamp(nDot1, 0.0, 1.0 - shadowFactor);
+    vec3 lightColor = light.color.xyz;
+    return brightness * lightColor / attenuationFactor;
+}
+
+vec3 calcSpecularLighting(Light light, vec3 toCamVector, vec3 vertexPosition, vec3 vertexNormal, float shadowFactor){
+    vec3 toLightVector = light.position - vertexPosition;
+    vec3 normal = normalize(toLightVector);
+	vec3 reflectedLightDirection = reflect(-normal, vertexNormal);
+	float specularFactor = dot(reflectedLightDirection, toCamVector);
+    float distance = length(toLightVector);
+    float attenuationFactor = light.attenuation.x +
+                (light.attenuation.y * distance) +
+                (light.attenuation.z * distance * distance);
+
+	specularFactor = max(specularFactor, 0.0);
+	specularFactor = pow(specularFactor, shineDamper);
+	float brightness = 1.0 - shadowFactor;
+	return specularFactor * specularReflectivity * light.color.xyz * brightness / attenuationFactor;
+}
+
 void main(void) {
     vec2 texCoordsGrid = clipSpaceToTextureCoords(vClipSpaceGrid);
     vec2 texCoordsReal = clipSpaceToTextureCoords(vClipSpaceReal);
@@ -101,10 +139,13 @@ void main(void) {
     refractColor = calculateMurkiness(refractColor, waterDepth);
     reflectColor = mix(reflectColor, waterColor, minBlueness);
 
-    vec3 finalColor = mix(reflectColor, refractColor, calculateFresnel(vToCameraVector, vNormal));
-    finalColor = finalColor * vDiffuse + vSpecular;
+    vec3 textureColor = mix(reflectColor, refractColor, calculateFresnel(vToCameraVector, vNormal));
+
+    vec3 ambientLight = vec3(0);
+    vec3 specularLight = vec3(0);
 
     for (int i = 0; i < LIGHT_COUNT; i++) {
+        float shadowFactor = 0;
         if (shadows[i].enabled > 0.5) {
             float mapSize = 2048.0;
             float texelSize = 1.0 / mapSize;
@@ -119,19 +160,20 @@ void main(void) {
                 }
             }
             total /= TOTAL_TEXELS;
-            float lightFactor = max(1.0 - (total * vShadowCoords[i].w), 0.4);
-            finalColor *= lightFactor;
+            shadowFactor += (total * vShadowCoords[i].w);
         }
-    }
 
-    for (int i = 0; i < LIGHT_COUNT; i++) {
         if (pointShadows[i].enabled > 0.5) {
-            float pointShadowFactor = pointShadowCalculation(vPosition.xyz, pointShadows[i].position, pointShadowMaps[i]);
-            float lightFactor = max(1.0 - pointShadowFactor, 0.4);
-            finalColor *= lightFactor;
+            shadowFactor += pointShadowCalculation(vPosition.xyz, pointShadows[i].position, pointShadowMaps[i]);
         }
+
+        shadowFactor = min(shadowFactor, 0.8);
+
+        ambientLight += calculateAmbientLight(lights[i], vPosition.xyz, vNormal, shadowFactor);
+        specularLight += calcSpecularLighting(lights[i], vToCameraVector, vPosition.xyz, vNormal, shadowFactor);
     }
 
+    vec3 finalColor = textureColor * ambientLight + specularLight;
     fColor = vec4(finalColor, clamp(waterDepth / edgeSoftness, 0.0, 1.0));
     fColor = mix(fogColor, fColor, vVisibility);
 

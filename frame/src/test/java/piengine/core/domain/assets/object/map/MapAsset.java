@@ -109,7 +109,7 @@ public class MapAsset extends WorldAsset<MapAssetArgument> {
         placeEntityOnTerrain(cubeModel4, 4, 6, 6);
 
         placeEntityOnTerrain(lampAsset1, -6, -6, 0);
-        placeEntityOnTerrain(lampAsset2, 10, -6, 0);
+        placeEntityOnTerrain(lampAsset2, -6, 0, 0);
 
         Random random = new Random();
         for (Model tree : treeModels) {
