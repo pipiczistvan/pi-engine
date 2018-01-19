@@ -17,8 +17,6 @@ import piengine.object.water.manager.WaterManager;
 import piengine.visual.shadow.manager.ShadowManager;
 import puppeteer.annotation.premade.Wire;
 
-import java.util.Random;
-
 public class MapAsset extends WorldAsset<MapAssetArgument> {
 
     private static final float WAVE_SPEED = 0.2f;
@@ -30,11 +28,12 @@ public class MapAsset extends WorldAsset<MapAssetArgument> {
 
     private Terrain terrain;
     private Water water;
-    public LampAsset lampAsset1, lampAsset2;
+    private LampAsset lampAsset1, lampAsset2;
     //    private Light light;
 //    private Shadow shadow;
     private Model cubeModel1, cubeModel2, cubeModel3, cubeModel4;
-    private Model[] treeModels = new Model[100];
+    private Model treeModel1, treeModel2, treeModel3, treeModel4;
+//    private Model[] treeModels = new Model[100];
 
     private float wave = 0;
 
@@ -60,9 +59,14 @@ public class MapAsset extends WorldAsset<MapAssetArgument> {
         cubeModel3 = modelManager.supply(this, "cube", false);
         cubeModel4 = modelManager.supply(this, "cube", false);
 
-        for (int i = 0; i < treeModels.length; i++) {
-            treeModels[i] = modelManager.supply(this, "lowPolyTree", "lowPolyTree", false);
-        }
+        treeModel1 = modelManager.supply(this, "lowPolyTree", "lowPolyTree", false);
+        treeModel2 = modelManager.supply(this, "lowPolyTree", "lowPolyTree", false);
+        treeModel3 = modelManager.supply(this, "lowPolyTree", "lowPolyTree", false);
+        treeModel4 = modelManager.supply(this, "lowPolyTree", "lowPolyTree", false);
+
+//        for (int i = 0; i < treeModels.length; i++) {
+//            treeModels[i] = modelManager.supply(this, "lowPolyTree", "lowPolyTree", false);
+//        }
 
         initializeAssets();
     }
@@ -82,8 +86,8 @@ public class MapAsset extends WorldAsset<MapAssetArgument> {
     @Override
     public WorldRenderAssetContext getAssetContext() {
         return WorldRenderAssetContextBuilder.create()
-                .loadModels(treeModels)
-                .loadModels(cubeModel1, cubeModel2, cubeModel3, cubeModel4)
+                .loadModels(treeModel1, treeModel2, treeModel3, treeModel4)
+                .loadModels(cubeModel1)
                 .loadTerrains(terrain)
                 .loadWaters(water)
                 .loadAssets(lampAsset1)
@@ -103,28 +107,38 @@ public class MapAsset extends WorldAsset<MapAssetArgument> {
 //        light.setColor(1, 1, 1);
 //        light.setPosition(100, 200, 300);
 
-        placeEntityOnTerrain(cubeModel1, 4, -6, 6);
-        placeEntityOnTerrain(cubeModel2, 4, -2, 6);
-        placeEntityOnTerrain(cubeModel3, 4, 2, 6);
-        placeEntityOnTerrain(cubeModel4, 4, 6, 6);
+        placeEntityOnTerrain(cubeModel1, 10, 10, 6);
+//        placeEntityOnTerrain(cubeModel2, 4, -2, 6);
+//        placeEntityOnTerrain(cubeModel3, 4, 2, 6);
+//        placeEntityOnTerrain(cubeModel4, 4, 6, 6);
 
-        placeEntityOnTerrain(lampAsset1, -6, -6, 0);
-        placeEntityOnTerrain(lampAsset2, -6, 0, 0);
+        placeEntityOnTerrain(treeModel1, 12, 5, 0);
+        placeEntityOnTerrain(treeModel2, 0, 12, 0);
+        placeEntityOnTerrain(treeModel3, -12, 5, 0);
+        placeEntityOnTerrain(treeModel4, 2, -12, 0);
 
-        Random random = new Random();
-        for (Model tree : treeModels) {
-            float x;
-            float y;
-            float z;
-            do {
-                x = random.nextFloat() * 256 - 128;
-                z = random.nextFloat() * 256 - 128;
-                y = terrain.getHeight(x, z) - 0.2f;
-            } while (y < waterHeight - 0.2);
-            float scale = random.nextFloat() * 0.1f + 0.2f;
+        treeModel1.scale(0.3f, 0.3f, 0.3f);
+        treeModel2.scale(0.3f, 0.3f, 0.3f);
+        treeModel3.scale(0.3f, 0.3f, 0.3f);
+        treeModel4.scale(0.3f, 0.3f, 0.3f);
 
-            tree.setScale(scale);
-            tree.setPosition(x, y, z);
-        }
+        placeEntityOnTerrain(lampAsset1, 0, 0, 0);
+//        placeEntityOnTerrain(lampAsset2, -6, 0, 0);
+
+//        Random random = new Random();
+//        for (Model tree : treeModels) {
+//            float x;
+//            float y;
+//            float z;
+//            do {
+//                x = random.nextFloat() * 256 - 128;
+//                z = random.nextFloat() * 256 - 128;
+//                y = terrain.getHeight(x, z) - 0.2f;
+//            } while (y < waterHeight - 0.2);
+//            float scale = random.nextFloat() * 0.1f + 0.2f;
+//
+//            tree.setScale(scale);
+//            tree.setPosition(x, y, z);
+//        }
     }
 }

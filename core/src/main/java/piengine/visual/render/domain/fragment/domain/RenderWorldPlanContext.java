@@ -19,7 +19,7 @@ import java.util.List;
 
 public class RenderWorldPlanContext implements PlanContext, RenderContext {
 
-    public static PointShadow currentPointShadow;
+    public PointShadow currentPointShadow;
 
     public final List<Model> models;
     public final List<Terrain> terrains;

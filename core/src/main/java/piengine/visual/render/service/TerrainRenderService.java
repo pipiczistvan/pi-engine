@@ -50,6 +50,7 @@ public class TerrainRenderService extends AbstractRenderService<TerrainShader, R
                 .loadProjectionMatrix(context.camera.getProjection())
                 .loadViewMatrix(context.camera.getView())
                 .loadClippingPlane(context.clippingPlane)
+                .loadCameraPosition(context.camera.getPosition())
                 .loadTextureUnits();
 
         int textureIndex = 0;

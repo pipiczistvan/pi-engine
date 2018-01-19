@@ -34,7 +34,7 @@ public class PointShadowRenderService extends AbstractRenderService<PointShadowS
     protected void render(final RenderWorldPlanContext context) {
         renderInterpreter.setViewport(context.viewport);
 
-        PointShadow pointShadow = context.currentPointShadow;//todo: erre kitalálni valamit
+        PointShadow pointShadow = context.currentPointShadow;
 
         Matrix4f[] projectionViewMatrices = new Matrix4f[CAMERA_COUNT];
         for (int i = 0; i < CAMERA_COUNT; i++) {

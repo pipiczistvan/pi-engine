@@ -1,6 +1,7 @@
 package piengine.visual.render.shader;
 
 import org.joml.Matrix4f;
+import org.joml.Vector3f;
 import org.joml.Vector4f;
 import piengine.core.base.type.property.PropertyKeys;
 import piengine.visual.fog.Fog;
@@ -10,6 +11,7 @@ import piengine.visual.shader.domain.Shader;
 import piengine.visual.shader.domain.ShaderDao;
 import piengine.visual.shader.domain.uniform.UniformInteger;
 import piengine.visual.shader.domain.uniform.UniformMatrix4f;
+import piengine.visual.shader.domain.uniform.UniformVector3f;
 import piengine.visual.shader.domain.uniform.UniformVector4f;
 import piengine.visual.shader.domain.uniform.struct.UniformFog;
 import piengine.visual.shader.domain.uniform.struct.UniformLight;
@@ -22,6 +24,7 @@ import java.util.List;
 import static piengine.core.base.type.property.ApplicationProperties.get;
 import static piengine.visual.shader.domain.uniform.UniformInteger.uniformInteger;
 import static piengine.visual.shader.domain.uniform.UniformMatrix4f.uniformMatrix4f;
+import static piengine.visual.shader.domain.uniform.UniformVector3f.uniformVector3f;
 import static piengine.visual.shader.domain.uniform.UniformVector4f.uniformVector4f;
 import static piengine.visual.shader.domain.uniform.struct.UniformFog.uniformFog;
 import static piengine.visual.shader.domain.uniform.struct.UniformLight.uniformLight;
@@ -41,6 +44,7 @@ public class TerrainShader extends Shader {
     private final UniformShadow[] shadows = uniformShadow(this, "shadows", LIGHT_COUNT);
     private final UniformInteger[] pointShadowMaps = uniformInteger(this, "pointShadowMaps", LIGHT_COUNT);
     private final UniformPointShadow[] pointShadows = uniformPointShadow(this, "pointShadows", LIGHT_COUNT);
+    private final UniformVector3f cameraPosition = uniformVector3f(this, "cameraPosition");
 
     public TerrainShader(final ShaderDao dao) {
         super(dao);
@@ -123,6 +127,12 @@ public class TerrainShader extends Shader {
         for (int i = 0; i < LIGHT_COUNT; i++) {
             pointShadowMaps[i].load(textureIndex++);
         }
+
+        return this;
+    }
+
+    public TerrainShader loadCameraPosition(final Vector3f value) {
+        cameraPosition.load(value);
 
         return this;
     }

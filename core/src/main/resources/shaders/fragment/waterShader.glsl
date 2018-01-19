@@ -14,6 +14,14 @@ const float TOTAL_TEXELS = (PCF_COUNT * 2.0 + 1.0) * (PCF_COUNT * 2.0 + 1.0);
 const float POINT_SHADOW_FAR_PLANE = ${point.shadow.far.plane};
 const float specularReflectivity = 0.4;
 const float shineDamper = 20.0;
+const vec3 sampleOffsetDirections[20] = vec3[]
+(
+   vec3( 1,  1,  1), vec3( 1, -1,  1), vec3(-1, -1,  1), vec3(-1,  1,  1),
+   vec3( 1,  1, -1), vec3( 1, -1, -1), vec3(-1, -1, -1), vec3(-1,  1, -1),
+   vec3( 1,  1,  0), vec3( 1, -1,  0), vec3(-1, -1,  0), vec3(-1,  1,  0),
+   vec3( 1,  0,  1), vec3(-1,  0,  1), vec3( 1,  0, -1), vec3(-1,  0, -1),
+   vec3( 0,  1,  1), vec3( 0, -1,  1), vec3( 0, -1, -1), vec3( 0,  1, -1)
+);
 
 struct Fog {
     vec4 color;
@@ -54,6 +62,7 @@ uniform sampler2D reflectionTexture;
 uniform sampler2D refractionTexture;
 uniform sampler2D depthTexture;
 uniform Fog fog;
+uniform vec3 cameraPosition;
 
 float calculateShadow(vec4 shadowCoords, sampler2D shadowMap, int mapSize) {
     float texelSize = 1.0 / mapSize;
@@ -71,15 +80,23 @@ float calculateShadow(vec4 shadowCoords, sampler2D shadowMap, int mapSize) {
     return total * shadowCoords.w;
 }
 
-float calculatePointShadow(vec3 fragPos, vec3 lightPosition, samplerCube shadowCubeMap) {
+float calculatePointShadow(vec3 fragPos, vec3 viewPosition, vec3 lightPosition, samplerCube shadowCubeMap) {
     vec3 fragToLight = fragPos - lightPosition;
     float currentDepth = length(fragToLight);
     currentDepth /= POINT_SHADOW_FAR_PLANE;
     currentDepth = clamp(currentDepth, 0.0, 1.0);
+    float viewDistance = length(viewPosition - fragPos);
 
-    float closestDepth = texture(shadowCubeMap, fragToLight).r;
-
-    return currentDepth > closestDepth ? 1.0 : 0.0;
+    float shadow  = 0.0;
+    float samples = 20;
+    float diskRadius = (1.0 + (viewDistance / POINT_SHADOW_FAR_PLANE)) / 25.0;
+    for(int i = 0; i < samples; i++) {
+        float closestDepth = texture(shadowCubeMap, fragToLight + sampleOffsetDirections[i] * diskRadius).r;
+        if(currentDepth > closestDepth) {
+            shadow += 1.0;
+        }
+    }
+    return shadow / samples;
 }
 
 vec3 calculateMurkiness(vec3 refractColor, float waterDepth) {
@@ -167,7 +184,7 @@ void main(void) {
             shadowFactor += calculateShadow(vShadowCoords[i], shadowMaps[i], shadows[i].mapSize);
         }
         if (pointShadows[i].enabled > 0.5) {
-            shadowFactor += calculatePointShadow(vPosition.xyz, pointShadows[i].position, pointShadowMaps[i]);
+            shadowFactor += calculatePointShadow(vPosition.xyz, cameraPosition, pointShadows[i].position, pointShadowMaps[i]);
         }
         shadowFactor = min(shadowFactor, 0.8);
 
