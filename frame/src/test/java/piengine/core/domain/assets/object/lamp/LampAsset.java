@@ -18,7 +18,7 @@ public class LampAsset extends WorldAsset<LampAssetArgument> {
 
     private Model lampModel;
     private Light lampLight;
-    private PointShadow lampPointShadow;
+    public PointShadow lampPointShadow;
 
     @Wire
     public LampAsset(final ModelManager modelManager, final PointShadowManager pointShadowManager) {

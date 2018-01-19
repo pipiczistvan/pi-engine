@@ -82,6 +82,7 @@ public class RenderWorldFragmentHandler implements FragmentHandler<RenderWorldPl
         Camera camera = context.camera;
 
         for (PointShadow pointShadow : context.pointShadows) {
+            context.currentPointShadow = pointShadow;
             framebufferService.bind(pointShadow.getShadowMap());
             {
                 context.clippingPlane.set(0, 0, 0, 0);

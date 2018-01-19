@@ -1,11 +1,11 @@
 package piengine.visual.render.shader;
 
 import org.joml.Matrix4f;
-import org.joml.Vector3f;
 import org.joml.Vector4f;
 import piengine.core.base.type.property.PropertyKeys;
 import piengine.visual.fog.Fog;
 import piengine.visual.light.domain.Light;
+import piengine.visual.pointshadow.domain.PointShadow;
 import piengine.visual.shader.domain.Shader;
 import piengine.visual.shader.domain.ShaderDao;
 import piengine.visual.shader.domain.uniform.UniformBoolean;
@@ -37,8 +37,9 @@ public class TerrainShader extends Shader {
     private final UniformInteger[] shadowMaps = uniformIntegerArray("shadowMaps", LIGHT_COUNT);
     private final UniformBoolean[] shadowEnableds = uniformBooleanArray("shadows", "enabled", LIGHT_COUNT);
     private final UniformMatrix4f[] shadowSpaceMatrices = uniformMatrix4fArray("shadows", "spaceMatrix", LIGHT_COUNT);
-    private final UniformInteger pointShadowMap = new UniformInteger(this, "pointShadowMap");
-    private final UniformVector3f pointShadowPosition = new UniformVector3f(this, "pointShadowPosition");
+    private final UniformInteger[] pointShadowMaps = uniformIntegerArray("pointShadowMaps", LIGHT_COUNT);
+    private final UniformBoolean[] pointShadowEnableds = uniformBooleanArray("pointShadows", "enabled", LIGHT_COUNT);
+    private final UniformVector3f[] pointShadowPositions = uniformVector3fArray("pointShadows", "position", LIGHT_COUNT);
 
     public TerrainShader(final ShaderDao dao) {
         super(dao);
@@ -110,24 +111,31 @@ public class TerrainShader extends Shader {
         return this;
     }
 
-    public TerrainShader loadTextureUnits(final List<Shadow> shadows) {
-        int textureIndex = 0;
+    public TerrainShader loadPointShadows(final List<PointShadow> pointShadows) {
+        int shadowCount = pointShadows.size();
 
         for (int i = 0; i < LIGHT_COUNT; i++) {
-            if (textureIndex < shadows.size()) {
-                shadowMaps[i].load(textureIndex++);
+            if (i < shadowCount) {
+                pointShadowEnableds[i].load(true);
+                pointShadowPositions[i].load(pointShadows.get(i).getLight().getPosition());
             } else {
-                shadowMaps[i].load(-1);
+                pointShadowEnableds[i].load(false);
             }
         }
-
-        pointShadowMap.load(16);
 
         return this;
     }
 
-    public TerrainShader loadPointShadowPosition(final Vector3f value) {
-        pointShadowPosition.load(value);
+    public TerrainShader loadTextureUnits() {
+        int textureIndex = 0;
+
+        for (int i = 0; i < LIGHT_COUNT; i++) {
+            shadowMaps[i].load(textureIndex++);
+        }
+
+        for (int i = 0; i < LIGHT_COUNT; i++) {
+            pointShadowMaps[i].load(textureIndex++);
+        }
 
         return this;
     }

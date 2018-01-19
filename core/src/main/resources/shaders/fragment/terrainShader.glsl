@@ -10,6 +10,11 @@ struct Shadow {
     mat4 spaceMatrix;
 };
 
+struct PointShadow {
+    float enabled;
+    vec3 position;
+};
+
 flat in vec4 vColor;
 in float vVisibility;
 in vec4 vShadowCoords[LIGHT_COUNT];
@@ -19,17 +24,17 @@ out vec4 fColor;
 
 uniform Shadow shadows[LIGHT_COUNT];
 uniform sampler2D shadowMaps[LIGHT_COUNT];
-uniform samplerCube pointShadowMap;
-uniform vec3 pointShadowPosition;
+uniform PointShadow pointShadows[LIGHT_COUNT];
+uniform samplerCube pointShadowMaps[LIGHT_COUNT];
 uniform vec4 fogColor;
 
-float pointShadowCalculation(vec3 fragPos) {
-    vec3 fragToLight = fragPos - pointShadowPosition;
+float pointShadowCalculation(vec3 fragPos, vec3 lightPosition, samplerCube shadowCubeMap) {
+    vec3 fragToLight = fragPos - lightPosition;
     float currentDepth = length(fragToLight);
     currentDepth /= POINT_SHADOW_FAR_PLANE;
     currentDepth = clamp(currentDepth, 0.0, 1.0);
 
-    float closestDepth = texture(pointShadowMap, fragToLight).r;
+    float closestDepth = texture(shadowCubeMap, fragToLight).r;
 
     return currentDepth > closestDepth ? 1.0 : 0.0;
 }
@@ -57,8 +62,14 @@ void main(void) {
         }
     }
 
-    float pointShadowFactor = pointShadowCalculation(vPosition.xyz);
-    fColor *= (1 - pointShadowFactor);
+
+    for (int i = 0; i < LIGHT_COUNT; i++) {
+        if (pointShadows[i].enabled > 0.5) {
+            float pointShadowFactor = pointShadowCalculation(vPosition.xyz, pointShadows[i].position, pointShadowMaps[i]);
+            float lightFactor = max(1.0 - pointShadowFactor, 0.4);
+            fColor *= lightFactor;
+        }
+    }
 
     // FINAL OUTPUT
     fColor = mix(fogColor, fColor, vVisibility);
