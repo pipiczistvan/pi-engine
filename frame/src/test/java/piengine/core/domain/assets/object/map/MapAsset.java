@@ -8,6 +8,7 @@ import piengine.object.asset.domain.WorldAsset;
 import piengine.object.asset.manager.AssetManager;
 import piengine.object.asset.plan.WorldRenderAssetContext;
 import piengine.object.asset.plan.WorldRenderAssetContextBuilder;
+import piengine.object.entity.domain.Entity;
 import piengine.object.model.domain.Model;
 import piengine.object.model.manager.ModelManager;
 import piengine.object.terrain.domain.Terrain;
@@ -29,7 +30,7 @@ public class MapAsset extends WorldAsset<MapAssetArgument> {
 
     private Terrain terrain;
     private Water water;
-    private LampAsset lampAsset;
+    private LampAsset lampAsset1, lampAsset2;
     //    private Light light;
 //    private Shadow shadow;
     private Model cubeModel1, cubeModel2, cubeModel3, cubeModel4;
@@ -51,11 +52,14 @@ public class MapAsset extends WorldAsset<MapAssetArgument> {
         water = waterManager.supply(arguments.viewport, new Vector2i(128, 128), new Vector3f(-128, -4, -128), new Vector3f(256, 0, 256));
 //        light = new Light(this);
 //        shadow = shadowManager.supply(light, arguments.camera, new Vector2i(2048));
-        lampAsset = assetManager.supply(LampAsset.class, this, new LampAssetArgument());
+        lampAsset1 = assetManager.supply(LampAsset.class, this, new LampAssetArgument());
+        lampAsset2 = assetManager.supply(LampAsset.class, this, new LampAssetArgument());
+
         cubeModel1 = modelManager.supply(this, "cube", false);
         cubeModel2 = modelManager.supply(this, "cube", false);
         cubeModel3 = modelManager.supply(this, "cube", false);
         cubeModel4 = modelManager.supply(this, "cube", false);
+
         for (int i = 0; i < treeModels.length; i++) {
             treeModels[i] = modelManager.supply(this, "lowPolyTree", "lowPolyTree", false);
         }
@@ -82,10 +86,15 @@ public class MapAsset extends WorldAsset<MapAssetArgument> {
                 .loadModels(cubeModel1, cubeModel2, cubeModel3, cubeModel4)
                 .loadTerrains(terrain)
                 .loadWaters(water)
-                .loadAssets(lampAsset)
+                .loadAssets(lampAsset1)
 //                .loadLights(light)
 //                .loadShadows(shadow)
                 .build();
+    }
+
+    private void placeEntityOnTerrain(final Entity entity, final float x, final float z, final float yOffset) {
+        float y = terrain.getHeight(x, z) + yOffset;
+        entity.setPosition(x, y, z);
     }
 
     private void initializeAssets() {
@@ -94,12 +103,13 @@ public class MapAsset extends WorldAsset<MapAssetArgument> {
 //        light.setColor(1, 1, 1);
 //        light.setPosition(100, 200, 300);
 
-        cubeModel1.setPosition(4, 0f, -4);
-        cubeModel2.setPosition(4, 0f, 4);
-        cubeModel3.setPosition(-4, 0f, -4);
-        cubeModel4.setPosition(-4, 0f, 4);
+        placeEntityOnTerrain(cubeModel1, 4, -6, 6);
+        placeEntityOnTerrain(cubeModel2, 4, -2, 6);
+        placeEntityOnTerrain(cubeModel3, 4, 2, 6);
+        placeEntityOnTerrain(cubeModel4, 4, 6, 6);
 
-        lampAsset.setPosition(0, terrain.getHeight(0, 0), 0);
+        placeEntityOnTerrain(lampAsset1, -6, -6, 0);
+        placeEntityOnTerrain(lampAsset2, 10, 10, 0);
 
         Random random = new Random();
         for (Model tree : treeModels) {

@@ -42,7 +42,6 @@ public class PointShadowRenderService extends AbstractRenderService<PointShadowS
         }
         shader.start()
                 .loadProjectionViewMatrices(projectionViewMatrices)
-                .loadFarPlane(pointShadow.getFarPlane())
                 .loadLightPosition(pointShadow.getLight().getPosition());
 
         for (Model model : context.models) {

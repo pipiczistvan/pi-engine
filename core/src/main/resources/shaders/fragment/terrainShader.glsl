@@ -3,6 +3,7 @@
 const int LIGHT_COUNT = ${light.count};
 const int PCF_COUNT = ${shadow.pcf.count};
 const float TOTAL_TEXELS = (PCF_COUNT * 2.0 + 1.0) * (PCF_COUNT * 2.0 + 1.0);
+const float POINT_SHADOW_FAR_PLANE = ${point.shadow.far.plane};
 
 struct Shadow {
     float enabled;
@@ -25,10 +26,12 @@ uniform vec4 fogColor;
 float pointShadowCalculation(vec3 fragPos) {
     vec3 fragToLight = fragPos - pointShadowPosition;
     float currentDepth = length(fragToLight);
+    currentDepth /= POINT_SHADOW_FAR_PLANE;
+    currentDepth = clamp(currentDepth, 0.0, 1.0);
 
     float closestDepth = texture(pointShadowMap, fragToLight).r;
 
-    return 1.0 > closestDepth ? 0.6 : 0.0;
+    return currentDepth > closestDepth ? 1.0 : 0.0;
 }
 
 void main(void) {

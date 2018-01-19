@@ -11,6 +11,7 @@ const float maxBlueness = 0.75;
 const float murkyDepth = 20.0;
 const int PCF_COUNT = ${shadow.pcf.count};
 const float TOTAL_TEXELS = (PCF_COUNT * 2.0 + 1.0) * (PCF_COUNT * 2.0 + 1.0);
+const float POINT_SHADOW_FAR_PLANE = ${point.shadow.far.plane};
 
 struct Shadow {
     float enabled;
@@ -41,10 +42,12 @@ uniform vec4 fogColor;
 float pointShadowCalculation(vec3 fragPos) {
     vec3 fragToLight = fragPos - pointShadowPosition;
     float currentDepth = length(fragToLight);
+    currentDepth /= POINT_SHADOW_FAR_PLANE;
+    currentDepth = clamp(currentDepth, 0.0, 1.0);
 
     float closestDepth = texture(pointShadowMap, fragToLight).r;
 
-    return 1.0 > closestDepth ? 0.6 : 0.0;
+    return currentDepth > closestDepth ? 0.6 : 0.0;
 }
 
 vec3 calculateMurkiness(vec3 refractColor, float waterDepth) {

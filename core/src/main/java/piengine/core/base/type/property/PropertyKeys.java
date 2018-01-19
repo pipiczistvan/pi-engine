@@ -41,4 +41,5 @@ public class PropertyKeys {
     public static final FloatProperty SHADOW_DISTANCE = new FloatProperty("shadow.distance");
     public static final IntegerProperty SHADOW_PCF_COUNT = new IntegerProperty("shadow.pcf.count");
 
+    public static final FloatProperty POINT_SHADOW_FAR_PLANE = new FloatProperty("point.shadow.far.plane");
 }

@@ -4,7 +4,6 @@ import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import piengine.visual.shader.domain.Shader;
 import piengine.visual.shader.domain.ShaderDao;
-import piengine.visual.shader.domain.uniform.UniformFloat;
 import piengine.visual.shader.domain.uniform.UniformMatrix4f;
 import piengine.visual.shader.domain.uniform.UniformVector3f;
 
@@ -15,7 +14,6 @@ public class PointShadowShader extends Shader {
     private final UniformMatrix4f modelMatrix = new UniformMatrix4f(this, "modelMatrix");
     private final UniformMatrix4f[] projectionViewMatrices = uniformMatrix4fArray("projectionViewMatrices", CAMERA_COUNT);
     private final UniformVector3f lightPosition = new UniformVector3f(this, "lightPosition");
-    private final UniformFloat farPlane = new UniformFloat(this, "farPlane");
 
     public PointShadowShader(final ShaderDao dao) {
         super(dao);
@@ -45,11 +43,6 @@ public class PointShadowShader extends Shader {
 
     public PointShadowShader loadLightPosition(final Vector3f value) {
         lightPosition.load(value);
-        return this;
-    }
-
-    public PointShadowShader loadFarPlane(final float value) {
-        farPlane.load(value);
         return this;
     }
 }
