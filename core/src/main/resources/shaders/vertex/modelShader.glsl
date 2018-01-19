@@ -2,6 +2,11 @@
 
 const int LIGHT_COUNT = ${light.count};
 
+struct Fog {
+    vec4 color;
+    float gradient;
+    float density;
+};
 struct Light {
     vec4 color;
     vec3 position;
@@ -16,25 +21,17 @@ out vec2 vTextureCoord;
 flat out vec4 vColor;
 out float vVisibility;
 
-//////////////
-// UNIFORMS //
-//////////////
-// TRANSFORMATION
 uniform mat4 modelMatrix;
 uniform mat4 viewMatrix;
 uniform mat4 projectionMatrix;
-// LIGHT
 uniform Light lights[LIGHT_COUNT];
-// FOG
-uniform float fogGradient;
-uniform float fogDensity;
-// CLIPPING PLANE
+uniform Fog fog;
 uniform vec4 clippingPlane;
 uniform float lightEmitter;
 
 float calculateVisibilityFactor(vec3 viewPosition) {
     float distance = length(viewPosition);
-    float visiblity = exp(-pow(distance * fogDensity, fogGradient));
+    float visiblity = exp(-pow(distance * fog.density, fog.gradient));
     return clamp(visiblity, 0.0, 1.0);
 }
 

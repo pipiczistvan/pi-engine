@@ -4,6 +4,11 @@ const int LIGHT_COUNT = ${light.count};
 const float SHADOW_DISTANCE = 30.0;
 const float TRANSITION_DISTANCE = 5.0;
 
+struct Fog {
+    vec4 color;
+    float gradient;
+    float density;
+};
 struct Shadow {
     float enabled;
     mat4 spaceMatrix;
@@ -19,22 +24,14 @@ out vec3 vPosition;
 out float vVisibility;
 out vec4 vShadowCoords[LIGHT_COUNT];
 
-//////////////
-// UNIFORMS //
-//////////////
-// TRANSFORMATION
 uniform mat4 viewMatrix;
 uniform mat4 projectionMatrix;
-// LIGHT
-uniform Shadow shadows[LIGHT_COUNT];
-// FOG
-uniform float fogGradient;
-uniform float fogDensity;
-// CLIPPING PLANE
 uniform vec4 clippingPlane;
+uniform Shadow shadows[LIGHT_COUNT];
+uniform Fog fog;
 
 float calculateVisibilityFactor(float distance) {
-    float visiblity = exp(-pow(distance * fogDensity, fogGradient));
+    float visiblity = exp(-pow(distance * fog.density, fog.gradient));
     return clamp(visiblity, 0.0, 1.0);
 }
 

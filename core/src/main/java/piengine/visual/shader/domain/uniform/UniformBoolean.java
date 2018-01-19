@@ -4,8 +4,20 @@ import piengine.visual.shader.domain.Shader;
 
 public class UniformBoolean extends Uniform<Boolean> {
 
-    public UniformBoolean(final Shader shader, final String variable) {
+    private UniformBoolean(final Shader shader, final String variable) {
         super(shader, variable);
+    }
+
+    public static UniformBoolean uniformBoolean(final Shader shader, final String variable) {
+        return new UniformBoolean(shader, variable);
+    }
+
+    public static UniformBoolean[] uniformBoolean(final Shader shader, final String variable, final int count) {
+        UniformBoolean[] uniforms = new UniformBoolean[count];
+        for (int i = 0; i < count; i++) {
+            uniforms[i] = uniformBoolean(shader, variable + "[" + i + "]");
+        }
+        return uniforms;
     }
 
     @Override

@@ -86,7 +86,7 @@ public class MapAsset extends WorldAsset<MapAssetArgument> {
                 .loadModels(cubeModel1, cubeModel2, cubeModel3, cubeModel4)
                 .loadTerrains(terrain)
                 .loadWaters(water)
-                .loadAssets(lampAsset1, lampAsset2)
+                .loadAssets(lampAsset1)
 //                .loadLights(light)
 //                .loadShadows(shadow)
                 .build();

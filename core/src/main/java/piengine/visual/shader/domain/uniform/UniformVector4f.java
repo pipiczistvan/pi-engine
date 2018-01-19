@@ -5,8 +5,20 @@ import piengine.visual.shader.domain.Shader;
 
 public class UniformVector4f extends Uniform<Vector4f> {
 
-    public UniformVector4f(final Shader shader, final String variable) {
+    private UniformVector4f(final Shader shader, final String variable) {
         super(shader, variable);
+    }
+
+    public static UniformVector4f uniformVector4f(final Shader shader, final String variable) {
+        return new UniformVector4f(shader, variable);
+    }
+
+    public static UniformVector4f[] uniformVector4f(final Shader shader, final String variable, final int count) {
+        UniformVector4f[] uniforms = new UniformVector4f[count];
+        for (int i = 0; i < count; i++) {
+            uniforms[i] = uniformVector4f(shader, variable + "[" + i + "]");
+        }
+        return uniforms;
     }
 
     @Override

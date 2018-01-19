@@ -4,8 +4,20 @@ import piengine.visual.shader.domain.Shader;
 
 public class UniformFloat extends Uniform<Float> {
 
-    public UniformFloat(final Shader shader, final String variable) {
+    private UniformFloat(final Shader shader, final String variable) {
         super(shader, variable);
+    }
+
+    public static UniformFloat uniformFloat(final Shader shader, final String variable) {
+        return new UniformFloat(shader, variable);
+    }
+
+    public static UniformFloat[] uniformFloat(final Shader shader, final String variable, final int count) {
+        UniformFloat[] uniforms = new UniformFloat[count];
+        for (int i = 0; i < count; i++) {
+            uniforms[i] = uniformFloat(shader, variable + "[" + i + "]");
+        }
+        return uniforms;
     }
 
     @Override

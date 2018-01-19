@@ -5,9 +5,11 @@ import piengine.visual.shader.domain.Shader;
 import piengine.visual.shader.domain.ShaderDao;
 import piengine.visual.shader.domain.uniform.UniformMatrix4f;
 
+import static piengine.visual.shader.domain.uniform.UniformMatrix4f.uniformMatrix4f;
+
 public class ShadowShader extends Shader {
 
-    private final UniformMatrix4f transformationMatrix = new UniformMatrix4f(this, "transformationMatrix");
+    private final UniformMatrix4f transformationMatrix = uniformMatrix4f(this, "transformationMatrix");
 
     public ShadowShader(final ShaderDao dao) {
         super(dao);

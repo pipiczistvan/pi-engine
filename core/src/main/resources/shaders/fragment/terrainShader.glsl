@@ -5,17 +5,20 @@ const int PCF_COUNT = ${shadow.pcf.count};
 const float TOTAL_TEXELS = (PCF_COUNT * 2.0 + 1.0) * (PCF_COUNT * 2.0 + 1.0);
 const float POINT_SHADOW_FAR_PLANE = ${point.shadow.far.plane};
 
+struct Fog {
+    vec4 color;
+    float gradient;
+    float density;
+};
 struct Light {
     vec4 color;
     vec3 position;
     vec3 attenuation;
 };
-
 struct Shadow {
     float enabled;
     mat4 spaceMatrix;
 };
-
 struct PointShadow {
     float enabled;
     vec3 position;
@@ -34,7 +37,7 @@ uniform Shadow shadows[LIGHT_COUNT];
 uniform sampler2D shadowMaps[LIGHT_COUNT];
 uniform PointShadow pointShadows[LIGHT_COUNT];
 uniform samplerCube pointShadowMaps[LIGHT_COUNT];
-uniform vec4 fogColor;
+uniform Fog fog;
 
 float pointShadowCalculation(vec3 fragPos, vec3 lightPosition, samplerCube shadowCubeMap) {
     vec3 fragToLight = fragPos - lightPosition;
@@ -93,5 +96,5 @@ void main(void) {
 
     fColor = vec4(ambientLight * vColor, 1.0);
     // FINAL OUTPUT
-    fColor = mix(fogColor, fColor, vVisibility);
+    fColor = mix(fog.color, fColor, vVisibility);
 }

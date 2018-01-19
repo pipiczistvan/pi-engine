@@ -15,18 +15,20 @@ const float POINT_SHADOW_FAR_PLANE = ${point.shadow.far.plane};
 const float specularReflectivity = 0.4;
 const float shineDamper = 20.0;
 
+struct Fog {
+    vec4 color;
+    float gradient;
+    float density;
+};
 struct Light {
     vec4 color;
     vec3 position;
-    vec2 bias;
     vec3 attenuation;
 };
-
 struct Shadow {
     float enabled;
     mat4 spaceMatrix;
 };
-
 struct PointShadow {
     float enabled;
     vec3 position;
@@ -50,7 +52,7 @@ uniform samplerCube pointShadowMaps[LIGHT_COUNT];
 uniform sampler2D reflectionTexture;
 uniform sampler2D refractionTexture;
 uniform sampler2D depthTexture;
-uniform vec4 fogColor;
+uniform Fog fog;
 
 float pointShadowCalculation(vec3 fragPos, vec3 lightPosition, samplerCube shadowCubeMap) {
     vec3 fragToLight = fragPos - lightPosition;
@@ -175,6 +177,6 @@ void main(void) {
 
     vec3 finalColor = textureColor * ambientLight + specularLight;
     fColor = vec4(finalColor, clamp(waterDepth / edgeSoftness, 0.0, 1.0));
-    fColor = mix(fogColor, fColor, vVisibility);
+    fColor = mix(fog.color, fColor, vVisibility);
 
 }

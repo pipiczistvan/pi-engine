@@ -3,13 +3,6 @@ package piengine.visual.shader.domain;
 import piengine.core.base.domain.Domain;
 import piengine.core.base.exception.PIEngineException;
 import piengine.visual.shader.domain.uniform.Uniform;
-import piengine.visual.shader.domain.uniform.UniformBoolean;
-import piengine.visual.shader.domain.uniform.UniformColor;
-import piengine.visual.shader.domain.uniform.UniformFloat;
-import piengine.visual.shader.domain.uniform.UniformInteger;
-import piengine.visual.shader.domain.uniform.UniformMatrix4f;
-import piengine.visual.shader.domain.uniform.UniformVector2f;
-import piengine.visual.shader.domain.uniform.UniformVector3f;
 import piengine.visual.shader.service.ShaderService;
 
 import java.lang.reflect.InvocationTargetException;
@@ -40,87 +33,6 @@ public class Shader implements Domain<ShaderDao> {
         for (Uniform uniform : uniforms) {
             uniform.initialize(this, shaderService);
         }
-    }
-
-    protected UniformVector2f[] uniformVector2fArray(final String struct, final String variable, final int count) {
-        UniformVector2f[] uniformArray = new UniformVector2f[count];
-        for (int i = 0; i < count; i++) {
-            uniformArray[i] = new UniformVector2f(this, struct + "[" + i + "]." + variable);
-        }
-
-        return uniformArray;
-    }
-
-    protected UniformVector3f[] uniformVector3fArray(final String struct, final String variable, final int count) {
-        UniformVector3f[] uniformArray = new UniformVector3f[count];
-        for (int i = 0; i < count; i++) {
-            uniformArray[i] = new UniformVector3f(this, struct + "[" + i + "]." + variable);
-        }
-
-        return uniformArray;
-    }
-
-    protected UniformColor[] uniformColorArray(final String struct, final String variable, final int count) {
-        UniformColor[] uniformArray = new UniformColor[count];
-        for (int i = 0; i < count; i++) {
-            uniformArray[i] = new UniformColor(this, struct + "[" + i + "]." + variable);
-        }
-
-        return uniformArray;
-    }
-
-    protected UniformFloat[] uniformFloatArray(final String struct, final String variable, final int count) {
-        UniformFloat[] uniformArray = new UniformFloat[count];
-        for (int i = 0; i < count; i++) {
-            uniformArray[i] = new UniformFloat(this, struct + "[" + i + "]." + variable);
-        }
-
-        return uniformArray;
-    }
-
-    protected UniformBoolean[] uniformBooleanArray(final String struct, final String variable, final int count) {
-        UniformBoolean[] uniformArray = new UniformBoolean[count];
-        for (int i = 0; i < count; i++) {
-            uniformArray[i] = new UniformBoolean(this, struct + "[" + i + "]." + variable);
-        }
-
-        return uniformArray;
-    }
-
-    protected UniformInteger[] uniformIntegerArray(final String struct, final String variable, final int count) {
-        UniformInteger[] uniformArray = new UniformInteger[count];
-        for (int i = 0; i < count; i++) {
-            uniformArray[i] = new UniformInteger(this, struct + "[" + i + "]." + variable);
-        }
-
-        return uniformArray;
-    }
-
-    protected UniformInteger[] uniformIntegerArray(final String variable, final int count) {
-        UniformInteger[] uniformArray = new UniformInteger[count];
-        for (int i = 0; i < count; i++) {
-            uniformArray[i] = new UniformInteger(this, variable + "[" + i + "]");
-        }
-
-        return uniformArray;
-    }
-
-    protected UniformMatrix4f[] uniformMatrix4fArray(final String struct, final String variable, final int count) {
-        UniformMatrix4f[] uniformArray = new UniformMatrix4f[count];
-        for (int i = 0; i < count; i++) {
-            uniformArray[i] = new UniformMatrix4f(this, struct + "[" + i + "]." + variable);
-        }
-
-        return uniformArray;
-    }
-
-    protected UniformMatrix4f[] uniformMatrix4fArray(final String variable, final int count) {
-        UniformMatrix4f[] uniformArray = new UniformMatrix4f[count];
-        for (int i = 0; i < count; i++) {
-            uniformArray[i] = new UniformMatrix4f(this, variable + "[" + i + "]");
-        }
-
-        return uniformArray;
     }
 
     protected void startShader() {

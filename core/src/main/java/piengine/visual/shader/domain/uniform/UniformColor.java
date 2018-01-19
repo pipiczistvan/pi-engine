@@ -5,8 +5,20 @@ import piengine.visual.shader.domain.Shader;
 
 public class UniformColor extends Uniform<Color> {
 
-    public UniformColor(final Shader shader, final String variable) {
+    private UniformColor(final Shader shader, final String variable) {
         super(shader, variable);
+    }
+
+    public static UniformColor uniformColor(final Shader shader, final String variable) {
+        return new UniformColor(shader, variable);
+    }
+
+    public static UniformColor[] uniformColor(final Shader shader, final String variable, final int count) {
+        UniformColor[] uniforms = new UniformColor[count];
+        for (int i = 0; i < count; i++) {
+            uniforms[i] = uniformColor(shader, variable + "[" + i + "]");
+        }
+        return uniforms;
     }
 
     @Override

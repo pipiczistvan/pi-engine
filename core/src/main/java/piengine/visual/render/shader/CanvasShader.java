@@ -8,11 +8,15 @@ import piengine.visual.shader.domain.uniform.UniformBoolean;
 import piengine.visual.shader.domain.uniform.UniformColor;
 import piengine.visual.shader.domain.uniform.UniformMatrix4f;
 
+import static piengine.visual.shader.domain.uniform.UniformBoolean.uniformBoolean;
+import static piengine.visual.shader.domain.uniform.UniformColor.uniformColor;
+import static piengine.visual.shader.domain.uniform.UniformMatrix4f.uniformMatrix4f;
+
 public class CanvasShader extends Shader {
 
-    private final UniformMatrix4f modelMatrix = new UniformMatrix4f(this, "modelMatrix");
-    private final UniformColor color = new UniformColor(this, "color");
-    private final UniformBoolean textureEnabled = new UniformBoolean(this, "textureEnabled");
+    private final UniformMatrix4f modelMatrix = uniformMatrix4f(this, "modelMatrix");
+    private final UniformColor color = uniformColor(this, "color");
+    private final UniformBoolean textureEnabled = uniformBoolean(this, "textureEnabled");
 
     public CanvasShader(final ShaderDao dao) {
         super(dao);

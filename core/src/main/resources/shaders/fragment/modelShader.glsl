@@ -1,5 +1,11 @@
 #version 330 core
 
+struct Fog {
+    vec4 color;
+    float gradient;
+    float density;
+};
+
 flat in vec4 vColor;
 in vec2 vTextureCoord;
 in float vVisibility;
@@ -9,7 +15,7 @@ out vec4 fColor;
 uniform sampler2D textureSampler;
 uniform float textureEnabled;
 uniform vec4 color;
-uniform vec4 fogColor;
+uniform Fog fog;
 
 void main(void) {
     // TEXTURE
@@ -17,5 +23,5 @@ void main(void) {
 
     // FINAL OUTPUT
     fColor = vColor * textureFactor * color;
-    fColor = mix(fogColor, fColor, vVisibility);
+    fColor = mix(fog.color, fColor, vVisibility);
 }

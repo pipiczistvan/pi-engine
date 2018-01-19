@@ -8,12 +8,14 @@ import piengine.visual.shader.domain.uniform.UniformMatrix4f;
 import piengine.visual.shader.domain.uniform.UniformVector3f;
 
 import static piengine.visual.pointshadow.domain.PointShadow.CAMERA_COUNT;
+import static piengine.visual.shader.domain.uniform.UniformMatrix4f.uniformMatrix4f;
+import static piengine.visual.shader.domain.uniform.UniformVector3f.uniformVector3f;
 
 public class PointShadowShader extends Shader {
 
-    private final UniformMatrix4f modelMatrix = new UniformMatrix4f(this, "modelMatrix");
-    private final UniformMatrix4f[] projectionViewMatrices = uniformMatrix4fArray("projectionViewMatrices", CAMERA_COUNT);
-    private final UniformVector3f lightPosition = new UniformVector3f(this, "lightPosition");
+    private final UniformMatrix4f modelMatrix = uniformMatrix4f(this, "modelMatrix");
+    private final UniformMatrix4f[] projectionViewMatrices = uniformMatrix4f(this, "projectionViewMatrices", CAMERA_COUNT);
+    private final UniformVector3f lightPosition = uniformVector3f(this, "lightPosition");
 
     public PointShadowShader(final ShaderDao dao) {
         super(dao);

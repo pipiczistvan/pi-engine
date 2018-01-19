@@ -8,10 +8,13 @@ import piengine.visual.shader.domain.ShaderDao;
 import piengine.visual.shader.domain.uniform.UniformColor;
 import piengine.visual.shader.domain.uniform.UniformMatrix4f;
 
+import static piengine.visual.shader.domain.uniform.UniformColor.uniformColor;
+import static piengine.visual.shader.domain.uniform.UniformMatrix4f.uniformMatrix4f;
+
 public class TextShader extends Shader {
 
-    private final UniformMatrix4f modelMatrix = new UniformMatrix4f(this, "modelMatrix");
-    private final UniformColor color = new UniformColor(this, "color");
+    private final UniformMatrix4f modelMatrix = uniformMatrix4f(this, "modelMatrix");
+    private final UniformColor color = uniformColor(this, "color");
 
     public TextShader(final ShaderDao dao) {
         super(dao);

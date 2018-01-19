@@ -23,5 +23,4 @@ abstract class Property<T> {
     }
 
     abstract T parseValue(final String property);
-
 }

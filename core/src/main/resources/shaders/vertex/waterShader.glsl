@@ -7,6 +7,11 @@ const float PI = 3.1415926535897932384626433832795;
 const float waveLength = 10.0;
 const float waveAmplitude = 0.3;
 
+struct Fog {
+    vec4 color;
+    float gradient;
+    float density;
+};
 struct Shadow {
     float enabled;
     mat4 spaceMatrix;
@@ -23,24 +28,15 @@ out float vVisibility;
 out vec4 vShadowCoords[LIGHT_COUNT];
 out vec4 vPosition;
 
-//////////////
-// UNIFORMS //
-//////////////
-// TRANSFORMATION
 uniform mat4 viewMatrix;
 uniform mat4 projectionMatrix;
-// LIGHT
 uniform Shadow shadows[LIGHT_COUNT];
-// FOG
-uniform float fogGradient;
-uniform float fogDensity;
-// CAMERA
+uniform Fog fog;
 uniform vec3 cameraPosition;
-// WAVE
 uniform float waveFactor;
 
 float calculateVisibilityFactor(float distance) {
-    float visiblity = exp(-pow(distance * fogDensity, fogGradient));
+    float visiblity = exp(-pow(distance * fog.density, fog.gradient));
     return clamp(visiblity, 0.0, 1.0);
 }
 
