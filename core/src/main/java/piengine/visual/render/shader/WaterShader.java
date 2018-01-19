@@ -5,6 +5,7 @@ import org.joml.Vector3f;
 import piengine.core.base.type.property.PropertyKeys;
 import piengine.visual.fog.Fog;
 import piengine.visual.light.domain.Light;
+import piengine.visual.pointshadow.domain.PointShadow;
 import piengine.visual.shader.domain.Shader;
 import piengine.visual.shader.domain.ShaderDao;
 import piengine.visual.shader.domain.uniform.UniformBoolean;
@@ -41,8 +42,9 @@ public class WaterShader extends Shader {
     private final UniformInteger[] shadowMaps = uniformIntegerArray("shadowMaps", LIGHT_COUNT);
     private final UniformBoolean[] shadowEnableds = uniformBooleanArray("shadows", "enabled", LIGHT_COUNT);
     private final UniformMatrix4f[] shadowSpaceMatrices = uniformMatrix4fArray("shadows", "spaceMatrix", LIGHT_COUNT);
-    private final UniformInteger pointShadowMap = new UniformInteger(this, "pointShadowMap");
-    private final UniformVector3f pointShadowPosition = new UniformVector3f(this, "pointShadowPosition");
+    private final UniformInteger[] pointShadowMaps = uniformIntegerArray("pointShadowMaps", LIGHT_COUNT);
+    private final UniformBoolean[] pointShadowEnableds = uniformBooleanArray("pointShadows", "enabled", LIGHT_COUNT);
+    private final UniformVector3f[] pointShadowPositions = uniformVector3fArray("pointShadows", "position", LIGHT_COUNT);
 
     public WaterShader(final ShaderDao dao) {
         super(dao);
@@ -68,11 +70,14 @@ public class WaterShader extends Shader {
         return this;
     }
 
-    public WaterShader loadTextureUnits(final List<Shadow> shadows) {
+    public WaterShader loadTextureUnits() {
         int textureIndex = 0;
 
-        while (textureIndex < shadows.size() && textureIndex < LIGHT_COUNT) {
-            shadowMaps[textureIndex].load(textureIndex++);
+        for (int i = 0; i < LIGHT_COUNT; i++) {
+            shadowMaps[i].load(textureIndex++);
+        }
+        for (int i = 0; i < LIGHT_COUNT; i++) {
+            pointShadowMaps[i].load(textureIndex++);
         }
         reflectionTexture.load(textureIndex++);
         refractionTexture.load(textureIndex++);
@@ -116,13 +121,20 @@ public class WaterShader extends Shader {
             }
         }
 
-        pointShadowMap.load(16);
-
         return this;
     }
 
-    public WaterShader loadPointShadowPosition(final Vector3f value) {
-        pointShadowPosition.load(value);
+    public WaterShader loadPointShadows(final List<PointShadow> pointShadows) {
+        int shadowCount = pointShadows.size();
+
+        for (int i = 0; i < LIGHT_COUNT; i++) {
+            if (i < shadowCount) {
+                pointShadowEnableds[i].load(true);
+                pointShadowPositions[i].load(pointShadows.get(i).getLight().getPosition());
+            } else {
+                pointShadowEnableds[i].load(false);
+            }
+        }
 
         return this;
     }

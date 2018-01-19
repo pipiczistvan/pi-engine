@@ -18,6 +18,11 @@ struct Shadow {
     mat4 spaceMatrix;
 };
 
+struct PointShadow {
+    float enabled;
+    vec3 position;
+};
+
 in vec4 vClipSpaceGrid;
 in vec4 vClipSpaceReal;
 in vec3 vToCameraVector;
@@ -32,22 +37,22 @@ out vec4 fColor;
 
 uniform Shadow shadows[LIGHT_COUNT];
 uniform sampler2D shadowMaps[LIGHT_COUNT];
+uniform PointShadow pointShadows[LIGHT_COUNT];
+uniform samplerCube pointShadowMaps[LIGHT_COUNT];
 uniform sampler2D reflectionTexture;
 uniform sampler2D refractionTexture;
 uniform sampler2D depthTexture;
-uniform samplerCube pointShadowMap;
-uniform vec3 pointShadowPosition;
 uniform vec4 fogColor;
 
-float pointShadowCalculation(vec3 fragPos) {
-    vec3 fragToLight = fragPos - pointShadowPosition;
+float pointShadowCalculation(vec3 fragPos, vec3 lightPosition, samplerCube shadowCubeMap) {
+    vec3 fragToLight = fragPos - lightPosition;
     float currentDepth = length(fragToLight);
     currentDepth /= POINT_SHADOW_FAR_PLANE;
     currentDepth = clamp(currentDepth, 0.0, 1.0);
 
-    float closestDepth = texture(pointShadowMap, fragToLight).r;
+    float closestDepth = texture(shadowCubeMap, fragToLight).r;
 
-    return currentDepth > closestDepth ? 0.6 : 0.0;
+    return currentDepth > closestDepth ? 1.0 : 0.0;
 }
 
 vec3 calculateMurkiness(vec3 refractColor, float waterDepth) {
@@ -119,8 +124,13 @@ void main(void) {
         }
     }
 
-    float pointShadowFactor = pointShadowCalculation(vPosition.xyz);
-    finalColor *= (1 - pointShadowFactor);
+    for (int i = 0; i < LIGHT_COUNT; i++) {
+        if (pointShadows[i].enabled > 0.5) {
+            float pointShadowFactor = pointShadowCalculation(vPosition.xyz, pointShadows[i].position, pointShadowMaps[i]);
+            float lightFactor = max(1.0 - pointShadowFactor, 0.4);
+            finalColor *= lightFactor;
+        }
+    }
 
     fColor = vec4(finalColor, clamp(waterDepth / edgeSoftness, 0.0, 1.0));
     fColor = mix(fogColor, fColor, vVisibility);
