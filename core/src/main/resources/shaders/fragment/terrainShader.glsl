@@ -18,6 +18,7 @@ struct Light {
 struct Shadow {
     float enabled;
     mat4 spaceMatrix;
+    int mapSize;
 };
 struct PointShadow {
     float enabled;
@@ -39,7 +40,23 @@ uniform PointShadow pointShadows[LIGHT_COUNT];
 uniform samplerCube pointShadowMaps[LIGHT_COUNT];
 uniform Fog fog;
 
-float pointShadowCalculation(vec3 fragPos, vec3 lightPosition, samplerCube shadowCubeMap) {
+float calculateShadow(vec4 shadowCoords, sampler2D shadowMap, int mapSize) {
+    float texelSize = 1.0 / mapSize;
+    float total = 0.0;
+
+    for (int x = -PCF_COUNT; x <= PCF_COUNT; x++) {
+        for (int y = -PCF_COUNT; y <= PCF_COUNT; y++) {
+            float objectNearestToLight = texture(shadowMap, shadowCoords.xy + vec2(x, y) * texelSize).r;
+            if (shadowCoords.z > objectNearestToLight) {
+                total += 1.0;
+            }
+        }
+    }
+    total /= TOTAL_TEXELS;
+    return total * shadowCoords.w;
+}
+
+float calculatePointShadow(vec3 fragPos, vec3 lightPosition, samplerCube shadowCubeMap) {
     vec3 fragToLight = fragPos - lightPosition;
     float currentDepth = length(fragToLight);
     currentDepth /= POINT_SHADOW_FAR_PLANE;
@@ -50,7 +67,7 @@ float pointShadowCalculation(vec3 fragPos, vec3 lightPosition, samplerCube shado
     return currentDepth > closestDepth ? 1.0 : 0.0;
 }
 
-vec3 calculateAmbientLight(Light light, vec3 vertexPosition, vec3 vertexNormal, float shadowFactor) {
+vec3 calculateDiffuseLight(Light light, vec3 vertexPosition, vec3 vertexNormal, float shadowFactor) {
     vec3 toLightVector = light.position - vertexPosition;
     float distance = length(toLightVector);
     float attenuationFactor = light.attenuation.x +
@@ -64,37 +81,21 @@ vec3 calculateAmbientLight(Light light, vec3 vertexPosition, vec3 vertexNormal, 
 }
 
 void main(void) {
-    vec3 ambientLight = vec3(0);
+    vec3 diffuseLight = vec3(0);
     for(int i = 0; i < LIGHT_COUNT; i++) {
         float shadowFactor = 0;
         if (shadows[i].enabled > 0.5) {
-            float mapSize = 2048.0;
-            float texelSize = 1.0 / mapSize;
-            float total = 0.0;
-
-            for (int x = -PCF_COUNT; x <= PCF_COUNT; x++) {
-                for (int y = -PCF_COUNT; y <= PCF_COUNT; y++) {
-                    float objectNearestToLight = texture(shadowMaps[i], vShadowCoords[i].xy + vec2(x, y) * texelSize).r;
-                    if (vShadowCoords[i].z > objectNearestToLight) {
-                        total += 1.0;
-                    }
-                }
-            }
-            total /= TOTAL_TEXELS;
-            shadowFactor += total * vShadowCoords[i].w;
+            shadowFactor += calculateShadow(vShadowCoords[i], shadowMaps[i], shadows[i].mapSize);
         }
-
         if (pointShadows[i].enabled > 0.5) {
-            float pointShadowFactor = pointShadowCalculation(vPosition, pointShadows[i].position, pointShadowMaps[i]);
-            shadowFactor += pointShadowFactor;
+            shadowFactor += calculatePointShadow(vPosition, pointShadows[i].position, pointShadowMaps[i]);
         }
-
         shadowFactor = min(shadowFactor, 0.8);
 
-        ambientLight += calculateAmbientLight(lights[i], vPosition, vNormal, shadowFactor);
+        diffuseLight += calculateDiffuseLight(lights[i], vPosition, vNormal, shadowFactor);
     }
 
-    fColor = vec4(ambientLight * vColor, 1.0);
+    fColor = vec4(diffuseLight * vColor, 1.0);
     // FINAL OUTPUT
     fColor = mix(fog.color, fColor, vVisibility);
 }

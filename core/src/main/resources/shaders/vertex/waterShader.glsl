@@ -1,8 +1,8 @@
 #version 330 core
 
 const int LIGHT_COUNT = ${light.count};
-const float SHADOW_DISTANCE = 30.0;
-const float TRANSITION_DISTANCE = 5.0;
+const float SHADOW_DISTANCE = ${shadow.distance};
+const float SHADOW_TRANSITION_DISTANCE = 5.0;
 const float PI = 3.1415926535897932384626433832795;
 const float waveLength = 10.0;
 const float waveAmplitude = 0.3;
@@ -15,6 +15,7 @@ struct Fog {
 struct Shadow {
     float enabled;
     mat4 spaceMatrix;
+    int mapSize;
 };
 
 layout (location = 0) in vec3 Position;
@@ -40,7 +41,7 @@ float calculateVisibilityFactor(float distance) {
     return clamp(visiblity, 0.0, 1.0);
 }
 
-vec3 calcNormal(vec3 vertex0, vec3 vertex1, vec3 vertex2){
+vec3 calculateNormal(vec3 vertex0, vec3 vertex1, vec3 vertex2){
 	vec3 tangent = vertex1 - vertex0;
 	vec3 bitangent = vertex2 - vertex0;
 	return cross(tangent, bitangent);
@@ -79,13 +80,13 @@ void main(void) {
 
     float distance = length(viewPosition);
 
-    vNormal = normalize(calcNormal(worldPosition.xyz, worldNeighbourPosition1.xyz, worldNeighbourPosition2.xyz));
+    vNormal = normalize(calculateNormal(worldPosition.xyz, worldNeighbourPosition1.xyz, worldNeighbourPosition2.xyz));
     vToCameraVector = normalize(cameraPosition - worldPosition.xyz);
     vVisibility = calculateVisibilityFactor(distance);
     vPosition = worldPosition;
 
-    distance = distance - (SHADOW_DISTANCE - TRANSITION_DISTANCE);
-    distance = distance / TRANSITION_DISTANCE;
+    distance = distance - (SHADOW_DISTANCE - SHADOW_TRANSITION_DISTANCE);
+    distance = distance / SHADOW_TRANSITION_DISTANCE;
     for (int i = 0; i < LIGHT_COUNT; i++) {
         vShadowCoords[i] = shadows[i].spaceMatrix * worldPosition;
         vShadowCoords[i].w = clamp(1.0 - distance, 0.0, 1.0);

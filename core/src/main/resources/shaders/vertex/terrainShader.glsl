@@ -12,6 +12,7 @@ struct Fog {
 struct Shadow {
     float enabled;
     mat4 spaceMatrix;
+    int mapSize;
 };
 
 layout (location = 0) in vec3 Position;
