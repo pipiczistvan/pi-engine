@@ -6,14 +6,12 @@ import piengine.visual.framebuffer.domain.Framebuffer;
 
 public class Water implements Domain<WaterDao> {
 
-    private final WaterDao dao;
-
     public final Framebuffer reflectionBuffer;
     public final Framebuffer refractionBuffer;
     public final Vector3f position;
     public final Vector3f rotation;
     public final Vector3f scale;
-
+    private final WaterDao dao;
     public float waveFactor = 0;
 
     public Water(final WaterDao dao, final Framebuffer reflectionBuffer, final Framebuffer refractionBuffer, final Vector3f position, final Vector3f rotation, final Vector3f scale) {

@@ -2,7 +2,11 @@ package piengine.core.engine.service;
 
 import piengine.core.architecture.scene.domain.Scene;
 import piengine.core.architecture.scene.service.SceneService;
-import piengine.core.base.api.*;
+import piengine.core.base.api.Initializable;
+import piengine.core.base.api.Renderable;
+import piengine.core.base.api.Service;
+import piengine.core.base.api.Terminatable;
+import piengine.core.base.api.Updatable;
 import piengine.core.time.service.TimeService;
 import piengine.visual.window.service.WindowService;
 import puppeteer.annotation.premade.Component;
@@ -11,7 +15,9 @@ import puppeteer.annotation.premade.Wire;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static piengine.visual.window.domain.WindowEventType.*;
+import static piengine.visual.window.domain.WindowEventType.CLOSE;
+import static piengine.visual.window.domain.WindowEventType.INITIALIZE;
+import static piengine.visual.window.domain.WindowEventType.UPDATE;
 
 @Component
 public class EngineService {
@@ -54,13 +60,16 @@ public class EngineService {
     }
 
     private void update() {
-        final double delta = timeService.getDelta();
-
-        updatableServices.forEach(u -> u.update(delta));
+        timeService.update();
 
         if (timeService.waitTimeSpent()) {
+            float delta = timeService.getDelta();
+
+            updatableServices.forEach(u -> u.update(delta));
             renderableServices.forEach(Renderable::render);
             windowService.swapBuffers();
+
+            timeService.frameUpdated();
         }
     }
 

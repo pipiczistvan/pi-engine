@@ -36,7 +36,7 @@ public class ShadowService extends SupplierService<ShadowKey, ShadowData, Shadow
     }
 
     @Override
-    public void update(double delta) {
+    public void update(final float delta) {
         for (Shadow shadow : getDomainValues()) {
             shadow.update(delta);
         }

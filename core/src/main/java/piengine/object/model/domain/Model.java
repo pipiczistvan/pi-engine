@@ -8,9 +8,9 @@ import piengine.visual.texture.domain.Texture;
 public class Model extends Entity {
 
     public final Mesh mesh;
+    public final boolean lightEmitter;
     public Texture texture;
     public Color color;
-    public final boolean lightEmitter;
 
     public Model(final Entity parent, final Mesh mesh, final Texture texture, final Color color, final boolean lightEmitter) {
         super(parent);

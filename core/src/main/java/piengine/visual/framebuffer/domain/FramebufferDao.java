@@ -25,7 +25,7 @@ public class FramebufferDao extends TextureDao {
     }
 
     public int getAttachment(final FramebufferAttachment attachment) {
-         return attachments.get(attachment);
+        return attachments.get(attachment);
     }
 
     @Override

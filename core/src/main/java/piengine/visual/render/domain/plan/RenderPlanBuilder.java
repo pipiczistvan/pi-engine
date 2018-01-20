@@ -19,8 +19,8 @@ import static piengine.visual.render.domain.fragment.domain.RenderFragmentType.C
 
 public abstract class RenderPlanBuilder<B extends RenderPlanBuilder<B, C>, C extends PlanContext> {
 
-    private final List<RenderFragment> fragments = new ArrayList<>();
     protected final C context;
+    private final List<RenderFragment> fragments = new ArrayList<>();
 
     RenderPlanBuilder(final C context) {
         this.context = context;

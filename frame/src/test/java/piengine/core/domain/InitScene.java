@@ -143,8 +143,8 @@ public class InitScene extends Scene {
     }
 
     @Override
-    public void update(double delta) {
-        skybox.addRotation((float) (0.5f * delta));
+    public void update(final float delta) {
+        skybox.addRotation(0.5f * delta);
 
         super.update(delta);
     }

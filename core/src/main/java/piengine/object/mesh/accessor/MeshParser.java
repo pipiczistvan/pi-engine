@@ -90,8 +90,8 @@ public class MeshParser {
     }
 
     private void processVertex(final String[] vertexData, final List<Integer> indices,
-                              final List<Vector2f> textures, final float[] texturesArray,
-                              final List<Vector3f> normals, final float[] normalsArray) {
+                               final List<Vector2f> textures, final float[] texturesArray,
+                               final List<Vector3f> normals, final float[] normalsArray) {
         int currentVertexPointer = parseInt(vertexData[0]) - 1;
 
         indices.add(currentVertexPointer);

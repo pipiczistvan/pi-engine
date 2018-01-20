@@ -32,7 +32,7 @@ public class SceneService implements Service, Initializable, Updatable, Renderab
     }
 
     @Override
-    public void update(double delta) {
+    public void update(final float delta) {
         if (currentScene != null) {
             currentScene.update(delta);
         }
@@ -55,5 +55,4 @@ public class SceneService implements Service, Initializable, Updatable, Renderab
         currentScene.initialize();
         currentScene.setupRenderPlan();
     }
-
 }

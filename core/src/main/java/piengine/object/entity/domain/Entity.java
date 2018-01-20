@@ -48,15 +48,15 @@ public abstract class Entity {
         return position;
     }
 
+    public void setPosition(final Vector3f vector) {
+        setPosition(vector.x, vector.y, vector.z);
+    }
+
     public void setPosition(final float x, final float y, final float z) {
         position.set(x, y, z);
         position.add(getParentPosition());
         updateTransformation(transformation);
         children.forEach(entity -> entity.translate(x, y, z));
-    }
-
-    public void setPosition(final Vector3f vector) {
-        setPosition(vector.x, vector.y, vector.z);
     }
 
     public void translate(final float x, final float y, final float z) {
@@ -74,15 +74,15 @@ public abstract class Entity {
         return rotation;
     }
 
+    public void setRotation(final Vector3f vector) {
+        setRotation(vector.x, vector.y, vector.z);
+    }
+
     public void setRotation(final float yaw, final float pitch, final float roll) {
         rotation.set(yaw, pitch, roll);
         rotation.add(getParentRotation());
         updateTransformation(transformation);
         children.forEach(entity -> entity.rotate(yaw, pitch, roll));
-    }
-
-    public void setRotation(final Vector3f vector) {
-        setRotation(vector.x, vector.y, vector.z);
     }
 
     public void rotate(final float yaw, final float pitch, final float roll) {
@@ -100,6 +100,10 @@ public abstract class Entity {
         return scale;
     }
 
+    public void setScale(final float scale) {
+        setScale(scale, scale, scale);
+    }
+
     public void setScale(final float x, final float y, final float z) {
         scale.set(x, y, z);
         scale.mul(getParentScale());
@@ -109,10 +113,6 @@ public abstract class Entity {
 
     public void setScale(final Vector3f vector) {
         setScale(vector.x, vector.y, vector.z);
-    }
-
-    public void setScale(final float scale) {
-        setScale(scale, scale, scale);
     }
 
     public void scale(final float x, final float y, final float z) {

@@ -11,8 +11,8 @@ import piengine.visual.shader.service.ShaderService;
 
 public abstract class AbstractRenderService<S extends Shader, C extends RenderContext> implements Service, Initializable {
 
-    private final ShaderService shaderService;
     protected final RenderInterpreter renderInterpreter;
+    private final ShaderService shaderService;
     protected S shader;
     private RenderConfig renderConfig;
 

@@ -72,15 +72,15 @@ public class MapAsset extends WorldAsset<MapAssetArgument> {
     }
 
     @Override
-    public void update(final double delta) {
+    public void update(final float delta) {
         water.waveFactor += WAVE_SPEED * delta;
 
         wave += delta;
 
-        cubeModel1.translateRotate(0, (float) (Math.sin(wave) * 0.01f), 0, (float) (5f * delta), (float) (10f * delta), (float) (15f * delta));
-        cubeModel2.translateRotate(0, (float) (Math.sin(wave - 0.5) * 0.01f), 0, (float) (5f * delta), (float) (10f * delta), (float) (15f * delta));
-        cubeModel3.translateRotate(0, (float) (Math.sin(wave - 1) * 0.01f), 0, (float) (5f * delta), (float) (10f * delta), (float) (15f * delta));
-        cubeModel4.translateRotate(0, (float) (Math.sin(wave - 1.5) * 0.01f), 0, (float) (5f * delta), (float) (10f * delta), (float) (15f * delta));
+        cubeModel1.translateRotate(0, (float) (Math.sin(wave) * 0.01f), 0, 5f * delta, 10f * delta, 15f * delta);
+        cubeModel2.translateRotate(0, (float) (Math.sin(wave - 0.5) * 0.01f), 0, 5f * delta, 10f * delta, 15f * delta);
+        cubeModel3.translateRotate(0, (float) (Math.sin(wave - 1) * 0.01f), 0, 5f * delta, 10f * delta, 15f * delta);
+        cubeModel4.translateRotate(0, (float) (Math.sin(wave - 1.5) * 0.01f), 0, 5f * delta, 10f * delta, 15f * delta);
     }
 
     @Override

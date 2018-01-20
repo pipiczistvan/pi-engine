@@ -2,7 +2,6 @@ package piengine.core.time.service;
 
 import piengine.core.base.api.Initializable;
 import piengine.core.base.api.Service;
-import piengine.core.base.api.Updatable;
 import piengine.core.time.interpreter.TimeInterpreter;
 import puppeteer.annotation.premade.Component;
 import puppeteer.annotation.premade.Wire;
@@ -11,7 +10,7 @@ import static piengine.core.base.type.property.ApplicationProperties.get;
 import static piengine.core.base.type.property.PropertyKeys.TIME_FPS_CAP;
 
 @Component
-public class TimeService implements Service, Initializable, Updatable {
+public class TimeService implements Service, Initializable {
 
     private static final int FPS_CAP = get(TIME_FPS_CAP);
 
@@ -21,9 +20,8 @@ public class TimeService implements Service, Initializable, Updatable {
     private boolean waitTimeSpent;
 
     private double lastTime;
-    private double deltaTime;
 
-    private double totalDeltaTime;
+    private double delta;
     private double totalFrameTime;
 
     private int frameCount;
@@ -40,27 +38,22 @@ public class TimeService implements Service, Initializable, Updatable {
         this.waitTimeSpent = false;
 
         this.lastTime = timeInterpreter.getTime();
-        this.deltaTime = 0;
 
-        this.totalDeltaTime = 0;
+        this.delta = 0;
         this.totalFrameTime = 0;
 
         this.frameCount = 0;
         this.totalFrameCount = 0;
     }
 
-    @Override
-    public void update(double delta) {
+    public void update() {
         updateDelta(timeInterpreter.getTime());
 
-        if (totalDeltaTime < loopSlot) {
-            waitTimeSpent = false;
+        waitTimeSpent = delta >= loopSlot;
+        if (!waitTimeSpent) {
             timeInterpreter.sleep();
-        } else {
-            waitTimeSpent = true;
-            totalDeltaTime = 0;
-            frameCount++;
         }
+
         if (totalFrameTime > 1) {
             totalFrameCount = frameCount;
             frameCount = 0;
@@ -68,23 +61,27 @@ public class TimeService implements Service, Initializable, Updatable {
         }
     }
 
+    public void frameUpdated() {
+        delta = 0;
+        frameCount++;
+    }
+
     public int getFPS() {
         return totalFrameCount;
     }
 
-    public double getDelta() {
-        return deltaTime;
+    public float getDelta() {
+        return (float) delta;
     }
 
     public boolean waitTimeSpent() {
         return waitTimeSpent;
     }
 
-    private void updateDelta(double currentTime) {
-        deltaTime = currentTime - lastTime;
-        totalDeltaTime += deltaTime;
+    private void updateDelta(final double currentTime) {
+        double deltaTime = currentTime - lastTime;
+        delta += deltaTime;
         totalFrameTime += deltaTime;
         lastTime = currentTime;
     }
-
 }

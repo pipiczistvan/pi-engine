@@ -26,15 +26,12 @@ public class Shadow implements Domain<ShadowDao>, Updatable {
     private static final float SHADOW_MIN_DISTANCE = get(CAMERA_NEAR_PLANE);
     private static final Vector4f UP = new Vector4f(0, 1, 0, 0);
     private static final Vector4f FORWARD = new Vector4f(0, 0, -1, 0);
-
+    public final Framebuffer shadowMap;
+    public final Matrix4f spaceMatrix;
     private final ShadowDao dao;
     private final Camera playerCamera;
     private final Camera lightCamera;
-
     private final Light light;
-    public final Framebuffer shadowMap;
-    public final Matrix4f spaceMatrix;
-
     private float farHeight, farWidth, nearHeight, nearWidth;
     private float maxX = 0;
     private float minX = 0;
@@ -55,8 +52,15 @@ public class Shadow implements Domain<ShadowDao>, Updatable {
         calculateWidthsAndHeights();
     }
 
+    private static Matrix4f createOffset() {
+        Matrix4f offset = new Matrix4f();
+        offset.translate(new Vector3f(0.5f, 0.5f, 0.5f));
+        offset.scale(new Vector3f(0.5f, 0.5f, 0.5f));
+        return offset;
+    }
+
     @Override
-    public void update(double delta) {
+    public void update(final float delta) {
         // PROJECTION UPDATE
         Matrix4f rotation = calculateCameraRotationMatrix(playerCamera.getRotation());
         Vector4f forwardVector = new Vector4f(0, 0, 0, 1);
@@ -131,13 +135,6 @@ public class Shadow implements Domain<ShadowDao>, Updatable {
 
     public Camera getLightCamera() {
         return lightCamera;
-    }
-
-    private static Matrix4f createOffset() {
-        Matrix4f offset = new Matrix4f();
-        offset.translate(new Vector3f(0.5f, 0.5f, 0.5f));
-        offset.scale(new Vector3f(0.5f, 0.5f, 0.5f));
-        return offset;
     }
 
     private Vector3f getCenter(Matrix4f lightView) {

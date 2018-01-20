@@ -60,7 +60,7 @@ public class TerrainIndexGenerator {
     }
 
     private int storeLastRowQuad(final int topLeft, final int topRight, final int bottomLeft,
-                                 final int bottomRight, final int[] indices,final boolean rightHanded,
+                                 final int bottomRight, final int[] indices, final boolean rightHanded,
                                  int pointer) {
         pointer = storeLeftTriangle(topLeft, topRight, bottomLeft, bottomRight, indices, rightHanded, pointer);
         indices[pointer++] = bottomRight;

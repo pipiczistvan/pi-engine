@@ -7,8 +7,8 @@ import piengine.visual.render.manager.RenderManager;
 
 public abstract class RenderPlanner<T extends RenderPlan> extends Entity implements Renderable {
 
-    private T renderPlan;
     private final RenderManager renderManager;
+    private T renderPlan;
 
     public RenderPlanner(final RenderManager renderManager) {
         super(null);

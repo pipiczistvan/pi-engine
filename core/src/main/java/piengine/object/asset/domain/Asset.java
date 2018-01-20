@@ -18,7 +18,7 @@ public abstract class Asset<A extends AssetArgument, C extends RenderAssetContex
     }
 
     @Override
-    public void update(double delta) {
+    public void update(final float delta) {
     }
 
     public abstract C getAssetContext();

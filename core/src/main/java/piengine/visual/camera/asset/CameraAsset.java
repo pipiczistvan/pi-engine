@@ -22,22 +22,19 @@ import static piengine.core.input.domain.KeyEventType.RELEASE;
 
 public class CameraAsset extends Asset<CameraAssetArgument, RenderAssetContext> {
 
-    public boolean movingEnabled = true;
-    public boolean lookingEnabled = true;
-    public boolean flyingEnabled = true;
-
     private static final float GRAVITY = -100;
     private static final float JUMP_POWER = 30;
     private static final float CAMERA_HEIGHT = 3;
-
     private final Vector2f movement;
     private final Vector2f looking;
+    private final InputManager inputManager;
+    private final WindowManager windowManager;
+    public boolean movingEnabled = true;
+    public boolean lookingEnabled = true;
+    public boolean flyingEnabled = true;
     private float upwardsSpeed = 0;
     private boolean isInAir = false;
     private boolean isFlying = false;
-
-    private final InputManager inputManager;
-    private final WindowManager windowManager;
 
     @Wire
     public CameraAsset(final InputManager inputManager, final WindowManager windowManager) {
@@ -76,9 +73,9 @@ public class CameraAsset extends Asset<CameraAssetArgument, RenderAssetContext> 
     }
 
     @Override
-    public void update(final double delta) {
+    public void update(final float delta) {
         Vector3f newPosition = calculatePosition(delta);
-        Vector3f newRotation = calculateRotation();
+        Vector3f newRotation = calculateRotation(delta);
 
         setPositionRotation(newPosition, newRotation);
 
@@ -195,10 +192,10 @@ public class CameraAsset extends Asset<CameraAssetArgument, RenderAssetContext> 
         return newPosition;
     }
 
-    private Vector3f calculateRotation() {
+    private Vector3f calculateRotation(final double delta) {
         Vector3f newRotation = new Vector3f(getRotation());
 
-        newRotation.add(looking.x * arguments.lookSpeed, -looking.y * arguments.lookSpeed, 0.0f);
+        newRotation.add(looking.x * arguments.lookSpeed * (float) delta, -looking.y * arguments.lookSpeed * (float) delta, 0.0f);
 
         if (newRotation.x > 360) {
             newRotation.sub(360, 0, 0);

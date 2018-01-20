@@ -19,8 +19,6 @@ import java.util.List;
 
 public class RenderWorldPlanContext implements PlanContext, RenderContext {
 
-    public PointShadow currentPointShadow;
-
     public final List<Model> models;
     public final List<Terrain> terrains;
     public final List<Water> waters;
@@ -29,9 +27,10 @@ public class RenderWorldPlanContext implements PlanContext, RenderContext {
     public final List<PointShadow> pointShadows;
     public final Vector4f clippingPlane;
     public final Vector2i viewport;
-    public Camera camera;
     public final Fog fog;
     public final Skybox skybox;
+    public PointShadow currentPointShadow;
+    public Camera camera;
 
     public RenderWorldPlanContext(final Vector4f clippingPlane, final Vector2i viewport, final Camera camera, final Fog fog, final Skybox skybox) {
         this.models = new ArrayList<>();

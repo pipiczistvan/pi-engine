@@ -19,6 +19,44 @@ public class TextAccessor {
     private static final double MAX_WIDTH = 1;
     private static final double MAX_HEIGHT = 1;
 
+    private static void addVertices(final List<Float> vertices, final double x, final double y, final double maxX, final double maxY) {
+        vertices.add((float) x);
+        vertices.add((float) y);
+        vertices.add((float) x);
+        vertices.add((float) maxY);
+        vertices.add((float) maxX);
+        vertices.add((float) maxY);
+        vertices.add((float) maxX);
+        vertices.add((float) maxY);
+        vertices.add((float) maxX);
+        vertices.add((float) y);
+        vertices.add((float) x);
+        vertices.add((float) y);
+    }
+
+    private static void addTexCoords(final List<Float> texCoords, final double x, final double y, final double maxX, final double maxY) {
+        texCoords.add((float) x);
+        texCoords.add((float) y);
+        texCoords.add((float) x);
+        texCoords.add((float) maxY);
+        texCoords.add((float) maxX);
+        texCoords.add((float) maxY);
+        texCoords.add((float) maxX);
+        texCoords.add((float) maxY);
+        texCoords.add((float) maxX);
+        texCoords.add((float) y);
+        texCoords.add((float) x);
+        texCoords.add((float) y);
+    }
+
+    private static float[] listToArray(final List<Float> listOfFloats) {
+        float[] array = new float[listOfFloats.size()];
+        for (int i = 0; i < array.length; i++) {
+            array[i] = listOfFloats.get(i);
+        }
+        return array;
+    }
+
     public TextData access(final TextConfiguration config) {
         List<Line> lines = createStructure(config);
         return createQuadVertices(config, lines);
@@ -99,44 +137,6 @@ public class TextAccessor {
         double properMaxX = (2 * maxX) - 1;
         double properMaxY = (-2 * maxY) + 1;
         addVertices(vertices, properX, properY, properMaxX, properMaxY);
-    }
-
-    private static void addVertices(final List<Float> vertices, final double x, final double y, final double maxX, final double maxY) {
-        vertices.add((float) x);
-        vertices.add((float) y);
-        vertices.add((float) x);
-        vertices.add((float) maxY);
-        vertices.add((float) maxX);
-        vertices.add((float) maxY);
-        vertices.add((float) maxX);
-        vertices.add((float) maxY);
-        vertices.add((float) maxX);
-        vertices.add((float) y);
-        vertices.add((float) x);
-        vertices.add((float) y);
-    }
-
-    private static void addTexCoords(final List<Float> texCoords, final double x, final double y, final double maxX, final double maxY) {
-        texCoords.add((float) x);
-        texCoords.add((float) y);
-        texCoords.add((float) x);
-        texCoords.add((float) maxY);
-        texCoords.add((float) maxX);
-        texCoords.add((float) maxY);
-        texCoords.add((float) maxX);
-        texCoords.add((float) maxY);
-        texCoords.add((float) maxX);
-        texCoords.add((float) y);
-        texCoords.add((float) x);
-        texCoords.add((float) y);
-    }
-
-    private static float[] listToArray(final List<Float> listOfFloats) {
-        float[] array = new float[listOfFloats.size()];
-        for (int i = 0; i < array.length; i++) {
-            array[i] = listOfFloats.get(i);
-        }
-        return array;
     }
 
 }

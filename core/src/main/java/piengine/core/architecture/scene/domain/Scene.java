@@ -44,7 +44,7 @@ public abstract class Scene extends RenderPlanner<RenderPlan> implements Initial
     }
 
     @Override
-    public void update(double delta) {
+    public void update(final float delta) {
         assets.forEach(asset -> asset.update(delta));
     }
 

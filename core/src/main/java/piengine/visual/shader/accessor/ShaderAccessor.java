@@ -18,10 +18,9 @@ import static piengine.core.base.type.property.PropertyKeys.SHADERS_LOCATION;
 @Component
 public class ShaderAccessor implements Accessor<ShaderKey, ShaderData> {
 
-    private static Pattern VARIABLE_PATTERN = Pattern.compile("\\$\\{.+}");
     private static final String ROOT = get(SHADERS_LOCATION);
     private static final String SHADER_EXT = "glsl";
-
+    private static Pattern VARIABLE_PATTERN = Pattern.compile("\\$\\{.+}");
     private final Logger logger = Logger.getLogger(getClass());
 
     private final ResourceLoader loader;

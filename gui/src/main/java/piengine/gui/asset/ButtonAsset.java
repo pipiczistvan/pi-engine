@@ -99,7 +99,7 @@ public class ButtonAsset extends Asset<ButtonAssetArgument, GuiRenderAssetContex
     }
 
     @Override
-    public void update(double delta) {
+    public void update(final float delta) {
 
     }
 

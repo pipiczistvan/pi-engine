@@ -10,9 +10,9 @@ import static piengine.core.utils.MatrixUtils.PERSPECTIVE_PROJECTION_MATRIX;
 
 public abstract class Camera extends Entity {
 
-    private final Matrix4f projection;
     public final Vector2i viewport;
     public final CameraAttribute attribute;
+    private final Matrix4f projection;
     private final ProjectionType projectionType;
 
     Camera(final Entity parent, final Vector2i viewport, final CameraAttribute attribute, final ProjectionType projectionType) {

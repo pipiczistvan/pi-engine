@@ -13,26 +13,6 @@ import java.util.List;
 
 public class WaterGridGenerator {
 
-    public WaterGrid generate(final Vector2i size, final Vector3f position, final Vector3f rotation, final Vector3f scale) {
-        Matrix4f transformation = MatrixUtils.MODEL_MATRIX(position, rotation, scale);
-
-        List<Vector3f> positionList = new ArrayList<>();
-        List<Vector4f> indicatorList = new ArrayList<>();
-
-        for (int row = 0; row < size.y; row++) {
-            for (int col = 0; col < size.x; col++) {
-                Vector3f[] cornerPos = calculateCornerPositions(transformation, col, row, size.x, size.y);
-                storeTriangle(cornerPos, positionList, indicatorList, true);
-                storeTriangle(cornerPos, positionList, indicatorList, false);
-            }
-        }
-
-        float[] positions = VectorUtils.vector3fToFloatArray(positionList);
-        float[] indicators = VectorUtils.vector4fToFloatArray(indicatorList);
-
-        return new WaterGrid(positions, indicators);
-    }
-
     private static void storeTriangle(Vector3f[] cornerPos, final List<Vector3f> positions, final List<Vector4f> indicators, boolean left) {
         int index0 = left ? 0 : 2;
         int index1 = 1;
@@ -74,5 +54,25 @@ public class WaterGridGenerator {
         vertex2Pos.sub(currentVertexPos, offset2);
 
         return new Vector4f(offset1.x, offset1.z, offset2.x, offset2.z);
+    }
+
+    public WaterGrid generate(final Vector2i size, final Vector3f position, final Vector3f rotation, final Vector3f scale) {
+        Matrix4f transformation = MatrixUtils.MODEL_MATRIX(position, rotation, scale);
+
+        List<Vector3f> positionList = new ArrayList<>();
+        List<Vector4f> indicatorList = new ArrayList<>();
+
+        for (int row = 0; row < size.y; row++) {
+            for (int col = 0; col < size.x; col++) {
+                Vector3f[] cornerPos = calculateCornerPositions(transformation, col, row, size.x, size.y);
+                storeTriangle(cornerPos, positionList, indicatorList, true);
+                storeTriangle(cornerPos, positionList, indicatorList, false);
+            }
+        }
+
+        float[] positions = VectorUtils.vector3fToFloatArray(positionList);
+        float[] indicators = VectorUtils.vector4fToFloatArray(indicatorList);
+
+        return new WaterGrid(positions, indicators);
     }
 }

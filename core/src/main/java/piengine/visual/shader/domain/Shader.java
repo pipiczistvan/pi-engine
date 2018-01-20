@@ -11,9 +11,9 @@ import java.util.List;
 
 public class Shader implements Domain<ShaderDao> {
 
-    private ShaderService shaderService;
     private final ShaderDao dao;
     private final List<Uniform> uniforms;
+    private ShaderService shaderService;
 
     public Shader(final ShaderDao dao) {
         this.dao = dao;

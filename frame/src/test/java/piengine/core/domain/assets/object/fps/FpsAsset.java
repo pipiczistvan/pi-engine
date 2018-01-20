@@ -36,7 +36,7 @@ public class FpsAsset extends GuiAsset<FpsAssetArgument> {
     }
 
     @Override
-    public void update(final double delta) {
+    public void update(final float delta) {
         textManager.update(fpsText, TextConfiguration.textConfig().withFont(font).withFontSize(2).withText("FPS: " + timeManager.getFPS()));
     }
 

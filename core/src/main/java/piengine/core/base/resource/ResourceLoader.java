@@ -38,6 +38,17 @@ public class ResourceLoader {
         this.extension = extension;
     }
 
+    private static String createFilePath(final String root, final String file, final String extension) {
+        return String.format("/%s/%s.%s", root, file, extension);
+    }
+
+    private static ByteBuffer resizeBuffer(ByteBuffer buffer, int newCapacity) {
+        ByteBuffer newBuffer = BufferUtils.createByteBuffer(newCapacity);
+        buffer.flip();
+        newBuffer.put(buffer);
+        return newBuffer;
+    }
+
     public String load(final String file) {
         StringBuilder builder = new StringBuilder();
 
@@ -62,6 +73,7 @@ public class ResourceLoader {
         if (Files.isReadable(path)) {
             try (SeekableByteChannel fc = Files.newByteChannel(path)) {
                 buffer = createByteBuffer((int) fc.size() + 1);
+                //noinspection StatementWithEmptyBody
                 while (fc.read(buffer) != -1) {
                 }
             }
@@ -110,17 +122,6 @@ public class ResourceLoader {
         }
 
         throw new PIEngineException("Could not find file: %s", f.getAbsolutePath());
-    }
-
-    private static String createFilePath(final String root, final String file, final String extension) {
-        return String.format("/%s/%s.%s", root, file, extension);
-    }
-
-    private static ByteBuffer resizeBuffer(ByteBuffer buffer, int newCapacity) {
-        ByteBuffer newBuffer = BufferUtils.createByteBuffer(newCapacity);
-        buffer.flip();
-        newBuffer.put(buffer);
-        return newBuffer;
     }
 
 }
