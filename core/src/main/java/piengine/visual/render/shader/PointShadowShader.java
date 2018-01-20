@@ -7,7 +7,7 @@ import piengine.visual.shader.domain.ShaderDao;
 import piengine.visual.shader.domain.uniform.UniformMatrix4f;
 import piengine.visual.shader.domain.uniform.UniformVector3f;
 
-import static piengine.visual.pointshadow.domain.PointShadow.CAMERA_COUNT;
+import static piengine.visual.lighting.point.shadow.domain.PointShadow.CAMERA_COUNT;
 import static piengine.visual.shader.domain.uniform.UniformMatrix4f.uniformMatrix4f;
 import static piengine.visual.shader.domain.uniform.UniformVector3f.uniformVector3f;
 

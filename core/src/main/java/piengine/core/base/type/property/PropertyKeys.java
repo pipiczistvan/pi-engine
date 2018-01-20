@@ -35,11 +35,11 @@ public class PropertyKeys {
     public static final FloatProperty CAMERA_MOVE_SPEED = new FloatProperty("camera.move.speed");
     public static final FloatProperty CAMERA_DISTANCE = new FloatProperty("camera.distance");
 
-    public static final IntegerProperty LIGHT_COUNT = new IntegerProperty("light.count");
-
-    public static final FloatProperty SHADOW_OFFSET = new FloatProperty("shadow.offset");
-    public static final FloatProperty SHADOW_DISTANCE = new FloatProperty("shadow.distance");
-    public static final IntegerProperty SHADOW_PCF_COUNT = new IntegerProperty("shadow.pcf.count");
-
-    public static final FloatProperty POINT_SHADOW_FAR_PLANE = new FloatProperty("point.shadow.far.plane");
+    public static final FloatProperty LIGHTING_SHADOW_DARKNESS = new FloatProperty("lighting.shadow.darkness");
+    public static final IntegerProperty LIGHTING_DIRECTIONAL_LIGHT_COUNT = new IntegerProperty("lighting.directional.light.count");
+    public static final FloatProperty LIGHTING_DIRECTIONAL_SHADOW_DISTANCE = new FloatProperty("lighting.directional.shadow.distance");
+    public static final FloatProperty LIGHTING_DIRECTIONAL_SHADOW_OFFSET = new FloatProperty("lighting.directional.shadow.offset");
+    public static final IntegerProperty LIGHTING_DIRECTIONAL_SHADOW_PCF_COUNT = new IntegerProperty("lighting.directional.shadow.pcf.count");
+    public static final IntegerProperty LIGHTING_POINT_LIGHT_COUNT = new IntegerProperty("lighting.point.light.count");
+    public static final FloatProperty LIGHTING_POINT_SHADOW_DISTANCE = new FloatProperty("lighting.point.shadow.distance");
 }

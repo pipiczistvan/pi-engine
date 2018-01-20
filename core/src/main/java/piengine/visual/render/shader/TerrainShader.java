@@ -5,19 +5,19 @@ import org.joml.Vector3f;
 import org.joml.Vector4f;
 import piengine.core.base.type.property.PropertyKeys;
 import piengine.visual.fog.Fog;
-import piengine.visual.light.domain.Light;
-import piengine.visual.pointshadow.domain.PointShadow;
+import piengine.visual.lighting.directional.light.domain.DirectionalLight;
+import piengine.visual.lighting.point.light.domain.PointLight;
 import piengine.visual.shader.domain.Shader;
 import piengine.visual.shader.domain.ShaderDao;
 import piengine.visual.shader.domain.uniform.UniformInteger;
 import piengine.visual.shader.domain.uniform.UniformMatrix4f;
 import piengine.visual.shader.domain.uniform.UniformVector3f;
 import piengine.visual.shader.domain.uniform.UniformVector4f;
+import piengine.visual.shader.domain.uniform.struct.UniformDirectionalLight;
+import piengine.visual.shader.domain.uniform.struct.UniformDirectionalShadow;
 import piengine.visual.shader.domain.uniform.struct.UniformFog;
-import piengine.visual.shader.domain.uniform.struct.UniformLight;
+import piengine.visual.shader.domain.uniform.struct.UniformPointLight;
 import piengine.visual.shader.domain.uniform.struct.UniformPointShadow;
-import piengine.visual.shader.domain.uniform.struct.UniformShadow;
-import piengine.visual.shadow.domain.Shadow;
 
 import java.util.List;
 
@@ -26,25 +26,28 @@ import static piengine.visual.shader.domain.uniform.UniformInteger.uniformIntege
 import static piengine.visual.shader.domain.uniform.UniformMatrix4f.uniformMatrix4f;
 import static piengine.visual.shader.domain.uniform.UniformVector3f.uniformVector3f;
 import static piengine.visual.shader.domain.uniform.UniformVector4f.uniformVector4f;
+import static piengine.visual.shader.domain.uniform.struct.UniformDirectionalLight.uniformDirectionalLight;
+import static piengine.visual.shader.domain.uniform.struct.UniformDirectionalShadow.uniformShadow;
 import static piengine.visual.shader.domain.uniform.struct.UniformFog.uniformFog;
-import static piengine.visual.shader.domain.uniform.struct.UniformLight.uniformLight;
+import static piengine.visual.shader.domain.uniform.struct.UniformPointLight.uniformPointLight;
 import static piengine.visual.shader.domain.uniform.struct.UniformPointShadow.uniformPointShadow;
-import static piengine.visual.shader.domain.uniform.struct.UniformShadow.uniformShadow;
 
 public class TerrainShader extends Shader {
 
-    private static final int LIGHT_COUNT = get(PropertyKeys.LIGHT_COUNT);
+    private static final int DIRECTIONAL_LIGHT_COUNT = get(PropertyKeys.LIGHTING_DIRECTIONAL_LIGHT_COUNT);
+    private static final int POINT_LIGHT_COUNT = get(PropertyKeys.LIGHTING_POINT_LIGHT_COUNT);
 
     private final UniformMatrix4f viewMatrix = uniformMatrix4f(this, "viewMatrix");
     private final UniformMatrix4f projectionMatrix = uniformMatrix4f(this, "projectionMatrix");
     private final UniformVector4f clippingPlane = uniformVector4f(this, "clippingPlane");
-    private final UniformFog fog = uniformFog(this, "fog");
-    private final UniformLight[] lights = uniformLight(this, "lights", LIGHT_COUNT);
-    private final UniformInteger[] shadowMaps = uniformInteger(this, "shadowMaps", LIGHT_COUNT);
-    private final UniformShadow[] shadows = uniformShadow(this, "shadows", LIGHT_COUNT);
-    private final UniformInteger[] pointShadowMaps = uniformInteger(this, "pointShadowMaps", LIGHT_COUNT);
-    private final UniformPointShadow[] pointShadows = uniformPointShadow(this, "pointShadows", LIGHT_COUNT);
     private final UniformVector3f cameraPosition = uniformVector3f(this, "cameraPosition");
+    private final UniformFog fog = uniformFog(this, "fog");
+    private final UniformDirectionalLight[] directionalLights = uniformDirectionalLight(this, "directionalLights", DIRECTIONAL_LIGHT_COUNT);
+    private final UniformInteger[] directionalShadowMaps = uniformInteger(this, "directionalShadowMaps", DIRECTIONAL_LIGHT_COUNT);
+    private final UniformDirectionalShadow[] directionalShadows = uniformShadow(this, "directionalShadows", DIRECTIONAL_LIGHT_COUNT);
+    private final UniformPointLight[] pointLights = uniformPointLight(this, "pointLights", POINT_LIGHT_COUNT);
+    private final UniformInteger[] pointShadowMaps = uniformInteger(this, "pointShadowMaps", POINT_LIGHT_COUNT);
+    private final UniformPointShadow[] pointShadows = uniformPointShadow(this, "pointShadows", POINT_LIGHT_COUNT);
 
     public TerrainShader(final ShaderDao dao) {
         super(dao);
@@ -74,12 +77,35 @@ public class TerrainShader extends Shader {
         return this;
     }
 
-    public TerrainShader loadLights(final List<Light> value) {
+    public TerrainShader loadDirectionalLights(final List<DirectionalLight> value) {
         int lightCount = value.size();
 
-        for (int i = 0; i < LIGHT_COUNT; i++) {
-            Light light = i < lightCount ? value.get(i) : new Light(null);
-            lights[i].load(light);
+        for (int i = 0; i < DIRECTIONAL_LIGHT_COUNT; i++) {
+            if (i < lightCount) {
+                DirectionalLight light = value.get(i);
+                directionalLights[i].load(light);
+                directionalShadows[i].load(light.getShadow());
+            } else {
+                directionalLights[i].load(null);
+                directionalShadows[i].load(null);
+            }
+        }
+
+        return this;
+    }
+
+    public TerrainShader loadPointLights(final List<PointLight> value) {
+        int lightCount = value.size();
+
+        for (int i = 0; i < POINT_LIGHT_COUNT; i++) {
+            if (i < lightCount) {
+                PointLight light = value.get(i);
+                pointLights[i].load(light);
+                pointShadows[i].load(light.getShadow());
+            } else {
+                pointLights[i].load(null);
+                pointShadows[i].load(null);
+            }
         }
 
         return this;
@@ -97,34 +123,13 @@ public class TerrainShader extends Shader {
         return this;
     }
 
-    public TerrainShader loadShadows(final List<Shadow> value) {
-        int shadowCount = value.size();
-        for (int i = 0; i < LIGHT_COUNT; i++) {
-            Shadow shadow = i < shadowCount ? value.get(i) : null;
-            shadows[i].load(shadow);
-        }
-
-        return this;
-    }
-
-    public TerrainShader loadPointShadows(final List<PointShadow> value) {
-        int pointShadowCount = value.size();
-        for (int i = 0; i < LIGHT_COUNT; i++) {
-            PointShadow pointShadow = i < pointShadowCount ? value.get(i) : null;
-            pointShadows[i].load(pointShadow);
-        }
-
-        return this;
-    }
-
     public TerrainShader loadTextureUnits() {
         int textureIndex = 0;
 
-        for (int i = 0; i < LIGHT_COUNT; i++) {
-            shadowMaps[i].load(textureIndex++);
+        for (int i = 0; i < DIRECTIONAL_LIGHT_COUNT; i++) {
+            directionalShadowMaps[i].load(textureIndex++);
         }
-
-        for (int i = 0; i < LIGHT_COUNT; i++) {
+        for (int i = 0; i < POINT_LIGHT_COUNT; i++) {
             pointShadowMaps[i].load(textureIndex++);
         }
 

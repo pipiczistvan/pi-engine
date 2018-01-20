@@ -4,9 +4,8 @@ import piengine.object.asset.domain.WorldAsset;
 import piengine.object.model.domain.Model;
 import piengine.object.terrain.domain.Terrain;
 import piengine.object.water.domain.Water;
-import piengine.visual.light.domain.Light;
-import piengine.visual.pointshadow.domain.PointShadow;
-import piengine.visual.shadow.domain.Shadow;
+import piengine.visual.lighting.directional.light.domain.DirectionalLight;
+import piengine.visual.lighting.point.light.domain.PointLight;
 
 import java.util.Arrays;
 
@@ -37,18 +36,13 @@ public class WorldRenderAssetContextBuilder {
         return this;
     }
 
-    public WorldRenderAssetContextBuilder loadLights(final Light... lights) {
-        this.assetContext.lights.addAll(Arrays.asList(lights));
+    public WorldRenderAssetContextBuilder loadDirectionalLights(final DirectionalLight... directionalLights) {
+        this.assetContext.directionalLights.addAll(Arrays.asList(directionalLights));
         return this;
     }
 
-    public WorldRenderAssetContextBuilder loadShadows(final Shadow... shadows) {
-        this.assetContext.shadows.addAll(Arrays.asList(shadows));
-        return this;
-    }
-
-    public WorldRenderAssetContextBuilder loadPointShadows(final PointShadow... pointShadows) {
-        this.assetContext.pointShadows.addAll(Arrays.asList(pointShadows));
+    public WorldRenderAssetContextBuilder loadPointLights(final PointLight... pointLights) {
+        this.assetContext.pointLights.addAll(Arrays.asList(pointLights));
         return this;
     }
 
@@ -64,9 +58,8 @@ public class WorldRenderAssetContextBuilder {
             this.assetContext.models.addAll(assetContext.models);
             this.assetContext.terrains.addAll(assetContext.terrains);
             this.assetContext.waters.addAll(assetContext.waters);
-            this.assetContext.lights.addAll(assetContext.lights);
-            this.assetContext.shadows.addAll(assetContext.shadows);
-            this.assetContext.pointShadows.addAll(assetContext.pointShadows);
+            this.assetContext.directionalLights.addAll(assetContext.directionalLights);
+            this.assetContext.pointLights.addAll(assetContext.pointLights);
         }
         return this;
     }

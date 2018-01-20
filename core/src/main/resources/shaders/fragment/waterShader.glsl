@@ -1,6 +1,11 @@
 #version 330 core
 
-const int LIGHT_COUNT = ${light.count};
+const float SHADOW_DARKNESS = ${lighting.shadow.darkness};
+const int DIRECTIONAL_LIGHT_COUNT = ${lighting.directional.light.count};
+const int POINT_LIGHT_COUNT = ${lighting.point.light.count};
+const int DIRECTIONAL_SHADOW_PCF_COUNT = ${lighting.directional.shadow.pcf.count};
+const float TOTAL_TEXELS = (DIRECTIONAL_SHADOW_PCF_COUNT * 2.0 + 1.0) * (DIRECTIONAL_SHADOW_PCF_COUNT * 2.0 + 1.0);
+const float POINT_SHADOW_DISTANCE = ${lighting.point.shadow.distance};
 const vec3 waterColor = vec3(0.604, 0.867, 0.851);
 const float fresnelReflective = 0.5;
 const float edgeSoftness = 2.0;
@@ -9,9 +14,6 @@ const float FAR_PLANE = ${camera.far.plane};
 const float minBlueness = 0.4;
 const float maxBlueness = 0.75;
 const float murkyDepth = 20.0;
-const int PCF_COUNT = ${shadow.pcf.count};
-const float TOTAL_TEXELS = (PCF_COUNT * 2.0 + 1.0) * (PCF_COUNT * 2.0 + 1.0);
-const float POINT_SHADOW_FAR_PLANE = ${point.shadow.far.plane};
 const float specularReflectivity = 0.4;
 const float shineDamper = 20.0;
 const vec3 sampleOffsetDirections[20] = vec3[]
@@ -28,12 +30,18 @@ struct Fog {
     float gradient;
     float density;
 };
-struct Light {
+struct DirectionalLight {
+    float enabled;
+    vec4 color;
+    vec3 position;
+};
+struct PointLight {
+    float enabled;
     vec4 color;
     vec3 position;
     vec3 attenuation;
 };
-struct Shadow {
+struct DirectionalShadow {
     float enabled;
     mat4 spaceMatrix;
     int mapSize;
@@ -48,28 +56,29 @@ in vec4 vClipSpaceReal;
 in vec3 vToCameraVector;
 flat in vec3 vNormal;
 in float vVisibility;
-in vec4 vShadowCoords[LIGHT_COUNT];
+in vec4 vShadowCoords[DIRECTIONAL_LIGHT_COUNT];
 in vec4 vPosition;
 
 out vec4 fColor;
 
-uniform Light lights[LIGHT_COUNT];
-uniform Shadow shadows[LIGHT_COUNT];
-uniform sampler2D shadowMaps[LIGHT_COUNT];
-uniform PointShadow pointShadows[LIGHT_COUNT];
-uniform samplerCube pointShadowMaps[LIGHT_COUNT];
+uniform DirectionalLight directionalLights[DIRECTIONAL_LIGHT_COUNT];
+uniform DirectionalShadow directionalShadows[DIRECTIONAL_LIGHT_COUNT];
+uniform sampler2D directionalShadowMaps[DIRECTIONAL_LIGHT_COUNT];
+uniform PointLight pointLights[POINT_LIGHT_COUNT];
+uniform PointShadow pointShadows[POINT_LIGHT_COUNT];
+uniform samplerCube pointShadowMaps[POINT_LIGHT_COUNT];
 uniform sampler2D reflectionTexture;
 uniform sampler2D refractionTexture;
 uniform sampler2D depthTexture;
 uniform Fog fog;
 uniform vec3 cameraPosition;
 
-float calculateShadow(vec4 shadowCoords, sampler2D shadowMap, int mapSize) {
+float calculateDirectionalShadow(vec4 shadowCoords, sampler2D shadowMap, int mapSize) {
     float texelSize = 1.0 / mapSize;
     float total = 0.0;
 
-    for (int x = -PCF_COUNT; x <= PCF_COUNT; x++) {
-        for (int y = -PCF_COUNT; y <= PCF_COUNT; y++) {
+    for (int x = -DIRECTIONAL_SHADOW_PCF_COUNT; x <= DIRECTIONAL_SHADOW_PCF_COUNT; x++) {
+        for (int y = -DIRECTIONAL_SHADOW_PCF_COUNT; y <= DIRECTIONAL_SHADOW_PCF_COUNT; y++) {
             float objectNearestToLight = texture(shadowMap, shadowCoords.xy + vec2(x, y) * texelSize).r;
             if (shadowCoords.z > objectNearestToLight) {
                 total += 1.0;
@@ -83,13 +92,13 @@ float calculateShadow(vec4 shadowCoords, sampler2D shadowMap, int mapSize) {
 float calculatePointShadow(vec3 fragPos, vec3 viewPosition, vec3 lightPosition, samplerCube shadowCubeMap) {
     vec3 fragToLight = fragPos - lightPosition;
     float currentDepth = length(fragToLight);
-    currentDepth /= POINT_SHADOW_FAR_PLANE;
+    currentDepth /= POINT_SHADOW_DISTANCE;
     currentDepth = clamp(currentDepth, 0.0, 1.0);
     float viewDistance = length(viewPosition - fragPos);
 
     float shadow  = 0.0;
     float samples = 20;
-    float diskRadius = (1.0 + (viewDistance / POINT_SHADOW_FAR_PLANE)) / 25.0;
+    float diskRadius = (1.0 + (viewDistance / POINT_SHADOW_DISTANCE)) / 25.0;
     for(int i = 0; i < samples; i++) {
         float closestDepth = texture(shadowCubeMap, fragToLight + sampleOffsetDirections[i] * diskRadius).r;
         if(currentDepth > closestDepth) {
@@ -130,24 +139,21 @@ vec2 clipSpaceToTextureCoords(vec4 clipSpace) {
     return clamp(texCoords, 0.002, 0.998);
 }
 
-float calculateAttenuation(Light light, vec3 vertexPosition) {
-    vec3 toLightVector = light.position - vertexPosition;
+float calculateAttenuationFactor(vec3 attenuation, vec3 lightPosition, vec3 vertexPosition) {
+    vec3 toLightVector = lightPosition - vertexPosition;
     float distance = length(toLightVector);
-    return light.attenuation.x +
-                (light.attenuation.y * distance) +
-                (light.attenuation.z * distance * distance);
+    return attenuation.x + (attenuation.y * distance) + (attenuation.z * distance * distance);
 }
 
-vec3 calculateDiffuseLight(Light light, vec3 vertexPosition, vec3 vertexNormal, float shadowFactor, float attenuation) {
-    vec3 toLightVector = light.position - vertexPosition;
+vec3 calculateLightFactor(vec3 lightPosition, vec3 lightColor, vec3 vertexPosition, vec3 vertexNormal, float shadowFactor) {
+    vec3 toLightVector = lightPosition - vertexPosition;
     float nDot1 = dot(normalize(toLightVector), vertexNormal);
     float brightness = clamp(nDot1, 0.0, 1.0 - shadowFactor);
-    vec3 lightColor = light.color.xyz;
-    return brightness * lightColor / attenuation;
+    return brightness * lightColor;
 }
 
-vec3 calculateSpecularLight(Light light, vec3 toCamVector, vec3 vertexPosition, vec3 vertexNormal, float shadowFactor, float attenuation){
-    vec3 toLightVector = light.position - vertexPosition;
+vec3 calculateSpecularFactor(vec3 lightPosition, vec3 lightColor, vec3 toCamVector, vec3 vertexPosition, vec3 vertexNormal, float shadowFactor){
+    vec3 toLightVector = lightPosition - vertexPosition;
     vec3 normal = normalize(toLightVector);
 	vec3 reflectedLightDirection = reflect(-normal, vertexNormal);
 	float specularFactor = dot(reflectedLightDirection, toCamVector);
@@ -155,7 +161,7 @@ vec3 calculateSpecularLight(Light light, vec3 toCamVector, vec3 vertexPosition, 
 	specularFactor = max(specularFactor, 0.0);
 	specularFactor = pow(specularFactor, shineDamper);
 	float brightness = 1.0 - shadowFactor;
-	return specularFactor * specularReflectivity * light.color.xyz * brightness / attenuation;
+	return specularFactor * specularReflectivity * lightColor * brightness;
 }
 
 void main(void) {
@@ -175,25 +181,35 @@ void main(void) {
 
     vec3 textureColor = mix(reflectColor, refractColor, calculateFresnel(vToCameraVector, vNormal));
 
-    vec3 ambientLight = vec3(0);
+    vec3 diffuseLight = vec3(0);
     vec3 specularLight = vec3(0);
+    for(int i = 0; i < DIRECTIONAL_LIGHT_COUNT; i++) {
+        if (directionalLights[i].enabled > 0.5) {
+            float shadowFactor = 0;
+            if (directionalShadows[i].enabled > 0.5) {
+                shadowFactor += calculateDirectionalShadow(vShadowCoords[i], directionalShadowMaps[i], directionalShadows[i].mapSize);
+            }
+            shadowFactor = min(shadowFactor, SHADOW_DARKNESS);
 
-    for (int i = 0; i < LIGHT_COUNT; i++) {
-        float shadowFactor = 0;
-        if (shadows[i].enabled > 0.5) {
-            shadowFactor += calculateShadow(vShadowCoords[i], shadowMaps[i], shadows[i].mapSize);
+            diffuseLight += calculateLightFactor(directionalLights[i].position, directionalLights[i].color.rgb, vPosition.xyz, vNormal, shadowFactor);
+            specularLight += calculateSpecularFactor(directionalLights[i].position, directionalLights[i].color.rgb, vToCameraVector, vPosition.xyz, vNormal, shadowFactor);
         }
-        if (pointShadows[i].enabled > 0.5) {
-            shadowFactor += calculatePointShadow(vPosition.xyz, cameraPosition, pointShadows[i].position, pointShadowMaps[i]);
-        }
-        shadowFactor = min(shadowFactor, 0.8);
+    }
+    for (int i = 0; i < POINT_LIGHT_COUNT; i++) {
+        if (pointLights[i].enabled > 0.5) {
+            float shadowFactor = 0;
+            if (pointShadows[i].enabled > 0.5) {
+                shadowFactor += calculatePointShadow(vPosition.xyz, cameraPosition, pointShadows[i].position, pointShadowMaps[i]);
+            }
+            shadowFactor = min(shadowFactor, SHADOW_DARKNESS);
 
-        float attenuation = calculateAttenuation(lights[i], vPosition.xyz);
-        ambientLight += calculateDiffuseLight(lights[i], vPosition.xyz, vNormal, shadowFactor, attenuation);
-        specularLight += calculateSpecularLight(lights[i], vToCameraVector, vPosition.xyz, vNormal, shadowFactor, attenuation);
+            float attenuationFactor = calculateAttenuationFactor(pointLights[i].attenuation, pointLights[i].position, vPosition.xyz);
+            diffuseLight += calculateLightFactor(pointLights[i].position, pointLights[i].color.rgb, vPosition.xyz, vNormal, shadowFactor) / attenuationFactor;
+            specularLight += calculateSpecularFactor(directionalLights[i].position, directionalLights[i].color.rgb, vToCameraVector, vPosition.xyz, vNormal, shadowFactor) / attenuationFactor;
+        }
     }
 
-    vec3 finalColor = textureColor * ambientLight + specularLight;
+    vec3 finalColor = textureColor * diffuseLight + specularLight;
     fColor = vec4(finalColor, clamp(waterDepth / edgeSoftness, 0.0, 1.0));
     fColor = mix(fog.color, fColor, vVisibility);
 

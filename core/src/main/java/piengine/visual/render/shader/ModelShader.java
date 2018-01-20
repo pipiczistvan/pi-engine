@@ -5,15 +5,17 @@ import org.joml.Vector4f;
 import piengine.core.base.type.color.Color;
 import piengine.core.base.type.property.PropertyKeys;
 import piengine.visual.fog.Fog;
-import piengine.visual.light.domain.Light;
+import piengine.visual.lighting.directional.light.domain.DirectionalLight;
+import piengine.visual.lighting.point.light.domain.PointLight;
 import piengine.visual.shader.domain.Shader;
 import piengine.visual.shader.domain.ShaderDao;
 import piengine.visual.shader.domain.uniform.UniformBoolean;
 import piengine.visual.shader.domain.uniform.UniformColor;
 import piengine.visual.shader.domain.uniform.UniformMatrix4f;
 import piengine.visual.shader.domain.uniform.UniformVector4f;
+import piengine.visual.shader.domain.uniform.struct.UniformDirectionalLight;
 import piengine.visual.shader.domain.uniform.struct.UniformFog;
-import piengine.visual.shader.domain.uniform.struct.UniformLight;
+import piengine.visual.shader.domain.uniform.struct.UniformPointLight;
 
 import java.util.List;
 
@@ -22,12 +24,14 @@ import static piengine.visual.shader.domain.uniform.UniformBoolean.uniformBoolea
 import static piengine.visual.shader.domain.uniform.UniformColor.uniformColor;
 import static piengine.visual.shader.domain.uniform.UniformMatrix4f.uniformMatrix4f;
 import static piengine.visual.shader.domain.uniform.UniformVector4f.uniformVector4f;
+import static piengine.visual.shader.domain.uniform.struct.UniformDirectionalLight.uniformDirectionalLight;
 import static piengine.visual.shader.domain.uniform.struct.UniformFog.uniformFog;
-import static piengine.visual.shader.domain.uniform.struct.UniformLight.uniformLight;
+import static piengine.visual.shader.domain.uniform.struct.UniformPointLight.uniformPointLight;
 
 public class ModelShader extends Shader {
 
-    private static final int LIGHT_COUNT = get(PropertyKeys.LIGHT_COUNT);
+    private static final int DIRECTIONAL_LIGHT_COUNT = get(PropertyKeys.LIGHTING_DIRECTIONAL_LIGHT_COUNT);
+    private static final int POINT_LIGHT_COUNT = get(PropertyKeys.LIGHTING_POINT_LIGHT_COUNT);
 
     private final UniformMatrix4f modelMatrix = uniformMatrix4f(this, "modelMatrix");
     private final UniformMatrix4f viewMatrix = uniformMatrix4f(this, "viewMatrix");
@@ -37,7 +41,8 @@ public class ModelShader extends Shader {
     private final UniformVector4f clippingPlane = uniformVector4f(this, "clippingPlane");
     private final UniformBoolean lightEmitter = uniformBoolean(this, "lightEmitter");
     private final UniformFog fog = uniformFog(this, "fog");
-    private final UniformLight[] lights = uniformLight(this, "lights", LIGHT_COUNT);
+    private final UniformDirectionalLight[] directionalLights = uniformDirectionalLight(this, "directionalLights", DIRECTIONAL_LIGHT_COUNT);
+    private final UniformPointLight[] pointLights = uniformPointLight(this, "pointLights", POINT_LIGHT_COUNT);
 
     public ModelShader(final ShaderDao dao) {
         super(dao);
@@ -73,12 +78,31 @@ public class ModelShader extends Shader {
         return this;
     }
 
-    public ModelShader loadLights(final List<Light> value) {
+    public ModelShader loadDirectionalLights(final List<DirectionalLight> value) {
         int lightCount = value.size();
 
-        for (int i = 0; i < LIGHT_COUNT; i++) {
-            Light light = i < lightCount ? value.get(i) : new Light(null);
-            lights[i].load(light);
+        for (int i = 0; i < DIRECTIONAL_LIGHT_COUNT; i++) {
+            if (i < lightCount) {
+                DirectionalLight light = value.get(i);
+                directionalLights[i].load(light);
+            } else {
+                directionalLights[i].load(null);
+            }
+        }
+
+        return this;
+    }
+
+    public ModelShader loadPointLights(final List<PointLight> value) {
+        int lightCount = value.size();
+
+        for (int i = 0; i < POINT_LIGHT_COUNT; i++) {
+            if (i < lightCount) {
+                PointLight light = value.get(i);
+                pointLights[i].load(light);
+            } else {
+                pointLights[i].load(null);
+            }
         }
 
         return this;

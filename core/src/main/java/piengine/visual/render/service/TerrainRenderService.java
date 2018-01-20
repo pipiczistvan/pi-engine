@@ -1,6 +1,5 @@
 package piengine.visual.render.service;
 
-import piengine.core.base.type.property.PropertyKeys;
 import piengine.object.terrain.domain.Terrain;
 import piengine.visual.render.domain.config.RenderConfig;
 import piengine.visual.render.domain.config.RenderConfigBuilder;
@@ -15,12 +14,15 @@ import puppeteer.annotation.premade.Wire;
 
 import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
 import static piengine.core.base.type.property.ApplicationProperties.get;
+import static piengine.core.base.type.property.PropertyKeys.LIGHTING_DIRECTIONAL_LIGHT_COUNT;
+import static piengine.core.base.type.property.PropertyKeys.LIGHTING_POINT_LIGHT_COUNT;
 import static piengine.visual.render.domain.config.ProvokingVertex.FIRST_VERTEX_CONVENTION;
 
 @Component
 public class TerrainRenderService extends AbstractRenderService<TerrainShader, RenderWorldPlanContext> {
 
-    private static final int LIGHT_COUNT = get(PropertyKeys.LIGHT_COUNT);
+    private static final int DIRECTIONAL_LIGHT_COUNT = get(LIGHTING_DIRECTIONAL_LIGHT_COUNT);
+    private static final int POINT_LIGHT_COUNT = get(LIGHTING_POINT_LIGHT_COUNT);
 
     private final TextureService textureService;
 
@@ -43,28 +45,26 @@ public class TerrainRenderService extends AbstractRenderService<TerrainShader, R
         renderInterpreter.setProvokingVertex(FIRST_VERTEX_CONVENTION);
 
         shader.start()
-                .loadLights(context.lights)
-                .loadShadows(context.shadows)
-                .loadPointShadows(context.pointShadows)
+                .loadDirectionalLights(context.directionalLights)
+                .loadPointLights(context.pointLights)
                 .loadFog(context.fog)
-                .loadProjectionMatrix(context.camera.getProjection())
-                .loadViewMatrix(context.camera.getView())
+                .loadProjectionMatrix(context.currentCamera.getProjection())
+                .loadViewMatrix(context.currentCamera.getView())
+                .loadCameraPosition(context.currentCamera.getPosition())
                 .loadClippingPlane(context.clippingPlane)
-                .loadCameraPosition(context.camera.getPosition())
                 .loadTextureUnits();
 
         int textureIndex = 0;
-        for (int i = 0; i < LIGHT_COUNT; i++) {
-            if (i < context.shadows.size()) {
-                textureService.bind(GL_TEXTURE0 + textureIndex++, context.shadows.get(i).shadowMap);
+        for (int i = 0; i < DIRECTIONAL_LIGHT_COUNT; i++) {
+            if (i < context.directionalLights.size() && context.directionalLights.get(i).getShadow() != null) {
+                textureService.bind(GL_TEXTURE0 + textureIndex++, context.directionalLights.get(i).getShadow().getShadowMap());
             } else {
                 textureService.bind(GL_TEXTURE0 + textureIndex++, -1);
             }
         }
-
-        for (int i = 0; i < LIGHT_COUNT; i++) {
-            if (i < context.pointShadows.size()) {
-                textureService.bindCubeMap(GL_TEXTURE0 + textureIndex++, context.pointShadows.get(i).getShadowMap());
+        for (int i = 0; i < POINT_LIGHT_COUNT; i++) {
+            if (i < context.pointLights.size() && context.pointLights.get(i).getShadow() != null) {
+                textureService.bindCubeMap(GL_TEXTURE0 + textureIndex++, context.pointLights.get(i).getShadow().getShadowMap());
             } else {
                 textureService.bindCubeMap(GL_TEXTURE0 + textureIndex++, -1);
             }

@@ -39,10 +39,11 @@ public class ModelRenderService extends AbstractRenderService<ModelShader, Rende
         renderInterpreter.setProvokingVertex(FIRST_VERTEX_CONVENTION);
 
         shader.start()
-                .loadLights(context.lights)
+                .loadDirectionalLights(context.directionalLights)
+                .loadPointLights(context.pointLights)
                 .loadFog(context.fog)
-                .loadProjectionMatrix(context.camera.getProjection())
-                .loadViewMatrix(context.camera.getView())
+                .loadProjectionMatrix(context.currentCamera.getProjection())
+                .loadViewMatrix(context.currentCamera.getView())
                 .loadClippingPlane(context.clippingPlane);
 
         for (Model model : context.models) {

@@ -1,6 +1,6 @@
 package piengine.visual.shader.domain.uniform.struct;
 
-import piengine.visual.pointshadow.domain.PointShadow;
+import piengine.visual.lighting.point.shadow.domain.PointShadow;
 import piengine.visual.shader.domain.Shader;
 import piengine.visual.shader.domain.uniform.UniformBoolean;
 import piengine.visual.shader.domain.uniform.UniformVector3f;
@@ -34,7 +34,7 @@ public class UniformPointShadow extends UniformStruct<PointShadow> {
     public void load(final PointShadow value) {
         if (value != null) {
             enabled.load(true);
-            position.load(value.getLight().getPosition());
+            position.load(value.getPosition());
         } else {
             enabled.load(false);
         }

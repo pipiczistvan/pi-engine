@@ -1,9 +1,11 @@
 #version 330 core
 
-const int LIGHT_COUNT = ${light.count};
-const int PCF_COUNT = ${shadow.pcf.count};
-const float TOTAL_TEXELS = (PCF_COUNT * 2.0 + 1.0) * (PCF_COUNT * 2.0 + 1.0);
-const float POINT_SHADOW_FAR_PLANE = ${point.shadow.far.plane};
+const float SHADOW_DARKNESS = ${lighting.shadow.darkness};
+const int DIRECTIONAL_LIGHT_COUNT = ${lighting.directional.light.count};
+const int POINT_LIGHT_COUNT = ${lighting.point.light.count};
+const int DIRECTIONAL_SHADOW_PCF_COUNT = ${lighting.directional.shadow.pcf.count};
+const float TOTAL_TEXELS = (DIRECTIONAL_SHADOW_PCF_COUNT * 2.0 + 1.0) * (DIRECTIONAL_SHADOW_PCF_COUNT * 2.0 + 1.0);
+const float POINT_SHADOW_DISTANCE = ${lighting.point.shadow.distance};
 const vec3 sampleOffsetDirections[20] = vec3[]
 (
    vec3( 1,  1,  1), vec3( 1, -1,  1), vec3(-1, -1,  1), vec3(-1,  1,  1),
@@ -18,12 +20,18 @@ struct Fog {
     float gradient;
     float density;
 };
-struct Light {
+struct DirectionalLight {
+    float enabled;
+    vec4 color;
+    vec3 position;
+};
+struct PointLight {
+    float enabled;
     vec4 color;
     vec3 position;
     vec3 attenuation;
 };
-struct Shadow {
+struct DirectionalShadow {
     float enabled;
     mat4 spaceMatrix;
     int mapSize;
@@ -37,24 +45,25 @@ flat in vec3 vColor;
 flat in vec3 vNormal;
 in vec3 vPosition;
 in float vVisibility;
-in vec4 vShadowCoords[LIGHT_COUNT];
+in vec4 vShadowCoords[DIRECTIONAL_LIGHT_COUNT];
 
 out vec4 fColor;
 
-uniform Light lights[LIGHT_COUNT];
-uniform Shadow shadows[LIGHT_COUNT];
-uniform sampler2D shadowMaps[LIGHT_COUNT];
-uniform PointShadow pointShadows[LIGHT_COUNT];
-uniform samplerCube pointShadowMaps[LIGHT_COUNT];
+uniform DirectionalLight directionalLights[DIRECTIONAL_LIGHT_COUNT];
+uniform DirectionalShadow directionalShadows[DIRECTIONAL_LIGHT_COUNT];
+uniform sampler2D directionalShadowMaps[DIRECTIONAL_LIGHT_COUNT];
+uniform PointLight pointLights[POINT_LIGHT_COUNT];
+uniform PointShadow pointShadows[POINT_LIGHT_COUNT];
+uniform samplerCube pointShadowMaps[POINT_LIGHT_COUNT];
 uniform Fog fog;
 uniform vec3 cameraPosition;
 
-float calculateShadow(vec4 shadowCoords, sampler2D shadowMap, int mapSize) {
+float calculateDirectionalShadow(vec4 shadowCoords, sampler2D shadowMap, int mapSize) {
     float texelSize = 1.0 / mapSize;
     float total = 0.0;
 
-    for (int x = -PCF_COUNT; x <= PCF_COUNT; x++) {
-        for (int y = -PCF_COUNT; y <= PCF_COUNT; y++) {
+    for (int x = -DIRECTIONAL_SHADOW_PCF_COUNT; x <= DIRECTIONAL_SHADOW_PCF_COUNT; x++) {
+        for (int y = -DIRECTIONAL_SHADOW_PCF_COUNT; y <= DIRECTIONAL_SHADOW_PCF_COUNT; y++) {
             float objectNearestToLight = texture(shadowMap, shadowCoords.xy + vec2(x, y) * texelSize).r;
             if (shadowCoords.z > objectNearestToLight) {
                 total += 1.0;
@@ -68,13 +77,13 @@ float calculateShadow(vec4 shadowCoords, sampler2D shadowMap, int mapSize) {
 float calculatePointShadow(vec3 fragPos, vec3 viewPosition, vec3 lightPosition, samplerCube shadowCubeMap) {
     vec3 fragToLight = fragPos - lightPosition;
     float currentDepth = length(fragToLight);
-    currentDepth /= POINT_SHADOW_FAR_PLANE;
+    currentDepth /= POINT_SHADOW_DISTANCE;
     currentDepth = clamp(currentDepth, 0.0, 1.0);
     float viewDistance = length(viewPosition - fragPos);
 
     float shadow  = 0.0;
     float samples = 20;
-    float diskRadius = (1.0 + (viewDistance / POINT_SHADOW_FAR_PLANE)) / 25.0;
+    float diskRadius = (1.0 + (viewDistance / POINT_SHADOW_DISTANCE)) / 25.0;
     for(int i = 0; i < samples; i++) {
         float closestDepth = texture(shadowCubeMap, fragToLight + sampleOffsetDirections[i] * diskRadius).r;
         if(currentDepth > closestDepth) {
@@ -84,32 +93,43 @@ float calculatePointShadow(vec3 fragPos, vec3 viewPosition, vec3 lightPosition, 
     return shadow / samples;
 }
 
-vec3 calculateDiffuseLight(Light light, vec3 vertexPosition, vec3 vertexNormal, float shadowFactor) {
-    vec3 toLightVector = light.position - vertexPosition;
+float calculateAttenuationFactor(vec3 attenuation, vec3 lightPosition, vec3 vertexPosition) {
+    vec3 toLightVector = lightPosition - vertexPosition;
     float distance = length(toLightVector);
-    float attenuationFactor = light.attenuation.x +
-                (light.attenuation.y * distance) +
-                (light.attenuation.z * distance * distance);
+    return attenuation.x + (attenuation.y * distance) + (attenuation.z * distance * distance);
+}
 
+vec3 calculateLightFactor(vec3 lightPosition, vec3 lightColor, vec3 vertexPosition, vec3 vertexNormal, float shadowFactor) {
+    vec3 toLightVector = lightPosition - vertexPosition;
     float nDot1 = dot(normalize(toLightVector), vertexNormal);
     float brightness = clamp(nDot1, 0.0, 1.0 - shadowFactor);
-    vec3 lightColor = light.color.xyz;
-    return brightness * lightColor / attenuationFactor;
+    return brightness * lightColor;
 }
 
 void main(void) {
     vec3 diffuseLight = vec3(0);
-    for(int i = 0; i < LIGHT_COUNT; i++) {
-        float shadowFactor = 0;
-        if (shadows[i].enabled > 0.5) {
-            shadowFactor += calculateShadow(vShadowCoords[i], shadowMaps[i], shadows[i].mapSize);
-        }
-        if (pointShadows[i].enabled > 0.5) {
-            shadowFactor += calculatePointShadow(vPosition, cameraPosition, pointShadows[i].position, pointShadowMaps[i]);
-        }
-        shadowFactor = min(shadowFactor, 0.8);
+    for(int i = 0; i < DIRECTIONAL_LIGHT_COUNT; i++) {
+        if (directionalLights[i].enabled > 0.5) {
+            float shadowFactor = 0;
+            if (directionalShadows[i].enabled > 0.5) {
+                shadowFactor += calculateDirectionalShadow(vShadowCoords[i], directionalShadowMaps[i], directionalShadows[i].mapSize);
+            }
+            shadowFactor = min(shadowFactor, SHADOW_DARKNESS);
 
-        diffuseLight += calculateDiffuseLight(lights[i], vPosition, vNormal, shadowFactor);
+            diffuseLight += calculateLightFactor(directionalLights[i].position, directionalLights[i].color.rgb, vPosition, vNormal, shadowFactor);
+        }
+    }
+    for (int i = 0; i < POINT_LIGHT_COUNT; i++) {
+        if (pointLights[i].enabled > 0.5) {
+            float shadowFactor = 0;
+            if (pointShadows[i].enabled > 0.5) {
+                shadowFactor += calculatePointShadow(vPosition, cameraPosition, pointShadows[i].position, pointShadowMaps[i]);
+            }
+            shadowFactor = min(shadowFactor, SHADOW_DARKNESS);
+
+            diffuseLight += calculateLightFactor(pointLights[i].position, pointLights[i].color.rgb, vPosition, vNormal, shadowFactor) /
+                calculateAttenuationFactor(pointLights[i].attenuation, pointLights[i].position, vPosition);
+        }
     }
 
     fColor = vec4(diffuseLight * vColor, 1.0);

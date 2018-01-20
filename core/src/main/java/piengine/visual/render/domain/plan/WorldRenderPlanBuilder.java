@@ -36,9 +36,8 @@ public class WorldRenderPlanBuilder extends RenderPlanBuilder<WorldRenderPlanBui
             this.context.models.addAll(assetContext.models);
             this.context.terrains.addAll(assetContext.terrains);
             this.context.waters.addAll(assetContext.waters);
-            this.context.lights.addAll(assetContext.lights);
-            this.context.shadows.addAll(assetContext.shadows);
-            this.context.pointShadows.addAll(assetContext.pointShadows);
+            this.context.directionalLights.addAll(assetContext.directionalLights);
+            this.context.pointLights.addAll(assetContext.pointLights);
         }
         return this;
     }

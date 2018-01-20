@@ -1,7 +1,7 @@
 #version 330 core
 
-const int LIGHT_COUNT = ${light.count};
-const float SHADOW_DISTANCE = ${shadow.distance};
+const int DIRECTIONAL_LIGHT_COUNT = ${lighting.directional.light.count};
+const float DIRECTIONAL_SHADOW_DISTANCE = ${lighting.directional.shadow.distance};
 const float SHADOW_TRANSITION_DISTANCE = 5.0;
 const float PI = 3.1415926535897932384626433832795;
 const float waveLength = 10.0;
@@ -12,7 +12,7 @@ struct Fog {
     float gradient;
     float density;
 };
-struct Shadow {
+struct DirectionalShadow {
     float enabled;
     mat4 spaceMatrix;
     int mapSize;
@@ -26,12 +26,12 @@ out vec4 vClipSpaceReal;
 out vec3 vToCameraVector;
 flat out vec3 vNormal;
 out float vVisibility;
-out vec4 vShadowCoords[LIGHT_COUNT];
+out vec4 vShadowCoords[DIRECTIONAL_LIGHT_COUNT];
 out vec4 vPosition;
 
 uniform mat4 viewMatrix;
 uniform mat4 projectionMatrix;
-uniform Shadow shadows[LIGHT_COUNT];
+uniform DirectionalShadow directionalShadows[DIRECTIONAL_LIGHT_COUNT];
 uniform Fog fog;
 uniform vec3 cameraPosition;
 uniform float waveFactor;
@@ -85,10 +85,10 @@ void main(void) {
     vVisibility = calculateVisibilityFactor(distance);
     vPosition = worldPosition;
 
-    distance = distance - (SHADOW_DISTANCE - SHADOW_TRANSITION_DISTANCE);
+    distance = distance - (DIRECTIONAL_SHADOW_DISTANCE - SHADOW_TRANSITION_DISTANCE);
     distance = distance / SHADOW_TRANSITION_DISTANCE;
-    for (int i = 0; i < LIGHT_COUNT; i++) {
-        vShadowCoords[i] = shadows[i].spaceMatrix * worldPosition;
+    for (int i = 0; i < DIRECTIONAL_LIGHT_COUNT; i++) {
+        vShadowCoords[i] = directionalShadows[i].spaceMatrix * worldPosition;
         vShadowCoords[i].w = clamp(1.0 - distance, 0.0, 1.0);
     }
 }
