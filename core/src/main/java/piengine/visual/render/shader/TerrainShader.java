@@ -53,18 +53,6 @@ public class TerrainShader extends Shader {
         super(dao);
     }
 
-    public TerrainShader start() {
-        startShader();
-
-        return this;
-    }
-
-    public TerrainShader stop() {
-        stopShader();
-
-        return this;
-    }
-
     public TerrainShader loadViewMatrix(final Matrix4f value) {
         viewMatrix.load(value);
 

@@ -2,17 +2,17 @@ package piengine.visual.render.domain.fragment.domain;
 
 import org.joml.Vector2i;
 import org.joml.Vector4f;
+import piengine.object.camera.domain.Camera;
 import piengine.object.model.domain.Model;
+import piengine.object.skybox.domain.Skybox;
 import piengine.object.terrain.domain.Terrain;
 import piengine.object.water.domain.Water;
-import piengine.visual.camera.domain.Camera;
 import piengine.visual.fog.Fog;
 import piengine.visual.lighting.directional.light.domain.DirectionalLight;
 import piengine.visual.lighting.point.light.domain.PointLight;
 import piengine.visual.lighting.point.shadow.domain.PointShadow;
 import piengine.visual.render.domain.context.RenderContext;
 import piengine.visual.render.domain.plan.PlanContext;
-import piengine.visual.skybox.domain.Skybox;
 
 import java.util.ArrayList;
 import java.util.List;

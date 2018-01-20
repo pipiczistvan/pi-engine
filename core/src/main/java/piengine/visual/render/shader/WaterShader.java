@@ -55,16 +55,6 @@ public class WaterShader extends Shader {
         super(dao);
     }
 
-    public WaterShader start() {
-        startShader();
-        return this;
-    }
-
-    public WaterShader stop() {
-        stopShader();
-        return this;
-    }
-
     public WaterShader loadViewMatrix(final Matrix4f value) {
         viewMatrix.load(value);
         return this;

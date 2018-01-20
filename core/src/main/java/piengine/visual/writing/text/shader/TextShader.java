@@ -20,19 +20,6 @@ public class TextShader extends Shader {
         super(dao);
     }
 
-    public TextShader start() {
-        startShader();
-
-        return this;
-    }
-
-    public TextShader stop() {
-        stopShader();
-
-        return this;
-    }
-
-
     public TextShader loadModelMatrix(final Matrix4f value) {
         modelMatrix.load(value);
 

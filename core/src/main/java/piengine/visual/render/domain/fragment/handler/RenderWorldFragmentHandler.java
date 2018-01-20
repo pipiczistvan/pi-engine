@@ -69,7 +69,7 @@ public class RenderWorldFragmentHandler implements FragmentHandler<RenderWorldPl
                 {
                     context.currentCamera = shadow.getLightCamera();
                     context.clippingPlane.set(0, 0, 0, 0);
-                    context.viewport.set(shadow.getShadowMap().resolution);
+                    context.viewport.set(shadow.getShadowMap().getSize());
                     clearScreenRenderService.clearScreen(ColorUtils.BLACK);
                     directionalShadowRenderService.process(context);
                 }
@@ -86,7 +86,7 @@ public class RenderWorldFragmentHandler implements FragmentHandler<RenderWorldPl
                 framebufferService.bind(context.currentPointShadow.getShadowMap());
                 {
                     context.clippingPlane.set(0, 0, 0, 0);
-                    context.viewport.set(context.currentPointShadow.getShadowMap().resolution);
+                    context.viewport.set(context.currentPointShadow.getShadowMap().getSize());
                     clearScreenRenderService.clearScreen(ColorUtils.BLACK);
                     pointShadowRenderService.process(context);
                 }
@@ -109,7 +109,7 @@ public class RenderWorldFragmentHandler implements FragmentHandler<RenderWorldPl
                 context.currentCamera.translateRotate(0, -distance, 0, 0, -cameraPitch * 2, 0);
 
                 context.clippingPlane.set(0, 1, 0, -waterHeight + 0.1f);
-                context.viewport.set(water.reflectionBuffer.resolution);
+                context.viewport.set(water.reflectionBuffer.getSize());
                 clearScreenRenderService.clearScreen(ColorUtils.BLACK);
                 terrainRenderService.process(context);
                 modelRenderService.process(context);
@@ -122,7 +122,7 @@ public class RenderWorldFragmentHandler implements FragmentHandler<RenderWorldPl
             framebufferService.bind(water.refractionBuffer);
             {
                 context.clippingPlane.set(0, -1, 0, waterHeight + 1);
-                context.viewport.set(water.refractionBuffer.resolution);
+                context.viewport.set(water.refractionBuffer.getSize());
                 clearScreenRenderService.clearScreen(ColorUtils.BLACK);
                 terrainRenderService.process(context);
                 modelRenderService.process(context);

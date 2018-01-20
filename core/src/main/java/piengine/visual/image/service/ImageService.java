@@ -1,5 +1,6 @@
 package piengine.visual.image.service;
 
+import org.joml.Vector2i;
 import piengine.core.base.resource.SupplierService;
 import piengine.visual.image.accessor.ImageAccessor;
 import piengine.visual.image.domain.Image;
@@ -20,6 +21,6 @@ public class ImageService extends SupplierService<ImageKey, ImageData, ImageDao,
 
     @Override
     protected Image createDomain(final ImageDao dao, final ImageData resource) {
-        return new Image(dao);
+        return new Image(dao, new Vector2i(resource.width, resource.height));
     }
 }

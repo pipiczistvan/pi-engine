@@ -48,18 +48,6 @@ public class ModelShader extends Shader {
         super(dao);
     }
 
-    public ModelShader start() {
-        startShader();
-
-        return this;
-    }
-
-    public ModelShader stop() {
-        stopShader();
-
-        return this;
-    }
-
     public ModelShader loadModelMatrix(final Matrix4f value) {
         modelMatrix.load(value);
 

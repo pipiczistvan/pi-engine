@@ -15,18 +15,6 @@ public class DirectionalShadowShader extends Shader {
         super(dao);
     }
 
-    public DirectionalShadowShader start() {
-        startShader();
-
-        return this;
-    }
-
-    public DirectionalShadowShader stop() {
-        stopShader();
-
-        return this;
-    }
-
     public DirectionalShadowShader loadTransformationMatrix(final Matrix4f value) {
         transformationMatrix.load(value);
 

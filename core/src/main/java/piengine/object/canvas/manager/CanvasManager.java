@@ -8,6 +8,7 @@ import piengine.object.canvas.service.CanvasService;
 import piengine.object.entity.domain.Entity;
 import piengine.visual.image.domain.Image;
 import piengine.visual.image.manager.ImageManager;
+import piengine.visual.postprocessing.domain.EffectType;
 import piengine.visual.texture.domain.Texture;
 import puppeteer.annotation.premade.Component;
 import puppeteer.annotation.premade.Wire;
@@ -24,20 +25,20 @@ public class CanvasManager {
         this.imageManager = imageManager;
     }
 
-    public Canvas supply(final Entity parent, final Texture texture, final Color color) {
-        return canvasService.supply(new CanvasKey(parent, texture, color));
+    public Canvas supply(final Entity parent, final Texture texture, final Color color, final EffectType... effects) {
+        return canvasService.supply(new CanvasKey(parent, texture, color, effects));
     }
 
-    public Canvas supply(final Entity parent, final Texture texture) {
-        return supply(parent, texture, ColorUtils.WHITE);
+    public Canvas supply(final Entity parent, final Texture texture, final EffectType... effects) {
+        return supply(parent, texture, ColorUtils.WHITE, effects);
     }
 
-    public Canvas supply(final Entity parent, final String imageFile, final Color color) {
+    public Canvas supply(final Entity parent, final String imageFile, final Color color, final EffectType... effects) {
         Image image = imageManager.supply(imageFile);
-        return supply(parent, image, color);
+        return supply(parent, image, color, effects);
     }
 
-    public Canvas supply(final Entity parent, final String imageFile) {
-        return supply(parent, imageFile, ColorUtils.WHITE);
+    public Canvas supply(final Entity parent, final String imageFile, final EffectType... effects) {
+        return supply(parent, imageFile, ColorUtils.WHITE, effects);
     }
 }

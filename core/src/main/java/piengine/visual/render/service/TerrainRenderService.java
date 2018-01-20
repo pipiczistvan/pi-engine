@@ -44,8 +44,7 @@ public class TerrainRenderService extends AbstractRenderService<TerrainShader, R
         renderInterpreter.setViewport(context.viewport);
         renderInterpreter.setProvokingVertex(FIRST_VERTEX_CONVENTION);
 
-        shader.start()
-                .loadDirectionalLights(context.directionalLights)
+        shader.loadDirectionalLights(context.directionalLights)
                 .loadPointLights(context.pointLights)
                 .loadFog(context.fog)
                 .loadProjectionMatrix(context.currentCamera.getProjection())
@@ -73,8 +72,6 @@ public class TerrainRenderService extends AbstractRenderService<TerrainShader, R
         for (Terrain terrain : context.terrains) {
             draw(terrain.getDao());
         }
-
-        shader.stop();
     }
 
     @Override

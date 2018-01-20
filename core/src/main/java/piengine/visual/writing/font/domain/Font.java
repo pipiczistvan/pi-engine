@@ -7,7 +7,7 @@ public class Font extends Texture<FontDao> {
     public final FontData data;
 
     public Font(final FontDao dao, final FontData data) {
-        super(dao);
+        super(dao, null);
 
         this.data = data;
     }

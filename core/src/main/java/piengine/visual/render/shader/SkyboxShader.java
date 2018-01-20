@@ -20,18 +20,6 @@ public class SkyboxShader extends Shader {
         super(dao);
     }
 
-    public SkyboxShader start() {
-        startShader();
-
-        return this;
-    }
-
-    public SkyboxShader stop() {
-        stopShader();
-
-        return this;
-    }
-
     public SkyboxShader loadProjectionMatrix(final Matrix4f value) {
         projectionMatrix.load(value);
 

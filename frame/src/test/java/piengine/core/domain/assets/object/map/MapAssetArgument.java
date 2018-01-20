@@ -2,8 +2,8 @@ package piengine.core.domain.assets.object.map;
 
 import org.joml.Vector2i;
 import piengine.object.asset.domain.AssetArgument;
+import piengine.object.camera.domain.Camera;
 import piengine.object.terrain.domain.Terrain;
-import piengine.visual.camera.domain.Camera;
 
 public class MapAssetArgument implements AssetArgument {
 

@@ -29,18 +29,18 @@ public class Shader implements Domain<ShaderDao> {
         this.uniforms.add(uniform);
     }
 
+    public void start() {
+        shaderService.start(this);
+    }
+
+    public void stop() {
+        shaderService.stop();
+    }
+
     private void getUniformLocations() {
         for (Uniform uniform : uniforms) {
             uniform.initialize(this, shaderService);
         }
-    }
-
-    protected void startShader() {
-        shaderService.start(this);
-    }
-
-    protected void stopShader() {
-        shaderService.stop();
     }
 
     public <T extends Shader> T castTo(final Class<T> shaderClass) {

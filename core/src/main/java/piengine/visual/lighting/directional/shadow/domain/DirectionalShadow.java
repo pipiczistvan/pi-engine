@@ -6,9 +6,9 @@ import org.joml.Vector3f;
 import org.joml.Vector4f;
 import piengine.core.base.api.Updatable;
 import piengine.core.base.domain.Domain;
-import piengine.visual.camera.domain.Camera;
-import piengine.visual.camera.domain.CameraAttribute;
-import piengine.visual.camera.domain.FirstPersonCamera;
+import piengine.object.camera.domain.Camera;
+import piengine.object.camera.domain.CameraAttribute;
+import piengine.object.camera.domain.FirstPersonCamera;
 import piengine.visual.framebuffer.domain.Framebuffer;
 import piengine.visual.lighting.Light;
 import piengine.visual.lighting.Shadow;
@@ -17,7 +17,7 @@ import static piengine.core.base.type.property.ApplicationProperties.get;
 import static piengine.core.base.type.property.PropertyKeys.CAMERA_NEAR_PLANE;
 import static piengine.core.base.type.property.PropertyKeys.LIGHTING_DIRECTIONAL_SHADOW_DISTANCE;
 import static piengine.core.base.type.property.PropertyKeys.LIGHTING_DIRECTIONAL_SHADOW_OFFSET;
-import static piengine.visual.camera.domain.ProjectionType.ORTHOGRAPHIC;
+import static piengine.object.camera.domain.ProjectionType.ORTHOGRAPHIC;
 
 public class DirectionalShadow implements Shadow, Domain<DirectionalShadowDao>, Updatable {
 

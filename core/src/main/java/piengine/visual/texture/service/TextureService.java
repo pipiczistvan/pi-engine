@@ -1,7 +1,6 @@
 package piengine.visual.texture.service;
 
 import piengine.visual.texture.domain.Texture;
-import piengine.visual.texture.domain.TextureDao;
 import piengine.visual.texture.interpreter.TextureInterpreter;
 import puppeteer.annotation.premade.Component;
 import puppeteer.annotation.premade.Wire;
@@ -18,11 +17,11 @@ public class TextureService {
         this.textureInterpreter = textureInterpreter;
     }
 
-    public <T extends TextureDao> void bind(final Texture<T> texture) {
+    public void bind(final Texture texture) {
         bind(GL_TEXTURE0, texture);
     }
 
-    public <T extends TextureDao> void bind(final int textureBank, final Texture<T> texture) {
+    public void bind(final int textureBank, final Texture texture) {
         bind(textureBank, texture.getDao().getTexture());
     }
 
@@ -30,11 +29,11 @@ public class TextureService {
         textureInterpreter.bindTexture(textureBank, textureId);
     }
 
-    public <T extends TextureDao> void bindCubeMap(final Texture<T> texture) {
+    public void bindCubeMap(final Texture texture) {
         bindCubeMap(GL_TEXTURE0, texture);
     }
 
-    public <T extends TextureDao> void bindCubeMap(final int textureBank, final Texture<T> texture) {
+    public void bindCubeMap(final int textureBank, final Texture texture) {
         bindCubeMap(textureBank, texture.getDao().getTexture());
     }
 

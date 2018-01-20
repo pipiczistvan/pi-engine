@@ -1,8 +1,8 @@
 package piengine.visual.render.service;
 
 import org.joml.Matrix4f;
+import piengine.object.camera.domain.Camera;
 import piengine.object.model.domain.Model;
-import piengine.visual.camera.domain.Camera;
 import piengine.visual.lighting.point.shadow.domain.PointShadow;
 import piengine.visual.render.domain.config.RenderConfig;
 import piengine.visual.render.domain.config.RenderConfigBuilder;
@@ -40,8 +40,7 @@ public class PointShadowRenderService extends AbstractRenderService<PointShadowS
         for (int i = 0; i < CAMERA_COUNT; i++) {
             projectionViewMatrices[i] = createProjectionView(pointShadow.getCamera(i));
         }
-        shader.start()
-                .loadProjectionViewMatrices(projectionViewMatrices)
+        shader.loadProjectionViewMatrices(projectionViewMatrices)
                 .loadLightPosition(pointShadow.getPosition());
 
         for (Model model : context.models) {
@@ -50,8 +49,6 @@ public class PointShadowRenderService extends AbstractRenderService<PointShadowS
                 draw(model.mesh.getDao());
             }
         }
-
-        shader.stop();
     }
 
     @Override

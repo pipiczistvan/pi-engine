@@ -2,7 +2,7 @@ package piengine.visual.lighting.directional.shadow.domain;
 
 import org.joml.Vector2i;
 import piengine.core.base.domain.ResourceData;
-import piengine.visual.camera.domain.Camera;
+import piengine.object.camera.domain.Camera;
 
 public class DirectionalShadowData implements ResourceData {
 

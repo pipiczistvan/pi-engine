@@ -2,14 +2,14 @@ package piengine.visual.render.domain.plan;
 
 import org.joml.Vector2i;
 import piengine.core.base.type.color.Color;
-import piengine.visual.camera.domain.Camera;
+import piengine.object.camera.domain.Camera;
+import piengine.object.skybox.domain.Skybox;
 import piengine.visual.fog.Fog;
 import piengine.visual.framebuffer.domain.Framebuffer;
 import piengine.visual.render.domain.fragment.RenderFragment;
 import piengine.visual.render.domain.fragment.domain.BindFrameBufferPlanContext;
 import piengine.visual.render.domain.fragment.domain.ClearScreenPlanContext;
 import piengine.visual.render.domain.fragment.domain.RenderFragmentType;
-import piengine.visual.skybox.domain.Skybox;
 
 import java.util.ArrayList;
 import java.util.List;

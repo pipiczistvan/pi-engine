@@ -21,16 +21,6 @@ public class PointShadowShader extends Shader {
         super(dao);
     }
 
-    public PointShadowShader start() {
-        startShader();
-        return this;
-    }
-
-    public PointShadowShader stop() {
-        stopShader();
-        return this;
-    }
-
     public PointShadowShader loadModelMatrix(final Matrix4f value) {
         modelMatrix.load(value);
         return this;

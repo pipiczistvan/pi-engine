@@ -4,11 +4,11 @@ import org.joml.Vector2i;
 import org.joml.Vector4f;
 import piengine.object.asset.domain.WorldAsset;
 import piengine.object.asset.plan.WorldRenderAssetContext;
-import piengine.visual.camera.domain.Camera;
+import piengine.object.camera.domain.Camera;
+import piengine.object.skybox.domain.Skybox;
 import piengine.visual.fog.Fog;
 import piengine.visual.render.domain.fragment.domain.RenderFragmentType;
 import piengine.visual.render.domain.fragment.domain.RenderWorldPlanContext;
-import piengine.visual.skybox.domain.Skybox;
 
 import static piengine.visual.render.domain.fragment.domain.RenderFragmentType.RENDER_WORLD;
 

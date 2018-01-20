@@ -44,8 +44,7 @@ public class WaterRenderService extends AbstractRenderService<WaterShader, Rende
     protected void render(final RenderWorldPlanContext context) {
         renderInterpreter.setViewport(context.viewport);
 
-        shader.start()
-                .loadProjectionMatrix(context.currentCamera.getProjection())
+        shader.loadProjectionMatrix(context.currentCamera.getProjection())
                 .loadViewMatrix(context.currentCamera.getView())
                 .loadCameraPosition(context.currentCamera.getPosition())
                 .loadDirectionalLights(context.directionalLights)
@@ -77,8 +76,6 @@ public class WaterRenderService extends AbstractRenderService<WaterShader, Rende
 
             draw(water.getDao());
         }
-
-        shader.stop();
     }
 
     @Override

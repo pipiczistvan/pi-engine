@@ -1,5 +1,6 @@
 package piengine.visual.cubemap.service;
 
+import org.joml.Vector2i;
 import piengine.core.base.resource.SupplierService;
 import piengine.visual.cubemap.accessor.CubeMapAccessor;
 import piengine.visual.cubemap.domain.CubeMap;
@@ -20,6 +21,6 @@ public class CubeMapService extends SupplierService<CubeMapKey, CubeMapData, Cub
 
     @Override
     protected CubeMap createDomain(final CubeMapDao dao, final CubeMapData resource) {
-        return new CubeMap(dao);
+        return new CubeMap(dao, new Vector2i(resource.textureData[0].width, resource.textureData[0].height));
     }
 }

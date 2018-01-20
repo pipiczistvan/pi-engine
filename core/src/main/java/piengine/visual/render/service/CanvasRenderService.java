@@ -1,6 +1,7 @@
 package piengine.visual.render.service;
 
 import piengine.object.canvas.domain.Canvas;
+import piengine.visual.postprocessing.service.PostProcessingService;
 import piengine.visual.render.domain.config.RenderConfig;
 import piengine.visual.render.domain.config.RenderConfigBuilder;
 import piengine.visual.render.domain.fragment.domain.RenderGuiPlanContext;
@@ -18,14 +19,17 @@ import static org.lwjgl.opengl.GL11.GL_NONE;
 public class CanvasRenderService extends AbstractRenderService<CanvasShader, RenderGuiPlanContext> {
 
     private final TextureService textureService;
+    private final PostProcessingService postProcessingService;
 
     @Wire
     public CanvasRenderService(final ShaderService shaderService,
                                final TextureService textureService,
-                               final RenderInterpreter renderInterpreter) {
+                               final RenderInterpreter renderInterpreter,
+                               final PostProcessingService postProcessingService) {
         super(shaderService, renderInterpreter);
 
         this.textureService = textureService;
+        this.postProcessingService = postProcessingService;
     }
 
     @Override
@@ -37,23 +41,16 @@ public class CanvasRenderService extends AbstractRenderService<CanvasShader, Ren
     protected void render(final RenderGuiPlanContext context) {
         renderInterpreter.setViewport(context.viewport);
 
-        shader.start();
-
         for (Canvas canvas : context.canvases) {
+            canvas.effects.forEach(postProcessingService::process);
+
+            shader.start();
             shader.loadModelMatrix(canvas.getTransformation())
                     .loadColor(canvas.color);
 
-            if (canvas.texture != null) {
-                shader.loadTextureEnabled(true);
-                textureService.bind(canvas.texture);
-            } else {
-                shader.loadTextureEnabled(false);
-            }
-
+            textureService.bind(canvas.texture);
             draw(canvas.mesh.getDao());
         }
-
-        shader.stop();
     }
 
     @Override

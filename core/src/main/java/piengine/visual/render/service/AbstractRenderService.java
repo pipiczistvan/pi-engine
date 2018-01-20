@@ -30,7 +30,9 @@ public abstract class AbstractRenderService<S extends Shader, C extends RenderCo
 
     public void process(final C context) {
         preConfig();
+        shader.start();
         render(context);
+        shader.stop();
     }
 
     protected void draw(final MeshDao dao) {

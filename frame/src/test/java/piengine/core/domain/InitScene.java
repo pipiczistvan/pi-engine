@@ -15,23 +15,23 @@ import piengine.gui.asset.ButtonAsset;
 import piengine.gui.asset.ButtonAssetArgument;
 import piengine.object.asset.manager.AssetManager;
 import piengine.object.asset.plan.GuiRenderAssetContextBuilder;
+import piengine.object.camera.asset.CameraAsset;
+import piengine.object.camera.asset.CameraAssetArgument;
+import piengine.object.camera.domain.Camera;
+import piengine.object.camera.domain.CameraAttribute;
+import piengine.object.camera.domain.FirstPersonCamera;
 import piengine.object.canvas.domain.Canvas;
 import piengine.object.canvas.manager.CanvasManager;
+import piengine.object.skybox.domain.Skybox;
+import piengine.object.skybox.manager.SkyboxManager;
 import piengine.object.terrain.domain.Terrain;
 import piengine.object.terrain.manager.TerrainManager;
-import piengine.visual.camera.asset.CameraAsset;
-import piengine.visual.camera.asset.CameraAssetArgument;
-import piengine.visual.camera.domain.Camera;
-import piengine.visual.camera.domain.CameraAttribute;
-import piengine.visual.camera.domain.FirstPersonCamera;
 import piengine.visual.fog.Fog;
 import piengine.visual.framebuffer.domain.Framebuffer;
 import piengine.visual.framebuffer.manager.FramebufferManager;
 import piengine.visual.render.domain.plan.RenderPlan;
 import piengine.visual.render.domain.plan.RenderPlanBuilder;
 import piengine.visual.render.manager.RenderManager;
-import piengine.visual.skybox.domain.Skybox;
-import piengine.visual.skybox.manager.SkyboxManager;
 import piengine.visual.window.manager.WindowManager;
 import puppeteer.annotation.premade.Wire;
 
@@ -48,9 +48,10 @@ import static piengine.core.base.type.property.PropertyKeys.CAMERA_NEAR_PLANE;
 import static piengine.core.base.type.property.PropertyKeys.CAMERA_VIEWPORT_HEIGHT;
 import static piengine.core.base.type.property.PropertyKeys.CAMERA_VIEWPORT_WIDTH;
 import static piengine.core.input.domain.KeyEventType.PRESS;
-import static piengine.visual.camera.domain.ProjectionType.PERSPECTIVE;
+import static piengine.object.camera.domain.ProjectionType.PERSPECTIVE;
 import static piengine.visual.framebuffer.domain.FramebufferAttachment.COLOR_ATTACHMENT;
 import static piengine.visual.framebuffer.domain.FramebufferAttachment.RENDER_BUFFER_ATTACHMENT;
+import static piengine.visual.postprocessing.domain.EffectType.HIGH_CONTRAST_EFFECT;
 
 public class InitScene extends Scene {
 
@@ -116,7 +117,7 @@ public class InitScene extends Scene {
         lampAsset = createAsset(LampAsset.class, new LampAssetArgument());
 
         framebuffer = framebufferManager.supply(VIEWPORT, COLOR_ATTACHMENT, RENDER_BUFFER_ATTACHMENT);
-        mainCanvas = canvasManager.supply(this, framebuffer);
+        mainCanvas = canvasManager.supply(this, framebuffer, HIGH_CONTRAST_EFFECT);
 
         buttonAsset = createAsset(ButtonAsset.class, new ButtonAssetArgument(
                 "buttonDefault", "buttonHover", "buttonPress",

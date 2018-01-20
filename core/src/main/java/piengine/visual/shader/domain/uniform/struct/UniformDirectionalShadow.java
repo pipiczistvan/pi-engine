@@ -39,7 +39,7 @@ public class UniformDirectionalShadow extends UniformStruct<DirectionalShadow> {
         if (value != null) {
             enabled.load(true);
             spaceMatrix.load(value.getSpaceMatrix());
-            mapSize.load(value.getShadowMap().resolution.x);
+            mapSize.load(value.getShadowMap().getSize().x);
         } else {
             enabled.load(false);
         }

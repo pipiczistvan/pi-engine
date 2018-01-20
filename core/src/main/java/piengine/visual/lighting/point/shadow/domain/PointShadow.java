@@ -2,16 +2,16 @@ package piengine.visual.lighting.point.shadow.domain;
 
 import org.joml.Vector3f;
 import piengine.core.base.domain.Domain;
-import piengine.visual.camera.domain.Camera;
-import piengine.visual.camera.domain.CameraAttribute;
-import piengine.visual.camera.domain.FirstPersonCamera;
+import piengine.object.camera.domain.Camera;
+import piengine.object.camera.domain.CameraAttribute;
+import piengine.object.camera.domain.FirstPersonCamera;
 import piengine.visual.framebuffer.domain.Framebuffer;
 import piengine.visual.lighting.Light;
 import piengine.visual.lighting.Shadow;
 
 import static piengine.core.base.type.property.ApplicationProperties.get;
 import static piengine.core.base.type.property.PropertyKeys.LIGHTING_POINT_SHADOW_DISTANCE;
-import static piengine.visual.camera.domain.ProjectionType.PERSPECTIVE;
+import static piengine.object.camera.domain.ProjectionType.PERSPECTIVE;
 
 public class PointShadow implements Shadow, Domain<PointShadowDao> {
 
@@ -28,7 +28,7 @@ public class PointShadow implements Shadow, Domain<PointShadowDao> {
 
     public void initialize(final Light light) {
         for (int i = 0; i < lightCameras.length; i++) {
-            lightCameras[i] = new FirstPersonCamera(light, shadowMap.resolution, new CameraAttribute(90, 1, get(LIGHTING_POINT_SHADOW_DISTANCE)), PERSPECTIVE);
+            lightCameras[i] = new FirstPersonCamera(light, shadowMap.getSize(), new CameraAttribute(90, 1, get(LIGHTING_POINT_SHADOW_DISTANCE)), PERSPECTIVE);
         }
 
         lightCameras[0].setRotation(90, 0, 180); // RIGHT
