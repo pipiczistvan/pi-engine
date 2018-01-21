@@ -21,6 +21,10 @@ public class TextureService {
         bind(GL_TEXTURE0, texture);
     }
 
+    public void bind(final int textureId) {
+        bind(GL_TEXTURE0, textureId);
+    }
+
     public void bind(final int textureBank, final Texture texture) {
         bind(textureBank, texture.getDao().getTexture());
     }

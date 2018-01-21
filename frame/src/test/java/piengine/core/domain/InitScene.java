@@ -50,8 +50,8 @@ import static piengine.core.base.type.property.PropertyKeys.CAMERA_VIEWPORT_WIDT
 import static piengine.core.input.domain.KeyEventType.PRESS;
 import static piengine.object.camera.domain.ProjectionType.PERSPECTIVE;
 import static piengine.visual.framebuffer.domain.FramebufferAttachment.COLOR_ATTACHMENT;
-import static piengine.visual.framebuffer.domain.FramebufferAttachment.RENDER_BUFFER_ATTACHMENT;
-import static piengine.visual.postprocessing.domain.EffectType.BLUR_EFFECT;
+import static piengine.visual.framebuffer.domain.FramebufferAttachment.DEPTH_TEXTURE_ATTACHMENT;
+import static piengine.visual.postprocessing.domain.EffectType.DEPTH_OF_FIELD_EFFECT;
 
 public class InitScene extends Scene {
 
@@ -116,8 +116,8 @@ public class InitScene extends Scene {
 
         lampAsset = createAsset(LampAsset.class, new LampAssetArgument());
 
-        framebuffer = framebufferManager.supply(VIEWPORT, COLOR_ATTACHMENT, RENDER_BUFFER_ATTACHMENT);
-        mainCanvas = canvasManager.supply(this, framebuffer, BLUR_EFFECT);
+        framebuffer = framebufferManager.supply(VIEWPORT, COLOR_ATTACHMENT, DEPTH_TEXTURE_ATTACHMENT);
+        mainCanvas = canvasManager.supply(this, framebuffer, DEPTH_OF_FIELD_EFFECT);
 
         buttonAsset = createAsset(ButtonAsset.class, new ButtonAssetArgument(
                 "buttonDefault", "buttonHover", "buttonPress",

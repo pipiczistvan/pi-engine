@@ -21,50 +21,50 @@ import static piengine.visual.framebuffer.domain.FramebufferAttachment.COLOR_ATT
 import static piengine.visual.postprocessing.domain.EffectType.BLUR_EFFECT;
 
 @Component
-public class BlurEffectPostProcessingService extends AbstractPostProcessingService<BlurEffectShader, BlurEffectContext> {
+public class BlurEffectService extends AbstractPostProcessingService<BlurEffectShader, BlurEffectContext> {
 
     private final FramebufferService framebufferService;
     private final TextureService textureService;
-    private final HorizontalBlurEffectPostProcessingService horizontalBlurEffectPostProcessingService;
-    private VerticalBlurEffectPostProcessingService verticalBlurEffectPostProcessingService;
+    private final HorizontalBlurEffectService horizontalBlurEffectService;
+    private final VerticalBlurEffectService verticalBlurEffectService;
 
     @Wire
-    public BlurEffectPostProcessingService(final RenderInterpreter renderInterpreter, final ShaderService shaderService,
-                                           final MeshService meshService, final FramebufferService framebufferService,
-                                           final TextureService textureService, final HorizontalBlurEffectPostProcessingService horizontalBlurEffectPostProcessingService,
-                                           final VerticalBlurEffectPostProcessingService verticalBlurEffectPostProcessingService) {
+    public BlurEffectService(final RenderInterpreter renderInterpreter, final ShaderService shaderService,
+                             final MeshService meshService, final FramebufferService framebufferService,
+                             final TextureService textureService, final HorizontalBlurEffectService horizontalBlurEffectService,
+                             final VerticalBlurEffectService verticalBlurEffectService) {
         super(renderInterpreter, shaderService, meshService);
         this.framebufferService = framebufferService;
         this.textureService = textureService;
-        this.horizontalBlurEffectPostProcessingService = horizontalBlurEffectPostProcessingService;
-        this.verticalBlurEffectPostProcessingService = verticalBlurEffectPostProcessingService;
+        this.horizontalBlurEffectService = horizontalBlurEffectService;
+        this.verticalBlurEffectService = verticalBlurEffectService;
     }
 
     @Override
-    public BlurEffectContext createContext(final Texture inputTexture, final Vector2i size) {
-        Vector2i blurTextureSize = new Vector2i(size.x / 4, size.y / 4);
+    public BlurEffectContext createContext(final Texture inTexture, final Texture outTexture, final Vector2i outSize) {
+        Vector2i blurTextureSize = new Vector2i(outSize.x / 4, outSize.y / 4);
         Framebuffer framebuffer = framebufferService.supply(new FramebufferKey(
-                blurTextureSize,
-                inputTexture,
+                outSize,
+                outTexture,
                 true,
                 COLOR_ATTACHMENT
         ));
-        HorizontalBlurEffectContext horizontalBlurEffectContext = horizontalBlurEffectPostProcessingService
-                .createContext(framebuffer, blurTextureSize);
-        VerticalBlurEffectContext verticalBlurEffectContext = verticalBlurEffectPostProcessingService
-                .createContext(framebuffer, blurTextureSize);
+        HorizontalBlurEffectContext horizontalBlurEffectContext = horizontalBlurEffectService
+                .createContext(inTexture, framebuffer, blurTextureSize);
+        VerticalBlurEffectContext verticalBlurEffectContext = verticalBlurEffectService
+                .createContext(framebuffer, framebuffer, blurTextureSize);
 
-        return new BlurEffectContext(framebuffer, horizontalBlurEffectContext, verticalBlurEffectContext);
+        return new BlurEffectContext(framebuffer, framebuffer, horizontalBlurEffectContext, verticalBlurEffectContext);
     }
 
     @Override
     protected void render(final BlurEffectContext context) {
-        horizontalBlurEffectPostProcessingService.process(context.horizontalBlurEffectContext);
-        verticalBlurEffectPostProcessingService.process(context.verticalBlurEffectContext);
+        horizontalBlurEffectService.process(context.horizontalBlurEffectContext);
+        verticalBlurEffectService.process(context.verticalBlurEffectContext);
 
         framebufferService.bind(context.framebuffer);
         shader.start();
-        textureService.bind(context.framebuffer);
+        textureService.bind(context.inputTexture);
         draw();
         shader.stop();
         framebufferService.unbind();

@@ -50,7 +50,7 @@ public abstract class AbstractPostProcessingService<S extends Shader, C extends 
         renderInterpreter.unbindVertexArray();
     }
 
-    public abstract C createContext(final Texture inputTexture, final Vector2i size);
+    public abstract C createContext(final Texture inTexture, final Texture outTexture, final Vector2i outSize);
 
     protected abstract void render(final C context);
 

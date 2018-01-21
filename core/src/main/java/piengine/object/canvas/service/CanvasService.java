@@ -44,6 +44,6 @@ public class CanvasService {
                 .filter(pps -> pps.getEffectType().equals(effectType))
                 .findFirst()
                 .orElseThrow(() -> new PIEngineException("Could not find post processing service for type: %s!", effectType))
-                .createContext(texture, texture.getSize());
+                .createContext(texture, texture, texture.getSize());
     }
 }

@@ -19,37 +19,37 @@ import static piengine.visual.framebuffer.domain.FramebufferAttachment.COLOR_ATT
 import static piengine.visual.postprocessing.domain.EffectType.HIGH_CONTRAST_EFFECT;
 
 @Component
-public class HighContrastEffectPostProcessingService extends AbstractPostProcessingService<HighContrastEffectShader, HighContrastEffectContext> {
+public class HighContrastEffectService extends AbstractPostProcessingService<HighContrastEffectShader, HighContrastEffectContext> {
 
     private final FramebufferService framebufferService;
     private final TextureService textureService;
 
     @Wire
-    public HighContrastEffectPostProcessingService(final RenderInterpreter renderInterpreter, final ShaderService shaderService,
-                                                   final MeshService meshService, final FramebufferService framebufferService,
-                                                   final TextureService textureService) {
+    public HighContrastEffectService(final RenderInterpreter renderInterpreter, final ShaderService shaderService,
+                                     final MeshService meshService, final FramebufferService framebufferService,
+                                     final TextureService textureService) {
         super(renderInterpreter, shaderService, meshService);
         this.framebufferService = framebufferService;
         this.textureService = textureService;
     }
 
     @Override
-    public HighContrastEffectContext createContext(final Texture inputTexture, final Vector2i size) {
+    public HighContrastEffectContext createContext(final Texture inTexture, final Texture outTexture, final Vector2i outSize) {
         Framebuffer framebuffer = framebufferService.supply(new FramebufferKey(
-                size,
-                inputTexture,
+                outSize,
+                outTexture,
                 true,
                 COLOR_ATTACHMENT
         ));
 
-        return new HighContrastEffectContext(framebuffer);
+        return new HighContrastEffectContext(inTexture, framebuffer);
     }
 
     @Override
     protected void render(final HighContrastEffectContext context) {
         framebufferService.bind(context.framebuffer);
         shader.start();
-        textureService.bind(context.framebuffer);
+        textureService.bind(context.inputTexture);
         draw();
         shader.stop();
         framebufferService.unbind();

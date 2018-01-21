@@ -6,8 +6,8 @@ import piengine.visual.framebuffer.domain.Framebuffer;
 import piengine.visual.framebuffer.domain.FramebufferKey;
 import piengine.visual.framebuffer.service.FramebufferService;
 import piengine.visual.postprocessing.domain.EffectType;
-import piengine.visual.postprocessing.domain.context.GrayScaleEffectContext;
-import piengine.visual.postprocessing.shader.GrayScaleEffectShader;
+import piengine.visual.postprocessing.domain.context.NegativeEffectContext;
+import piengine.visual.postprocessing.shader.NegativeEffectShader;
 import piengine.visual.render.interpreter.RenderInterpreter;
 import piengine.visual.shader.service.ShaderService;
 import piengine.visual.texture.domain.Texture;
@@ -16,52 +16,52 @@ import puppeteer.annotation.premade.Component;
 import puppeteer.annotation.premade.Wire;
 
 import static piengine.visual.framebuffer.domain.FramebufferAttachment.COLOR_ATTACHMENT;
-import static piengine.visual.postprocessing.domain.EffectType.GRAY_SCALE_EFFECT;
+import static piengine.visual.postprocessing.domain.EffectType.NEGATIVE_EFFECT;
 
 @Component
-public class GrayScaleEffectPostProcessingService extends AbstractPostProcessingService<GrayScaleEffectShader, GrayScaleEffectContext> {
+public class NegativeEffectService extends AbstractPostProcessingService<NegativeEffectShader, NegativeEffectContext> {
 
     private final FramebufferService framebufferService;
     private final TextureService textureService;
 
     @Wire
-    public GrayScaleEffectPostProcessingService(final RenderInterpreter renderInterpreter, final ShaderService shaderService,
-                                                final MeshService meshService, final FramebufferService framebufferService,
-                                                final TextureService textureService) {
+    public NegativeEffectService(final RenderInterpreter renderInterpreter, final ShaderService shaderService,
+                                 final MeshService meshService, final FramebufferService framebufferService,
+                                 final TextureService textureService) {
         super(renderInterpreter, shaderService, meshService);
         this.framebufferService = framebufferService;
         this.textureService = textureService;
     }
 
     @Override
-    public GrayScaleEffectContext createContext(final Texture inputTexture, final Vector2i size) {
+    public NegativeEffectContext createContext(final Texture inTexture, final Texture outTexture, final Vector2i outSize) {
         Framebuffer framebuffer = framebufferService.supply(new FramebufferKey(
-                size,
-                inputTexture,
+                outSize,
+                outTexture,
                 true,
                 COLOR_ATTACHMENT
         ));
 
-        return new GrayScaleEffectContext(framebuffer);
+        return new NegativeEffectContext(inTexture, framebuffer);
     }
 
     @Override
-    protected void render(final GrayScaleEffectContext context) {
+    protected void render(final NegativeEffectContext context) {
         framebufferService.bind(context.framebuffer);
         shader.start();
-        textureService.bind(context.framebuffer);
+        textureService.bind(context.inputTexture);
         draw();
         shader.stop();
         framebufferService.unbind();
     }
 
     @Override
-    protected GrayScaleEffectShader createShader() {
-        return createShader("grayScaleEffectShader", GrayScaleEffectShader.class);
+    protected NegativeEffectShader createShader() {
+        return createShader("negativeEffectShader", NegativeEffectShader.class);
     }
 
     @Override
     public EffectType getEffectType() {
-        return GRAY_SCALE_EFFECT;
+        return NEGATIVE_EFFECT;
     }
 }
