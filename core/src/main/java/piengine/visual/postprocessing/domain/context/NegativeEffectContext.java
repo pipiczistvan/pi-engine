@@ -1,6 +1,7 @@
-package piengine.visual.postprocessing.domain;
+package piengine.visual.postprocessing.domain.context;
 
 import piengine.visual.framebuffer.domain.Framebuffer;
+import piengine.visual.postprocessing.domain.EffectType;
 
 import static piengine.visual.postprocessing.domain.EffectType.NEGATIVE_EFFECT;
 

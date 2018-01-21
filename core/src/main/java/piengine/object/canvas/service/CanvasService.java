@@ -7,7 +7,7 @@ import piengine.object.mesh.domain.Mesh;
 import piengine.object.mesh.domain.MeshKey;
 import piengine.object.mesh.service.MeshService;
 import piengine.visual.postprocessing.domain.EffectType;
-import piengine.visual.postprocessing.domain.PostProcessingEffectContext;
+import piengine.visual.postprocessing.domain.context.PostProcessingEffectContext;
 import piengine.visual.postprocessing.service.AbstractPostProcessingService;
 import piengine.visual.texture.domain.Texture;
 import puppeteer.annotation.premade.Component;
@@ -44,6 +44,6 @@ public class CanvasService {
                 .filter(pps -> pps.getEffectType().equals(effectType))
                 .findFirst()
                 .orElseThrow(() -> new PIEngineException("Could not find post processing service for type: %s!", effectType))
-                .createContext(texture);
+                .createContext(texture, texture.getSize());
     }
 }

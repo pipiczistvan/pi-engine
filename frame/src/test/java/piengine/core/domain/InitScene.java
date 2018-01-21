@@ -51,7 +51,7 @@ import static piengine.core.input.domain.KeyEventType.PRESS;
 import static piengine.object.camera.domain.ProjectionType.PERSPECTIVE;
 import static piengine.visual.framebuffer.domain.FramebufferAttachment.COLOR_ATTACHMENT;
 import static piengine.visual.framebuffer.domain.FramebufferAttachment.RENDER_BUFFER_ATTACHMENT;
-import static piengine.visual.postprocessing.domain.EffectType.GRAY_SCALE_EFFECT;
+import static piengine.visual.postprocessing.domain.EffectType.BLUR_EFFECT;
 
 public class InitScene extends Scene {
 
@@ -117,7 +117,7 @@ public class InitScene extends Scene {
         lampAsset = createAsset(LampAsset.class, new LampAssetArgument());
 
         framebuffer = framebufferManager.supply(VIEWPORT, COLOR_ATTACHMENT, RENDER_BUFFER_ATTACHMENT);
-        mainCanvas = canvasManager.supply(this, framebuffer, GRAY_SCALE_EFFECT);
+        mainCanvas = canvasManager.supply(this, framebuffer, BLUR_EFFECT);
 
         buttonAsset = createAsset(ButtonAsset.class, new ButtonAssetArgument(
                 "buttonDefault", "buttonHover", "buttonPress",

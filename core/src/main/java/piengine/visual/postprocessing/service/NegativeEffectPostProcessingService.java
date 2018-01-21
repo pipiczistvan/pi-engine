@@ -1,14 +1,14 @@
 package piengine.visual.postprocessing.service;
 
+import org.joml.Vector2i;
 import piengine.object.mesh.service.MeshService;
 import piengine.visual.framebuffer.domain.Framebuffer;
 import piengine.visual.framebuffer.domain.FramebufferKey;
 import piengine.visual.framebuffer.service.FramebufferService;
 import piengine.visual.postprocessing.domain.EffectType;
-import piengine.visual.postprocessing.domain.NegativeEffectContext;
+import piengine.visual.postprocessing.domain.context.NegativeEffectContext;
+import piengine.visual.postprocessing.shader.NegativeEffectShader;
 import piengine.visual.render.interpreter.RenderInterpreter;
-import piengine.visual.render.shader.NegativeEffectShader;
-import piengine.visual.shader.domain.ShaderKey;
 import piengine.visual.shader.service.ShaderService;
 import piengine.visual.texture.domain.Texture;
 import piengine.visual.texture.service.TextureService;
@@ -34,9 +34,9 @@ public class NegativeEffectPostProcessingService extends AbstractPostProcessingS
     }
 
     @Override
-    public NegativeEffectContext createContext(final Texture inputTexture) {
+    public NegativeEffectContext createContext(final Texture inputTexture, final Vector2i size) {
         Framebuffer framebuffer = framebufferService.supply(new FramebufferKey(
-                inputTexture.getSize(),
+                size,
                 inputTexture,
                 true,
                 COLOR_ATTACHMENT
@@ -56,8 +56,8 @@ public class NegativeEffectPostProcessingService extends AbstractPostProcessingS
     }
 
     @Override
-    protected NegativeEffectShader createShader(final ShaderService shaderService) {
-        return shaderService.supply(new ShaderKey("negativeEffectShader")).castTo(NegativeEffectShader.class);
+    protected NegativeEffectShader createShader() {
+        return createShader("negativeEffectShader", NegativeEffectShader.class);
     }
 
     @Override

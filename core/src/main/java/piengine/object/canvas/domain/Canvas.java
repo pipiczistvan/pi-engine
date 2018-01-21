@@ -3,7 +3,7 @@ package piengine.object.canvas.domain;
 import piengine.core.base.type.color.Color;
 import piengine.object.entity.domain.Entity;
 import piengine.object.mesh.domain.Mesh;
-import piengine.visual.postprocessing.domain.PostProcessingEffectContext;
+import piengine.visual.postprocessing.domain.context.PostProcessingEffectContext;
 import piengine.visual.texture.domain.Texture;
 
 import java.util.List;

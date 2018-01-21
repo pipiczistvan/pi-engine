@@ -1,14 +1,16 @@
 package piengine.visual.postprocessing.service;
 
+import org.joml.Vector2i;
 import piengine.core.base.api.Initializable;
 import piengine.core.base.api.Service;
 import piengine.object.mesh.domain.Mesh;
 import piengine.object.mesh.domain.MeshKey;
 import piengine.object.mesh.service.MeshService;
 import piengine.visual.postprocessing.domain.Effective;
-import piengine.visual.postprocessing.domain.PostProcessingEffectContext;
+import piengine.visual.postprocessing.domain.context.PostProcessingEffectContext;
 import piengine.visual.render.interpreter.RenderInterpreter;
 import piengine.visual.shader.domain.Shader;
+import piengine.visual.shader.domain.ShaderKey;
 import piengine.visual.shader.service.ShaderService;
 import piengine.visual.texture.domain.Texture;
 
@@ -32,7 +34,7 @@ public abstract class AbstractPostProcessingService<S extends Shader, C extends 
 
     @Override
     public void initialize() {
-        this.shader = createShader(shaderService);
+        this.shader = createShader();
         this.canvas = meshService.supply(new MeshKey("canvas"));
     }
 
@@ -48,9 +50,13 @@ public abstract class AbstractPostProcessingService<S extends Shader, C extends 
         renderInterpreter.unbindVertexArray();
     }
 
-    public abstract C createContext(final Texture inputTexture);
+    public abstract C createContext(final Texture inputTexture, final Vector2i size);
 
     protected abstract void render(final C context);
 
-    protected abstract S createShader(final ShaderService shaderService);
+    protected S createShader(final String file, final Class<S> shaderClass) {
+        return shaderService.supply(new ShaderKey("postprocessing/" + file)).castTo(shaderClass);
+    }
+
+    protected abstract S createShader();
 }

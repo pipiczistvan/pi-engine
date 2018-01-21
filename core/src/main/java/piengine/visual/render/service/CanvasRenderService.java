@@ -2,7 +2,7 @@ package piengine.visual.render.service;
 
 import piengine.core.base.exception.PIEngineException;
 import piengine.object.canvas.domain.Canvas;
-import piengine.visual.postprocessing.domain.PostProcessingEffectContext;
+import piengine.visual.postprocessing.domain.context.PostProcessingEffectContext;
 import piengine.visual.postprocessing.service.AbstractPostProcessingService;
 import piengine.visual.render.domain.config.RenderConfig;
 import piengine.visual.render.domain.config.RenderConfigBuilder;

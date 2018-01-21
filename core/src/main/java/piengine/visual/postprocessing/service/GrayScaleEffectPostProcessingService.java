@@ -1,14 +1,14 @@
 package piengine.visual.postprocessing.service;
 
+import org.joml.Vector2i;
 import piengine.object.mesh.service.MeshService;
 import piengine.visual.framebuffer.domain.Framebuffer;
 import piengine.visual.framebuffer.domain.FramebufferKey;
 import piengine.visual.framebuffer.service.FramebufferService;
 import piengine.visual.postprocessing.domain.EffectType;
-import piengine.visual.postprocessing.domain.GrayScaleEffectContext;
+import piengine.visual.postprocessing.domain.context.GrayScaleEffectContext;
+import piengine.visual.postprocessing.shader.GrayScaleEffectShader;
 import piengine.visual.render.interpreter.RenderInterpreter;
-import piengine.visual.render.shader.GrayScaleEffectShader;
-import piengine.visual.shader.domain.ShaderKey;
 import piengine.visual.shader.service.ShaderService;
 import piengine.visual.texture.domain.Texture;
 import piengine.visual.texture.service.TextureService;
@@ -34,9 +34,9 @@ public class GrayScaleEffectPostProcessingService extends AbstractPostProcessing
     }
 
     @Override
-    public GrayScaleEffectContext createContext(final Texture inputTexture) {
+    public GrayScaleEffectContext createContext(final Texture inputTexture, final Vector2i size) {
         Framebuffer framebuffer = framebufferService.supply(new FramebufferKey(
-                inputTexture.getSize(),
+                size,
                 inputTexture,
                 true,
                 COLOR_ATTACHMENT
@@ -56,8 +56,8 @@ public class GrayScaleEffectPostProcessingService extends AbstractPostProcessing
     }
 
     @Override
-    protected GrayScaleEffectShader createShader(final ShaderService shaderService) {
-        return shaderService.supply(new ShaderKey("grayScaleEffectShader")).castTo(GrayScaleEffectShader.class);
+    protected GrayScaleEffectShader createShader() {
+        return createShader("grayScaleEffectShader", GrayScaleEffectShader.class);
     }
 
     @Override

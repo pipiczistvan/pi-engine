@@ -1,4 +1,4 @@
-package piengine.visual.render.shader;
+package piengine.visual.postprocessing.shader;
 
 import piengine.visual.shader.domain.Shader;
 import piengine.visual.shader.domain.ShaderDao;
