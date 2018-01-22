@@ -1,6 +1,6 @@
-#version 150
+#version 330 core
 
-const float KERNEL_VALUES[] = {
+const float KERNEL_VALUES[] = float[](
     0.0093,
     0.028002,
     0.065984,
@@ -12,7 +12,7 @@ const float KERNEL_VALUES[] = {
     0.065984,
     0.028002,
     0.0093
-};
+);
 const int KERNEL_SIZE = 11;
 
 in vec2 vBlurTextureCoords[KERNEL_SIZE];

@@ -3,8 +3,7 @@ package piengine.visual.postprocessing.service;
 import org.joml.Vector2i;
 import piengine.object.mesh.service.MeshService;
 import piengine.visual.framebuffer.domain.Framebuffer;
-import piengine.visual.framebuffer.domain.FramebufferKey;
-import piengine.visual.framebuffer.service.FramebufferService;
+import piengine.visual.framebuffer.manager.FramebufferManager;
 import piengine.visual.postprocessing.domain.EffectType;
 import piengine.visual.postprocessing.domain.context.HighContrastEffectContext;
 import piengine.visual.postprocessing.shader.HighContrastEffectShader;
@@ -15,44 +14,41 @@ import piengine.visual.texture.service.TextureService;
 import puppeteer.annotation.premade.Component;
 import puppeteer.annotation.premade.Wire;
 
-import static piengine.visual.framebuffer.domain.FramebufferAttachment.COLOR_ATTACHMENT;
+import static piengine.visual.framebuffer.domain.FramebufferAttachment.COLOR_TEXTURE_ATTACHMENT;
 import static piengine.visual.postprocessing.domain.EffectType.HIGH_CONTRAST_EFFECT;
 
 @Component
-public class HighContrastEffectService extends AbstractPostProcessingService<HighContrastEffectShader, HighContrastEffectContext> {
+public class HighContrastEffectService extends AbstractPostProcessingRenderService<HighContrastEffectShader, HighContrastEffectContext> {
 
-    private final FramebufferService framebufferService;
+    private final FramebufferManager framebufferManager;
     private final TextureService textureService;
 
     @Wire
     public HighContrastEffectService(final RenderInterpreter renderInterpreter, final ShaderService shaderService,
-                                     final MeshService meshService, final FramebufferService framebufferService,
+                                     final MeshService meshService, final FramebufferManager framebufferManager,
                                      final TextureService textureService) {
         super(renderInterpreter, shaderService, meshService);
-        this.framebufferService = framebufferService;
+        this.framebufferManager = framebufferManager;
         this.textureService = textureService;
     }
 
     @Override
-    public HighContrastEffectContext createContext(final Texture inTexture, final Texture outTexture, final Vector2i outSize) {
-        Framebuffer framebuffer = framebufferService.supply(new FramebufferKey(
-                outSize,
-                outTexture,
-                true,
-                COLOR_ATTACHMENT
-        ));
+    public HighContrastEffectContext createContext(final Vector2i outSize) {
+        Framebuffer framebuffer = framebufferManager.supply(outSize, COLOR_TEXTURE_ATTACHMENT);
 
-        return new HighContrastEffectContext(inTexture, framebuffer);
+        return new HighContrastEffectContext(framebuffer);
     }
 
     @Override
-    protected void render(final HighContrastEffectContext context) {
-        framebufferService.bind(context.framebuffer);
+    public Texture process(final Texture inTexture, final HighContrastEffectContext context) {
+        framebufferManager.bind(context.framebuffer);
         shader.start();
-        textureService.bind(context.inputTexture);
+        textureService.bind(inTexture);
         draw();
         shader.stop();
-        framebufferService.unbind();
+        framebufferManager.unbind();
+
+        return context.framebuffer;
     }
 
     @Override

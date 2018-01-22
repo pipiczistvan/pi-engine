@@ -15,6 +15,7 @@ import piengine.gui.asset.ButtonAsset;
 import piengine.gui.asset.ButtonAssetArgument;
 import piengine.object.asset.manager.AssetManager;
 import piengine.object.asset.plan.GuiRenderAssetContextBuilder;
+import piengine.object.asset.plan.WorldRenderAssetContextBuilder;
 import piengine.object.camera.asset.CameraAsset;
 import piengine.object.camera.asset.CameraAssetArgument;
 import piengine.object.camera.domain.Camera;
@@ -29,6 +30,8 @@ import piengine.object.terrain.manager.TerrainManager;
 import piengine.visual.fog.Fog;
 import piengine.visual.framebuffer.domain.Framebuffer;
 import piengine.visual.framebuffer.manager.FramebufferManager;
+import piengine.visual.lighting.directional.light.domain.DirectionalLight;
+import piengine.visual.lighting.directional.light.manager.DirectionalLightManager;
 import piengine.visual.render.domain.plan.RenderPlan;
 import piengine.visual.render.domain.plan.RenderPlanBuilder;
 import piengine.visual.render.manager.RenderManager;
@@ -49,12 +52,14 @@ import static piengine.core.base.type.property.PropertyKeys.CAMERA_VIEWPORT_HEIG
 import static piengine.core.base.type.property.PropertyKeys.CAMERA_VIEWPORT_WIDTH;
 import static piengine.core.input.domain.KeyEventType.PRESS;
 import static piengine.object.camera.domain.ProjectionType.PERSPECTIVE;
-import static piengine.visual.framebuffer.domain.FramebufferAttachment.COLOR_ATTACHMENT;
-import static piengine.visual.framebuffer.domain.FramebufferAttachment.DEPTH_TEXTURE_ATTACHMENT;
-import static piengine.visual.postprocessing.domain.EffectType.DEPTH_OF_FIELD_EFFECT;
+import static piengine.visual.framebuffer.domain.FramebufferAttachment.COLOR_BUFFER_MULTISAMPLE_ATTACHMENT;
+import static piengine.visual.framebuffer.domain.FramebufferAttachment.DEPTH_BUFFER_MULTISAMPLE_ATTACHMENT;
+import static piengine.visual.postprocessing.domain.EffectType.ANTIALIAS_EFFECT;
 
 public class InitScene extends Scene {
 
+    public static final int TERRAIN_SCALE = 256;
+    public static final int WATER_SCALE = TERRAIN_SCALE / 4;
     private static final Vector2i VIEWPORT = new Vector2i(get(CAMERA_VIEWPORT_WIDTH), get(CAMERA_VIEWPORT_HEIGHT));
 
     private final InputManager inputManager;
@@ -63,6 +68,7 @@ public class InitScene extends Scene {
     private final SkyboxManager skyboxManager;
     private final CanvasManager canvasManager;
     private final TerrainManager terrainManager;
+    private final DirectionalLightManager directionalLightManager;
 
     private Framebuffer framebuffer;
     private Fog fog;
@@ -76,12 +82,14 @@ public class InitScene extends Scene {
     private MapAsset mapAsset;
     private ButtonAsset buttonAsset;
     private FpsAsset fpsAsset;
+    private DirectionalLight sun;
 
     @Wire
     public InitScene(final RenderManager renderManager, final AssetManager assetManager,
                      final InputManager inputManager, final WindowManager windowManager,
                      final FramebufferManager framebufferManager, final SkyboxManager skyboxManager,
-                     final CanvasManager canvasManager, final TerrainManager terrainManager) {
+                     final CanvasManager canvasManager, final TerrainManager terrainManager,
+                     final DirectionalLightManager directionalLightManager) {
         super(renderManager, assetManager);
 
         this.inputManager = inputManager;
@@ -90,6 +98,7 @@ public class InitScene extends Scene {
         this.skyboxManager = skyboxManager;
         this.canvasManager = canvasManager;
         this.terrainManager = terrainManager;
+        this.directionalLightManager = directionalLightManager;
     }
 
     @Override
@@ -101,7 +110,7 @@ public class InitScene extends Scene {
 
     @Override
     protected void createAssets() {
-        terrain = terrainManager.supply(new Vector3f(-128, 0, -128), new Vector3f(256, 10, 256), "heightmap2");
+        terrain = terrainManager.supply(new Vector3f(-TERRAIN_SCALE / 2, 0, -TERRAIN_SCALE / 2), new Vector3f(TERRAIN_SCALE, 10, TERRAIN_SCALE), "heightmap2");
 
         cameraAsset = createAsset(CameraAsset.class, new CameraAssetArgument(
                 terrain,
@@ -116,8 +125,8 @@ public class InitScene extends Scene {
 
         lampAsset = createAsset(LampAsset.class, new LampAssetArgument());
 
-        framebuffer = framebufferManager.supply(VIEWPORT, COLOR_ATTACHMENT, DEPTH_TEXTURE_ATTACHMENT);
-        mainCanvas = canvasManager.supply(this, framebuffer, DEPTH_OF_FIELD_EFFECT);
+        framebuffer = framebufferManager.supply(VIEWPORT, COLOR_BUFFER_MULTISAMPLE_ATTACHMENT, DEPTH_BUFFER_MULTISAMPLE_ATTACHMENT);
+        mainCanvas = canvasManager.supply(this, framebuffer, ANTIALIAS_EFFECT);
 
         buttonAsset = createAsset(ButtonAsset.class, new ButtonAssetArgument(
                 "buttonDefault", "buttonHover", "buttonPress",
@@ -129,6 +138,9 @@ public class InitScene extends Scene {
                 "skybox/nightBottom", "skybox/nightBack", "skybox/nightFront");
 
         fog = new Fog(ColorUtils.BLACK, 0.015f, 1.5f);
+
+        sun = directionalLightManager.supply(this, ColorUtils.WHITE, camera, new Vector2i(2048));
+        sun.setPosition(1000, 1000, 300);
     }
 
     @Override
@@ -159,6 +171,7 @@ public class InitScene extends Scene {
                         RenderPlanBuilder
                                 .createPlan(camera, fog, skybox)
                                 .loadAssets(mapAsset)
+                                .loadAssetContext(WorldRenderAssetContextBuilder.create().loadDirectionalLights(sun).build())
                                 .clearScreen(ColorUtils.BLACK)
                                 .render()
                 )

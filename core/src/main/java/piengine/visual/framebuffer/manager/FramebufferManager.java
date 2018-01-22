@@ -30,4 +30,16 @@ public class FramebufferManager {
     public Framebuffer supply(final Vector2i resolution, final FramebufferAttachment textureAttachment, final FramebufferAttachment... attachments) {
         return supply(resolution, true, textureAttachment, attachments);
     }
+
+    public void bind(final Framebuffer framebuffer) {
+        framebufferService.bind(framebuffer);
+    }
+
+    public void unbind() {
+        framebufferService.unbind();
+    }
+
+    public void blit(final Framebuffer src, final Framebuffer dest) {
+        framebufferService.blit(src, dest);
+    }
 }

@@ -3,8 +3,7 @@ package piengine.visual.postprocessing.service;
 import org.joml.Vector2i;
 import piengine.object.mesh.service.MeshService;
 import piengine.visual.framebuffer.domain.Framebuffer;
-import piengine.visual.framebuffer.domain.FramebufferKey;
-import piengine.visual.framebuffer.service.FramebufferService;
+import piengine.visual.framebuffer.manager.FramebufferManager;
 import piengine.visual.postprocessing.domain.EffectType;
 import piengine.visual.postprocessing.domain.context.VerticalBlurEffectContext;
 import piengine.visual.postprocessing.shader.VerticalBlurEffectShader;
@@ -15,45 +14,42 @@ import piengine.visual.texture.service.TextureService;
 import puppeteer.annotation.premade.Component;
 import puppeteer.annotation.premade.Wire;
 
-import static piengine.visual.framebuffer.domain.FramebufferAttachment.COLOR_ATTACHMENT;
+import static piengine.visual.framebuffer.domain.FramebufferAttachment.COLOR_TEXTURE_ATTACHMENT;
 import static piengine.visual.postprocessing.domain.EffectType.VERTICAL_BLUR_EFFECT;
 
 @Component
-public class VerticalBlurEffectService extends AbstractPostProcessingService<VerticalBlurEffectShader, VerticalBlurEffectContext> {
+public class VerticalBlurEffectService extends AbstractPostProcessingRenderService<VerticalBlurEffectShader, VerticalBlurEffectContext> {
 
-    private final FramebufferService framebufferService;
+    private final FramebufferManager framebufferManager;
     private final TextureService textureService;
 
     @Wire
     public VerticalBlurEffectService(final RenderInterpreter renderInterpreter, final ShaderService shaderService,
-                                     final MeshService meshService, final FramebufferService framebufferService,
+                                     final MeshService meshService, final FramebufferManager framebufferManager,
                                      final TextureService textureService) {
         super(renderInterpreter, shaderService, meshService);
-        this.framebufferService = framebufferService;
+        this.framebufferManager = framebufferManager;
         this.textureService = textureService;
     }
 
     @Override
-    public VerticalBlurEffectContext createContext(final Texture inTexture, final Texture outTexture, final Vector2i outSize) {
-        Framebuffer framebuffer = framebufferService.supply(new FramebufferKey(
-                outSize,
-                outTexture,
-                true,
-                COLOR_ATTACHMENT
-        ));
+    public VerticalBlurEffectContext createContext(final Vector2i outSize) {
+        Framebuffer framebuffer = framebufferManager.supply(outSize, COLOR_TEXTURE_ATTACHMENT);
 
-        return new VerticalBlurEffectContext(inTexture, framebuffer);
+        return new VerticalBlurEffectContext(framebuffer);
     }
 
     @Override
-    protected void render(final VerticalBlurEffectContext context) {
-        framebufferService.bind(context.framebuffer);
+    public Texture process(final Texture inTexture, final VerticalBlurEffectContext context) {
+        framebufferManager.bind(context.framebuffer);
         shader.start();
-        shader.loadTextureHeight(context.framebuffer.getSize().y);
-        textureService.bind(context.inputTexture);
+        shader.loadTextureHeight(context.framebuffer.getSize().y / 4);
+        textureService.bind(inTexture);
         draw();
         shader.stop();
-        framebufferService.unbind();
+        framebufferManager.unbind();
+
+        return context.framebuffer;
     }
 
     @Override

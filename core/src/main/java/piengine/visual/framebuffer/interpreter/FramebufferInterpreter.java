@@ -3,6 +3,7 @@ package piengine.visual.framebuffer.interpreter;
 import org.joml.Vector2i;
 import piengine.core.base.api.Interpreter;
 import piengine.core.base.exception.PIEngineException;
+import piengine.visual.framebuffer.domain.Framebuffer;
 import piengine.visual.framebuffer.domain.FramebufferAttachment;
 import piengine.visual.framebuffer.domain.FramebufferDao;
 import piengine.visual.framebuffer.domain.FramebufferData;
@@ -13,11 +14,15 @@ import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
+import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
 import static org.lwjgl.opengl.GL11.GL_DEPTH_COMPONENT;
 import static org.lwjgl.opengl.GL11.GL_FLOAT;
 import static org.lwjgl.opengl.GL11.GL_LINEAR;
+import static org.lwjgl.opengl.GL11.GL_NEAREST;
 import static org.lwjgl.opengl.GL11.GL_NONE;
 import static org.lwjgl.opengl.GL11.GL_RGB;
+import static org.lwjgl.opengl.GL11.GL_RGBA8;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_MAG_FILTER;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_MIN_FILTER;
@@ -32,21 +37,29 @@ import static org.lwjgl.opengl.GL11.glTexParameteri;
 import static org.lwjgl.opengl.GL14.GL_DEPTH_COMPONENT24;
 import static org.lwjgl.opengl.GL30.GL_COLOR_ATTACHMENT0;
 import static org.lwjgl.opengl.GL30.GL_DEPTH_ATTACHMENT;
+import static org.lwjgl.opengl.GL30.GL_DRAW_FRAMEBUFFER;
 import static org.lwjgl.opengl.GL30.GL_FRAMEBUFFER;
+import static org.lwjgl.opengl.GL30.GL_READ_FRAMEBUFFER;
 import static org.lwjgl.opengl.GL30.GL_RENDERBUFFER;
 import static org.lwjgl.opengl.GL30.glBindFramebuffer;
 import static org.lwjgl.opengl.GL30.glBindRenderbuffer;
+import static org.lwjgl.opengl.GL30.glBlitFramebuffer;
 import static org.lwjgl.opengl.GL30.glDeleteFramebuffers;
 import static org.lwjgl.opengl.GL30.glDeleteRenderbuffers;
 import static org.lwjgl.opengl.GL30.glFramebufferRenderbuffer;
 import static org.lwjgl.opengl.GL30.glGenFramebuffers;
 import static org.lwjgl.opengl.GL30.glGenRenderbuffers;
 import static org.lwjgl.opengl.GL30.glRenderbufferStorage;
+import static org.lwjgl.opengl.GL30.glRenderbufferStorageMultisample;
 import static org.lwjgl.opengl.GL32.glFramebufferTexture;
-import static piengine.visual.framebuffer.domain.FramebufferAttachment.RENDER_BUFFER_ATTACHMENT;
+import static piengine.core.base.type.property.ApplicationProperties.get;
+import static piengine.core.base.type.property.PropertyKeys.WINDOW_MULTI_SAMPLE_COUNT;
+import static piengine.visual.framebuffer.domain.FramebufferAttachment.DEPTH_BUFFER_ATTACHMENT;
 
 @Component
 public class FramebufferInterpreter implements Interpreter<FramebufferData, FramebufferDao> {
+
+    private static final int SAMPLES = get(WINDOW_MULTI_SAMPLE_COUNT);
 
     @Override
     public FramebufferDao create(final FramebufferData framebufferData) {
@@ -68,7 +81,7 @@ public class FramebufferInterpreter implements Interpreter<FramebufferData, Fram
         glDeleteFramebuffers(dao.getFbo());
 
         for (Map.Entry<FramebufferAttachment, Integer> attachment : dao.getAttachments().entrySet()) {
-            if (attachment.getKey().equals(RENDER_BUFFER_ATTACHMENT)) {
+            if (attachment.getKey().equals(DEPTH_BUFFER_ATTACHMENT)) {
                 glDeleteRenderbuffers(attachment.getValue());
             } else {
                 glDeleteTextures(attachment.getValue());
@@ -84,6 +97,16 @@ public class FramebufferInterpreter implements Interpreter<FramebufferData, Fram
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
     }
 
+    public void blit(final Framebuffer src, final Framebuffer dest) {
+        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, dest.getDao().getFbo());
+        glBindFramebuffer(GL_READ_FRAMEBUFFER, src.getDao().getFbo());
+        glBlitFramebuffer(
+                0, 0, src.getSize().x, src.getSize().y,
+                0, 0, dest.getSize().x, dest.getSize().y,
+                GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT, GL_NEAREST);
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    }
+
     private int createFrameBuffer(final int buffer) {
         int frameBuffer = glGenFramebuffers();
         glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer);
@@ -93,7 +116,7 @@ public class FramebufferInterpreter implements Interpreter<FramebufferData, Fram
         return frameBuffer;
     }
 
-    private int createColorAttachment(final Vector2i resolution, final Texture texture) {
+    private int createColorTextureAttachment(final Vector2i resolution, final Texture texture) {
         int textureId = texture != null ? texture.getDao().getTexture() :
                 generateTexture(resolution, GL_RGB, GL_RGB, GL_UNSIGNED_BYTE);
         glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, textureId, 0);
@@ -111,22 +134,44 @@ public class FramebufferInterpreter implements Interpreter<FramebufferData, Fram
 
     private int createAttachment(final FramebufferAttachment attachment, final Vector2i resolution, final Texture texture) {
         switch (attachment) {
-            case COLOR_ATTACHMENT:
-                return createColorAttachment(resolution, texture);
+            case COLOR_TEXTURE_ATTACHMENT:
+                return createColorTextureAttachment(resolution, texture);
             case DEPTH_TEXTURE_ATTACHMENT:
                 return createDepthTextureAttachment(resolution, texture);
-            case RENDER_BUFFER_ATTACHMENT:
-                return createRenderBufferAttachment(resolution);
+            case DEPTH_BUFFER_ATTACHMENT:
+                return createDepthBufferAttachment(resolution);
+            case DEPTH_BUFFER_MULTISAMPLE_ATTACHMENT:
+                return createDepthBufferMultisampleAttachment(resolution);
+            case COLOR_BUFFER_MULTISAMPLE_ATTACHMENT:
+                return createColorBufferMultisampleAttachment(resolution);
             default:
                 throw new PIEngineException("Invalid framebuffer attachment: %s", attachment.name());
         }
     }
 
-    private int createRenderBufferAttachment(final Vector2i resolution) {
+    private int createDepthBufferAttachment(final Vector2i resolution) {
         int rbo = glGenRenderbuffers();
         glBindRenderbuffer(GL_RENDERBUFFER, rbo);
         glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, resolution.x, resolution.y);
         glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, rbo);
+
+        return rbo;
+    }
+
+    private int createDepthBufferMultisampleAttachment(final Vector2i resolution) {
+        int rbo = glGenRenderbuffers();
+        glBindRenderbuffer(GL_RENDERBUFFER, rbo);
+        glRenderbufferStorageMultisample(GL_RENDERBUFFER, SAMPLES, GL_DEPTH_COMPONENT, resolution.x, resolution.y);
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, rbo);
+
+        return rbo;
+    }
+
+    private int createColorBufferMultisampleAttachment(final Vector2i resolution) {
+        int rbo = glGenRenderbuffers();
+        glBindRenderbuffer(GL_RENDERBUFFER, rbo);
+        glRenderbufferStorageMultisample(GL_RENDERBUFFER, SAMPLES, GL_RGBA8, resolution.x, resolution.y);
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, rbo);
 
         return rbo;
     }

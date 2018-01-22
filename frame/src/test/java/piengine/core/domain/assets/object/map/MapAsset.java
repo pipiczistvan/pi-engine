@@ -16,6 +16,11 @@ import piengine.object.water.domain.Water;
 import piengine.object.water.manager.WaterManager;
 import puppeteer.annotation.premade.Wire;
 
+import java.util.Random;
+
+import static piengine.core.domain.InitScene.TERRAIN_SCALE;
+import static piengine.core.domain.InitScene.WATER_SCALE;
+
 public class MapAsset extends WorldAsset<MapAssetArgument> {
 
     private static final float WAVE_SPEED = 0.2f;
@@ -29,6 +34,7 @@ public class MapAsset extends WorldAsset<MapAssetArgument> {
     private LampAsset lampAsset1, lampAsset2;
     private Model cubeModel1, cubeModel2, cubeModel3, cubeModel4;
     private Model treeModel1, treeModel2, treeModel3, treeModel4;
+    private Model[] treeModels = new Model[100];
 
     private float wave = 0;
 
@@ -42,7 +48,7 @@ public class MapAsset extends WorldAsset<MapAssetArgument> {
     @Override
     public void initialize() {
         terrain = arguments.terrain;
-        water = waterManager.supply(arguments.viewport, new Vector2i(128, 128), new Vector3f(-128, -4, -128), new Vector3f(256, 0, 256));
+        water = waterManager.supply(arguments.viewport, new Vector2i(WATER_SCALE, WATER_SCALE), new Vector3f(-TERRAIN_SCALE / 2, -4, -TERRAIN_SCALE / 2), new Vector3f(TERRAIN_SCALE, 0, TERRAIN_SCALE));
 
         lampAsset1 = assetManager.supply(LampAsset.class, this, new LampAssetArgument());
         lampAsset2 = assetManager.supply(LampAsset.class, this, new LampAssetArgument());
@@ -56,6 +62,10 @@ public class MapAsset extends WorldAsset<MapAssetArgument> {
         treeModel2 = modelManager.supply(this, "lowPolyTree", "lowPolyTree", false);
         treeModel3 = modelManager.supply(this, "lowPolyTree", "lowPolyTree", false);
         treeModel4 = modelManager.supply(this, "lowPolyTree", "lowPolyTree", false);
+
+        for (int i = 0; i < treeModels.length; i++) {
+            treeModels[i] = modelManager.supply(this, "lowPolyTree", "lowPolyTree", false);
+        }
 
         initializeAssets();
     }
@@ -79,7 +89,8 @@ public class MapAsset extends WorldAsset<MapAssetArgument> {
                 .loadModels(cubeModel1)
                 .loadTerrains(terrain)
                 .loadWaters(water)
-                .loadAssets(lampAsset1)
+                .loadModels(treeModels)
+//                .loadAssets(lampAsset1)
                 .build();
     }
 
@@ -112,20 +123,20 @@ public class MapAsset extends WorldAsset<MapAssetArgument> {
         placeEntityOnTerrain(lampAsset1, 0, 0, 0);
 //        placeEntityOnTerrain(lampAsset2, -6, 0, 0);
 
-//        Random random = new Random();
-//        for (Model tree : treeModels) {
-//            float x;
-//            float y;
-//            float z;
-//            do {
-//                x = random.nextFloat() * 256 - 128;
-//                z = random.nextFloat() * 256 - 128;
-//                y = terrain.getHeight(x, z) - 0.2f;
-//            } while (y < waterHeight - 0.2);
-//            float scale = random.nextFloat() * 0.1f + 0.2f;
-//
-//            tree.setScale(scale);
-//            tree.setPosition(x, y, z);
-//        }
+        Random random = new Random();
+        for (Model tree : treeModels) {
+            float x;
+            float y;
+            float z;
+            do {
+                x = random.nextFloat() * 256 - 128;
+                z = random.nextFloat() * 256 - 128;
+                y = terrain.getHeight(x, z) - 0.2f;
+            } while (y < waterHeight - 0.2);
+            float scale = random.nextFloat() * 0.1f + 0.2f;
+
+            tree.setScale(scale);
+            tree.setPosition(x, y, z);
+        }
     }
 }

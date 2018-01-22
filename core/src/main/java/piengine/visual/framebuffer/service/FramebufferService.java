@@ -38,6 +38,15 @@ public class FramebufferService extends SupplierService<FramebufferKey, Framebuf
 
     public void unbind() {
         fboStack.pop();
+        rebindLast();
+    }
+
+    public void blit(final Framebuffer src, final Framebuffer dest) {
+        framebufferInterpreter.blit(src, dest);
+        rebindLast();
+    }
+
+    private void rebindLast() {
         if (fboStack.empty()) {
             framebufferInterpreter.unbind();
         } else {

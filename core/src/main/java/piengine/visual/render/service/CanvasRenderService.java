@@ -11,6 +11,7 @@ import piengine.visual.render.interpreter.RenderInterpreter;
 import piengine.visual.render.shader.CanvasShader;
 import piengine.visual.shader.domain.ShaderKey;
 import piengine.visual.shader.service.ShaderService;
+import piengine.visual.texture.domain.Texture;
 import piengine.visual.texture.service.TextureService;
 import puppeteer.annotation.premade.Component;
 import puppeteer.annotation.premade.Wire;
@@ -46,13 +47,16 @@ public class CanvasRenderService extends AbstractRenderService<CanvasShader, Ren
         renderInterpreter.setViewport(context.viewport);
 
         for (Canvas canvas : context.canvases) {
-            canvas.effectContexts.forEach(this::applyPostProcessing);
+            Texture currentTexture = canvas.texture;
+            for (PostProcessingEffectContext effectContext : canvas.effectContexts) {
+                currentTexture = applyPostProcessing(currentTexture, effectContext);
+            }
 
             shader.start();
             shader.loadModelMatrix(canvas.getTransformation())
                     .loadColor(canvas.color);
 
-            textureService.bind(canvas.texture);
+            textureService.bind(currentTexture);
             draw(canvas.mesh.getDao());
         }
     }
@@ -66,11 +70,11 @@ public class CanvasRenderService extends AbstractRenderService<CanvasShader, Ren
                 .build();
     }
 
-    private void applyPostProcessing(final PostProcessingEffectContext effectContext) {
-        postProcessingServices.stream()
+    private Texture applyPostProcessing(final Texture texture, final PostProcessingEffectContext effectContext) {
+        return postProcessingServices.stream()
                 .filter(pps -> pps.getEffectType().equals(effectContext.getEffectType()))
                 .findFirst()
                 .orElseThrow(() -> new PIEngineException("Could not find post processing service for type: %s!", effectContext.getEffectType()))
-                .process(effectContext);
+                .process(texture, effectContext);
     }
 }

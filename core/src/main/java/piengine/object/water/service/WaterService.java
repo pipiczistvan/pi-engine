@@ -13,9 +13,9 @@ import piengine.visual.framebuffer.manager.FramebufferManager;
 import puppeteer.annotation.premade.Component;
 import puppeteer.annotation.premade.Wire;
 
-import static piengine.visual.framebuffer.domain.FramebufferAttachment.COLOR_ATTACHMENT;
+import static piengine.visual.framebuffer.domain.FramebufferAttachment.COLOR_TEXTURE_ATTACHMENT;
+import static piengine.visual.framebuffer.domain.FramebufferAttachment.DEPTH_BUFFER_ATTACHMENT;
 import static piengine.visual.framebuffer.domain.FramebufferAttachment.DEPTH_TEXTURE_ATTACHMENT;
-import static piengine.visual.framebuffer.domain.FramebufferAttachment.RENDER_BUFFER_ATTACHMENT;
 
 @Component
 public class WaterService extends SupplierService<WaterKey, WaterData, WaterDao, Water> {
@@ -41,8 +41,8 @@ public class WaterService extends SupplierService<WaterKey, WaterData, WaterDao,
                 resource.resolution.y / 2
         );
 
-        Framebuffer reflectionBuffer = framebufferManager.supply(reflectionResolution, COLOR_ATTACHMENT, RENDER_BUFFER_ATTACHMENT);
-        Framebuffer refractionBuffer = framebufferManager.supply(refractionResolution, COLOR_ATTACHMENT, DEPTH_TEXTURE_ATTACHMENT);
+        Framebuffer reflectionBuffer = framebufferManager.supply(reflectionResolution, COLOR_TEXTURE_ATTACHMENT, DEPTH_BUFFER_ATTACHMENT);
+        Framebuffer refractionBuffer = framebufferManager.supply(refractionResolution, COLOR_TEXTURE_ATTACHMENT, DEPTH_TEXTURE_ATTACHMENT);
 
         return new Water(dao, reflectionBuffer, refractionBuffer, resource.position, resource.rotation, resource.scale);
     }
