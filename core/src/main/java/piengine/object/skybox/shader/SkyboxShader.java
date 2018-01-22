@@ -1,4 +1,4 @@
-package piengine.visual.render.shader;
+package piengine.object.skybox.shader;
 
 import org.joml.Matrix4f;
 import piengine.visual.fog.Fog;

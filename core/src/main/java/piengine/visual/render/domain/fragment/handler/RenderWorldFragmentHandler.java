@@ -1,21 +1,22 @@
 package piengine.visual.render.domain.fragment.handler;
 
 import piengine.core.utils.ColorUtils;
+import piengine.object.animatedmodel.service.AnimatedModelRenderService;
+import piengine.object.model.service.ModelRenderService;
+import piengine.object.skybox.service.SkyboxRenderService;
+import piengine.object.terrain.service.TerrainRenderService;
 import piengine.object.water.domain.Water;
+import piengine.object.water.service.WaterRenderService;
 import piengine.visual.framebuffer.service.FramebufferService;
 import piengine.visual.lighting.directional.light.domain.DirectionalLight;
 import piengine.visual.lighting.directional.shadow.domain.DirectionalShadow;
+import piengine.visual.lighting.directional.shadow.service.DirectionalShadowRenderService;
 import piengine.visual.lighting.point.light.domain.PointLight;
 import piengine.visual.lighting.point.shadow.domain.PointShadow;
+import piengine.visual.lighting.point.shadow.service.PointShadowRenderService;
 import piengine.visual.render.domain.fragment.domain.RenderFragmentType;
 import piengine.visual.render.domain.fragment.domain.RenderWorldPlanContext;
 import piengine.visual.render.service.ClearScreenRenderService;
-import piengine.visual.render.service.DirectionalShadowRenderService;
-import piengine.visual.render.service.ModelRenderService;
-import piengine.visual.render.service.PointShadowRenderService;
-import piengine.visual.render.service.SkyboxRenderService;
-import piengine.visual.render.service.TerrainRenderService;
-import piengine.visual.render.service.WaterRenderService;
 import puppeteer.annotation.premade.Component;
 import puppeteer.annotation.premade.Wire;
 
@@ -32,12 +33,14 @@ public class RenderWorldFragmentHandler implements FragmentHandler<RenderWorldPl
     private final FramebufferService framebufferService;
     private final ClearScreenRenderService clearScreenRenderService;
     private final PointShadowRenderService pointShadowRenderService;
+    private final AnimatedModelRenderService animatedModelRenderService;
 
     @Wire
     public RenderWorldFragmentHandler(final ModelRenderService modelRenderService, final TerrainRenderService terrainRenderService,
                                       final WaterRenderService waterRenderService, final DirectionalShadowRenderService directionalShadowRenderService,
                                       final SkyboxRenderService skyboxRenderService, final FramebufferService framebufferService,
-                                      final ClearScreenRenderService clearScreenRenderService, final PointShadowRenderService pointShadowRenderService) {
+                                      final ClearScreenRenderService clearScreenRenderService, final PointShadowRenderService pointShadowRenderService,
+                                      final AnimatedModelRenderService animatedModelRenderService) {
         this.modelRenderService = modelRenderService;
         this.terrainRenderService = terrainRenderService;
         this.waterRenderService = waterRenderService;
@@ -46,6 +49,7 @@ public class RenderWorldFragmentHandler implements FragmentHandler<RenderWorldPl
         this.framebufferService = framebufferService;
         this.clearScreenRenderService = clearScreenRenderService;
         this.pointShadowRenderService = pointShadowRenderService;
+        this.animatedModelRenderService = animatedModelRenderService;
     }
 
     @Override
@@ -113,6 +117,7 @@ public class RenderWorldFragmentHandler implements FragmentHandler<RenderWorldPl
                 clearScreenRenderService.clearScreen(ColorUtils.BLACK);
                 terrainRenderService.process(context);
                 modelRenderService.process(context);
+                animatedModelRenderService.process(context);
                 skyboxRenderService.process(context);
 
                 context.currentCamera.translateRotate(0, distance, 0, 0, cameraPitch * 2, 0);
@@ -126,6 +131,7 @@ public class RenderWorldFragmentHandler implements FragmentHandler<RenderWorldPl
                 clearScreenRenderService.clearScreen(ColorUtils.BLACK);
                 terrainRenderService.process(context);
                 modelRenderService.process(context);
+                animatedModelRenderService.process(context);
                 skyboxRenderService.process(context);
             }
             framebufferService.unbind();
@@ -138,6 +144,7 @@ public class RenderWorldFragmentHandler implements FragmentHandler<RenderWorldPl
         context.viewport.set(context.currentCamera.viewport);
         terrainRenderService.process(context);
         modelRenderService.process(context);
+        animatedModelRenderService.process(context);
         skyboxRenderService.process(context);
         waterRenderService.process(context);
     }

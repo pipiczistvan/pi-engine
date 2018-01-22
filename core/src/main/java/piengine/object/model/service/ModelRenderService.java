@@ -1,11 +1,12 @@
-package piengine.visual.render.service;
+package piengine.object.model.service;
 
 import piengine.object.model.domain.Model;
+import piengine.object.model.shader.ModelShader;
 import piengine.visual.render.domain.config.RenderConfig;
 import piengine.visual.render.domain.config.RenderConfigBuilder;
 import piengine.visual.render.domain.fragment.domain.RenderWorldPlanContext;
 import piengine.visual.render.interpreter.RenderInterpreter;
-import piengine.visual.render.shader.ModelShader;
+import piengine.visual.render.service.AbstractRenderService;
 import piengine.visual.shader.domain.ShaderKey;
 import piengine.visual.shader.service.ShaderService;
 import piengine.visual.texture.service.TextureService;

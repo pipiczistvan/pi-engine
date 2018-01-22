@@ -12,7 +12,7 @@ import static java.lang.Float.parseFloat;
 import static java.lang.Integer.parseInt;
 
 @Component
-public class MeshParser {
+public class ObjParser {
 
     private static final String VERTEX_PREFIX = "v";
     private static final String TEXTURE_PREFIX = "vt";
@@ -108,12 +108,11 @@ public class MeshParser {
         normalsArray[currentVertexPointer * 3 + 2] = currentNormal.z;
     }
 
-    private Vector2f parseVector2f(String[] splatString) {
+    private Vector2f parseVector2f(final String[] splatString) {
         return new Vector2f(parseFloat(splatString[1]), parseFloat(splatString[2]));
     }
 
-    private Vector3f parseVector3f(String[] splatString) {
+    private Vector3f parseVector3f(final String[] splatString) {
         return new Vector3f(parseFloat(splatString[1]), parseFloat(splatString[2]), parseFloat(splatString[3]));
     }
-
 }

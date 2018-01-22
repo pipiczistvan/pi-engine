@@ -1,5 +1,6 @@
 package piengine.object.asset.plan;
 
+import piengine.object.animatedmodel.domain.AnimatedModel;
 import piengine.object.model.domain.Model;
 import piengine.object.terrain.domain.Terrain;
 import piengine.object.water.domain.Water;
@@ -16,12 +17,14 @@ public class WorldRenderAssetContext implements RenderAssetContext {
     public final List<Water> waters;
     public final List<DirectionalLight> directionalLights;
     public final List<PointLight> pointLights;
+    public final List<AnimatedModel> animatedModels;
 
-    WorldRenderAssetContext() {
+    public WorldRenderAssetContext() {
         this.models = new ArrayList<>();
         this.terrains = new ArrayList<>();
         this.waters = new ArrayList<>();
         this.directionalLights = new ArrayList<>();
         this.pointLights = new ArrayList<>();
+        this.animatedModels = new ArrayList<>();
     }
 }

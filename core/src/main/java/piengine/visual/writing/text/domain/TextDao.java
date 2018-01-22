@@ -10,7 +10,7 @@ import static piengine.object.mesh.domain.MeshDataType.VERTEX;
 
 public class TextDao extends MeshDao {
 
-    private static MeshDataType[] meshDataTypes = {VERTEX, TEXTURE_COORD};
+    private static final MeshDataType[] MESH_DATA_TYPES = {VERTEX, TEXTURE_COORD};
 
     public TextDao(final int vaoId, final List<Integer> vboIds, final int vertexCount) {
         super(vaoId, vboIds, vertexCount);
@@ -18,6 +18,6 @@ public class TextDao extends MeshDao {
 
     @Override
     public MeshDataType[] getVertexAttribs() {
-        return meshDataTypes;
+        return MESH_DATA_TYPES;
     }
 }

@@ -11,7 +11,7 @@ import static piengine.object.mesh.domain.MeshDataType.VERTEX;
 
 public class TerrainDao extends MeshDao {
 
-    private static MeshDataType[] meshDataTypes = {VERTEX, NORMAL, COLOR};
+    private static final MeshDataType[] MESH_DATA_TYPES = {VERTEX, NORMAL, COLOR};
 
     public TerrainDao(final int vaoId, final List<Integer> vboIds, final int vertexCount) {
         super(vaoId, vboIds, vertexCount);
@@ -19,6 +19,6 @@ public class TerrainDao extends MeshDao {
 
     @Override
     public MeshDataType[] getVertexAttribs() {
-        return meshDataTypes;
+        return MESH_DATA_TYPES;
     }
 }

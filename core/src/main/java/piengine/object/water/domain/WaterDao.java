@@ -12,7 +12,7 @@ import static piengine.object.mesh.domain.MeshDataType.VERTEX;
 
 public class WaterDao extends MeshDao {
 
-    private static MeshDataType[] meshDataTypes = {VERTEX, NORMAL, COLOR, INDICATOR};
+    private static final MeshDataType[] MESH_DATA_TYPES = {VERTEX, NORMAL, COLOR, INDICATOR};
 
     public WaterDao(final int vaoId, final List<Integer> vboIds, final int vertexCount) {
         super(vaoId, vboIds, vertexCount);
@@ -20,6 +20,6 @@ public class WaterDao extends MeshDao {
 
     @Override
     public MeshDataType[] getVertexAttribs() {
-        return meshDataTypes;
+        return MESH_DATA_TYPES;
     }
 }

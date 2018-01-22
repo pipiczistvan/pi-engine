@@ -9,7 +9,7 @@ import static piengine.object.mesh.domain.MeshDataType.VERTEX;
 
 public class SkyboxDao extends MeshDao {
 
-    private static MeshDataType[] meshDataTypes = {VERTEX};
+    private static final MeshDataType[] MESH_DATA_TYPES = {VERTEX};
 
     public SkyboxDao(final int vaoId, final List<Integer> vboIds, final int vertexCount) {
         super(vaoId, vboIds, vertexCount);
@@ -17,6 +17,6 @@ public class SkyboxDao extends MeshDao {
 
     @Override
     public MeshDataType[] getVertexAttribs() {
-        return meshDataTypes;
+        return MESH_DATA_TYPES;
     }
 }

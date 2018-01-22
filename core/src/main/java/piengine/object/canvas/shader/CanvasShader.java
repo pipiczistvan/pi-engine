@@ -1,4 +1,4 @@
-package piengine.visual.render.shader;
+package piengine.object.canvas.shader;
 
 import org.joml.Matrix4f;
 import piengine.core.base.type.color.Color;

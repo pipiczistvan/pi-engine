@@ -1,8 +1,8 @@
 package piengine.visual.render.domain.fragment.handler;
 
+import piengine.object.canvas.service.CanvasRenderService;
 import piengine.visual.render.domain.fragment.domain.RenderFragmentType;
 import piengine.visual.render.domain.fragment.domain.RenderGuiPlanContext;
-import piengine.visual.render.service.CanvasRenderService;
 import piengine.visual.writing.text.service.TextRenderService;
 import puppeteer.annotation.premade.Component;
 import puppeteer.annotation.premade.Wire;

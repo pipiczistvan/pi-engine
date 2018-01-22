@@ -1,4 +1,4 @@
-package piengine.visual.render.shader;
+package piengine.object.water.shader;
 
 import org.joml.Matrix4f;
 import org.joml.Vector3f;

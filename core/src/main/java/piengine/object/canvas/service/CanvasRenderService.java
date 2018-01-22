@@ -1,14 +1,15 @@
-package piengine.visual.render.service;
+package piengine.object.canvas.service;
 
 import piengine.core.base.exception.PIEngineException;
 import piengine.object.canvas.domain.Canvas;
+import piengine.object.canvas.shader.CanvasShader;
 import piengine.visual.postprocessing.domain.context.PostProcessingEffectContext;
 import piengine.visual.postprocessing.service.AbstractPostProcessingService;
 import piengine.visual.render.domain.config.RenderConfig;
 import piengine.visual.render.domain.config.RenderConfigBuilder;
 import piengine.visual.render.domain.fragment.domain.RenderGuiPlanContext;
 import piengine.visual.render.interpreter.RenderInterpreter;
-import piengine.visual.render.shader.CanvasShader;
+import piengine.visual.render.service.AbstractRenderService;
 import piengine.visual.shader.domain.ShaderKey;
 import piengine.visual.shader.service.ShaderService;
 import piengine.visual.texture.domain.Texture;

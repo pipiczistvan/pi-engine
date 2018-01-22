@@ -1,10 +1,11 @@
-package piengine.visual.render.service;
+package piengine.object.skybox.service;
 
+import piengine.object.skybox.shader.SkyboxShader;
 import piengine.visual.render.domain.config.RenderConfig;
 import piengine.visual.render.domain.config.RenderConfigBuilder;
 import piengine.visual.render.domain.fragment.domain.RenderWorldPlanContext;
 import piengine.visual.render.interpreter.RenderInterpreter;
-import piengine.visual.render.shader.SkyboxShader;
+import piengine.visual.render.service.AbstractRenderService;
 import piengine.visual.shader.domain.ShaderKey;
 import piengine.visual.shader.service.ShaderService;
 import piengine.visual.texture.service.TextureService;

@@ -1,4 +1,4 @@
-package piengine.visual.render.shader;
+package piengine.visual.lighting.directional.shadow.shader;
 
 import org.joml.Matrix4f;
 import piengine.visual.shader.domain.Shader;

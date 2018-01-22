@@ -17,21 +17,20 @@ public class MeshAccessor implements Accessor<MeshKey, MeshData> {
     private static final String ROOT = get(MESHES_LOCATION);
     private static final String MESH_EXT = "obj";
 
-    private final MeshParser meshParser;
+    private final ObjParser objParser;
     private final ResourceLoader loader;
 
     @Wire
-    public MeshAccessor(final MeshParser meshParser) {
-        this.meshParser = meshParser;
+    public MeshAccessor(final ObjParser objParser) {
+        this.objParser = objParser;
         this.loader = new ResourceLoader(ROOT, MESH_EXT);
     }
 
     @Override
     public MeshData access(final MeshKey key) {
         final String meshSource = loader.load(key.file);
-        final ParsedMeshData parsedMeshData = meshParser.parseSource(meshSource.split("\n"));
+        final ParsedMeshData parsedMeshData = objParser.parseSource(meshSource.split("\n"));
 
         return new MeshData(parsedMeshData.vertices, parsedMeshData.indices, parsedMeshData.textureCoords, parsedMeshData.normals);
     }
-
 }
