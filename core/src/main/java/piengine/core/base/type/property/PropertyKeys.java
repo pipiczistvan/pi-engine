@@ -23,6 +23,7 @@ public class PropertyKeys {
     public static final StringProperty MESHES_LOCATION = new StringProperty("engine.resources.root.meshes");
     public static final StringProperty IMAGES_LOCATION = new StringProperty("engine.resources.root.images");
     public static final StringProperty FONTS_LOCATION = new StringProperty("engine.resources.root.fonts");
+    public static final StringProperty COLLADA_LOCATION = new StringProperty("engine.resources.root.collada");
 
     public static final FloatProperty CAMERA_FOV = new FloatProperty("camera.fov");
     public static final IntegerProperty CAMERA_VIEWPORT_WIDTH = new IntegerProperty("camera.viewport.width");
