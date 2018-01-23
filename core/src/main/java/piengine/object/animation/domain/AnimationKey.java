@@ -1,4 +1,4 @@
-package piengine.object.animation.accessor;
+package piengine.object.animation.domain;
 
 import piengine.core.base.domain.Key;
 

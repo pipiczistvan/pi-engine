@@ -12,6 +12,7 @@ layout (location = 6) in vec3 Weight;
 out vec2 vTextureCoord;
 out vec3 vNormal;
 
+uniform mat4 modelMatrix;
 uniform mat4 jointTransforms[MAX_JOINTS];
 uniform mat4 projectionViewMatrix;
 
@@ -28,7 +29,7 @@ void main(void) {
 		totalNormal += worldNormal * Weight[i];
 	}
 
-	gl_Position = projectionViewMatrix * totalLocalPos;
+	gl_Position = projectionViewMatrix * modelMatrix * totalLocalPos;
 	vNormal = totalNormal.xyz;
 	vTextureCoord = TextureCoord;
 }

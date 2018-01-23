@@ -17,6 +17,7 @@ public class AnimatedModelShader extends Shader {
     private UniformMatrix4f projectionViewMatrix = uniformMatrix4f(this, "projectionViewMatrix");
     private UniformVector3f lightDirection = uniformVector3f(this, "lightDirection");
     private UniformMatrix4f[] jointTransforms = uniformMatrix4f(this, "jointTransforms", MAX_JOINTS);
+    private UniformMatrix4f modelMatrix = uniformMatrix4f(this, "modelMatrix");
 
     public AnimatedModelShader(final ShaderDao dao) {
         super(dao);
@@ -38,6 +39,12 @@ public class AnimatedModelShader extends Shader {
         for (int i = 0; i < value.length; i++) {
             jointTransforms[i].load(value[i]);
         }
+
+        return this;
+    }
+
+    public AnimatedModelShader loadModelMatrix(final Matrix4f value) {
+        modelMatrix.load(value);
 
         return this;
     }

@@ -5,6 +5,7 @@ import piengine.core.base.resource.ResourceLoader;
 import piengine.core.xml.domain.XmlNode;
 import piengine.core.xml.service.XmlParser;
 import piengine.object.animation.domain.AnimationData;
+import piengine.object.animation.domain.AnimationKey;
 import puppeteer.annotation.premade.Component;
 import puppeteer.annotation.premade.Wire;
 

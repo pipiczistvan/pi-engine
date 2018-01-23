@@ -4,8 +4,13 @@ import org.joml.Vector2i;
 import org.joml.Vector3f;
 import piengine.core.domain.assets.object.lamp.LampAsset;
 import piengine.core.domain.assets.object.lamp.LampAssetArgument;
+import piengine.core.input.domain.KeyEventType;
+import piengine.core.input.manager.InputManager;
 import piengine.object.animatedmodel.domain.AnimatedModel;
 import piengine.object.animatedmodel.manager.AnimatedModelManager;
+import piengine.object.animation.domain.Animation;
+import piengine.object.animation.manager.AnimationManager;
+import piengine.object.animator.Animator;
 import piengine.object.asset.domain.WorldAsset;
 import piengine.object.asset.manager.AssetManager;
 import piengine.object.asset.plan.WorldRenderAssetContext;
@@ -20,6 +25,7 @@ import puppeteer.annotation.premade.Wire;
 
 import java.util.Random;
 
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_R;
 import static piengine.core.domain.InitScene.TERRAIN_SCALE;
 import static piengine.core.domain.InitScene.WATER_SCALE;
 
@@ -31,6 +37,8 @@ public class MapAsset extends WorldAsset<MapAssetArgument> {
     private final ModelManager modelManager;
     private final AssetManager assetManager;
     private final AnimatedModelManager animatedModelManager;
+    private final AnimationManager animationManager;
+    private final InputManager inputManager;
 
     private Terrain terrain;
     private Water water;
@@ -39,16 +47,21 @@ public class MapAsset extends WorldAsset<MapAssetArgument> {
     private Model treeModel1, treeModel2, treeModel3, treeModel4;
     private Model[] treeModels = new Model[100];
     private AnimatedModel peasantModel;
+    private Animation peasantAnimation;
+    private Animator animator;
 
     private float wave = 0;
 
     @Wire
     public MapAsset(final WaterManager waterManager, final ModelManager modelManager,
-                    final AssetManager assetManager, final AnimatedModelManager animatedModelManager) {
+                    final AssetManager assetManager, final AnimatedModelManager animatedModelManager,
+                    final AnimationManager animationManager, final InputManager inputManager) {
         this.waterManager = waterManager;
         this.modelManager = modelManager;
         this.assetManager = assetManager;
         this.animatedModelManager = animatedModelManager;
+        this.animationManager = animationManager;
+        this.inputManager = inputManager;
     }
 
     @Override
@@ -74,6 +87,11 @@ public class MapAsset extends WorldAsset<MapAssetArgument> {
         }
 
         peasantModel = animatedModelManager.supply(this, "peasant", "peasant");
+        peasantAnimation = animationManager.supply("peasant");
+
+        animator = new Animator(peasantModel);
+        inputManager.addEvent(GLFW_KEY_R, KeyEventType.PRESS, () -> animator.doAnimation(peasantAnimation));
+        inputManager.addEvent(GLFW_KEY_R, KeyEventType.RELEASE, () -> animator.doAnimation(null));
 
         initializeAssets();
     }
@@ -89,7 +107,7 @@ public class MapAsset extends WorldAsset<MapAssetArgument> {
         cubeModel3.translateRotate(0, (float) (Math.sin(wave - 1) * 0.01f), 0, 5f * delta, 10f * delta, 15f * delta);
         cubeModel4.translateRotate(0, (float) (Math.sin(wave - 1.5) * 0.01f), 0, 5f * delta, 10f * delta, 15f * delta);
 
-//        peasantModel.rotate(0.01f, 0, 0);
+        animator.update(delta);
     }
 
     @Override
@@ -149,5 +167,8 @@ public class MapAsset extends WorldAsset<MapAssetArgument> {
             tree.setScale(scale);
             tree.setPosition(x, y, z);
         }
+
+        peasantModel.setScale(0.5f);
+        placeEntityOnTerrain(peasantModel, -5, -5, 0);
     }
 }

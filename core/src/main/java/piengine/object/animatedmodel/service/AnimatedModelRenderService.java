@@ -40,7 +40,8 @@ public class AnimatedModelRenderService extends AbstractRenderService<AnimatedMo
                 .loadProjectionViewMatrix(createProjectionView(context.currentCamera));
 
         for (AnimatedModel animatedModel : context.animatedModels) {
-            shader.loadJointTransforms(animatedModel.getJointTransforms());
+            shader.loadJointTransforms(animatedModel.getJointTransforms())
+                    .loadModelMatrix(animatedModel.getTransformation());
             textureService.bind(animatedModel.texture);
             draw(animatedModel.getDao());
         }
