@@ -6,6 +6,8 @@ const int POINT_LIGHT_COUNT = ${lighting.point.light.count};
 const int DIRECTIONAL_SHADOW_PCF_COUNT = ${lighting.directional.shadow.pcf.count};
 const float TOTAL_TEXELS = (DIRECTIONAL_SHADOW_PCF_COUNT * 2.0 + 1.0) * (DIRECTIONAL_SHADOW_PCF_COUNT * 2.0 + 1.0);
 const float POINT_SHADOW_DISTANCE = ${lighting.point.shadow.distance};
+const float POINT_SHADOW_TRANSITION_DISTANCE = ${lighting.point.shadow.transition.distance};
+const float POINT_SHADOW_TRANSITION_LENGTH = 1.0 - (POINT_SHADOW_DISTANCE - POINT_SHADOW_TRANSITION_DISTANCE) / POINT_SHADOW_DISTANCE;
 const vec3 sampleOffsetDirections[20] = vec3[]
 (
    vec3( 1,  1,  1), vec3( 1, -1,  1), vec3(-1, -1,  1), vec3(-1,  1,  1),
@@ -78,7 +80,6 @@ float calculatePointShadow(vec3 fragPos, vec3 viewPosition, vec3 lightPosition, 
     vec3 fragToLight = fragPos - lightPosition;
     float currentDepth = length(fragToLight);
     currentDepth /= POINT_SHADOW_DISTANCE;
-    currentDepth = clamp(currentDepth, 0.0, 1.0);
     float viewDistance = length(viewPosition - fragPos);
 
     float shadow  = 0.0;
@@ -90,7 +91,10 @@ float calculatePointShadow(vec3 fragPos, vec3 viewPosition, vec3 lightPosition, 
             shadow += 1.0;
         }
     }
-    return shadow / samples;
+
+    float strength = 1.0 - clamp(currentDepth - POINT_SHADOW_TRANSITION_LENGTH, 0.0, 1.0);
+
+    return shadow / samples * strength;
 }
 
 float calculateAttenuationFactor(vec3 attenuation, vec3 lightPosition, vec3 vertexPosition) {

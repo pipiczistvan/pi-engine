@@ -2,7 +2,8 @@
 
 const int DIRECTIONAL_LIGHT_COUNT = ${lighting.directional.light.count};
 const float DIRECTIONAL_SHADOW_DISTANCE = ${lighting.directional.shadow.distance};
-const float TRANSITION_DISTANCE = 5.0;
+const float DIRECTIONAL_SHADOW_TRANSITION_DISTANCE = ${lighting.directional.shadow.transition.distance};
+const int POINT_LIGHT_COUNT = ${lighting.point.light.count};
 
 struct Fog {
     vec4 color;
@@ -49,11 +50,11 @@ void main(void) {
     vPosition = worldPosition.xyz;
     vVisibility = calculateVisibilityFactor(distance);
 
-    distance = distance - (DIRECTIONAL_SHADOW_DISTANCE - TRANSITION_DISTANCE);
-    distance = distance / TRANSITION_DISTANCE;
+    float directionalShadowDistance = distance - (DIRECTIONAL_SHADOW_DISTANCE - DIRECTIONAL_SHADOW_TRANSITION_DISTANCE);
+    directionalShadowDistance /= DIRECTIONAL_SHADOW_TRANSITION_DISTANCE;
     for (int i = 0; i < DIRECTIONAL_LIGHT_COUNT; i++) {
         vShadowCoords[i] = directionalShadows[i].spaceMatrix * worldPosition;
-        vShadowCoords[i].w = clamp(1.0 - distance, 0.0, 1.0);
+        vShadowCoords[i].w = clamp(1.0 - directionalShadowDistance, 0.0, 1.0);
     }
 
     gl_Position = projectionMatrix * viewPosition;

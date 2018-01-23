@@ -2,7 +2,7 @@
 
 const int DIRECTIONAL_LIGHT_COUNT = ${lighting.directional.light.count};
 const float DIRECTIONAL_SHADOW_DISTANCE = ${lighting.directional.shadow.distance};
-const float SHADOW_TRANSITION_DISTANCE = 5.0;
+const float DIRECTIONAL_SHADOW_TRANSITION_DISTANCE = ${lighting.directional.shadow.transition.distance};
 const float PI = 3.1415926535897932384626433832795;
 const float waveLength = 10.0;
 const float waveAmplitude = 0.3;
@@ -85,8 +85,8 @@ void main(void) {
     vVisibility = calculateVisibilityFactor(distance);
     vPosition = worldPosition;
 
-    distance = distance - (DIRECTIONAL_SHADOW_DISTANCE - SHADOW_TRANSITION_DISTANCE);
-    distance = distance / SHADOW_TRANSITION_DISTANCE;
+    distance = distance - (DIRECTIONAL_SHADOW_DISTANCE - DIRECTIONAL_SHADOW_TRANSITION_DISTANCE);
+    distance = distance / DIRECTIONAL_SHADOW_TRANSITION_DISTANCE;
     for (int i = 0; i < DIRECTIONAL_LIGHT_COUNT; i++) {
         vShadowCoords[i] = directionalShadows[i].spaceMatrix * worldPosition;
         vShadowCoords[i].w = clamp(1.0 - distance, 0.0, 1.0);
