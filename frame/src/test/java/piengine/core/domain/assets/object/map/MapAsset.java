@@ -4,6 +4,8 @@ import org.joml.Vector2i;
 import org.joml.Vector3f;
 import piengine.core.domain.assets.object.lamp.LampAsset;
 import piengine.core.domain.assets.object.lamp.LampAssetArgument;
+import piengine.object.animatedmodel.domain.AnimatedModel;
+import piengine.object.animatedmodel.manager.AnimatedModelManager;
 import piengine.object.asset.domain.WorldAsset;
 import piengine.object.asset.manager.AssetManager;
 import piengine.object.asset.plan.WorldRenderAssetContext;
@@ -28,6 +30,7 @@ public class MapAsset extends WorldAsset<MapAssetArgument> {
     private final WaterManager waterManager;
     private final ModelManager modelManager;
     private final AssetManager assetManager;
+    private final AnimatedModelManager animatedModelManager;
 
     private Terrain terrain;
     private Water water;
@@ -35,14 +38,17 @@ public class MapAsset extends WorldAsset<MapAssetArgument> {
     private Model cubeModel1, cubeModel2, cubeModel3, cubeModel4;
     private Model treeModel1, treeModel2, treeModel3, treeModel4;
     private Model[] treeModels = new Model[100];
+    private AnimatedModel peasantModel;
 
     private float wave = 0;
 
     @Wire
-    public MapAsset(final WaterManager waterManager, final ModelManager modelManager, final AssetManager assetManager) {
+    public MapAsset(final WaterManager waterManager, final ModelManager modelManager,
+                    final AssetManager assetManager, final AnimatedModelManager animatedModelManager) {
         this.waterManager = waterManager;
         this.modelManager = modelManager;
         this.assetManager = assetManager;
+        this.animatedModelManager = animatedModelManager;
     }
 
     @Override
@@ -67,6 +73,8 @@ public class MapAsset extends WorldAsset<MapAssetArgument> {
             treeModels[i] = modelManager.supply(this, "lowPolyTree", "lowPolyTree", false);
         }
 
+        peasantModel = animatedModelManager.supply(this, "peasant", "peasant");
+
         initializeAssets();
     }
 
@@ -80,6 +88,8 @@ public class MapAsset extends WorldAsset<MapAssetArgument> {
         cubeModel2.translateRotate(0, (float) (Math.sin(wave - 0.5) * 0.01f), 0, 5f * delta, 10f * delta, 15f * delta);
         cubeModel3.translateRotate(0, (float) (Math.sin(wave - 1) * 0.01f), 0, 5f * delta, 10f * delta, 15f * delta);
         cubeModel4.translateRotate(0, (float) (Math.sin(wave - 1.5) * 0.01f), 0, 5f * delta, 10f * delta, 15f * delta);
+
+//        peasantModel.rotate(0.01f, 0, 0);
     }
 
     @Override
@@ -90,6 +100,7 @@ public class MapAsset extends WorldAsset<MapAssetArgument> {
                 .loadTerrains(terrain)
                 .loadWaters(water)
                 .loadModels(treeModels)
+                .loadAnimatedModels(peasantModel)
 //                .loadAssets(lampAsset1)
                 .build();
     }

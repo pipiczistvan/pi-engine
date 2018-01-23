@@ -15,23 +15,27 @@ public class XmlParser {
     private static final Pattern ATTR_VAL = Pattern.compile("\"(.+?)\"");
     private static final Pattern CLOSED = Pattern.compile("(</|/>)");
 
-    public XmlNode parseSource(String[] source) {
-        return loadNode(source, 0);
+    public XmlNode parseSource(final String[] source) {
+        LineReader lineReader = new LineReader(source);
+        lineReader.read();
+
+        return loadNode(lineReader);
     }
 
-    private XmlNode loadNode(final String[] lines, int lineIndex) {
-        if (lines[lineIndex].startsWith("</")) {
+    private XmlNode loadNode(final LineReader lineReader) {
+        String line = lineReader.read();
+        if (line.startsWith("</")) {
             return null;
         }
-        String[] startTagParts = getStartTag(lines[lineIndex]).split(" ");
+        String[] startTagParts = getStartTag(line).split(" ");
         XmlNode node = new XmlNode(startTagParts[0].replace("/", ""));
         addAttributes(startTagParts, node);
-        addData(lines[lineIndex], node);
-        if (CLOSED.matcher(lines[lineIndex]).find()) {
+        addData(line, node);
+        if (CLOSED.matcher(line).find()) {
             return node;
         }
         XmlNode child;
-        while ((child = loadNode(lines, lineIndex++)) != null) {
+        while ((child = loadNode(lineReader)) != null) {
             node.addChild(child);
         }
         return node;
@@ -64,5 +68,19 @@ public class XmlParser {
         Matcher match = START_TAG.matcher(line);
         match.find();
         return match.group(1);
+    }
+
+    private class LineReader {
+
+        private int index = 0;
+        private final String[] lines;
+
+        private LineReader(final String[] lines) {
+            this.lines = lines;
+        }
+
+        private String read() {
+            return lines[index++];
+        }
     }
 }

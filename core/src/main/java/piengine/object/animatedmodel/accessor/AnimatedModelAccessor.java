@@ -39,13 +39,13 @@ public class AnimatedModelAccessor implements Accessor<AnimatedModelKey, Animate
 
     @Override
     public AnimatedModelData access(final AnimatedModelKey key) {
-        String colladaSource = loader.load(key.file);
+        String colladaSource = loader.load(key.colladaFile);
         XmlNode node = xmlParser.parseSource(colladaSource.split("\n"));
 
         SkinningData skinningData = skinningDataParser.parseXmlNode(node.getChild("library_controllers"), key.maxWeights);
         SkeletonData skeletonData = skeletonDataParser.parseXmlNode(node.getChild("library_visual_scenes"), skinningData.jointOrder);
         GeometryData geometryData = geometryDataParser.parseXmlNode(node.getChild("library_geometries"), skinningData.verticesSkinData);
 
-        return new AnimatedModelData(skeletonData, geometryData);
+        return new AnimatedModelData(key.parent, key.texture, skeletonData, geometryData);
     }
 }

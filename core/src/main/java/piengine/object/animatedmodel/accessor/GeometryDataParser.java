@@ -24,8 +24,10 @@ public class GeometryDataParser {
         List<Vector2f> textures = new ArrayList<>();
         List<Integer> indices = new ArrayList<>();
 
-        readRawData(geometryNode, vertices, normals, textures, vertexWeights);
-        assembleVertices(geometryNode, vertices, indices);
+        XmlNode meshNode = geometryNode.getChild("geometry").getChild("mesh");
+
+        readRawData(meshNode, vertices, normals, textures, vertexWeights);
+        assembleVertices(meshNode, vertices, indices);
         removeUnusedVertices(vertices);
 
         float[] verticesArray = new float[vertices.size() * 3];

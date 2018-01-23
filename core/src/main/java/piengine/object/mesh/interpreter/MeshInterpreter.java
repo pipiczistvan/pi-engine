@@ -59,7 +59,7 @@ public class MeshInterpreter implements Interpreter<MeshData, MeshDao> {
         glBindVertexArray(0);
     }
 
-    private int createIndicesVbo(int[] data) {
+    private int createIndicesVbo(final int[] data) {
         int vbo = glGenBuffers();
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vbo);
         IntBuffer buffer = convertToIntBuffer(data);
@@ -68,7 +68,7 @@ public class MeshInterpreter implements Interpreter<MeshData, MeshDao> {
         return vbo;
     }
 
-    private int createVbo(int index, float[] data, int size) {
+    private int createVbo(final int index, final float[] data, final int size) {
         int vbo = glGenBuffers();
         glBindBuffer(GL_ARRAY_BUFFER, vbo);
         FloatBuffer buffer = convertToFloatBuffer(data);

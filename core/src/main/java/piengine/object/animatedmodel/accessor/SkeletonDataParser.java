@@ -17,7 +17,7 @@ public class SkeletonDataParser {
     private static final Matrix4f CORRECTION = new Matrix4f().rotate((float) Math.toRadians(-90), new Vector3f(1, 0, 0));
 
     public SkeletonData parseXmlNode(final XmlNode visualSceneNode, final List<String> boneOrder) {
-        XmlNode headNode = visualSceneNode.getChild("node");
+        XmlNode headNode = visualSceneNode.getChild("visual_scene").getChildWithAttribute("node", "id", "Armature").getChild("node");
         JointCountHolder countHolder = new JointCountHolder();
         JointData headJoint = loadJointData(headNode, true, boneOrder, countHolder);
         return new SkeletonData(countHolder.value(), headJoint);

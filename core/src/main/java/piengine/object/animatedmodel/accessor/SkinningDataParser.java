@@ -12,19 +12,20 @@ import java.util.List;
 public class SkinningDataParser {
 
     public SkinningData parseXmlNode(final XmlNode controllersNode, final int maxWeights) {
-        List<String> jointsList = loadJointsList(controllersNode);
-        float[] weights = loadWeights(controllersNode);
-        XmlNode weightsDataNode = controllersNode.getChild("vertex_weights");
-        int[] effectorJointCounts = getEffectiveJointsCounts(weightsDataNode);
-        List<VertexSkinData> vertexWeights = getSkinData(weightsDataNode, effectorJointCounts, weights, maxWeights);
+        XmlNode skinNode = controllersNode.getChild("controller").getChild("skin");
+
+        List<String> jointsList = loadJointsList(skinNode);
+        float[] weights = loadWeights(skinNode);
+        int[] effectorJointCounts = getEffectiveJointsCounts(skinNode);
+        List<VertexSkinData> vertexWeights = getSkinData(skinNode, effectorJointCounts, weights, maxWeights);
         return new SkinningData(jointsList, vertexWeights);
     }
 
-    private List<String> loadJointsList(final XmlNode controllersNode) {
-        XmlNode inputNode = controllersNode.getChild("vertex_weights");
+    private List<String> loadJointsList(final XmlNode skinNode) {
+        XmlNode inputNode = skinNode.getChild("vertex_weights");
         String jointDataId = inputNode.getChildWithAttribute("input", "semantic", "JOINT").getAttribute("source")
                 .substring(1);
-        XmlNode jointsNode = controllersNode.getChildWithAttribute("source", "id", jointDataId).getChild("Name_array");
+        XmlNode jointsNode = skinNode.getChildWithAttribute("source", "id", jointDataId).getChild("Name_array");
         String[] names = jointsNode.getData().split(" ");
         List<String> jointsList = new ArrayList<String>();
         for (String name : names) {
@@ -33,11 +34,11 @@ public class SkinningDataParser {
         return jointsList;
     }
 
-    private float[] loadWeights(final XmlNode controllersNode) {
-        XmlNode inputNode = controllersNode.getChild("vertex_weights");
+    private float[] loadWeights(final XmlNode skinNode) {
+        XmlNode inputNode = skinNode.getChild("vertex_weights");
         String weightsDataId = inputNode.getChildWithAttribute("input", "semantic", "WEIGHT").getAttribute("source")
                 .substring(1);
-        XmlNode weightsNode = controllersNode.getChildWithAttribute("source", "id", weightsDataId).getChild("float_array");
+        XmlNode weightsNode = skinNode.getChildWithAttribute("source", "id", weightsDataId).getChild("float_array");
         String[] rawData = weightsNode.getData().split(" ");
         float[] weights = new float[rawData.length];
         for (int i = 0; i < weights.length; i++) {
@@ -46,8 +47,8 @@ public class SkinningDataParser {
         return weights;
     }
 
-    private int[] getEffectiveJointsCounts(final XmlNode weightsDataNode) {
-        String[] rawData = weightsDataNode.getChild("vcount").getData().split(" ");
+    private int[] getEffectiveJointsCounts(final XmlNode skinNode) {
+        String[] rawData = skinNode.getChild("vertex_weights").getChild("vcount").getData().split(" ");
         int[] counts = new int[rawData.length];
         for (int i = 0; i < rawData.length; i++) {
             counts[i] = Integer.parseInt(rawData[i]);
@@ -55,8 +56,8 @@ public class SkinningDataParser {
         return counts;
     }
 
-    private List<VertexSkinData> getSkinData(final XmlNode weightsDataNode, final int[] counts, final float[] weights, final int maxWeights) {
-        String[] rawData = weightsDataNode.getChild("v").getData().split(" ");
+    private List<VertexSkinData> getSkinData(final XmlNode skinNode, final int[] counts, final float[] weights, final int maxWeights) {
+        String[] rawData = skinNode.getChild("vertex_weights").getChild("v").getData().split(" ");
         List<VertexSkinData> skinningData = new ArrayList<>();
         int pointer = 0;
         for (int count : counts) {

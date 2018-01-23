@@ -55,7 +55,7 @@ public class ResourceLoader {
         try (BufferedReader reader = new BufferedReader(new URLReader(getUrl(file)))) {
             String line;
             while ((line = reader.readLine()) != null) {
-                builder.append(line).append("\n");
+                builder.append(line.trim()).append("\n");
             }
             reader.close();
         } catch (Exception e) {
