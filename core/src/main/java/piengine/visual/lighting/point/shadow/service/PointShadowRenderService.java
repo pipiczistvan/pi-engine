@@ -1,6 +1,7 @@
 package piengine.visual.lighting.point.shadow.service;
 
 import org.joml.Matrix4f;
+import piengine.object.animatedmodel.domain.AnimatedModel;
 import piengine.object.camera.domain.Camera;
 import piengine.object.model.domain.Model;
 import piengine.visual.lighting.point.shadow.domain.PointShadow;
@@ -44,11 +45,18 @@ public class PointShadowRenderService extends AbstractRenderService<PointShadowS
         shader.loadProjectionViewMatrices(projectionViewMatrices)
                 .loadLightPosition(pointShadow.getPosition());
 
+        shader.loadRenderStage(0);
         for (Model model : context.models) {
             if (!model.lightEmitter) {
                 shader.loadModelMatrix(model.getTransformation());
                 draw(model.mesh.getDao());
             }
+        }
+        shader.loadRenderStage(1);
+        for (AnimatedModel animatedModel : context.animatedModels) {
+            shader.loadModelMatrix(animatedModel.getTransformation())
+                    .loadJointTransforms(animatedModel.getJointTransforms());
+            draw(animatedModel.getDao());
         }
     }
 

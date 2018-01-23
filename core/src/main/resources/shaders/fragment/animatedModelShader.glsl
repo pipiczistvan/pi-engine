@@ -1,18 +1,25 @@
 #version 330 core
 
-const vec2 LIGHT_BIAS = vec2(0.7, 0.6);
+struct Fog {
+    vec4 color;
+    float gradient;
+    float density;
+};
 
+flat in vec4 vColor;
 in vec2 vTextureCoord;
-in vec3 vNormal;
+in float vVisibility;
 
 out vec4 fColor;
 
-uniform sampler2D diffuseMap;
-uniform vec3 lightDirection;
+uniform sampler2D textureSampler;
+uniform Fog fog;
 
 void main(void) {
-	vec4 diffuseColor = texture(diffuseMap, vTextureCoord);
-	vec3 unitNormal = normalize(vNormal);
-	float diffuseLight = max(dot(-lightDirection, unitNormal), 0.0) * LIGHT_BIAS.x + LIGHT_BIAS.y;
-	fColor = diffuseColor * diffuseLight;
+	// TEXTURE
+    vec4 textureFactor = texture(textureSampler, vTextureCoord);
+
+    // FINAL OUTPUT
+    fColor = vColor * textureFactor;
+    fColor = mix(fog.color, fColor, vVisibility);
 }

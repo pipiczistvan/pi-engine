@@ -9,11 +9,13 @@ import piengine.visual.image.manager.ImageManager;
 import puppeteer.annotation.premade.Component;
 import puppeteer.annotation.premade.Wire;
 
+import static piengine.core.base.type.property.ApplicationProperties.get;
+import static piengine.core.base.type.property.PropertyKeys.ANIMATION_SKELETON_MAX_WEIGHTS;
+
 @Component
 public class AnimatedModelManager {
 
-    //todo: dynamic
-    private static final int MAX_WIGHTS = 3;
+    private static final int MAX_WIGHTS = get(ANIMATION_SKELETON_MAX_WEIGHTS);
 
     private final AnimatedModelService animatedModelService;
     private final ImageManager imageManager;

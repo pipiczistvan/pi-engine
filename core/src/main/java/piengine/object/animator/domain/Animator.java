@@ -1,4 +1,4 @@
-package piengine.object.animator;
+package piengine.object.animator.domain;
 
 import org.joml.Matrix4f;
 import piengine.object.animatedmodel.domain.AnimatedModel;

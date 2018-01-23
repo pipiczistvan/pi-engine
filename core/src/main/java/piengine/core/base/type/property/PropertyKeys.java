@@ -43,4 +43,7 @@ public class PropertyKeys {
     public static final IntegerProperty LIGHTING_DIRECTIONAL_SHADOW_PCF_COUNT = new IntegerProperty("lighting.directional.shadow.pcf.count");
     public static final IntegerProperty LIGHTING_POINT_LIGHT_COUNT = new IntegerProperty("lighting.point.light.count");
     public static final FloatProperty LIGHTING_POINT_SHADOW_DISTANCE = new FloatProperty("lighting.point.shadow.distance");
+
+    public static final IntegerProperty ANIMATION_SKELETON_MAX_WEIGHTS = new IntegerProperty("animation.skeleton.max.weights");
+    public static final IntegerProperty ANIMATION_SKELETON_MAX_JOINTS = new IntegerProperty("animation.skeleton.max.joints");
 }

@@ -1,7 +1,6 @@
 package piengine.object.animatedmodel.service;
 
 import org.joml.Matrix4f;
-import org.joml.Vector3f;
 import piengine.object.animatedmodel.domain.AnimatedModel;
 import piengine.object.animatedmodel.shader.AnimatedModelShader;
 import piengine.object.camera.domain.Camera;
@@ -15,6 +14,8 @@ import piengine.visual.shader.service.ShaderService;
 import piengine.visual.texture.service.TextureService;
 import puppeteer.annotation.premade.Component;
 import puppeteer.annotation.premade.Wire;
+
+import static piengine.visual.render.domain.config.ProvokingVertex.FIRST_VERTEX_CONVENTION;
 
 @Component
 public class AnimatedModelRenderService extends AbstractRenderService<AnimatedModelShader, RenderWorldPlanContext> {
@@ -36,12 +37,21 @@ public class AnimatedModelRenderService extends AbstractRenderService<AnimatedMo
 
     @Override
     protected void render(final RenderWorldPlanContext context) {
-        shader.loadLightDirection(new Vector3f(1000, 1000, 300).normalize().negate())
-                .loadProjectionViewMatrix(createProjectionView(context.currentCamera));
+        renderInterpreter.setViewport(context.viewport);
+        renderInterpreter.setProvokingVertex(FIRST_VERTEX_CONVENTION);
+
+        shader.loadDirectionalLights(context.directionalLights)
+                .loadPointLights(context.pointLights)
+                .loadFog(context.fog)
+                .loadProjectionMatrix(context.currentCamera.getProjection())
+                .loadViewMatrix(context.currentCamera.getView())
+                .loadClippingPlane(context.clippingPlane);
 
         for (AnimatedModel animatedModel : context.animatedModels) {
             shader.loadJointTransforms(animatedModel.getJointTransforms())
-                    .loadModelMatrix(animatedModel.getTransformation());
+                    .loadModelMatrix(animatedModel.getTransformation())
+                    .loadLightEmitter(false);
+
             textureService.bind(animatedModel.texture);
             draw(animatedModel.getDao());
         }

@@ -1,6 +1,7 @@
 package piengine.visual.lighting.directional.shadow.service;
 
 import org.joml.Matrix4f;
+import piengine.object.animatedmodel.domain.AnimatedModel;
 import piengine.object.camera.domain.Camera;
 import piengine.object.entity.domain.Entity;
 import piengine.object.model.domain.Model;
@@ -35,14 +36,21 @@ public class DirectionalShadowRenderService extends AbstractRenderService<Direct
         Matrix4f projectionViewMatrix = createProjectionView(context.currentCamera);
 
         renderInterpreter.setViewport(context.viewport);
-        shader.start();
 
+        shader.start();
+        shader.loadRenderStage(0);
         for (Model model : context.models) {
             Matrix4f transformationMatrix = createTransformation(projectionViewMatrix, model);
             shader.loadTransformationMatrix(transformationMatrix);
             draw(model.mesh.getDao());
         }
-
+        shader.loadRenderStage(1);
+        for (AnimatedModel animatedModel : context.animatedModels) {
+            Matrix4f transformationMatrix = createTransformation(projectionViewMatrix, animatedModel);
+            shader.loadTransformationMatrix(transformationMatrix)
+                    .loadJointTransforms(animatedModel.getJointTransforms());
+            draw(animatedModel.getDao());
+        }
         shader.stop();
     }
 

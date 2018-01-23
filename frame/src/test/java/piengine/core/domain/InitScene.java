@@ -15,7 +15,6 @@ import piengine.gui.asset.ButtonAsset;
 import piengine.gui.asset.ButtonAssetArgument;
 import piengine.object.asset.manager.AssetManager;
 import piengine.object.asset.plan.GuiRenderAssetContextBuilder;
-import piengine.object.asset.plan.WorldRenderAssetContextBuilder;
 import piengine.object.camera.asset.CameraAsset;
 import piengine.object.camera.asset.CameraAssetArgument;
 import piengine.object.camera.domain.Camera;
@@ -171,7 +170,7 @@ public class InitScene extends Scene {
                         RenderPlanBuilder
                                 .createPlan(camera, fog, skybox)
                                 .loadAssets(mapAsset)
-                                .loadAssetContext(WorldRenderAssetContextBuilder.create().loadDirectionalLights(sun).build())
+//                                .loadAssetContext(WorldRenderAssetContextBuilder.create().loadDirectionalLights(sun).build())
                                 .clearScreen(ColorUtils.BLACK)
                                 .render()
                 )
