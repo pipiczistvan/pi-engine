@@ -43,6 +43,7 @@ flat out vec3 vdDiffuse[DIRECTIONAL_LIGHT_COUNT];
 flat out vec3 vdSpecular[DIRECTIONAL_LIGHT_COUNT];
 flat out vec3 vpDiffuse[POINT_LIGHT_COUNT];
 flat out vec3 vpSpecular[POINT_LIGHT_COUNT];
+flat out float vAttenuation[POINT_LIGHT_COUNT];
 out float vVisibility;
 out vec4 vShadowCoords[DIRECTIONAL_LIGHT_COUNT];
 out vec4 vPosition;
@@ -145,9 +146,9 @@ void main(void) {
     }
     for (int i = 0; i < POINT_LIGHT_COUNT; i++) {
         if (pointLights[i].enabled > 0.5) {
-            float attenuationFactor = calculateAttenuationFactor(pointLights[i].attenuation, pointLights[i].position, vPosition.xyz);
-            vpDiffuse[i] = calculateLightFactor(pointLights[i].position, pointLights[i].color.rgb, vPosition.xyz, vNormal) / attenuationFactor;
-            vpSpecular[i] = calculateSpecularFactor(directionalLights[i].position, directionalLights[i].color.rgb, vToCameraVector, vPosition.xyz, vNormal) / attenuationFactor;
+            vAttenuation[i] = calculateAttenuationFactor(pointLights[i].attenuation, pointLights[i].position, vPosition.xyz);
+            vpDiffuse[i] = calculateLightFactor(pointLights[i].position, pointLights[i].color.rgb, vPosition.xyz, vNormal);
+            vpSpecular[i] = calculateSpecularFactor(directionalLights[i].position, directionalLights[i].color.rgb, vToCameraVector, vPosition.xyz, vNormal);
         }
     }
 }

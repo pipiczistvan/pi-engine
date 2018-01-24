@@ -47,6 +47,7 @@ flat in vec3 vColor;
 flat in vec3 vNormal;
 flat in vec3 vdDiffuse[DIRECTIONAL_LIGHT_COUNT];
 flat in vec3 vpDiffuse[POINT_LIGHT_COUNT];
+flat in float vAttenuation[POINT_LIGHT_COUNT];
 in vec3 vPosition;
 in float vVisibility;
 in vec4 vShadowCoords[DIRECTIONAL_LIGHT_COUNT];
@@ -118,7 +119,7 @@ void main(void) {
             if (pointShadows[i].enabled > 0.5) {
                 shadowFactor = calculatePointShadow(vPosition.xyz, cameraPosition, pointShadows[i].position, pointShadowMaps[i]);
             }
-            finalDiffuse += max(vpDiffuse[i] - shadowFactor, 0.0);
+            finalDiffuse += max(vpDiffuse[i] - shadowFactor, 0.0) / vAttenuation[i];
         }
     }
 
