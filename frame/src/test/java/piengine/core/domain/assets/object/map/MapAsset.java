@@ -122,6 +122,7 @@ public class MapAsset extends WorldAsset<MapAssetArgument> {
                 .loadModels(treeModels)
                 .loadAnimatedModels(peasantModel)
                 .loadAssets(lampAsset1)
+//                .loadAssets(lampAsset2)
                 .build();
     }
 
@@ -152,7 +153,7 @@ public class MapAsset extends WorldAsset<MapAssetArgument> {
         treeModel4.scale(0.3f, 0.3f, 0.3f);
 
         placeEntityOnTerrain(lampAsset1, 0, 0, 0);
-//        placeEntityOnTerrain(lampAsset2, -6, 0, 0);
+        placeEntityOnTerrain(lampAsset2, -6, 0, 0);
 
         Random random = new Random();
         for (Model tree : treeModels) {

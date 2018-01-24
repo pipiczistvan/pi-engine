@@ -1,16 +1,30 @@
 #version 330 core
 
+const int POINT_LIGHT_COUNT = ${lighting.point.light.count};
 const int DIRECTIONAL_LIGHT_COUNT = ${lighting.directional.light.count};
 const float DIRECTIONAL_SHADOW_DISTANCE = ${lighting.directional.shadow.distance};
 const float DIRECTIONAL_SHADOW_TRANSITION_DISTANCE = ${lighting.directional.shadow.transition.distance};
 const float PI = 3.1415926535897932384626433832795;
-const float waveLength = 10.0;
+const float waveLength = 4.0;
 const float waveAmplitude = 0.3;
+const float specularReflectivity = 0.4;
+const float shineDamper = 20.0;
 
 struct Fog {
     vec4 color;
     float gradient;
     float density;
+};
+struct DirectionalLight {
+    float enabled;
+    vec4 color;
+    vec3 position;
+};
+struct PointLight {
+    float enabled;
+    vec4 color;
+    vec3 position;
+    vec3 attenuation;
 };
 struct DirectionalShadow {
     float enabled;
@@ -25,10 +39,16 @@ out vec4 vClipSpaceGrid;
 out vec4 vClipSpaceReal;
 out vec3 vToCameraVector;
 flat out vec3 vNormal;
+flat out vec3 vdDiffuse[DIRECTIONAL_LIGHT_COUNT];
+flat out vec3 vdSpecular[DIRECTIONAL_LIGHT_COUNT];
+flat out vec3 vpDiffuse[POINT_LIGHT_COUNT];
+flat out vec3 vpSpecular[POINT_LIGHT_COUNT];
 out float vVisibility;
 out vec4 vShadowCoords[DIRECTIONAL_LIGHT_COUNT];
 out vec4 vPosition;
 
+uniform DirectionalLight directionalLights[DIRECTIONAL_LIGHT_COUNT];
+uniform PointLight pointLights[POINT_LIGHT_COUNT];
 uniform mat4 viewMatrix;
 uniform mat4 projectionMatrix;
 uniform DirectionalShadow directionalShadows[DIRECTIONAL_LIGHT_COUNT];
@@ -58,6 +78,30 @@ vec4 applyDistortion(vec4 vertex){
     float yDistortion = generateOffset(vertex.x, vertex.z, 0.1, 0.3);
     float zDistortion = generateOffset(vertex.x, vertex.z, 0.15, 0.2);
 	return vertex + vec4(xDistortion, yDistortion, zDistortion, 0.0);
+}
+
+float calculateAttenuationFactor(vec3 attenuation, vec3 lightPosition, vec3 vertexPosition) {
+    vec3 toLightVector = lightPosition - vertexPosition;
+    float distance = length(toLightVector);
+    return attenuation.x + (attenuation.y * distance) + (attenuation.z * distance * distance);
+}
+
+vec3 calculateLightFactor(vec3 lightPosition, vec3 lightColor, vec3 vertexPosition, vec3 vertexNormal) {
+    vec3 toLightVector = lightPosition - vertexPosition;
+    float nDot1 = dot(normalize(toLightVector), vertexNormal);
+    float brightness = clamp(nDot1, 0.0, 1.0);
+    return brightness * lightColor;
+}
+
+vec3 calculateSpecularFactor(vec3 lightPosition, vec3 lightColor, vec3 toCamVector, vec3 vertexPosition, vec3 vertexNormal) {
+    vec3 toLightVector = lightPosition - vertexPosition;
+    vec3 normal = normalize(toLightVector);
+	vec3 reflectedLightDirection = reflect(-normal, vertexNormal);
+	float specularFactor = dot(reflectedLightDirection, toCamVector);
+
+	specularFactor = max(specularFactor, 0.0);
+	specularFactor = pow(specularFactor, shineDamper);
+	return specularFactor * specularReflectivity * lightColor;
 }
 
 void main(void) {
@@ -90,5 +134,20 @@ void main(void) {
     for (int i = 0; i < DIRECTIONAL_LIGHT_COUNT; i++) {
         vShadowCoords[i] = directionalShadows[i].spaceMatrix * worldPosition;
         vShadowCoords[i].w = clamp(1.0 - distance, 0.0, 1.0);
+    }
+
+    // LIGHTING
+    for(int i = 0; i < DIRECTIONAL_LIGHT_COUNT; i++) {
+        if (directionalLights[i].enabled > 0.5) {
+            vdDiffuse[i] = calculateLightFactor(directionalLights[i].position, directionalLights[i].color.rgb, vPosition.xyz, vNormal);
+            vdSpecular[i] = calculateSpecularFactor(directionalLights[i].position, directionalLights[i].color.rgb, vToCameraVector, vPosition.xyz, vNormal);
+        }
+    }
+    for (int i = 0; i < POINT_LIGHT_COUNT; i++) {
+        if (pointLights[i].enabled > 0.5) {
+            float attenuationFactor = calculateAttenuationFactor(pointLights[i].attenuation, pointLights[i].position, vPosition.xyz);
+            vpDiffuse[i] = calculateLightFactor(pointLights[i].position, pointLights[i].color.rgb, vPosition.xyz, vNormal) / attenuationFactor;
+            vpSpecular[i] = calculateSpecularFactor(directionalLights[i].position, directionalLights[i].color.rgb, vToCameraVector, vPosition.xyz, vNormal) / attenuationFactor;
+        }
     }
 }

@@ -3,6 +3,7 @@ package piengine.core.domain;
 import org.joml.Vector2i;
 import org.joml.Vector3f;
 import piengine.core.architecture.scene.domain.Scene;
+import piengine.core.base.type.color.Color;
 import piengine.core.domain.assets.object.fps.FpsAsset;
 import piengine.core.domain.assets.object.fps.FpsAssetArgument;
 import piengine.core.domain.assets.object.lamp.LampAsset;
@@ -58,7 +59,7 @@ import static piengine.visual.postprocessing.domain.EffectType.ANTIALIAS_EFFECT;
 public class InitScene extends Scene {
 
     public static final int TERRAIN_SCALE = 256;
-    public static final int WATER_SCALE = TERRAIN_SCALE / 4;
+    public static final int WATER_SCALE = TERRAIN_SCALE / 2;
     private static final Vector2i VIEWPORT = new Vector2i(get(CAMERA_VIEWPORT_WIDTH), get(CAMERA_VIEWPORT_HEIGHT));
 
     private final InputManager inputManager;
@@ -138,7 +139,7 @@ public class InitScene extends Scene {
 
         fog = new Fog(ColorUtils.BLACK, 0.015f, 1.5f);
 
-        sun = directionalLightManager.supply(this, ColorUtils.WHITE, camera, new Vector2i(2048));
+        sun = directionalLightManager.supply(this, new Color(1.0f, 0.9f, 0.6f), camera, new Vector2i(2048));
         sun.setPosition(1000, 1000, 300);
     }
 

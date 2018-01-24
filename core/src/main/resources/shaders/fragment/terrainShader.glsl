@@ -45,6 +45,8 @@ struct PointShadow {
 
 flat in vec3 vColor;
 flat in vec3 vNormal;
+flat in vec3 vdDiffuse[DIRECTIONAL_LIGHT_COUNT];
+flat in vec3 vpDiffuse[POINT_LIGHT_COUNT];
 in vec3 vPosition;
 in float vVisibility;
 in vec4 vShadowCoords[DIRECTIONAL_LIGHT_COUNT];
@@ -73,7 +75,8 @@ float calculateDirectionalShadow(vec4 shadowCoords, sampler2D shadowMap, int map
         }
     }
     total /= TOTAL_TEXELS;
-    return total * shadowCoords.w;
+
+    return min(total * shadowCoords.w, SHADOW_DARKNESS);
 }
 
 float calculatePointShadow(vec3 fragPos, vec3 viewPosition, vec3 lightPosition, samplerCube shadowCubeMap) {
@@ -92,51 +95,34 @@ float calculatePointShadow(vec3 fragPos, vec3 viewPosition, vec3 lightPosition, 
         }
     }
 
-    float strength = 1.0 - clamp(currentDepth - POINT_SHADOW_TRANSITION_LENGTH, 0.0, 1.0);
+    float strength = max(1.0 - currentDepth, 0.0) / POINT_SHADOW_TRANSITION_LENGTH;
 
-    return shadow / samples * strength;
-}
-
-float calculateAttenuationFactor(vec3 attenuation, vec3 lightPosition, vec3 vertexPosition) {
-    vec3 toLightVector = lightPosition - vertexPosition;
-    float distance = length(toLightVector);
-    return attenuation.x + (attenuation.y * distance) + (attenuation.z * distance * distance);
-}
-
-vec3 calculateLightFactor(vec3 lightPosition, vec3 lightColor, vec3 vertexPosition, vec3 vertexNormal, float shadowFactor) {
-    vec3 toLightVector = lightPosition - vertexPosition;
-    float nDot1 = dot(normalize(toLightVector), vertexNormal);
-    float brightness = clamp(nDot1, 0.0, 1.0 - shadowFactor);
-    return brightness * lightColor;
+    return min(shadow / samples * strength, SHADOW_DARKNESS);
 }
 
 void main(void) {
-    vec3 diffuseLight = vec3(0);
+
+    vec3 finalDiffuse = vec3(0.0);
     for(int i = 0; i < DIRECTIONAL_LIGHT_COUNT; i++) {
         if (directionalLights[i].enabled > 0.5) {
-            float shadowFactor = 0;
+            float shadowFactor = 0.0;
             if (directionalShadows[i].enabled > 0.5) {
-                shadowFactor += calculateDirectionalShadow(vShadowCoords[i], directionalShadowMaps[i], directionalShadows[i].mapSize);
+                shadowFactor = calculateDirectionalShadow(vShadowCoords[i], directionalShadowMaps[i], directionalShadows[i].mapSize);
             }
-            shadowFactor = min(shadowFactor, SHADOW_DARKNESS);
-
-            diffuseLight += calculateLightFactor(directionalLights[i].position, directionalLights[i].color.rgb, vPosition, vNormal, shadowFactor);
+            finalDiffuse += max(vdDiffuse[i] - shadowFactor, 0.0);
         }
     }
     for (int i = 0; i < POINT_LIGHT_COUNT; i++) {
         if (pointLights[i].enabled > 0.5) {
-            float shadowFactor = 0;
+            float shadowFactor = 0.0;
             if (pointShadows[i].enabled > 0.5) {
-                shadowFactor += calculatePointShadow(vPosition, cameraPosition, pointShadows[i].position, pointShadowMaps[i]);
+                shadowFactor = calculatePointShadow(vPosition.xyz, cameraPosition, pointShadows[i].position, pointShadowMaps[i]);
             }
-            shadowFactor = min(shadowFactor, SHADOW_DARKNESS);
-
-            diffuseLight += calculateLightFactor(pointLights[i].position, pointLights[i].color.rgb, vPosition, vNormal, shadowFactor) /
-                calculateAttenuationFactor(pointLights[i].attenuation, pointLights[i].position, vPosition);
+            finalDiffuse += max(vpDiffuse[i] - shadowFactor, 0.0);
         }
     }
 
-    fColor = vec4(diffuseLight * vColor, 1.0);
+    fColor = vec4(finalDiffuse * vColor, 1.0);
     // FINAL OUTPUT
     fColor = mix(fog.color, fColor, vVisibility);
 }
