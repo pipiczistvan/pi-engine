@@ -4,9 +4,9 @@ const int POINT_LIGHT_COUNT = ${lighting.point.light.count};
 const int DIRECTIONAL_LIGHT_COUNT = ${lighting.directional.light.count};
 const float DIRECTIONAL_SHADOW_DISTANCE = ${lighting.directional.shadow.distance};
 const float DIRECTIONAL_SHADOW_TRANSITION_DISTANCE = ${lighting.directional.shadow.transition.distance};
+const float WAVE_LENTH = ${water.wave.length};
+const float WAVE_AMPLITUDE = ${water.wave.amplitude};
 const float PI = 3.1415926535897932384626433832795;
-const float waveLength = 4.0;
-const float waveAmplitude = 0.3;
 const float specularReflectivity = 0.4;
 const float shineDamper = 20.0;
 
@@ -69,9 +69,9 @@ vec3 calculateNormal(vec3 vertex0, vec3 vertex1, vec3 vertex2){
 }
 
 float generateOffset(float x, float z, float val1, float val2){
-	float radiansX = ((mod(x + z * x * val1, waveLength)/waveLength) + waveFactor * mod(x * 0.8 + z, 1.5)) * 2.0 * PI;
-	float radiansZ = ((mod(val2 * (z * x + x * z), waveLength)/waveLength) + waveFactor * 2.0 * mod(x , 2.0) ) * 2.0 * PI;
-	return waveAmplitude * 0.5 * (sin(radiansZ) + cos(radiansX));
+	float radiansX = ((mod(x + z * x * val1, WAVE_LENTH)/WAVE_LENTH) + waveFactor * mod(x * 0.8 + z, 1.5)) * 2.0 * PI;
+	float radiansZ = ((mod(val2 * (z * x + x * z), WAVE_LENTH)/WAVE_LENTH) + waveFactor * 2.0 * mod(x , 2.0) ) * 2.0 * PI;
+	return WAVE_AMPLITUDE * 0.5 * (sin(radiansZ) + cos(radiansX));
 }
 
 vec4 applyDistortion(vec4 vertex){

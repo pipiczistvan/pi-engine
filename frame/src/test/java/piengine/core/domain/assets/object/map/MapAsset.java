@@ -30,12 +30,14 @@ import puppeteer.annotation.premade.Wire;
 import java.util.Random;
 
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_R;
+import static piengine.core.base.type.property.ApplicationProperties.get;
+import static piengine.core.base.type.property.PropertyKeys.WATER_WAVE_SPEED;
 import static piengine.core.domain.InitScene.TERRAIN_SCALE;
 import static piengine.core.domain.InitScene.WATER_SCALE;
 
 public class MapAsset extends WorldAsset<MapAssetArgument> {
 
-    private static final float WAVE_SPEED = 0.2f;
+    private static final float WAVE_SPEED = get(WATER_WAVE_SPEED);
 
     private final WaterManager waterManager;
     private final ModelManager modelManager;

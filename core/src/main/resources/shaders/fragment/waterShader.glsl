@@ -10,13 +10,13 @@ const float POINT_SHADOW_TRANSITION_DISTANCE = ${lighting.point.shadow.transitio
 const float POINT_SHADOW_TRANSITION_LENGTH = 1.0 - (POINT_SHADOW_DISTANCE - POINT_SHADOW_TRANSITION_DISTANCE) / POINT_SHADOW_DISTANCE;
 //const vec3 waterColor = vec3(0.604, 0.867, 0.851);
 const vec3 waterColor = vec3(0.2, 1.0, 0.898);
-const float fresnelReflective = 0.5;
-const float edgeSoftness = 2.0;
-const float NEAR_PLANE = ${camera.near.plane};
-const float FAR_PLANE = ${camera.far.plane};
-const float minBlueness = 0.3;
-const float maxBlueness = 0.75;
-const float murkyDepth = 25.0;
+const float WATER_FRESNEL_EFFECT = ${water.fresnel.effect};
+const float WATER_EDGE_SOFTNESS = ${water.edge.softness};
+const float WATER_MIN_COLOR = ${water.color.min};
+const float WATER_MAX_COLOR = ${water.color.max};
+const float WATER_MURKY_DEPTH = ${water.murky.depth};
+const float CAMERA_NEAR_PLANE = ${camera.near.plane};
+const float CAMERA_FAR_PLANE = ${camera.far.plane};
 const vec3 sampleOffsetDirections[20] = vec3[]
 (
    vec3( 1,  1,  1), vec3( 1, -1,  1), vec3(-1, -1,  1), vec3(-1,  1,  1),
@@ -118,13 +118,13 @@ float calculatePointShadow(vec3 fragPos, vec3 viewPosition, vec3 lightPosition, 
 }
 
 vec3 calculateMurkiness(vec3 refractColor, float waterDepth) {
-    float murkyFactor = smoothstep(0, murkyDepth, waterDepth);
-    float murkiness = minBlueness + murkyFactor * (maxBlueness - minBlueness);
+    float murkyFactor = smoothstep(0, WATER_MURKY_DEPTH, waterDepth);
+    float murkiness = WATER_MIN_COLOR + murkyFactor * (WATER_MAX_COLOR - WATER_MIN_COLOR);
     return mix(refractColor, waterColor, murkiness);
 }
 
 float calculateLinearDepth(float zDepth) {
-    return 2.0 * NEAR_PLANE * FAR_PLANE / (FAR_PLANE + NEAR_PLANE - (2.0 * zDepth - 1.0) * (FAR_PLANE - NEAR_PLANE));
+    return 2.0 * CAMERA_NEAR_PLANE * CAMERA_FAR_PLANE / (CAMERA_FAR_PLANE + CAMERA_NEAR_PLANE - (2.0 * zDepth - 1.0) * (CAMERA_FAR_PLANE - CAMERA_NEAR_PLANE));
 }
 
 float calculateWaterDepth(vec2 textureCoords) {
@@ -138,7 +138,7 @@ float calculateFresnel(vec3 toCameraVector, vec3 normalVector) {
     vec3 viewVector = normalize(toCameraVector);
     vec3 normal = normalize(normalVector);
     float refractiveFactor = dot(viewVector, normal);
-    refractiveFactor = pow(refractiveFactor, fresnelReflective);
+    refractiveFactor = pow(refractiveFactor, WATER_FRESNEL_EFFECT);
     return clamp(refractiveFactor, 0.0, 1.0);
 }
 
@@ -163,7 +163,7 @@ void main(void) {
     float waterDepth = calculateWaterDepth(texCoordsReal);
 
     refractColor = calculateMurkiness(refractColor, waterDepth);
-    reflectColor = mix(reflectColor, waterColor, minBlueness);
+    reflectColor = mix(reflectColor, waterColor, WATER_MIN_COLOR);
 
     vec3 textureColor = mix(reflectColor, refractColor, calculateFresnel(vToCameraVector, vNormal));
 
@@ -195,6 +195,6 @@ void main(void) {
     // OUTPUT
 
     vec3 finalColor = textureColor * finalDiffuse + finalSpecular;
-    fColor = vec4(finalColor, clamp(waterDepth / edgeSoftness, 0.0, 1.0));
+    fColor = vec4(finalColor, clamp(waterDepth / WATER_EDGE_SOFTNESS, 0.0, 1.0));
     fColor = mix(fog.color, fColor, vVisibility);
 }

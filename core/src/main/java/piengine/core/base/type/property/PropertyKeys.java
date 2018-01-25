@@ -48,4 +48,13 @@ public class PropertyKeys {
 
     public static final IntegerProperty ANIMATION_SKELETON_MAX_WEIGHTS = new IntegerProperty("animation.skeleton.max.weights");
     public static final IntegerProperty ANIMATION_SKELETON_MAX_JOINTS = new IntegerProperty("animation.skeleton.max.joints");
+
+    public static final FloatProperty WATER_WAVE_SPEED = new FloatProperty("water.wave.speed");
+    public static final FloatProperty WATER_WAVE_LENGTH = new FloatProperty("water.wave.length");
+    public static final FloatProperty WATER_WAVE_AMPLITUDE = new FloatProperty("water.wave.amplitude");
+    public static final FloatProperty WATER_FRESNEL_EFFECT = new FloatProperty("water.fresnel.effect");
+    public static final FloatProperty WATER_EDGE_SOFTNESS = new FloatProperty("water.edge.softness");
+    public static final FloatProperty WATER_COLOR_MIN = new FloatProperty("water.color.min");
+    public static final FloatProperty WATER_COLOR_MAX = new FloatProperty("water.color.max");
+    public static final FloatProperty WATER_MURKY_DEPTH = new FloatProperty("water.murky.depth");
 }
