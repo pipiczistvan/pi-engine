@@ -4,6 +4,7 @@ struct Fog {
     vec4 color;
     float gradient;
     float density;
+    float enabled;
 };
 
 flat in vec4 vColor;
@@ -21,5 +22,9 @@ void main(void) {
 
     // FINAL OUTPUT
     fColor = vColor * textureFactor;
-    fColor = mix(fog.color, fColor, vVisibility);
+
+    // FOG
+    if (fog.enabled > 0.5) {
+        fColor = mix(fog.color, fColor, vVisibility);
+    }
 }

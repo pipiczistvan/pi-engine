@@ -14,6 +14,7 @@ struct Fog {
     vec4 color;
     float gradient;
     float density;
+    float enabled;
 };
 struct DirectionalLight {
     float enabled;
@@ -127,7 +128,7 @@ void main(void) {
 
     vNormal = normalize(calculateNormal(worldPosition.xyz, worldNeighbourPosition1.xyz, worldNeighbourPosition2.xyz));
     vToCameraVector = normalize(cameraPosition - worldPosition.xyz);
-    vVisibility = calculateVisibilityFactor(distance);
+    vVisibility = fog.enabled > 0.5 ? calculateVisibilityFactor(distance) : 1.0;
     vPosition = worldPosition;
 
     distance = distance - (DIRECTIONAL_SHADOW_DISTANCE - DIRECTIONAL_SHADOW_TRANSITION_DISTANCE);

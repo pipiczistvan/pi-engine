@@ -21,6 +21,7 @@ struct Fog {
     vec4 color;
     float gradient;
     float density;
+    float enabled;
 };
 struct DirectionalLight {
     float enabled;
@@ -124,6 +125,8 @@ void main(void) {
     }
 
     fColor = vec4(finalDiffuse * vColor, 1.0);
-    // FINAL OUTPUT
-    fColor = mix(fog.color, fColor, vVisibility);
+    // FOG
+    if (fog.enabled > 0.5) {
+        fColor = mix(fog.color, fColor, vVisibility);
+    }
 }

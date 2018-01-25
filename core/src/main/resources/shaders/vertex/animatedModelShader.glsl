@@ -9,6 +9,7 @@ struct Fog {
     vec4 color;
     float gradient;
     float density;
+    float enabled;
 };
 struct DirectionalLight {
     float enabled;
@@ -108,6 +109,6 @@ void main(void) {
 
     vColor = lightFactor;
 	vTextureCoord = TextureCoord;
-    vVisibility = calculateVisibilityFactor(viewPosition.xyz);
+    vVisibility = fog.enabled > 0.5 ? calculateVisibilityFactor(viewPosition.xyz) : 1.0;
     gl_Position = projectionMatrix * viewPosition;
 }

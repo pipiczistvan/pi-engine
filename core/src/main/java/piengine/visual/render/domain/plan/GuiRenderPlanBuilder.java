@@ -12,12 +12,16 @@ import static piengine.visual.render.domain.fragment.domain.RenderFragmentType.R
 
 public class GuiRenderPlanBuilder extends RenderPlanBuilder<GuiRenderPlanBuilder, RenderGuiPlanContext> {
 
-    GuiRenderPlanBuilder(final Vector2i viewport) {
+    private GuiRenderPlanBuilder(final Vector2i viewport) {
         super(new RenderGuiPlanContext(
                 viewport,
                 new ArrayList<>(),
                 new ArrayList<>()
         ));
+    }
+
+    public static GuiRenderPlanBuilder createPlan(final Vector2i viewport) {
+        return new GuiRenderPlanBuilder(viewport);
     }
 
     public GuiRenderPlanBuilder loadAssets(final GuiAsset... assets) {

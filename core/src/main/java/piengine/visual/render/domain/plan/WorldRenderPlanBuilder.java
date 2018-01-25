@@ -14,7 +14,7 @@ import static piengine.visual.render.domain.fragment.domain.RenderFragmentType.R
 
 public class WorldRenderPlanBuilder extends RenderPlanBuilder<WorldRenderPlanBuilder, RenderWorldPlanContext> {
 
-    WorldRenderPlanBuilder(final Camera camera, final Fog fog, final Skybox skybox) {
+    private WorldRenderPlanBuilder(final Camera camera, final Fog fog, final Skybox skybox) {
         super(new RenderWorldPlanContext(
                 new Vector4f(),
                 new Vector2i(camera.viewport),
@@ -22,6 +22,22 @@ public class WorldRenderPlanBuilder extends RenderPlanBuilder<WorldRenderPlanBui
                 fog,
                 skybox
         ));
+    }
+
+    public static WorldRenderPlanBuilder createPlan(final Camera camera, final Fog fog, final Skybox skybox) {
+        return new WorldRenderPlanBuilder(camera, fog, skybox);
+    }
+
+    public static WorldRenderPlanBuilder createPlan(final Camera camera, final Skybox skybox) {
+        return new WorldRenderPlanBuilder(camera, null, skybox);
+    }
+
+    public static WorldRenderPlanBuilder createPlan(final Camera camera, final Fog fog) {
+        return new WorldRenderPlanBuilder(camera, fog, null);
+    }
+
+    public static WorldRenderPlanBuilder createPlan(final Camera camera) {
+        return new WorldRenderPlanBuilder(camera, null, null);
     }
 
     public WorldRenderPlanBuilder loadAssets(final WorldAsset... assets) {

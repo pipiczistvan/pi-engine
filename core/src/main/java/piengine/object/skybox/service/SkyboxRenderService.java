@@ -33,6 +33,13 @@ public class SkyboxRenderService extends AbstractRenderService<SkyboxShader, Ren
     }
 
     @Override
+    public void process(final RenderWorldPlanContext context) {
+        if (context.skybox != null) {
+            super.process(context);
+        }
+    }
+
+    @Override
     protected void render(final RenderWorldPlanContext context) {
         renderInterpreter.setViewport(context.viewport);
 

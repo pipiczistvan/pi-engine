@@ -1,10 +1,6 @@
 package piengine.visual.render.domain.plan;
 
-import org.joml.Vector2i;
 import piengine.core.base.type.color.Color;
-import piengine.object.camera.domain.Camera;
-import piengine.object.skybox.domain.Skybox;
-import piengine.visual.fog.Fog;
 import piengine.visual.framebuffer.domain.Framebuffer;
 import piengine.visual.render.domain.fragment.RenderFragment;
 import piengine.visual.render.domain.fragment.domain.BindFrameBufferPlanContext;
@@ -22,16 +18,8 @@ public abstract class RenderPlanBuilder<B extends RenderPlanBuilder<B, C>, C ext
     protected final C context;
     private final List<RenderFragment> fragments = new ArrayList<>();
 
-    RenderPlanBuilder(final C context) {
+    protected RenderPlanBuilder(final C context) {
         this.context = context;
-    }
-
-    public static WorldRenderPlanBuilder createPlan(final Camera camera, final Fog fog, final Skybox skybox) {
-        return new WorldRenderPlanBuilder(camera, fog, skybox);
-    }
-
-    public static GuiRenderPlanBuilder createPlan(final Vector2i viewport) {
-        return new GuiRenderPlanBuilder(viewport);
     }
 
     public B clearScreen(final Color color) {

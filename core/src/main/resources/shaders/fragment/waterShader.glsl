@@ -30,6 +30,7 @@ struct Fog {
     vec4 color;
     float gradient;
     float density;
+    float enabled;
 };
 struct DirectionalLight {
     float enabled;
@@ -196,5 +197,9 @@ void main(void) {
 
     vec3 finalColor = textureColor * finalDiffuse + finalSpecular;
     fColor = vec4(finalColor, clamp(waterDepth / WATER_EDGE_SOFTNESS, 0.0, 1.0));
-    fColor = mix(fog.color, fColor, vVisibility);
+
+    // FOG
+    if (fog.enabled > 0.5) {
+        fColor = mix(fog.color, fColor, vVisibility);
+    }
 }

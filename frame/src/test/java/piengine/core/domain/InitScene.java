@@ -29,8 +29,9 @@ import piengine.object.terrain.manager.TerrainManager;
 import piengine.visual.fog.Fog;
 import piengine.visual.framebuffer.domain.Framebuffer;
 import piengine.visual.framebuffer.manager.FramebufferManager;
+import piengine.visual.render.domain.plan.GuiRenderPlanBuilder;
 import piengine.visual.render.domain.plan.RenderPlan;
-import piengine.visual.render.domain.plan.RenderPlanBuilder;
+import piengine.visual.render.domain.plan.WorldRenderPlanBuilder;
 import piengine.visual.render.manager.RenderManager;
 import piengine.visual.window.manager.WindowManager;
 import puppeteer.annotation.premade.Wire;
@@ -154,12 +155,12 @@ public class InitScene extends Scene {
 
     @Override
     protected RenderPlan createRenderPlan() {
-        return RenderPlanBuilder
+        return GuiRenderPlanBuilder
                 .createPlan(VIEWPORT)
                 .bindFrameBuffer(
                         framebuffer,
-                        RenderPlanBuilder
-                                .createPlan(camera, fog, skybox)
+                        WorldRenderPlanBuilder
+                                .createPlan(camera)
                                 .loadAssets(mapAsset)
                                 .clearScreen(ColorUtils.BLACK)
                                 .render()
