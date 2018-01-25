@@ -2,6 +2,7 @@ package piengine.core.domain.assets.object.map;
 
 import org.joml.Vector2i;
 import org.joml.Vector3f;
+import piengine.core.base.type.color.Color;
 import piengine.core.domain.assets.object.lamp.LampAsset;
 import piengine.core.domain.assets.object.lamp.LampAssetArgument;
 import piengine.core.input.domain.KeyEventType;
@@ -22,6 +23,8 @@ import piengine.object.model.manager.ModelManager;
 import piengine.object.terrain.domain.Terrain;
 import piengine.object.water.domain.Water;
 import piengine.object.water.manager.WaterManager;
+import piengine.visual.lighting.directional.light.domain.DirectionalLight;
+import piengine.visual.lighting.directional.light.manager.DirectionalLightManager;
 import puppeteer.annotation.premade.Wire;
 
 import java.util.Random;
@@ -41,6 +44,7 @@ public class MapAsset extends WorldAsset<MapAssetArgument> {
     private final AnimationManager animationManager;
     private final AnimatorManager animatorManager;
     private final InputManager inputManager;
+    private final DirectionalLightManager directionalLightManager;
 
     private Terrain terrain;
     private Water water;
@@ -51,6 +55,7 @@ public class MapAsset extends WorldAsset<MapAssetArgument> {
     private AnimatedModel peasantModel;
     private Animation peasantAnimation;
     private Animator peasantAnimator;
+    private DirectionalLight sun;
 
     private float wave = 0;
 
@@ -58,7 +63,7 @@ public class MapAsset extends WorldAsset<MapAssetArgument> {
     public MapAsset(final WaterManager waterManager, final ModelManager modelManager,
                     final AssetManager assetManager, final AnimatedModelManager animatedModelManager,
                     final AnimationManager animationManager, final AnimatorManager animatorManager,
-                    final InputManager inputManager) {
+                    final InputManager inputManager, final DirectionalLightManager directionalLightManager) {
         this.waterManager = waterManager;
         this.modelManager = modelManager;
         this.assetManager = assetManager;
@@ -66,6 +71,7 @@ public class MapAsset extends WorldAsset<MapAssetArgument> {
         this.animationManager = animationManager;
         this.animatorManager = animatorManager;
         this.inputManager = inputManager;
+        this.directionalLightManager = directionalLightManager;
     }
 
     @Override
@@ -97,6 +103,9 @@ public class MapAsset extends WorldAsset<MapAssetArgument> {
         inputManager.addEvent(GLFW_KEY_R, KeyEventType.PRESS, () -> peasantAnimator.doAnimation(peasantAnimation));
         inputManager.addEvent(GLFW_KEY_R, KeyEventType.RELEASE, () -> peasantAnimator.doAnimation(null));
 
+        sun = directionalLightManager.supply(this, new Color(1.0f, 0.9f, 0.6f), arguments.camera, new Vector2i(2048));
+        sun.setPosition(1000, 1000, 300);
+
         initializeAssets();
     }
 
@@ -121,6 +130,7 @@ public class MapAsset extends WorldAsset<MapAssetArgument> {
                 .loadWaters(water)
                 .loadModels(treeModels)
                 .loadAnimatedModels(peasantModel)
+//                .loadDirectionalLights(sun)
                 .loadAssets(lampAsset1)
 //                .loadAssets(lampAsset2)
                 .build();

@@ -48,7 +48,7 @@ public class Animator {
         return interpolatePoses(frames[0], frames[1], progression);
     }
 
-    private void applyPoseToJoints(Map<String, Matrix4f> currentPose, Joint joint, Matrix4f parentTransform) {
+    private void applyPoseToJoints(final Map<String, Matrix4f> currentPose, final Joint joint, final Matrix4f parentTransform) {
         Matrix4f currentLocalTransform = currentPose.get(joint.name);
         Matrix4f currentTransform = new Matrix4f(parentTransform).mul(currentLocalTransform);
         for (Joint childJoint : joint.children) {
@@ -72,13 +72,13 @@ public class Animator {
         return new KeyFrame[]{previousFrame, nextFrame};
     }
 
-    private float calculateProgression(KeyFrame previousFrame, KeyFrame nextFrame) {
+    private float calculateProgression(final KeyFrame previousFrame, final KeyFrame nextFrame) {
         float totalTime = nextFrame.getTimeStamp() - previousFrame.getTimeStamp();
         float currentTime = animationTime - previousFrame.getTimeStamp();
         return currentTime / totalTime;
     }
 
-    private Map<String, Matrix4f> interpolatePoses(KeyFrame previousFrame, KeyFrame nextFrame, float progression) {
+    private Map<String, Matrix4f> interpolatePoses(final KeyFrame previousFrame, final KeyFrame nextFrame, final float progression) {
         Map<String, Matrix4f> currentPose = new HashMap<>();
         for (String jointName : previousFrame.getJointKeyFrames().keySet()) {
             JointTransform previousTransform = previousFrame.getJointKeyFrames().get(jointName);

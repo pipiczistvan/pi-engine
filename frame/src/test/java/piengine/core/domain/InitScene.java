@@ -3,7 +3,6 @@ package piengine.core.domain;
 import org.joml.Vector2i;
 import org.joml.Vector3f;
 import piengine.core.architecture.scene.domain.Scene;
-import piengine.core.base.type.color.Color;
 import piengine.core.domain.assets.object.fps.FpsAsset;
 import piengine.core.domain.assets.object.fps.FpsAssetArgument;
 import piengine.core.domain.assets.object.lamp.LampAsset;
@@ -30,8 +29,6 @@ import piengine.object.terrain.manager.TerrainManager;
 import piengine.visual.fog.Fog;
 import piengine.visual.framebuffer.domain.Framebuffer;
 import piengine.visual.framebuffer.manager.FramebufferManager;
-import piengine.visual.lighting.directional.light.domain.DirectionalLight;
-import piengine.visual.lighting.directional.light.manager.DirectionalLightManager;
 import piengine.visual.render.domain.plan.RenderPlan;
 import piengine.visual.render.domain.plan.RenderPlanBuilder;
 import piengine.visual.render.manager.RenderManager;
@@ -68,7 +65,6 @@ public class InitScene extends Scene {
     private final SkyboxManager skyboxManager;
     private final CanvasManager canvasManager;
     private final TerrainManager terrainManager;
-    private final DirectionalLightManager directionalLightManager;
 
     private Framebuffer framebuffer;
     private Fog fog;
@@ -82,14 +78,12 @@ public class InitScene extends Scene {
     private MapAsset mapAsset;
     private ButtonAsset buttonAsset;
     private FpsAsset fpsAsset;
-    private DirectionalLight sun;
 
     @Wire
     public InitScene(final RenderManager renderManager, final AssetManager assetManager,
                      final InputManager inputManager, final WindowManager windowManager,
                      final FramebufferManager framebufferManager, final SkyboxManager skyboxManager,
-                     final CanvasManager canvasManager, final TerrainManager terrainManager,
-                     final DirectionalLightManager directionalLightManager) {
+                     final CanvasManager canvasManager, final TerrainManager terrainManager) {
         super(renderManager, assetManager);
 
         this.inputManager = inputManager;
@@ -98,7 +92,6 @@ public class InitScene extends Scene {
         this.skyboxManager = skyboxManager;
         this.canvasManager = canvasManager;
         this.terrainManager = terrainManager;
-        this.directionalLightManager = directionalLightManager;
     }
 
     @Override
@@ -138,9 +131,6 @@ public class InitScene extends Scene {
                 "skybox/nightBottom", "skybox/nightBack", "skybox/nightFront");
 
         fog = new Fog(ColorUtils.BLACK, 0.015f, 1.5f);
-
-        sun = directionalLightManager.supply(this, new Color(1.0f, 0.9f, 0.6f), camera, new Vector2i(2048));
-        sun.setPosition(1000, 1000, 300);
     }
 
     @Override
@@ -171,7 +161,6 @@ public class InitScene extends Scene {
                         RenderPlanBuilder
                                 .createPlan(camera, fog, skybox)
                                 .loadAssets(mapAsset)
-//                                .loadAssetContext(WorldRenderAssetContextBuilder.create().loadDirectionalLights(sun).build())
                                 .clearScreen(ColorUtils.BLACK)
                                 .render()
                 )

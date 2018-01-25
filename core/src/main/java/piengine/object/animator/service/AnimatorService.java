@@ -26,7 +26,7 @@ public class AnimatorService implements Service, Updatable {
     }
 
     @Override
-    public void update(float delta) {
+    public void update(final float delta) {
         for (Animator animator : registeredAnimators) {
             animator.update(delta);
         }

@@ -53,4 +53,11 @@ public class VectorUtils {
 
         return array;
     }
+
+    public static Vector3f interpolateVector3f(final Vector3f start, final Vector3f end, final float progression) {
+        float x = start.x + (end.x - start.x) * progression;
+        float y = start.y + (end.y - start.y) * progression;
+        float z = start.z + (end.z - start.z) * progression;
+        return new Vector3f(x, y, z);
+    }
 }

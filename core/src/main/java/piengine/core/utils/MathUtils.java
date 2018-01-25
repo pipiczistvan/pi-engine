@@ -12,7 +12,7 @@ public class MathUtils {
     }
 
 
-    public static Vector3f calculateNormal(Vector3f vertex0, Vector3f vertex1, Vector3f vertex2) {
+    public static Vector3f calculateNormal(final Vector3f vertex0, final Vector3f vertex1, final Vector3f vertex2) {
         Vector3f tangentA = new Vector3f();
         vertex1.sub(vertex0, tangentA);
 

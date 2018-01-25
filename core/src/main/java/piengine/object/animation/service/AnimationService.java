@@ -1,6 +1,7 @@
 package piengine.object.animation.service;
 
 import org.joml.Matrix4f;
+import org.joml.Quaternionf;
 import org.joml.Vector3f;
 import piengine.core.base.resource.SupplierService;
 import piengine.object.animation.accessor.AnimationAccessor;
@@ -12,7 +13,6 @@ import piengine.object.animation.domain.JointTransform;
 import piengine.object.animation.domain.JointTransformData;
 import piengine.object.animation.domain.KeyFrame;
 import piengine.object.animation.domain.KeyFrameData;
-import piengine.object.animation.domain.Quaternion;
 import piengine.object.animation.interpreter.AnimationInterpreter;
 import puppeteer.annotation.premade.Component;
 import puppeteer.annotation.premade.Wire;
@@ -50,7 +50,7 @@ public class AnimationService extends SupplierService<AnimationKey, AnimationDat
     private JointTransform createTransform(final JointTransformData data) {
         Matrix4f mat = data.jointLocalTransform;
         Vector3f translation = new Vector3f(mat.m30(), mat.m31(), mat.m32());
-        Quaternion rotation = Quaternion.fromMatrix(mat);
+        Quaternionf rotation = new Quaternionf().setFromNormalized(mat);
         return new JointTransform(translation, rotation);
     }
 }

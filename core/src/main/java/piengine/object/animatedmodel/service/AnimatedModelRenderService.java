@@ -1,9 +1,7 @@
 package piengine.object.animatedmodel.service;
 
-import org.joml.Matrix4f;
 import piengine.object.animatedmodel.domain.AnimatedModel;
 import piengine.object.animatedmodel.shader.AnimatedModelShader;
-import piengine.object.camera.domain.Camera;
 import piengine.visual.render.domain.config.RenderConfig;
 import piengine.visual.render.domain.config.RenderConfigBuilder;
 import piengine.visual.render.domain.fragment.domain.RenderWorldPlanContext;
@@ -62,14 +60,5 @@ public class AnimatedModelRenderService extends AbstractRenderService<AnimatedMo
         return RenderConfigBuilder.create()
                 .withClipDistance(true)
                 .build();
-    }
-
-    private Matrix4f createProjectionView(final Camera camera) {
-        Matrix4f projectionViewMatrix = new Matrix4f();
-        Matrix4f projectionMatrix = camera.getProjection();
-        Matrix4f viewMatrix = camera.getView();
-        projectionMatrix.mul(viewMatrix, projectionViewMatrix);
-
-        return projectionViewMatrix;
     }
 }

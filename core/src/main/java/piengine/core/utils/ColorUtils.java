@@ -15,7 +15,7 @@ public class ColorUtils {
     private ColorUtils() {
     }
 
-    public static Color interpolateColors(Color color1, Color color2, float blend) {
+    public static Color interpolateColors(final Color color1, final Color color2, final float blend) {
         float colour1Weight = 1 - blend;
         float r = (colour1Weight * color1.r) + (blend * color2.r);
         float g = (colour1Weight * color1.g) + (blend * color2.g);
