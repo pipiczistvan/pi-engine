@@ -23,5 +23,4 @@ public class EngineTester {
         );
         engine.start(InitScene.class);
     }
-
 }

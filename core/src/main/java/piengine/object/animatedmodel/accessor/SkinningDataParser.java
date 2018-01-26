@@ -1,70 +1,61 @@
 package piengine.object.animatedmodel.accessor;
 
-import piengine.core.xml.domain.XmlNode;
+import piengine.core.xml.collada.domain.common.Input;
+import piengine.core.xml.collada.domain.common.Source;
+import piengine.core.xml.collada.domain.controller.Controller;
+import piengine.core.xml.collada.domain.controller.Skin;
 import piengine.object.animatedmodel.domain.SkinningData;
 import piengine.object.animatedmodel.domain.VertexSkinData;
 import puppeteer.annotation.premade.Component;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+
+import static piengine.core.xml.collada.domain.common.Input.findInputBySemantic;
+import static piengine.core.xml.collada.domain.common.Source.findSourceById;
 
 @Component
 public class SkinningDataParser {
 
-    public SkinningData parseXmlNode(final XmlNode controllersNode, final int maxWeights) {
-        XmlNode skinNode = controllersNode.getChild("controller").getChild("skin");
-
-        List<String> jointsList = loadJointsList(skinNode);
-        float[] weights = loadWeights(skinNode);
-        int[] effectorJointCounts = getEffectiveJointsCounts(skinNode);
-        List<VertexSkinData> vertexWeights = getSkinData(skinNode, effectorJointCounts, weights, maxWeights);
+    public SkinningData parse(final Controller controller, final int maxWeights) {
+        List<String> jointsList = loadJointsList(controller.skin);
+        float[] weights = loadWeights(controller.skin);
+        int[] effectorJointCounts = getEffectiveJointsCounts(controller.skin);
+        List<VertexSkinData> vertexWeights = getSkinData(controller.skin, effectorJointCounts, weights, maxWeights);
         return new SkinningData(jointsList, vertexWeights);
     }
 
-    private List<String> loadJointsList(final XmlNode skinNode) {
-        XmlNode inputNode = skinNode.getChild("vertex_weights");
-        String jointDataId = inputNode.getChildWithAttribute("input", "semantic", "JOINT").getAttribute("source")
-                .substring(1);
-        XmlNode jointsNode = skinNode.getChildWithAttribute("source", "id", jointDataId).getChild("Name_array");
-        String[] names = jointsNode.getData().split(" ");
-        List<String> jointsList = new ArrayList<String>();
-        for (String name : names) {
-            jointsList.add(name);
-        }
-        return jointsList;
+    private List<String> loadJointsList(final Skin skin) {
+        Input input = findInputBySemantic(skin.vertex_weights.input, "JOINT");
+        Source source = findSourceById(skin.source, input.source.substring(1));
+
+        return new ArrayList<>(Arrays.asList(source.Name_array));
     }
 
-    private float[] loadWeights(final XmlNode skinNode) {
-        XmlNode inputNode = skinNode.getChild("vertex_weights");
-        String weightsDataId = inputNode.getChildWithAttribute("input", "semantic", "WEIGHT").getAttribute("source")
-                .substring(1);
-        XmlNode weightsNode = skinNode.getChildWithAttribute("source", "id", weightsDataId).getChild("float_array");
-        String[] rawData = weightsNode.getData().split(" ");
-        float[] weights = new float[rawData.length];
-        for (int i = 0; i < weights.length; i++) {
-            weights[i] = Float.parseFloat(rawData[i]);
-        }
+    private float[] loadWeights(final Skin skin) {
+        Input input = findInputBySemantic(skin.vertex_weights.input, "WEIGHT");
+        Source source = findSourceById(skin.source, input.source.substring(1));
+
+        float[] weights = new float[source.float_array.length];
+        System.arraycopy(source.float_array, 0, weights, 0, weights.length);
         return weights;
     }
 
-    private int[] getEffectiveJointsCounts(final XmlNode skinNode) {
-        String[] rawData = skinNode.getChild("vertex_weights").getChild("vcount").getData().split(" ");
-        int[] counts = new int[rawData.length];
-        for (int i = 0; i < rawData.length; i++) {
-            counts[i] = Integer.parseInt(rawData[i]);
-        }
+    private int[] getEffectiveJointsCounts(final Skin skin) {
+        int[] counts = new int[skin.vertex_weights.vcount.length];
+        System.arraycopy(skin.vertex_weights.vcount, 0, counts, 0, skin.vertex_weights.vcount.length);
         return counts;
     }
 
-    private List<VertexSkinData> getSkinData(final XmlNode skinNode, final int[] counts, final float[] weights, final int maxWeights) {
-        String[] rawData = skinNode.getChild("vertex_weights").getChild("v").getData().split(" ");
+    private List<VertexSkinData> getSkinData(final Skin skin, final int[] counts, final float[] weights, final int maxWeights) {
         List<VertexSkinData> skinningData = new ArrayList<>();
         int pointer = 0;
         for (int count : counts) {
             VertexSkinData skinData = new VertexSkinData();
             for (int i = 0; i < count; i++) {
-                int jointId = Integer.parseInt(rawData[pointer++]);
-                int weightId = Integer.parseInt(rawData[pointer++]);
+                int jointId = skin.vertex_weights.v[pointer++];
+                int weightId = skin.vertex_weights.v[pointer++];
                 skinData.addJointEffect(jointId, weights[weightId]);
             }
             skinData.limitJointNumber(maxWeights);

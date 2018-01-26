@@ -4,7 +4,11 @@ import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
-import piengine.core.xml.domain.XmlNode;
+import piengine.core.xml.collada.domain.common.Input;
+import piengine.core.xml.collada.domain.common.Source;
+import piengine.core.xml.collada.domain.geometry.Geometry;
+import piengine.core.xml.collada.domain.geometry.Mesh;
+import piengine.core.xml.collada.domain.geometry.Polylist;
 import piengine.object.animatedmodel.domain.GeometryData;
 import piengine.object.animatedmodel.domain.Vertex;
 import piengine.object.animatedmodel.domain.VertexSkinData;
@@ -13,21 +17,22 @@ import puppeteer.annotation.premade.Component;
 import java.util.ArrayList;
 import java.util.List;
 
+import static piengine.core.xml.collada.domain.common.Input.findInputBySemantic;
+import static piengine.core.xml.collada.domain.common.Source.findSourceById;
+
 @Component
 public class GeometryDataParser {
 
     private static final Matrix4f CORRECTION = new Matrix4f().rotate((float) Math.toRadians(-90), new Vector3f(1, 0, 0));
 
-    public GeometryData parseXmlNode(final XmlNode geometryNode, final List<VertexSkinData> vertexWeights) {
+    public GeometryData parse(final Geometry geometry, final List<VertexSkinData> vertexWeights) {
         List<Vertex> vertices = new ArrayList<>();
         List<Vector3f> normals = new ArrayList<>();
         List<Vector2f> textures = new ArrayList<>();
         List<Integer> indices = new ArrayList<>();
 
-        XmlNode meshNode = geometryNode.getChild("geometry").getChild("mesh");
-
-        readRawData(meshNode, vertices, normals, textures, vertexWeights);
-        assembleVertices(meshNode, vertices, indices);
+        readRawData(geometry.mesh, vertices, normals, textures, vertexWeights);
+        assembleVertices(geometry.mesh.polylist, vertices, indices);
         removeUnusedVertices(vertices);
 
         float[] verticesArray = new float[vertices.size() * 3];
@@ -41,68 +46,60 @@ public class GeometryDataParser {
         return new GeometryData(verticesArray, texturesArray, normalsArray, indicesArray, jointIdsArray, weightsArray);
     }
 
-    private void readRawData(final XmlNode geometryNode, final List<Vertex> vertices, final List<Vector3f> normals, final List<Vector2f> textures, final List<VertexSkinData> vertexWeights) {
-        readPositions(geometryNode, vertices, vertexWeights);
-        readNormals(geometryNode, normals);
-        readTextureCoords(geometryNode, textures);
+    private void readRawData(final Mesh mesh, final List<Vertex> vertices, final List<Vector3f> normals, final List<Vector2f> textures, final List<VertexSkinData> vertexWeights) {
+        readPositions(mesh, vertices, vertexWeights);
+        readNormals(mesh, normals);
+        readTextureCoords(mesh, textures);
     }
 
-    private void readPositions(final XmlNode geometryNode, final List<Vertex> vertices, final List<VertexSkinData> vertexWeights) {
-        String positionsId = geometryNode.getChild("vertices").getChild("input").getAttribute("source").substring(1);
-        XmlNode positionsData = geometryNode.getChildWithAttribute("source", "id", positionsId).getChild("float_array");
-        int count = Integer.parseInt(positionsData.getAttribute("count"));
-        String[] posData = positionsData.getData().split(" ");
-        for (int i = 0; i < count / 3; i++) {
-            float x = Float.parseFloat(posData[i * 3]);
-            float y = Float.parseFloat(posData[i * 3 + 1]);
-            float z = Float.parseFloat(posData[i * 3 + 2]);
+    private void readPositions(final Mesh mesh, final List<Vertex> vertices, final List<VertexSkinData> vertexWeights) {
+        String positionsId = mesh.vertices.input.source.substring(1);
+        Source source = findSourceById(mesh.source, positionsId);
+
+        for (int i = 0; i < source.float_array.length / 3; i++) {
+            float x = source.float_array[i * 3];
+            float y = source.float_array[i * 3 + 1];
+            float z = source.float_array[i * 3 + 2];
             Vector4f position = new Vector4f(x, y, z, 1);
             CORRECTION.transform(position, position);
             vertices.add(new Vertex(vertices.size(), new Vector3f(position.x, position.y, position.z), vertexWeights.get(vertices.size())));
         }
     }
 
-    private void readNormals(final XmlNode geometryNode, final List<Vector3f> normals) {
-        String normalsId = geometryNode.getChild("polylist").getChildWithAttribute("input", "semantic", "NORMAL")
-                .getAttribute("source").substring(1);
-        XmlNode normalsData = geometryNode.getChildWithAttribute("source", "id", normalsId).getChild("float_array");
-        int count = Integer.parseInt(normalsData.getAttribute("count"));
-        String[] normData = normalsData.getData().split(" ");
-        for (int i = 0; i < count / 3; i++) {
-            float x = Float.parseFloat(normData[i * 3]);
-            float y = Float.parseFloat(normData[i * 3 + 1]);
-            float z = Float.parseFloat(normData[i * 3 + 2]);
+    private void readNormals(final Mesh mesh, final List<Vector3f> normals) {
+        Input input = findInputBySemantic(mesh.polylist.input, "NORMAL");
+        Source source = findSourceById(mesh.source, input.source.substring(1));
+
+        for (int i = 0; i < source.float_array.length / 3; i++) {
+            float x = source.float_array[i * 3];
+            float y = source.float_array[i * 3 + 1];
+            float z = source.float_array[i * 3 + 2];
             Vector4f norm = new Vector4f(x, y, z, 0f);
             CORRECTION.transform(norm, norm);
             normals.add(new Vector3f(norm.x, norm.y, norm.z));
         }
     }
 
-    private void readTextureCoords(final XmlNode geometryNode, final List<Vector2f> textures) {
-        String texCoordsId = geometryNode.getChild("polylist").getChildWithAttribute("input", "semantic", "TEXCOORD")
-                .getAttribute("source").substring(1);
-        XmlNode texCoordsData = geometryNode.getChildWithAttribute("source", "id", texCoordsId).getChild("float_array");
-        int count = Integer.parseInt(texCoordsData.getAttribute("count"));
-        String[] texData = texCoordsData.getData().split(" ");
-        for (int i = 0; i < count / 2; i++) {
-            float s = Float.parseFloat(texData[i * 2]);
-            float t = Float.parseFloat(texData[i * 2 + 1]);
+    private void readTextureCoords(final Mesh mesh, final List<Vector2f> textures) {
+        Input input = findInputBySemantic(mesh.polylist.input, "TEXCOORD");
+        Source source = findSourceById(mesh.source, input.source.substring(1));
+
+        for (int i = 0; i < source.float_array.length / 2; i++) {
+            float s = source.float_array[i * 2];
+            float t = source.float_array[i * 2 + 1];
             textures.add(new Vector2f(s, t));
         }
     }
 
-    private void assembleVertices(final XmlNode geometryNode, final List<Vertex> vertices, final List<Integer> indices) {
-        XmlNode poly = geometryNode.getChild("polylist");
-        int typeCount = poly.getChildren("input").size();
-        String[] indexData = poly.getChild("p").getData().split(" ");
-        for (int i = 0; i < indexData.length / typeCount; i++) {
-            int positionIndex = Integer.parseInt(indexData[i * typeCount]);
-            int normalIndex = Integer.parseInt(indexData[i * typeCount + 1]);
-            int texCoordIndex = Integer.parseInt(indexData[i * typeCount + 2]);
+    private void assembleVertices(final Polylist polylist, final List<Vertex> vertices, final List<Integer> indices) {
+        int typeCount = polylist.input.length;
+        for (int i = 0; i < polylist.p.length / typeCount; i++) {
+            int positionIndex = polylist.p[i * typeCount];
+            int normalIndex = polylist.p[i * typeCount + 1];
+            int texCoordIndex = polylist.p[i * typeCount + 2];
             processVertex(vertices, indices, positionIndex, normalIndex, texCoordIndex);
         }
     }
-
 
     private Vertex processVertex(final List<Vertex> vertices, final List<Integer> indices, int posIndex, int normIndex, int texIndex) {
         Vertex currentVertex = vertices.get(posIndex);

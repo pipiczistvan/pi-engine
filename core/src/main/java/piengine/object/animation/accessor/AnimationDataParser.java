@@ -3,44 +3,36 @@ package piengine.object.animation.accessor;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.lwjgl.BufferUtils;
-import piengine.core.xml.domain.XmlNode;
+import piengine.core.xml.collada.domain.animation.Animation;
+import piengine.core.xml.collada.domain.common.Input;
+import piengine.core.xml.collada.domain.common.Node;
+import piengine.core.xml.collada.domain.common.Source;
+import piengine.core.xml.collada.domain.visualscene.VisualScene;
 import piengine.object.animation.domain.AnimationData;
 import piengine.object.animation.domain.JointTransformData;
 import piengine.object.animation.domain.KeyFrameData;
 import puppeteer.annotation.premade.Component;
 
 import java.nio.FloatBuffer;
-import java.util.List;
+
+import static piengine.core.xml.collada.domain.common.Input.findInputBySemantic;
+import static piengine.core.xml.collada.domain.common.Source.findSourceById;
 
 @Component
 public class AnimationDataParser {
 
     private static final Matrix4f CORRECTION = new Matrix4f().rotate((float) Math.toRadians(-90), new Vector3f(1, 0, 0));
 
-    public AnimationData parseXmlNode(final XmlNode node) {
-        XmlNode animationNode = node.getChild("library_animations");
-        XmlNode jointsNode = node.getChild("library_visual_scenes");
-
-        String rootNode = findRootJointName(jointsNode);
-        float[] times = getKeyTimes(animationNode);
+    public AnimationData parse(final Animation[] animations, final VisualScene visualScene) {
+        String rootNode = findRootJointName(visualScene);
+        float[] times = animations[0].source[0].float_array;
         float duration = times[times.length - 1];
         KeyFrameData[] keyFrames = initKeyFrames(times);
-        List<XmlNode> animationNodes = animationNode.getChildren("animation");
-        for (XmlNode jointNode : animationNodes) {
+        for (Animation jointNode : animations) {
             loadJointTransforms(keyFrames, jointNode, rootNode);
         }
 
         return new AnimationData(duration, keyFrames);
-    }
-
-    private float[] getKeyTimes(final XmlNode animationNode) {
-        XmlNode timeData = animationNode.getChild("animation").getChild("source").getChild("float_array");
-        String[] rawTimes = timeData.getData().split(" ");
-        float[] times = new float[rawTimes.length];
-        for (int i = 0; i < times.length; i++) {
-            times[i] = Float.parseFloat(rawTimes[i]);
-        }
-        return times;
     }
 
     private KeyFrameData[] initKeyFrames(float[] times) {
@@ -51,32 +43,26 @@ public class AnimationDataParser {
         return frames;
     }
 
-    private void loadJointTransforms(KeyFrameData[] frames, XmlNode jointData, String rootNodeId) {
+    private void loadJointTransforms(final KeyFrameData[] frames, final Animation jointData, final String rootNodeId) {
         String jointNameId = getJointName(jointData);
         String dataId = getDataId(jointData);
-        XmlNode transformData = jointData.getChildWithAttribute("source", "id", dataId);
-        String[] rawData = transformData.getChild("float_array").getData().split(" ");
-        processTransforms(jointNameId, rawData, frames, jointNameId.equals(rootNodeId));
+        Source source = findSourceById(jointData.source, dataId);
+        processTransforms(jointNameId, source.float_array, frames, jointNameId.equals(rootNodeId));
     }
 
-    private String getDataId(XmlNode jointData) {
-        XmlNode node = jointData.getChild("sampler").getChildWithAttribute("input", "semantic", "OUTPUT");
-        return node.getAttribute("source").substring(1);
+    private String getDataId(final Animation jointData) {
+        Input input = findInputBySemantic(jointData.sampler.input, "OUTPUT");
+        return input.source.substring(1);
     }
 
-    private String getJointName(XmlNode jointData) {
-        XmlNode channelNode = jointData.getChild("channel");
-        String data = channelNode.getAttribute("target");
-        return data.split("/")[0];
+    private String getJointName(final Animation jointData) {
+        return jointData.channel.target.split("/")[0];
     }
 
-    private void processTransforms(String jointName, String[] rawData, KeyFrameData[] keyFrames, boolean root) {
-        FloatBuffer buffer = BufferUtils.createFloatBuffer(16);
+    private void processTransforms(final String jointName, final float[] rawData, final KeyFrameData[] keyFrames, final boolean root) {FloatBuffer buffer = BufferUtils.createFloatBuffer(16);
         float[] matrixData = new float[16];
         for (int i = 0; i < keyFrames.length; i++) {
-            for (int j = 0; j < 16; j++) {
-                matrixData[j] = Float.parseFloat(rawData[i * 16 + j]);
-            }
+            System.arraycopy(rawData, i * 16, matrixData, 0, 16);
             buffer.clear();
             buffer.put(matrixData);
             buffer.flip();
@@ -91,8 +77,8 @@ public class AnimationDataParser {
         }
     }
 
-    private String findRootJointName(final XmlNode jointsNode) {
-        XmlNode skeleton = jointsNode.getChild("visual_scene").getChildWithAttribute("node", "id", "Armature");
-        return skeleton.getChild("node").getAttribute("id");
+    private String findRootJointName(final VisualScene visualScene) {
+        Node skeleton = Node.findNodeById(visualScene.node, "Armature");
+        return skeleton.node[0].id;
     }
 }

@@ -42,7 +42,7 @@ public class ResourceLoader {
         return String.format("/%s/%s.%s", root, file, extension);
     }
 
-    private static ByteBuffer resizeBuffer(ByteBuffer buffer, int newCapacity) {
+    private static ByteBuffer resizeBuffer(final ByteBuffer buffer, final int newCapacity) {
         ByteBuffer newBuffer = BufferUtils.createByteBuffer(newCapacity);
         buffer.flip();
         newBuffer.put(buffer);

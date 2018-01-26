@@ -8,6 +8,7 @@ import java.util.List;
 
 import static piengine.core.utils.MatrixUtils.MODEL_MATRIX;
 
+//todo: fixme
 public abstract class Entity {
 
     private static final Vector3f ZERO = new Vector3f(0);

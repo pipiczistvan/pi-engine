@@ -1,9 +1,8 @@
 package piengine.object.animatedmodel.accessor;
 
 import piengine.core.base.api.Accessor;
-import piengine.core.base.resource.ResourceLoader;
-import piengine.core.xml.domain.XmlNode;
-import piengine.core.xml.service.XmlParser;
+import piengine.core.xml.collada.domain.Collada;
+import piengine.core.xml.collada.service.ColladaParser;
 import piengine.object.animatedmodel.domain.AnimatedModelData;
 import piengine.object.animatedmodel.domain.AnimatedModelKey;
 import piengine.object.animatedmodel.domain.GeometryData;
@@ -12,39 +11,29 @@ import piengine.object.animatedmodel.domain.SkinningData;
 import puppeteer.annotation.premade.Component;
 import puppeteer.annotation.premade.Wire;
 
-import static piengine.core.base.type.property.ApplicationProperties.get;
-import static piengine.core.base.type.property.PropertyKeys.COLLADA_LOCATION;
-
 @Component
 public class AnimatedModelAccessor implements Accessor<AnimatedModelKey, AnimatedModelData> {
 
-    private static final String ROOT = get(COLLADA_LOCATION);
-    private static final String COLLADA_EXT = "dae";
-
-    private final XmlParser xmlParser;
+    private final ColladaParser colladaParser;
     private final SkinningDataParser skinningDataParser;
     private final SkeletonDataParser skeletonDataParser;
     private final GeometryDataParser geometryDataParser;
-    private final ResourceLoader loader;
 
     @Wire
-    public AnimatedModelAccessor(final XmlParser xmlParser, final SkinningDataParser skinningDataParser,
+    public AnimatedModelAccessor(final ColladaParser colladaParser, final SkinningDataParser skinningDataParser,
                                  final SkeletonDataParser skeletonDataParser, final GeometryDataParser geometryDataParser) {
-        this.xmlParser = xmlParser;
+        this.colladaParser = colladaParser;
         this.skinningDataParser = skinningDataParser;
         this.skeletonDataParser = skeletonDataParser;
         this.geometryDataParser = geometryDataParser;
-        this.loader = new ResourceLoader(ROOT, COLLADA_EXT);
     }
 
     @Override
     public AnimatedModelData access(final AnimatedModelKey key) {
-        String colladaSource = loader.load(key.colladaFile);
-        XmlNode node = xmlParser.parseSource(colladaSource.split("\n"));
-
-        SkinningData skinningData = skinningDataParser.parseXmlNode(node.getChild("library_controllers"), key.maxWeights);
-        SkeletonData skeletonData = skeletonDataParser.parseXmlNode(node.getChild("library_visual_scenes"), skinningData.jointOrder);
-        GeometryData geometryData = geometryDataParser.parseXmlNode(node.getChild("library_geometries"), skinningData.verticesSkinData);
+        Collada collada = colladaParser.parse(key.colladaFile);
+        SkinningData skinningData = skinningDataParser.parse(collada.library_controllers[0], key.maxWeights);
+        SkeletonData skeletonData = skeletonDataParser.parse(collada.library_visual_scenes[0], skinningData.jointOrder);
+        GeometryData geometryData = geometryDataParser.parse(collada.library_geometries[0], skinningData.verticesSkinData);
 
         return new AnimatedModelData(key.parent, key.texture, skeletonData, geometryData);
     }
