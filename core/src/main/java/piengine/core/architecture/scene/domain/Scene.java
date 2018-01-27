@@ -10,25 +10,18 @@ import piengine.object.asset.plan.RenderAssetContext;
 import piengine.visual.render.domain.plan.RenderPlan;
 import piengine.visual.render.manager.RenderManager;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public abstract class Scene extends RenderPlanner<RenderPlan> implements Initializable, Updatable {
 
     private final AssetManager assetManager;
-    private final List<Asset> assets;
 
     public Scene(final RenderManager renderManager, final AssetManager assetManager) {
         super(renderManager);
 
         this.assetManager = assetManager;
-        this.assets = new ArrayList<>();
     }
 
     protected <T extends Asset<A, C>, A extends AssetArgument, C extends RenderAssetContext> T createAsset(final Class<T> assetClass, final A arguments) {
-        final T asset = assetManager.supply(assetClass, this, arguments);
-        assets.add(asset);
-        return asset;
+        return assetManager.supply(assetClass, this, arguments);
     }
 
     @Override
@@ -42,10 +35,4 @@ public abstract class Scene extends RenderPlanner<RenderPlan> implements Initial
 
     protected void initializeAssets() {
     }
-
-    @Override
-    public void update(final float delta) {
-        assets.forEach(asset -> asset.update(delta));
-    }
-
 }

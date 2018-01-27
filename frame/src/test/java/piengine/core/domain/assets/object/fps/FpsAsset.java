@@ -2,6 +2,7 @@ package piengine.core.domain.assets.object.fps;
 
 import piengine.core.time.manager.TimeManager;
 import piengine.object.asset.domain.GuiAsset;
+import piengine.object.asset.manager.AssetManager;
 import piengine.object.asset.plan.GuiRenderAssetContext;
 import piengine.object.asset.plan.GuiRenderAssetContextBuilder;
 import piengine.visual.writing.font.domain.Font;
@@ -21,8 +22,10 @@ public class FpsAsset extends GuiAsset<FpsAssetArgument> {
     private Text fpsText;
 
     @Wire
-    public FpsAsset(final FontManager fontManager, final TextManager textManager,
-                    final TimeManager timeManager) {
+    public FpsAsset(final AssetManager assetManager, final FontManager fontManager,
+                    final TextManager textManager, final TimeManager timeManager) {
+        super(assetManager);
+
         this.fontManager = fontManager;
         this.textManager = textManager;
         this.timeManager = timeManager;

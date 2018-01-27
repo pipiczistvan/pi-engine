@@ -4,6 +4,7 @@ import org.joml.Vector2f;
 import org.joml.Vector3f;
 import piengine.core.input.manager.InputManager;
 import piengine.object.asset.domain.Asset;
+import piengine.object.asset.manager.AssetManager;
 import piengine.object.asset.plan.RenderAssetContext;
 import piengine.visual.window.manager.WindowManager;
 import puppeteer.annotation.premade.Wire;
@@ -37,7 +38,9 @@ public class CameraAsset extends Asset<CameraAssetArgument, RenderAssetContext> 
     private boolean isFlying = false;
 
     @Wire
-    public CameraAsset(final InputManager inputManager, final WindowManager windowManager) {
+    public CameraAsset(final AssetManager assetManager, final InputManager inputManager, final WindowManager windowManager) {
+        super(assetManager);
+
         this.inputManager = inputManager;
         this.windowManager = windowManager;
 

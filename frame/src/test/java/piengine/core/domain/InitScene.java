@@ -3,6 +3,7 @@ package piengine.core.domain;
 import org.joml.Vector2i;
 import org.joml.Vector3f;
 import piengine.core.architecture.scene.domain.Scene;
+import piengine.core.base.api.Updatable;
 import piengine.core.domain.assets.object.fps.FpsAsset;
 import piengine.core.domain.assets.object.fps.FpsAssetArgument;
 import piengine.core.domain.assets.object.lamp.LampAsset;
@@ -54,7 +55,7 @@ import static piengine.visual.framebuffer.domain.FramebufferAttachment.COLOR_BUF
 import static piengine.visual.framebuffer.domain.FramebufferAttachment.DEPTH_BUFFER_MULTISAMPLE_ATTACHMENT;
 import static piengine.visual.postprocessing.domain.EffectType.ANTIALIAS_EFFECT;
 
-public class InitScene extends Scene {
+public class InitScene extends Scene implements Updatable {
 
     public static final int TERRAIN_SCALE = 256;
     public static final int WATER_SCALE = TERRAIN_SCALE / 2;
@@ -149,8 +150,6 @@ public class InitScene extends Scene {
     @Override
     public void update(final float delta) {
         skybox.addRotation(0.5f * delta);
-
-        super.update(delta);
     }
 
     @Override

@@ -1,5 +1,7 @@
 package piengine.object.asset.service;
 
+import piengine.core.base.api.Service;
+import piengine.core.base.api.Updatable;
 import piengine.object.asset.domain.Asset;
 import piengine.object.asset.domain.AssetArgument;
 import piengine.object.asset.plan.RenderAssetContext;
@@ -8,14 +10,19 @@ import puppeteer.Puppeteer;
 import puppeteer.annotation.premade.Component;
 import puppeteer.annotation.premade.Wire;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Component
-public class AssetService {
+public class AssetService implements Service, Updatable {
 
     private final Puppeteer puppeteer;
+    private final List<Asset> assets;
 
     @Wire
     public AssetService(final Puppeteer puppeteer) {
         this.puppeteer = puppeteer;
+        this.assets = new ArrayList<>();
     }
 
     public <T extends Asset<A, C>, A extends AssetArgument, C extends RenderAssetContext> T supply(final Class<T> assetClass, final Entity parent, final A arguments) {
@@ -26,6 +33,12 @@ public class AssetService {
         asset.initialize();
         parent.addChild(asset);
 
+        assets.add(asset);
         return asset;
+    }
+
+    @Override
+    public void update(final float delta) {
+        assets.forEach(asset -> asset.update(delta));
     }
 }

@@ -5,6 +5,7 @@ import org.lwjgl.glfw.GLFW;
 import piengine.core.input.domain.KeyEventType;
 import piengine.core.input.manager.InputManager;
 import piengine.object.asset.domain.Asset;
+import piengine.object.asset.manager.AssetManager;
 import piengine.object.asset.plan.GuiRenderAssetContext;
 import piengine.object.asset.plan.GuiRenderAssetContextBuilder;
 import piengine.object.canvas.domain.Canvas;
@@ -42,9 +43,10 @@ public class ButtonAsset extends Asset<ButtonAssetArgument, GuiRenderAssetContex
     private boolean pressed = false;
 
     @Wire
-    public ButtonAsset(final ImageManager imageManager, final CanvasManager canvasManager,
-                       final InputManager inputManager, final FontManager fontManager,
-                       final TextManager textManager) {
+    public ButtonAsset(final AssetManager assetManager, final ImageManager imageManager, final CanvasManager canvasManager,
+                       final InputManager inputManager, final FontManager fontManager, final TextManager textManager) {
+        super(assetManager);
+
         this.imageManager = imageManager;
         this.canvasManager = canvasManager;
         this.inputManager = inputManager;

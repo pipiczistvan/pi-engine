@@ -4,6 +4,7 @@ import org.joml.Vector2i;
 import org.joml.Vector3f;
 import piengine.core.base.type.color.Color;
 import piengine.object.asset.domain.WorldAsset;
+import piengine.object.asset.manager.AssetManager;
 import piengine.object.asset.plan.WorldRenderAssetContext;
 import piengine.object.asset.plan.WorldRenderAssetContextBuilder;
 import piengine.object.model.domain.Model;
@@ -21,7 +22,9 @@ public class LampAsset extends WorldAsset<LampAssetArgument> {
     private PointLight lampLight;
 
     @Wire
-    public LampAsset(final ModelManager modelManager, final PointLightManager pointLightManager) {
+    public LampAsset(final AssetManager assetManager, final ModelManager modelManager, final PointLightManager pointLightManager) {
+        super(assetManager);
+
         this.modelManager = modelManager;
         this.pointLightManager = pointLightManager;
     }

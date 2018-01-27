@@ -41,7 +41,6 @@ public class MapAsset extends WorldAsset<MapAssetArgument> {
 
     private final WaterManager waterManager;
     private final ModelManager modelManager;
-    private final AssetManager assetManager;
     private final AnimatedModelManager animatedModelManager;
     private final AnimationManager animationManager;
     private final AnimatorManager animatorManager;
@@ -62,13 +61,14 @@ public class MapAsset extends WorldAsset<MapAssetArgument> {
     private float wave = 0;
 
     @Wire
-    public MapAsset(final WaterManager waterManager, final ModelManager modelManager,
-                    final AssetManager assetManager, final AnimatedModelManager animatedModelManager,
+    public MapAsset(final AssetManager assetManager, final ModelManager modelManager,
+                    final WaterManager waterManager, final AnimatedModelManager animatedModelManager,
                     final AnimationManager animationManager, final AnimatorManager animatorManager,
                     final InputManager inputManager, final DirectionalLightManager directionalLightManager) {
+        super(assetManager);
+
         this.waterManager = waterManager;
         this.modelManager = modelManager;
-        this.assetManager = assetManager;
         this.animatedModelManager = animatedModelManager;
         this.animationManager = animationManager;
         this.animatorManager = animatorManager;
@@ -81,8 +81,8 @@ public class MapAsset extends WorldAsset<MapAssetArgument> {
         terrain = arguments.terrain;
         water = waterManager.supply(arguments.viewport, new Vector2i(WATER_SCALE, WATER_SCALE), new Vector3f(-TERRAIN_SCALE / 2, -4, -TERRAIN_SCALE / 2), new Vector3f(TERRAIN_SCALE, 0, TERRAIN_SCALE));
 
-        lampAsset1 = assetManager.supply(LampAsset.class, this, new LampAssetArgument());
-        lampAsset2 = assetManager.supply(LampAsset.class, this, new LampAssetArgument());
+        lampAsset1 = createAsset(LampAsset.class, new LampAssetArgument());
+        lampAsset2 = createAsset(LampAsset.class, new LampAssetArgument());
 
         cubeModel1 = modelManager.supply(this, "cube", false);
         cubeModel2 = modelManager.supply(this, "cube", false);
