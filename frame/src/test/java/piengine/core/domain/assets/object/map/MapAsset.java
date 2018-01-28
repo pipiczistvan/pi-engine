@@ -68,8 +68,10 @@ public class MapAsset extends WorldAsset<MapAssetArgument> {
     public MapAsset(final AssetManager assetManager, final ModelManager modelManager,
                     final WaterManager waterManager, final AnimatedModelManager animatedModelManager,
                     final AnimationManager animationManager, final AnimatorManager animatorManager,
-                    final InputManager inputManager, final DirectionalLightManager directionalLightManager,) {
+                    final InputManager inputManager, final DirectionalLightManager directionalLightManager,
+                    final ParticleSystemManager particleSystemManager) {
         super(assetManager);
+
         this.waterManager = waterManager;
         this.modelManager = modelManager;
         this.animatedModelManager = animatedModelManager;
