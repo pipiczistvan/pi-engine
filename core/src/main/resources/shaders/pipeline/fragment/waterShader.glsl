@@ -41,7 +41,7 @@ flat in vec3 vdSpecular[DIRECTIONAL_LIGHT_COUNT];
 flat in vec3 vpDiffuse[POINT_LIGHT_COUNT];
 flat in vec3 vpSpecular[POINT_LIGHT_COUNT];
 flat in float vAttenuation[POINT_LIGHT_COUNT];
-in float vVisibility;
+in float vFogFactor;
 in vec4 vShadowCoords[DIRECTIONAL_LIGHT_COUNT];
 in vec4 vPosition;
 
@@ -179,6 +179,6 @@ void main(void) {
 
     // FOG
     if (fog.enabled > 0.5) {
-        fColor = mix(fog.color, fColor, vVisibility);
+        fColor = mix(fColor, fog.color, vFogFactor);
     }
 }

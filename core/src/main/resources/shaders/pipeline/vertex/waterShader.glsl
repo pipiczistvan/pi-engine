@@ -15,7 +15,9 @@ const float shineDamper = 20.0;
 #import "struct/pointLight";
 #import "struct/directionalShadow";
 
+#import "function/light";
 #import "function/attenuation";
+#import "function/fog";
 
 layout (location = 0) in vec3 Position;
 layout (location = 4) in vec4 Indicator;
@@ -29,7 +31,7 @@ flat out vec3 vdSpecular[DIRECTIONAL_LIGHT_COUNT];
 flat out vec3 vpDiffuse[POINT_LIGHT_COUNT];
 flat out vec3 vpSpecular[POINT_LIGHT_COUNT];
 flat out float vAttenuation[POINT_LIGHT_COUNT];
-out float vVisibility;
+out float vFogFactor;
 out vec4 vShadowCoords[DIRECTIONAL_LIGHT_COUNT];
 out vec4 vPosition;
 
@@ -41,11 +43,6 @@ uniform DirectionalShadow directionalShadows[DIRECTIONAL_LIGHT_COUNT];
 uniform Fog fog;
 uniform vec3 cameraPosition;
 uniform float waveFactor;
-
-float calculateVisibilityFactor(float distance) {
-    float visiblity = exp(-pow(distance * fog.density, fog.gradient));
-    return clamp(visiblity, 0.0, 1.0);
-}
 
 vec3 calculateNormal(vec3 vertex0, vec3 vertex1, vec3 vertex2){
 	vec3 tangent = vertex1 - vertex0;
@@ -64,13 +61,6 @@ vec4 applyDistortion(vec4 vertex){
     float yDistortion = generateOffset(vertex.x, vertex.z, 0.1, 0.3);
     float zDistortion = generateOffset(vertex.x, vertex.z, 0.15, 0.2);
 	return vertex + vec4(xDistortion, yDistortion, zDistortion, 0.0);
-}
-
-vec3 calculateLightFactor(vec3 lightPosition, vec3 lightColor, vec3 vertexPosition, vec3 vertexNormal) {
-    vec3 toLightVector = lightPosition - vertexPosition;
-    float nDot1 = dot(normalize(toLightVector), vertexNormal);
-    float brightness = clamp(nDot1, 0.0, 1.0);
-    return brightness * lightColor;
 }
 
 vec3 calculateSpecularFactor(vec3 lightPosition, vec3 lightColor, vec3 toCamVector, vec3 vertexPosition, vec3 vertexNormal) {
@@ -106,7 +96,7 @@ void main(void) {
 
     vNormal = normalize(calculateNormal(worldPosition.xyz, worldNeighbourPosition1.xyz, worldNeighbourPosition2.xyz));
     vToCameraVector = normalize(cameraPosition - worldPosition.xyz);
-    vVisibility = fog.enabled > 0.5 ? calculateVisibilityFactor(distance) : 1.0;
+    vFogFactor = fog.enabled > 0.5 ? calculateFogFactor(viewPosition.xyz, fog.density, fog.gradient) : 1.0;
     vPosition = worldPosition;
 
     distance = distance - (DIRECTIONAL_SHADOW_DISTANCE - DIRECTIONAL_SHADOW_TRANSITION_DISTANCE);

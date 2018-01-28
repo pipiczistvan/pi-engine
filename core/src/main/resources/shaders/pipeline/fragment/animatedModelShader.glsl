@@ -4,7 +4,7 @@
 
 flat in vec4 vColor;
 in vec2 vTextureCoord;
-in float vVisibility;
+in float vFogFactor;
 
 out vec4 fColor;
 
@@ -20,6 +20,6 @@ void main(void) {
 
     // FOG
     if (fog.enabled > 0.5) {
-        fColor = mix(fog.color, fColor, vVisibility);
+        fColor = mix(fColor, fog.color, vFogFactor);
     }
 }

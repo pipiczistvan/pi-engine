@@ -10,7 +10,9 @@ const float DIRECTIONAL_SHADOW_TRANSITION_DISTANCE = ${lighting.directional.shad
 #import "struct/pointLight";
 #import "struct/directionalShadow";
 
+#import "function/light";
 #import "function/attenuation";
+#import "function/fog";
 
 layout (location = 0) in vec3 Position;
 layout (location = 2) in vec3 Color;
@@ -22,7 +24,7 @@ flat out vec3 vdDiffuse[DIRECTIONAL_LIGHT_COUNT];
 flat out vec3 vpDiffuse[POINT_LIGHT_COUNT];
 flat out float vAttenuation[POINT_LIGHT_COUNT];
 out vec3 vPosition;
-out float vVisibility;
+out float vFogFactor;
 out vec4 vShadowCoords[DIRECTIONAL_LIGHT_COUNT];
 
 uniform DirectionalLight directionalLights[DIRECTIONAL_LIGHT_COUNT];
@@ -32,18 +34,6 @@ uniform mat4 projectionMatrix;
 uniform vec4 clippingPlane;
 uniform DirectionalShadow directionalShadows[DIRECTIONAL_LIGHT_COUNT];
 uniform Fog fog;
-
-float calculateVisibilityFactor(float distance) {
-    float visiblity = exp(-pow(distance * fog.density, fog.gradient));
-    return clamp(visiblity, 0.0, 1.0);
-}
-
-vec3 calculateLightFactor(vec3 lightPosition, vec3 lightColor, vec3 vertexPosition, vec3 vertexNormal) {
-    vec3 toLightVector = lightPosition - vertexPosition;
-    float nDot1 = dot(normalize(toLightVector), vertexNormal);
-    float brightness = clamp(nDot1, 0.0, 1.0);
-    return brightness * lightColor;
-}
 
 void main(void) {
     vec4 worldPosition = vec4(Position, 1.0);
@@ -56,7 +46,7 @@ void main(void) {
     vColor = Color;
     vNormal = normalize(worldNormal.xyz);
     vPosition = worldPosition.xyz;
-    vVisibility = fog.enabled > 0.5 ? calculateVisibilityFactor(distance) : 1.0;
+    vFogFactor = fog.enabled > 0.5 ? calculateFogFactor(viewPosition.xyz, fog.density, fog.gradient) : 1.0;
 
     float directionalShadowDistance = distance - (DIRECTIONAL_SHADOW_DISTANCE - DIRECTIONAL_SHADOW_TRANSITION_DISTANCE);
     directionalShadowDistance /= DIRECTIONAL_SHADOW_TRANSITION_DISTANCE;

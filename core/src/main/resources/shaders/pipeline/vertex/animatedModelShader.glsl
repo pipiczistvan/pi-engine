@@ -9,7 +9,9 @@ const int POINT_LIGHT_COUNT = ${lighting.point.light.count};
 #import "struct/directionalLight";
 #import "struct/pointLight";
 
+#import "function/light";
 #import "function/attenuation";
+#import "function/fog";
 
 layout (location = 0) in vec3 Position;
 layout (location = 1) in vec2 TextureCoord;
@@ -19,7 +21,7 @@ layout (location = 6) in vec3 Weight;
 
 out vec2 vTextureCoord;
 flat out vec4 vColor;
-out float vVisibility;
+out float vFogFactor;
 
 uniform mat4 modelMatrix;
 uniform mat4 viewMatrix;
@@ -30,19 +32,6 @@ uniform PointLight pointLights[POINT_LIGHT_COUNT];
 uniform Fog fog;
 uniform vec4 clippingPlane;
 uniform float lightEmitter;
-
-float calculateVisibilityFactor(vec3 viewPosition) {
-    float distance = length(viewPosition);
-    float visiblity = exp(-pow(distance * fog.density, fog.gradient));
-    return clamp(visiblity, 0.0, 1.0);
-}
-
-vec4 calculateLightFactor(vec3 lightPosition, vec4 lightColor, vec3 vertexPosition, vec3 vertexNormal) {
-    vec3 toLightVector = lightPosition - vertexPosition;
-    float nDot1 = dot(normalize(toLightVector), vertexNormal);
-    float brightness = max(nDot1, 0.0);
-    return brightness * lightColor;
-}
 
 void main(void) {
     // POSITION AND NORMAL
@@ -68,18 +57,18 @@ void main(void) {
 
 	// LIGHTING
 
-    vec4 lightFactor = vec4(0);
+    vec3 lightFactor = vec3(0);
     if (lightEmitter > 0.5) {
-        lightFactor = vec4(1);
+        lightFactor = vec3(1);
     } else {
         for (int i = 0; i < DIRECTIONAL_LIGHT_COUNT; i++) {
             if (directionalLights[i].enabled > 0.5) {
-                lightFactor += calculateLightFactor(directionalLights[i].position, directionalLights[i].color, worldPosition.xyz, normalizedVertexNormal);
+                lightFactor += calculateLightFactor(directionalLights[i].position, directionalLights[i].color.rgb, worldPosition.xyz, normalizedVertexNormal);
             }
         }
         for (int i = 0; i < POINT_LIGHT_COUNT; i++) {
             if (pointLights[i].enabled > 0.5) {
-                lightFactor += calculateLightFactor(pointLights[i].position, pointLights[i].color, worldPosition.xyz, normalizedVertexNormal) /
+                lightFactor += calculateLightFactor(pointLights[i].position, pointLights[i].color.rgb, worldPosition.xyz, normalizedVertexNormal) /
                         calculateAttenuationFactor(pointLights[i].attenuation, pointLights[i].position, worldPosition.xyz);
             }
         }
@@ -89,8 +78,8 @@ void main(void) {
 
     // OUTPUT
 
-    vColor = lightFactor;
+    vColor = vec4(lightFactor.xyz, 1.0);
 	vTextureCoord = TextureCoord;
-    vVisibility = fog.enabled > 0.5 ? calculateVisibilityFactor(viewPosition.xyz) : 1.0;
+    vFogFactor = fog.enabled > 0.5 ? calculateFogFactor(viewPosition.xyz, fog.density, fog.gradient) : 1.0;
     gl_Position = projectionMatrix * viewPosition;
 }
