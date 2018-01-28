@@ -3,6 +3,7 @@ package piengine.visual.render.domain.fragment.handler;
 import piengine.core.utils.ColorUtils;
 import piengine.object.animatedmodel.service.AnimatedModelRenderService;
 import piengine.object.model.service.ModelRenderService;
+import piengine.object.particlesystem.service.ParticleSystemRenderService;
 import piengine.object.skybox.service.SkyboxRenderService;
 import piengine.object.terrain.service.TerrainRenderService;
 import piengine.object.water.domain.Water;
@@ -34,13 +35,14 @@ public class RenderWorldFragmentHandler implements FragmentHandler<RenderWorldPl
     private final ClearScreenRenderService clearScreenRenderService;
     private final PointShadowRenderService pointShadowRenderService;
     private final AnimatedModelRenderService animatedModelRenderService;
+    private final ParticleSystemRenderService particleSystemRenderService;
 
     @Wire
     public RenderWorldFragmentHandler(final ModelRenderService modelRenderService, final TerrainRenderService terrainRenderService,
                                       final WaterRenderService waterRenderService, final DirectionalShadowRenderService directionalShadowRenderService,
                                       final SkyboxRenderService skyboxRenderService, final FramebufferService framebufferService,
                                       final ClearScreenRenderService clearScreenRenderService, final PointShadowRenderService pointShadowRenderService,
-                                      final AnimatedModelRenderService animatedModelRenderService) {
+                                      final AnimatedModelRenderService animatedModelRenderService, final ParticleSystemRenderService particleSystemRenderService) {
         this.modelRenderService = modelRenderService;
         this.terrainRenderService = terrainRenderService;
         this.waterRenderService = waterRenderService;
@@ -50,6 +52,7 @@ public class RenderWorldFragmentHandler implements FragmentHandler<RenderWorldPl
         this.clearScreenRenderService = clearScreenRenderService;
         this.pointShadowRenderService = pointShadowRenderService;
         this.animatedModelRenderService = animatedModelRenderService;
+        this.particleSystemRenderService = particleSystemRenderService;
     }
 
     @Override
@@ -147,5 +150,6 @@ public class RenderWorldFragmentHandler implements FragmentHandler<RenderWorldPl
         animatedModelRenderService.process(context);
         skyboxRenderService.process(context);
         waterRenderService.process(context);
+        particleSystemRenderService.process(context);
     }
 }

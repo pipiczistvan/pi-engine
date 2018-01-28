@@ -60,6 +60,7 @@ public abstract class AbstractRenderService<S extends Shader, C extends RenderCo
 
     private void preConfig() {
         renderInterpreter.setDepthTest(renderConfig.depthTest);
+        renderInterpreter.setDepthMask(renderConfig.depthMask);
         renderInterpreter.setBlendTest(renderConfig.blendTest);
         renderInterpreter.setCullFace(renderConfig.cullFace);
         renderInterpreter.setWireFrameMode(renderConfig.wireFrameMode);

@@ -7,6 +7,7 @@ import static piengine.visual.render.domain.config.RenderFunction.DRAW_ELEMENTS;
 public class RenderConfigBuilder {
 
     private boolean depthTest = true;
+    private boolean depthMask = true;
     private boolean blendTest = false;
     private boolean wireFrameMode = false;
     private boolean clipDistance = false;
@@ -23,6 +24,11 @@ public class RenderConfigBuilder {
 
     public RenderConfigBuilder withDepthTest(final boolean depthTest) {
         this.depthTest = depthTest;
+        return this;
+    }
+
+    public RenderConfigBuilder withDepthMask(final boolean depthMask) {
+        this.depthMask = depthMask;
         return this;
     }
 
@@ -57,6 +63,6 @@ public class RenderConfigBuilder {
     }
 
     public RenderConfig build() {
-        return new RenderConfig(depthTest, blendTest, wireFrameMode, clipDistance, cullFace, drawMode, renderFunction);
+        return new RenderConfig(depthTest, depthMask, blendTest, wireFrameMode, clipDistance, cullFace, drawMode, renderFunction);
     }
 }

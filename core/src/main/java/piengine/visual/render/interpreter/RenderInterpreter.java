@@ -22,6 +22,7 @@ import static org.lwjgl.opengl.GL11.glBlendFunc;
 import static org.lwjgl.opengl.GL11.glClear;
 import static org.lwjgl.opengl.GL11.glClearColor;
 import static org.lwjgl.opengl.GL11.glCullFace;
+import static org.lwjgl.opengl.GL11.glDepthMask;
 import static org.lwjgl.opengl.GL11.glDisable;
 import static org.lwjgl.opengl.GL11.glDrawArrays;
 import static org.lwjgl.opengl.GL11.glDrawElements;
@@ -87,6 +88,10 @@ public class RenderInterpreter {
         } else {
             glDisable(GL_DEPTH_TEST);
         }
+    }
+
+    public void setDepthMask(final boolean enabled) {
+        glDepthMask(enabled);
     }
 
     public void setBlendTest(final boolean enabled) {

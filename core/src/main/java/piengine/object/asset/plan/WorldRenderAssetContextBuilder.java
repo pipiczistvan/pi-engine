@@ -3,6 +3,7 @@ package piengine.object.asset.plan;
 import piengine.object.animatedmodel.domain.AnimatedModel;
 import piengine.object.asset.domain.WorldAsset;
 import piengine.object.model.domain.Model;
+import piengine.object.particlesystem.domain.ParticleSystem;
 import piengine.object.terrain.domain.Terrain;
 import piengine.object.water.domain.Water;
 import piengine.visual.lighting.directional.light.domain.DirectionalLight;
@@ -52,6 +53,11 @@ public class WorldRenderAssetContextBuilder {
         return this;
     }
 
+    public WorldRenderAssetContextBuilder loadParticleSystems(final ParticleSystem... particleSystems) {
+        this.assetContext.particleSystems.addAll(asList(particleSystems));
+        return this;
+    }
+
     public WorldRenderAssetContextBuilder loadAssets(final WorldAsset... assets) {
         for (WorldAsset asset : assets) {
             loadAssetContext((WorldRenderAssetContext) asset.getAssetContext());
@@ -67,6 +73,7 @@ public class WorldRenderAssetContextBuilder {
             this.assetContext.directionalLights.addAll(assetContext.directionalLights);
             this.assetContext.pointLights.addAll(assetContext.pointLights);
             this.assetContext.animatedModels.addAll(assetContext.animatedModels);
+            this.assetContext.particleSystems.addAll(assetContext.particleSystems);
         }
         return this;
     }

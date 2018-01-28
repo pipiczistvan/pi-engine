@@ -20,6 +20,8 @@ import piengine.object.asset.plan.WorldRenderAssetContextBuilder;
 import piengine.object.entity.domain.Entity;
 import piengine.object.model.domain.Model;
 import piengine.object.model.manager.ModelManager;
+import piengine.object.particlesystem.domain.ParticleSystem;
+import piengine.object.particlesystem.manager.ParticleSystemManager;
 import piengine.object.terrain.domain.Terrain;
 import piengine.object.water.domain.Water;
 import piengine.object.water.manager.WaterManager;
@@ -46,6 +48,7 @@ public class MapAsset extends WorldAsset<MapAssetArgument> {
     private final AnimatorManager animatorManager;
     private final InputManager inputManager;
     private final DirectionalLightManager directionalLightManager;
+    private final ParticleSystemManager particleSystemManager;
 
     private Terrain terrain;
     private Water water;
@@ -57,6 +60,7 @@ public class MapAsset extends WorldAsset<MapAssetArgument> {
     private Animation peasantAnimation;
     private Animator peasantAnimator;
     private DirectionalLight sun;
+    private ParticleSystem particleSystem;
 
     private float wave = 0;
 
@@ -64,9 +68,8 @@ public class MapAsset extends WorldAsset<MapAssetArgument> {
     public MapAsset(final AssetManager assetManager, final ModelManager modelManager,
                     final WaterManager waterManager, final AnimatedModelManager animatedModelManager,
                     final AnimationManager animationManager, final AnimatorManager animatorManager,
-                    final InputManager inputManager, final DirectionalLightManager directionalLightManager) {
+                    final InputManager inputManager, final DirectionalLightManager directionalLightManager,) {
         super(assetManager);
-
         this.waterManager = waterManager;
         this.modelManager = modelManager;
         this.animatedModelManager = animatedModelManager;
@@ -74,6 +77,7 @@ public class MapAsset extends WorldAsset<MapAssetArgument> {
         this.animatorManager = animatorManager;
         this.inputManager = inputManager;
         this.directionalLightManager = directionalLightManager;
+        this.particleSystemManager = particleSystemManager;
     }
 
     @Override
@@ -108,6 +112,9 @@ public class MapAsset extends WorldAsset<MapAssetArgument> {
         sun = directionalLightManager.supply(this, new Color(1.0f, 0.9f, 0.6f), arguments.camera, new Vector2i(2048));
         sun.setPosition(1000, 1000, 300);
 
+        particleSystem = particleSystemManager.supply(this, 50, 25, 0.3f, 4);
+        particleSystem.scale(0.1f, 0.1f, 0.1f);
+
         initializeAssets();
     }
 
@@ -135,6 +142,7 @@ public class MapAsset extends WorldAsset<MapAssetArgument> {
 //                .loadDirectionalLights(sun)
                 .loadAssets(lampAsset1)
 //                .loadAssets(lampAsset2)
+                .loadParticleSystems(particleSystem)
                 .build();
     }
 
