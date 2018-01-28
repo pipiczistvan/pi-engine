@@ -194,6 +194,6 @@ public class WindowInterpreter {
         glfwDestroyWindow(windowId);
         glfwTerminate();
         glfwSetErrorCallback(null);
+        System.exit(0);
     }
-
 }

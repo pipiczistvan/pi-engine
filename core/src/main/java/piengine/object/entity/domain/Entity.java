@@ -8,7 +8,6 @@ import java.util.List;
 
 import static piengine.core.utils.MatrixUtils.MODEL_MATRIX;
 
-//todo: fixme
 public abstract class Entity {
 
     private static final Vector3f ZERO = new Vector3f(0);
@@ -54,10 +53,7 @@ public abstract class Entity {
     }
 
     public void setPosition(final float x, final float y, final float z) {
-        position.set(x, y, z);
-        position.add(getParentPosition());
-        updateTransformation(transformation);
-        children.forEach(entity -> entity.translate(x, y, z));
+        translate(x - position.x, y - position.y, z - position.z);
     }
 
     public void translate(final float x, final float y, final float z) {
@@ -80,10 +76,7 @@ public abstract class Entity {
     }
 
     public void setRotation(final float yaw, final float pitch, final float roll) {
-        rotation.set(yaw, pitch, roll);
-        rotation.add(getParentRotation());
-        updateTransformation(transformation);
-        children.forEach(entity -> entity.rotate(yaw, pitch, roll));
+        rotate(yaw - rotation.x, pitch - rotation.y, roll - rotation.z);
     }
 
     public void rotate(final float yaw, final float pitch, final float roll) {
@@ -106,10 +99,7 @@ public abstract class Entity {
     }
 
     public void setScale(final float x, final float y, final float z) {
-        scale.set(x, y, z);
-        scale.mul(getParentScale());
-        updateTransformation(transformation);
-        children.forEach(entity -> entity.scale(x, y, z));
+        scale(x / scale.x, y / scale.y, z / scale.z);
     }
 
     public void setScale(final Vector3f vector) {
@@ -129,14 +119,9 @@ public abstract class Entity {
     // MULTI
     public void setPositionRotation(final float x, final float y, final float z,
                                     final float yaw, final float pitch, final float roll) {
-        position.set(x, y, z);
-        position.add(getParentPosition());
-        rotation.set(yaw, pitch, roll);
-        rotation.add(getParentRotation());
-        updateTransformation(transformation);
-        children.forEach(entity -> entity.setPositionRotation(
+        translateRotate(
                 x - position.x, y - position.y, z - position.z,
-                yaw - rotation.x, pitch - rotation.y, roll - rotation.z)
+                yaw - rotation.x, pitch - rotation.y, roll - rotation.z
         );
     }
 
