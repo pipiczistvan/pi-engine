@@ -114,8 +114,8 @@ public class MapAsset extends WorldAsset<MapAssetArgument> {
         sun = directionalLightManager.supply(this, new Color(1.0f, 0.9f, 0.6f), arguments.camera, new Vector2i(2048));
         sun.setPosition(1000, 1000, 300);
 
-        particleSystem = particleSystemManager.supply(this, 50, 25, 0.3f, 4);
-        particleSystem.scale(0.1f, 0.1f, 0.1f);
+        particleSystem = particleSystemManager.supply(this, arguments.camera, 50, 7, 0.01f, 1, "fire", 8);
+        particleSystem.scale(2,2,2);
 
         initializeAssets();
     }

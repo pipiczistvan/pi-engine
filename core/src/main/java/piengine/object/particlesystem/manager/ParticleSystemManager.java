@@ -1,5 +1,6 @@
 package piengine.object.particlesystem.manager;
 
+import piengine.object.camera.domain.Camera;
 import piengine.object.entity.domain.Entity;
 import piengine.object.particlesystem.domain.ParticleSystem;
 import piengine.object.particlesystem.domain.ParticleSystemKey;
@@ -17,8 +18,9 @@ public class ParticleSystemManager {
         this.particleSystemService = particleSystemService;
     }
 
-    public ParticleSystem supply(final Entity parent, final float pps, final float speed,
-                                 final float gravityComplient, final float lifeLength) {
-        return particleSystemService.supply(new ParticleSystemKey(parent, pps, speed, gravityComplient, lifeLength));
+    public ParticleSystem supply(final Entity parent, final Camera camera, final float pps,
+                                 final float speed, final float gravityComplient, final float lifeLength,
+                                 final String sprite, final int spriteSize) {
+        return particleSystemService.supply(new ParticleSystemKey(parent, camera, pps, speed, gravityComplient, lifeLength, sprite, spriteSize));
     }
 }

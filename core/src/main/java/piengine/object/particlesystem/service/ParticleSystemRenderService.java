@@ -14,15 +14,20 @@ import piengine.visual.render.interpreter.RenderInterpreter;
 import piengine.visual.render.service.AbstractRenderService;
 import piengine.visual.shader.domain.ShaderKey;
 import piengine.visual.shader.service.ShaderService;
+import piengine.visual.texture.service.TextureService;
 import puppeteer.annotation.premade.Component;
 import puppeteer.annotation.premade.Wire;
 
 @Component
 public class ParticleSystemRenderService extends AbstractRenderService<ParticleSystemShader, RenderWorldPlanContext> {
 
+    private final TextureService textureService;
+
     @Wire
-    public ParticleSystemRenderService(final ShaderService shaderService, final RenderInterpreter renderInterpreter) {
+    public ParticleSystemRenderService(final ShaderService shaderService, final RenderInterpreter renderInterpreter,
+                                       final TextureService textureService) {
         super(shaderService, renderInterpreter);
+        this.textureService = textureService;
     }
 
     @Override
@@ -35,8 +40,12 @@ public class ParticleSystemRenderService extends AbstractRenderService<ParticleS
         shader.loadProjectionMatrix(context.currentCamera.getProjection());
 
         for (ParticleSystem particleSystem : context.particleSystems) {
+            textureService.bind(particleSystem.sprite);
             for (Particle particle : particleSystem.particles) {
-                shader.loadModelViewMatrix(createModelView(particle, context.currentCamera));
+                shader.loadModelViewMatrix(createModelView(particle, context.currentCamera))
+                        .loadTextureOffsetCurrent(particle.getTextureOffsetCurrent())
+                        .loadTextureOffsetNext(particle.getTextureOffsetNext())
+                        .loadTextureCoordsInfo(particle.getTextureInfo());
                 draw(particleSystem.mesh.getDao());
             }
         }

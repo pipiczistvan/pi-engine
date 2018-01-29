@@ -2,8 +2,10 @@ package piengine.object.particlesystem.domain;
 
 import org.joml.Vector3f;
 import piengine.core.base.api.Updatable;
+import piengine.object.camera.domain.Camera;
 import piengine.object.entity.domain.Entity;
 import piengine.object.mesh.domain.Mesh;
+import piengine.visual.sprite.domain.Sprite;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -12,16 +14,22 @@ import java.util.List;
 public class ParticleSystem extends Entity implements Updatable {
 
     public final Mesh mesh;
+    public final Sprite sprite;
+    public final List<Particle> particles;
+
+    private final Camera camera;
     private final float pps;
     private final float speed;
     private final float gravityComplient;
     private final float lifeLength;
-    public final List<Particle> particles;
 
-    public ParticleSystem(final Entity parent, final Mesh mesh, final float pps,
-                          final float speed, final float gravityComplient, final float lifeLength) {
+    public ParticleSystem(final Entity parent, final Mesh mesh, final Sprite sprite,
+                          final Camera camera, final float pps, final float speed,
+                          final float gravityComplient, final float lifeLength) {
         super(parent);
         this.mesh = mesh;
+        this.sprite = sprite;
+        this.camera = camera;
         this.pps = pps;
         this.speed = speed;
         this.gravityComplient = gravityComplient;
@@ -41,6 +49,7 @@ public class ParticleSystem extends Entity implements Updatable {
                 iterator.remove();
             }
         }
+        sortHighToLow(particles);
     }
 
     private void generateParticles(final float delta) {
@@ -62,6 +71,25 @@ public class ParticleSystem extends Entity implements Updatable {
         velocity.normalize();
         velocity.mul(speed);
 
-        particles.add(new Particle(this, velocity, gravityComplient, lifeLength));
+        particles.add(new Particle(this, camera, velocity, gravityComplient, lifeLength, sprite.getNumberOfRows()));
+    }
+
+    private static void sortHighToLow(final List<Particle> list) {
+        for (int i = 1; i < list.size(); i++) {
+            Particle item = list.get(i);
+            if (item.getDistance() > list.get(i - 1).getDistance()) {
+                sortUpHighToLow(list, i);
+            }
+        }
+    }
+
+    private static void sortUpHighToLow(final List<Particle> list, final int i) {
+        Particle item = list.get(i);
+        int attemptPos = i - 1;
+        while (attemptPos != 0 && list.get(attemptPos - 1).getDistance() < item.getDistance()) {
+            attemptPos--;
+        }
+        list.remove(i);
+        list.add(attemptPos, item);
     }
 }
