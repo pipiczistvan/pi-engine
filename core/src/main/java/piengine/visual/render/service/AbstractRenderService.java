@@ -3,11 +3,15 @@ package piengine.visual.render.service;
 import piengine.core.base.api.Initializable;
 import piengine.core.base.api.Service;
 import piengine.object.mesh.domain.MeshDao;
+import piengine.object.particlesystem.domain.ParticleSysemDao;
 import piengine.visual.render.domain.config.RenderConfig;
 import piengine.visual.render.domain.context.RenderContext;
 import piengine.visual.render.interpreter.RenderInterpreter;
 import piengine.visual.shader.domain.Shader;
 import piengine.visual.shader.service.ShaderService;
+
+import static org.lwjgl.opengl.GL11.GL_TRIANGLE_STRIP;
+import static org.lwjgl.opengl.GL31.glDrawArraysInstanced;
 
 public abstract class AbstractRenderService<S extends Shader, C extends RenderContext> implements Service, Initializable {
 
@@ -47,6 +51,17 @@ public abstract class AbstractRenderService<S extends Shader, C extends RenderCo
                 renderInterpreter.drawElements(renderConfig.drawMode, dao.vertexCount);
                 break;
         }
+
+        renderInterpreter.disableVertexAttribArray(dao.getVertexAttribs());
+        renderInterpreter.unbindVertexArray();
+    }
+
+    //todo: HACK
+    protected void drawInstanced(final ParticleSysemDao dao, final int primCount) {
+        renderInterpreter.bindVertexArray(dao.vaoId);
+        renderInterpreter.enableVertexAttribArray(dao.getVertexAttribs());
+
+        glDrawArraysInstanced(GL_TRIANGLE_STRIP, 0, dao.vertexCount, primCount);
 
         renderInterpreter.disableVertexAttribArray(dao.getVertexAttribs());
         renderInterpreter.unbindVertexArray();

@@ -10,7 +10,7 @@ import static piengine.object.mesh.domain.MeshDataType.VERTEX;
 
 public class MeshDao implements Dao {
 
-    private static MeshDataType[] meshDataTypes = {VERTEX, TEXTURE_COORD, NORMAL};
+    private static MeshDataType[] MESH_DATA_TYPES = {VERTEX, TEXTURE_COORD, NORMAL};
 
     public int vaoId;
     public List<Integer> vboIds;
@@ -23,6 +23,6 @@ public class MeshDao implements Dao {
     }
 
     public MeshDataType[] getVertexAttribs() {
-        return meshDataTypes;
+        return MESH_DATA_TYPES;
     }
 }

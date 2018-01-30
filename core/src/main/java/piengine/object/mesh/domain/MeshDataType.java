@@ -8,7 +8,13 @@ public enum MeshDataType {
     NORMAL(3),
     INDICATOR(4),
     JOINT_INDEX(5),
-    WEIGHT(6);
+    WEIGHT(6),
+    MODEL_VIEW_MATRIX_1(7),
+    MODEL_VIEW_MATRIX_2(8),
+    MODEL_VIEW_MATRIX_3(9),
+    MODEL_VIEW_MATRIX_4(10),
+    TEXTURE_OFFSET(11),
+    BLEND(12);
 
     public final int value;
 

@@ -4,16 +4,15 @@ import org.joml.Vector3f;
 import piengine.core.base.api.Updatable;
 import piengine.object.camera.domain.Camera;
 import piengine.object.entity.domain.Entity;
-import piengine.object.mesh.domain.Mesh;
+import piengine.object.entity.domain.EntityDomain;
 import piengine.visual.sprite.domain.Sprite;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public class ParticleSystem extends Entity implements Updatable {
+public class ParticleSystem extends EntityDomain<ParticleSysemDao> implements Updatable {
 
-    public final Mesh mesh;
     public final Sprite sprite;
     public final List<Particle> particles;
 
@@ -23,11 +22,10 @@ public class ParticleSystem extends Entity implements Updatable {
     private final float gravityComplient;
     private final float lifeLength;
 
-    public ParticleSystem(final Entity parent, final Mesh mesh, final Sprite sprite,
+    public ParticleSystem(final Entity parent, final ParticleSysemDao dao, final Sprite sprite,
                           final Camera camera, final float pps, final float speed,
                           final float gravityComplient, final float lifeLength) {
-        super(parent);
-        this.mesh = mesh;
+        super(parent, dao);
         this.sprite = sprite;
         this.camera = camera;
         this.pps = pps;
