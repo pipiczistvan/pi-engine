@@ -38,6 +38,11 @@ public class AntialiasEffectService extends AbstractPostProcessingService<Antial
     }
 
     @Override
+    public void cleanUp(final AntialiasEffectContext context) {
+        framebufferManager.cleanUp(context.framebuffer);
+    }
+
+    @Override
     public EffectType getEffectType() {
         return ANTIALIAS_EFFECT;
     }

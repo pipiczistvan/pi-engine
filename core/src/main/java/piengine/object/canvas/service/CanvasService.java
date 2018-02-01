@@ -31,19 +31,38 @@ public class CanvasService {
     public Canvas supply(final CanvasKey key) {
         Mesh mesh = meshService.supply(new MeshKey("canvas"));
 
+        List<PostProcessingEffectContext> effectContexts = createEffects(key);
+
+        return new Canvas(key.parent, key, mesh, effectContexts, key.texture, key.color);
+    }
+
+    public void recreateEffects(final Canvas canvas) {
+        canvas.effectContexts.forEach(this::cleanUpEffectContext);
+        canvas.effectContexts.clear();
+        canvas.effectContexts.addAll(createEffects(canvas.key));
+    }
+
+    private List<PostProcessingEffectContext> createEffects(final CanvasKey key) {
         List<PostProcessingEffectContext> effectContexts = new ArrayList<>();
         for (EffectType effectType : key.effects) {
             effectContexts.add(createEffectContext(effectType, key.texture));
         }
 
-        return new Canvas(key.parent, mesh, effectContexts, key.texture, key.color);
+        return effectContexts;
     }
 
     private PostProcessingEffectContext createEffectContext(final EffectType effectType, final Texture texture) {
+        return findPostProcessingService(effectType).createContext(texture.getSize());
+    }
+
+    private void cleanUpEffectContext(final PostProcessingEffectContext effectContext) {
+        findPostProcessingService(effectContext.getEffectType()).cleanUp(effectContext);
+    }
+
+    private AbstractPostProcessingService findPostProcessingService(final EffectType effectType) {
         return postProcessingServices.stream()
                 .filter(pps -> pps.getEffectType().equals(effectType))
                 .findFirst()
-                .orElseThrow(() -> new PIEngineException("Could not find post processing service for type: %s!", effectType))
-                .createContext(texture.getSize());
+                .orElseThrow(() -> new PIEngineException("Could not find post processing service for type: %s!", effectType));
     }
 }

@@ -48,6 +48,11 @@ public abstract class SupplierService<K extends Key, R extends ResourceData, D e
 
     protected abstract M createDomain(final D dao, final R resource);
 
+    protected void removeForKey(final K key) {
+        resourceMap.remove(key);
+        domainMap.remove(key);
+    }
+
     private M computeDomain(final K key) {
         R resourceData = load(key);
         D dao = interpreter.create(resourceData);

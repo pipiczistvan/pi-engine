@@ -19,9 +19,6 @@ public class FontAccessor implements Accessor<FontKey, FontData> {
     private static final String ROOT = ApplicationProperties.get(PropertyKeys.FONTS_LOCATION);
     private static final String FONT_EXT = "fnt";
 
-    private static final int VIEW_PORT_WIDTH = ApplicationProperties.get(PropertyKeys.WINDOW_WIDTH);
-    private static final int VIEW_PORT_HEIGHT = ApplicationProperties.get(PropertyKeys.WINDOW_HEIGHT);
-
     private static final int PAD_TOP = 0;
     private static final int PAD_LEFT = 1;
     private static final int PAD_BOTTOM = 2;
@@ -120,7 +117,7 @@ public class FontAccessor implements Accessor<FontKey, FontData> {
 
         private FontContext(final String[] source) {
             this.source = source;
-            this.aspectRatio = (double) VIEW_PORT_WIDTH / (double) VIEW_PORT_HEIGHT;
+            this.aspectRatio = 800d / 600d; //todo: dinamikus
             this.values = new HashMap<>();
         }
 

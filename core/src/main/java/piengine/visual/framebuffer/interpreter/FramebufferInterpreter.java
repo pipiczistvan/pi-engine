@@ -54,7 +54,9 @@ import static org.lwjgl.opengl.GL30.glRenderbufferStorageMultisample;
 import static org.lwjgl.opengl.GL32.glFramebufferTexture;
 import static piengine.core.base.type.property.ApplicationProperties.get;
 import static piengine.core.base.type.property.PropertyKeys.WINDOW_MULTI_SAMPLE_COUNT;
+import static piengine.visual.framebuffer.domain.FramebufferAttachment.COLOR_BUFFER_MULTISAMPLE_ATTACHMENT;
 import static piengine.visual.framebuffer.domain.FramebufferAttachment.DEPTH_BUFFER_ATTACHMENT;
+import static piengine.visual.framebuffer.domain.FramebufferAttachment.DEPTH_BUFFER_MULTISAMPLE_ATTACHMENT;
 
 @Component
 public class FramebufferInterpreter implements Interpreter<FramebufferData, FramebufferDao> {
@@ -78,10 +80,13 @@ public class FramebufferInterpreter implements Interpreter<FramebufferData, Fram
 
     @Override
     public void free(final FramebufferDao dao) {
+        unbind();
         glDeleteFramebuffers(dao.getFbo());
 
         for (Map.Entry<FramebufferAttachment, Integer> attachment : dao.getAttachments().entrySet()) {
-            if (attachment.getKey().equals(DEPTH_BUFFER_ATTACHMENT)) {
+            if (attachment.getKey().equals(DEPTH_BUFFER_ATTACHMENT)
+                    || attachment.getKey().equals(DEPTH_BUFFER_MULTISAMPLE_ATTACHMENT)
+                    || attachment.getKey().equals(COLOR_BUFFER_MULTISAMPLE_ATTACHMENT)) {
                 glDeleteRenderbuffers(attachment.getValue());
             } else {
                 glDeleteTextures(attachment.getValue());
@@ -104,11 +109,10 @@ public class FramebufferInterpreter implements Interpreter<FramebufferData, Fram
                 0, 0, src.getSize().x, src.getSize().y,
                 0, 0, dest.getSize().x, dest.getSize().y,
                 GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT, GL_NEAREST);
-        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        unbind();
     }
 
     public void resize(final Framebuffer framebuffer, final Vector2i resolution) {
-        unbind();
         free(framebuffer.getDao());
 
         FramebufferDao dao = create(new FramebufferData(

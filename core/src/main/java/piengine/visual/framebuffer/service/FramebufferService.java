@@ -52,6 +52,11 @@ public class FramebufferService extends SupplierService<FramebufferKey, Framebuf
         rebindLast();
     }
 
+    public void cleanUp(final Framebuffer framebuffer) {
+        framebufferInterpreter.free(framebuffer.getDao());
+        removeForKey(framebuffer.key);
+    }
+
     private void rebindLast() {
         if (fboStack.empty()) {
             framebufferInterpreter.unbind();

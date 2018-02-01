@@ -58,6 +58,11 @@ public class VerticalBlurEffectService extends AbstractPostProcessingRenderServi
     }
 
     @Override
+    public void cleanUp(final VerticalBlurEffectContext context) {
+        framebufferManager.cleanUp(context.framebuffer);
+    }
+
+    @Override
     public EffectType getEffectType() {
         return VERTICAL_BLUR_EFFECT;
     }

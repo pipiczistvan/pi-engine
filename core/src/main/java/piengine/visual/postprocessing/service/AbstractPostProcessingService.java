@@ -11,4 +11,5 @@ public abstract class AbstractPostProcessingService<C extends PostProcessingEffe
 
     public abstract C createContext(final Vector2i outSize);
 
+    public abstract void cleanUp(final C context);
 }

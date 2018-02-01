@@ -57,6 +57,11 @@ public class NegativeEffectService extends AbstractPostProcessingRenderService<N
     }
 
     @Override
+    public void cleanUp(final NegativeEffectContext context) {
+        framebufferManager.cleanUp(context.framebuffer);
+    }
+
+    @Override
     public EffectType getEffectType() {
         return NEGATIVE_EFFECT;
     }

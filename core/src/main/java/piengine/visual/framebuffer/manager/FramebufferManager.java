@@ -46,4 +46,8 @@ public class FramebufferManager {
     public void resize(final Framebuffer framebuffer, final Vector2i resolution) {
         framebufferService.resize(framebuffer, resolution);
     }
+
+    public void cleanUp(final Framebuffer framebuffer) {
+        framebufferService.cleanUp(framebuffer);
+    }
 }

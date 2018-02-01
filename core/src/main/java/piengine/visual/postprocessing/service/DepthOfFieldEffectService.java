@@ -71,6 +71,12 @@ public class DepthOfFieldEffectService extends AbstractPostProcessingRenderServi
     }
 
     @Override
+    public void cleanUp(final DepthOfFieldEffectContext context) {
+        framebufferManager.cleanUp(context.framebuffer);
+        blurEffectService.cleanUp(context.blurEffectContext);
+    }
+
+    @Override
     public EffectType getEffectType() {
         return DEPTH_OF_FIELD_EFFECT;
     }

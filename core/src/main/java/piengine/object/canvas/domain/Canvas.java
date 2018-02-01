@@ -10,13 +10,15 @@ import java.util.List;
 
 public class Canvas extends Entity {
 
+    public final CanvasKey key;
     public final Mesh mesh;
     public final List<PostProcessingEffectContext> effectContexts;
     public Texture texture;
     public Color color;
 
-    public Canvas(final Entity parent, final Mesh mesh, final List<PostProcessingEffectContext> effectContexts, final Texture texture, final Color color) {
+    public Canvas(final Entity parent, final CanvasKey key, final Mesh mesh, final List<PostProcessingEffectContext> effectContexts, final Texture texture, final Color color) {
         super(parent);
+        this.key = key;
         this.mesh = mesh;
         this.effectContexts = effectContexts;
         this.texture = texture;

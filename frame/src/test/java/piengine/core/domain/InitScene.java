@@ -52,8 +52,9 @@ import static piengine.core.base.type.property.PropertyKeys.WINDOW_HEIGHT;
 import static piengine.core.base.type.property.PropertyKeys.WINDOW_WIDTH;
 import static piengine.core.input.domain.KeyEventType.PRESS;
 import static piengine.object.camera.domain.ProjectionType.PERSPECTIVE;
-import static piengine.visual.framebuffer.domain.FramebufferAttachment.COLOR_TEXTURE_ATTACHMENT;
-import static piengine.visual.framebuffer.domain.FramebufferAttachment.DEPTH_BUFFER_ATTACHMENT;
+import static piengine.visual.framebuffer.domain.FramebufferAttachment.COLOR_BUFFER_MULTISAMPLE_ATTACHMENT;
+import static piengine.visual.framebuffer.domain.FramebufferAttachment.DEPTH_BUFFER_MULTISAMPLE_ATTACHMENT;
+import static piengine.visual.postprocessing.domain.EffectType.ANTIALIAS_EFFECT;
 
 public class InitScene extends Scene implements Updatable {
 
@@ -130,8 +131,8 @@ public class InitScene extends Scene implements Updatable {
 
         lampAsset = createAsset(LampAsset.class, new LampAssetArgument());
 
-        framebuffer = framebufferManager.supply(VIEWPORT, COLOR_TEXTURE_ATTACHMENT, DEPTH_BUFFER_ATTACHMENT);
-        mainCanvas = canvasManager.supply(this, framebuffer);
+        framebuffer = framebufferManager.supply(VIEWPORT, COLOR_BUFFER_MULTISAMPLE_ATTACHMENT, DEPTH_BUFFER_MULTISAMPLE_ATTACHMENT);
+        mainCanvas = canvasManager.supply(this, framebuffer, ANTIALIAS_EFFECT);
 
         buttonAsset = createAsset(ButtonAsset.class, new ButtonAssetArgument(
                 "buttonDefault", "buttonHover", "buttonPress",
@@ -192,5 +193,6 @@ public class InitScene extends Scene implements Updatable {
         camera.recalculateProjection();
         framebufferManager.resize(framebuffer, VIEWPORT);
         mapAsset.resize(VIEWPORT);
+        canvasManager.recreateEffects(mainCanvas);
     }
 }
