@@ -21,27 +21,20 @@ public class TerrainAccessor implements Accessor<TerrainKey, TerrainData> {
     private static final String ROOT = get(IMAGES_LOCATION);
     private static final String PNG_EXT = "png";
     private static final float MAX_PIXEL_COLOR = 256 * 256 * 256;
-    private static final Color[] BIOME_COLORS = {
-            new Color(0.78823529412f, 0.69803921569f, 0.38823529412f),
-            new Color(0.52941176471f, 0.72156862745f, 0.32156862745f),
-            new Color(0.3137254902f, 0.67058823529f, 0.36470588235f),
-            new Color(0.47058823529f, 0.47058823529f, 0.47058823529f),
-            new Color(0.78431372549f, 0.78431372549f, 0.82352941176f)
-    };
     private static final float COLOR_SPREAD = 0.45f;
 
     private final ResourceLoader loader;
-    private final TerrainColorGenerator colorGenerator;
     private final TerrainGridGenerator gridGenerator;
 
     public TerrainAccessor() {
         this.loader = new ResourceLoader(ROOT, PNG_EXT);
-        this.colorGenerator = new TerrainColorGenerator(BIOME_COLORS, COLOR_SPREAD);
         this.gridGenerator = new TerrainGridGenerator();
     }
 
     @Override
     public TerrainData access(final TerrainKey key) {
+        TerrainColorGenerator colorGenerator = new TerrainColorGenerator(key.biomColors, COLOR_SPREAD);
+
         BufferedImage heightmap;
         try {
             heightmap = loader.loadBufferedImage(key.heightmap);
