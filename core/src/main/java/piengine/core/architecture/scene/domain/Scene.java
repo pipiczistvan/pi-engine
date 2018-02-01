@@ -2,6 +2,7 @@ package piengine.core.architecture.scene.domain;
 
 import piengine.core.base.RenderPlanner;
 import piengine.core.base.api.Initializable;
+import piengine.core.base.api.Resizable;
 import piengine.core.base.api.Updatable;
 import piengine.object.asset.domain.Asset;
 import piengine.object.asset.domain.AssetArgument;
@@ -10,7 +11,7 @@ import piengine.object.asset.plan.RenderAssetContext;
 import piengine.visual.render.domain.plan.RenderPlan;
 import piengine.visual.render.manager.RenderManager;
 
-public abstract class Scene extends RenderPlanner<RenderPlan> implements Initializable, Updatable {
+public abstract class Scene extends RenderPlanner<RenderPlan> implements Initializable, Updatable, Resizable {
 
     private final AssetManager assetManager;
 

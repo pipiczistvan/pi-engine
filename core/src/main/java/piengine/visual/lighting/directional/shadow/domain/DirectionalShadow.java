@@ -49,8 +49,6 @@ public class DirectionalShadow implements Shadow, Domain<DirectionalShadowDao>, 
 
         this.spaceMatrix = new Matrix4f();
         this.lightCamera = new FirstPersonCamera(null, new Vector2i(), new CameraAttribute(0, 0, 0), ORTHOGRAPHIC);
-
-        calculateWidthsAndHeights();
     }
 
     public void initialize(final Light light) {
@@ -66,6 +64,7 @@ public class DirectionalShadow implements Shadow, Domain<DirectionalShadowDao>, 
 
     @Override
     public void update(final float delta) {
+        calculateWidthsAndHeights();
         // PROJECTION UPDATE
         Matrix4f rotation = calculateCameraRotationMatrix(playerCamera.getRotation());
         Vector4f forwardVector = new Vector4f(0, 0, 0, 1);

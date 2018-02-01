@@ -48,8 +48,8 @@ import static piengine.core.base.type.property.PropertyKeys.CAMERA_LOOK_SPEED;
 import static piengine.core.base.type.property.PropertyKeys.CAMERA_LOOK_UP_LIMIT;
 import static piengine.core.base.type.property.PropertyKeys.CAMERA_MOVE_SPEED;
 import static piengine.core.base.type.property.PropertyKeys.CAMERA_NEAR_PLANE;
-import static piengine.core.base.type.property.PropertyKeys.CAMERA_VIEWPORT_HEIGHT;
-import static piengine.core.base.type.property.PropertyKeys.CAMERA_VIEWPORT_WIDTH;
+import static piengine.core.base.type.property.PropertyKeys.WINDOW_HEIGHT;
+import static piengine.core.base.type.property.PropertyKeys.WINDOW_WIDTH;
 import static piengine.core.input.domain.KeyEventType.PRESS;
 import static piengine.object.camera.domain.ProjectionType.PERSPECTIVE;
 import static piengine.visual.framebuffer.domain.FramebufferAttachment.COLOR_BUFFER_MULTISAMPLE_ATTACHMENT;
@@ -60,7 +60,7 @@ public class InitScene extends Scene implements Updatable {
 
     public static final int TERRAIN_SCALE = 256;
     public static final int WATER_SCALE = TERRAIN_SCALE / 2;
-    private static final Vector2i VIEWPORT = new Vector2i(get(CAMERA_VIEWPORT_WIDTH), get(CAMERA_VIEWPORT_HEIGHT));
+    private static final Vector2i VIEWPORT = new Vector2i(get(WINDOW_WIDTH), get(WINDOW_HEIGHT));
     private static final Color[] BIOME_COLORS = {
             new Color(0.78823529412f, 0.69803921569f, 0.38823529412f),
             new Color(0.52941176471f, 0.72156862745f, 0.32156862745f),
@@ -180,5 +180,13 @@ public class InitScene extends Scene implements Updatable {
                 .loadAssets(fpsAsset)
                 .clearScreen(ColorUtils.BLACK)
                 .render();
+    }
+
+    @Override
+    public void resize(int width, int height) {
+        VIEWPORT.x = width;
+        VIEWPORT.y = height;
+
+        camera.recalculateProjection();
     }
 }

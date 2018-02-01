@@ -64,4 +64,11 @@ public class WindowService {
         windowInterpreter.closeWindow();
     }
 
+    public int getWidth() {
+        return windowInterpreter.getWidth();
+    }
+
+    public int getHeight() {
+        return windowInterpreter.getHeight();
+    }
 }
