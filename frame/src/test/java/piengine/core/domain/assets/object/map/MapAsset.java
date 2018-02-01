@@ -196,4 +196,8 @@ public class MapAsset extends WorldAsset<MapAssetArgument> {
         peasantModel.setScale(0.5f);
         placeEntityOnTerrain(peasantModel, 5, -5, 5);
     }
+
+    public void resize(final Vector2i resolution) {
+        waterManager.resize(water, resolution);
+    }
 }

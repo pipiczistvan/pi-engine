@@ -46,4 +46,9 @@ public class WaterService extends SupplierService<WaterKey, WaterData, WaterDao,
 
         return new Water(dao, reflectionBuffer, refractionBuffer, resource.position, resource.rotation, resource.scale);
     }
+
+    public void resize(final Water water, final Vector2i resolution) {
+        framebufferManager.resize(water.reflectionBuffer, resolution);
+        framebufferManager.resize(water.refractionBuffer, new Vector2i(resolution.x / 2, resolution.y / 2));
+    }
 }

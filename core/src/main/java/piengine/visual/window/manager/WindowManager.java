@@ -31,4 +31,7 @@ public class WindowManager {
         return windowService.getWindowCenter();
     }
 
+    public void setCursorVisibility(final boolean visible) {
+        windowService.setCursorVisibility(visible);
+    }
 }

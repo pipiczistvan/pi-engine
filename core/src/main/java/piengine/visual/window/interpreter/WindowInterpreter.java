@@ -1,6 +1,7 @@
 package piengine.visual.window.interpreter;
 
 import org.joml.Vector2f;
+import org.joml.Vector2i;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.glfw.GLFWWindowSizeCallback;
@@ -19,6 +20,7 @@ import static org.lwjgl.glfw.GLFW.GLFW_CONTEXT_VERSION_MAJOR;
 import static org.lwjgl.glfw.GLFW.GLFW_CONTEXT_VERSION_MINOR;
 import static org.lwjgl.glfw.GLFW.GLFW_CURSOR;
 import static org.lwjgl.glfw.GLFW.GLFW_CURSOR_HIDDEN;
+import static org.lwjgl.glfw.GLFW.GLFW_CURSOR_NORMAL;
 import static org.lwjgl.glfw.GLFW.GLFW_FALSE;
 import static org.lwjgl.glfw.GLFW.GLFW_HAND_CURSOR;
 import static org.lwjgl.glfw.GLFW.GLFW_OPENGL_CORE_PROFILE;
@@ -67,6 +69,8 @@ public class WindowInterpreter {
     private final InputService inputService;
     private final ListMap<WindowEventType, Event> eventMap;
     private final GLFWWindowSizeCallback windowSizeCallback;
+    private final Vector2i windowSize;
+    private final Vector2f windowCenter;
 
     private long windowId;
     private long cursorId;
@@ -76,7 +80,6 @@ public class WindowInterpreter {
     private IntBuffer frameBufferHeight = BufferUtils.createIntBuffer(1);
     private DoubleBuffer xBuffer = BufferUtils.createDoubleBuffer(1);
     private DoubleBuffer yBuffer = BufferUtils.createDoubleBuffer(1);
-    private Vector2f windowCenter;
     private boolean resized = false;
 
     @Wire
@@ -89,6 +92,8 @@ public class WindowInterpreter {
                 resized = true;
             }
         };
+        this.windowSize = new Vector2i();
+        this.windowCenter = new Vector2f();
     }
 
     public void createWindow(String title, int width, int height, boolean fullScreen, int multiSampleCount, boolean cursorHidden, int major, int minor) {
@@ -137,6 +142,14 @@ public class WindowInterpreter {
         return frameBufferHeight.get(0);
     }
 
+    public void setCursorVisibility(final boolean visible) {
+        if (visible) {
+            glfwSetInputMode(windowId, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+        } else {
+            glfwSetInputMode(windowId, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+        }
+    }
+
     private void setupGLFW() {
         if (glfwInit() != GLFW_TRUE) {
             throw new PIEngineException("Unable to initialize GLFW!");
@@ -165,16 +178,13 @@ public class WindowInterpreter {
         updateSizeBuffers();
         glfwSetWindowPos(
                 windowId,
-                (vidMode.width() - windowWidth.get()) / 2,
-                (vidMode.height() - windowHeight.get()) / 2
+                (vidMode.width() - windowSize.x) / 2,
+                (vidMode.height() - windowSize.y) / 2
         );
-        windowCenter = new Vector2f(width / 2, height / 2);
 
         glfwSetCursor(windowId, cursorId);
 
-        if (cursorHidden) {
-            glfwSetInputMode(windowId, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
-        }
+        setCursorVisibility(!cursorHidden);
 
         glfwSetKeyCallback(windowId, inputService.getKeyCallback());
         glfwSetMouseButtonCallback(windowId, inputService.getMouseButtonCallback());
@@ -219,5 +229,8 @@ public class WindowInterpreter {
         frameBufferHeight.clear();
         glfwGetFramebufferSize(windowId, frameBufferWidth, frameBufferHeight);
         glfwGetWindowSize(windowId, windowWidth, windowHeight);
+
+        windowSize.set(windowWidth.get(), windowHeight.get());
+        windowCenter.set(windowSize.x / 2f, windowSize.y / 2f);
     }
 }

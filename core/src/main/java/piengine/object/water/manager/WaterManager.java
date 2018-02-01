@@ -25,4 +25,8 @@ public class WaterManager {
     public Water supply(final Vector2i resolution, final Vector2i size, final Vector3f position, final Vector3f scale) {
         return supply(resolution, size, position, new Vector3f(0), scale);
     }
+
+    public void resize(final Water water, final Vector2i resolution) {
+        waterService.resize(water, resolution);
+    }
 }

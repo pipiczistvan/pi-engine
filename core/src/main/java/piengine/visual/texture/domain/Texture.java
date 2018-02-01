@@ -5,8 +5,8 @@ import piengine.core.base.domain.Domain;
 
 public abstract class Texture<T extends TextureDao> implements Domain<T> {
 
-    private final T dao;
-    private final Vector2i size;
+    protected T dao;
+    protected Vector2i size;
 
     public Texture(final T dao, final Vector2i size) {
         this.dao = dao;

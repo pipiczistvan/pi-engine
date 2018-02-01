@@ -42,4 +42,8 @@ public class FramebufferManager {
     public void blit(final Framebuffer src, final Framebuffer dest) {
         framebufferService.blit(src, dest);
     }
+
+    public void resize(final Framebuffer framebuffer, final Vector2i resolution) {
+        framebufferService.resize(framebuffer, resolution);
+    }
 }

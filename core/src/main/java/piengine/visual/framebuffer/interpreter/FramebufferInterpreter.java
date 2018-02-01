@@ -107,6 +107,24 @@ public class FramebufferInterpreter implements Interpreter<FramebufferData, Fram
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
     }
 
+    public void resize(final Framebuffer framebuffer, final Vector2i resolution) {
+        unbind();
+        free(framebuffer.getDao());
+
+        FramebufferDao dao = create(new FramebufferData(
+                framebuffer.key,
+                resolution,
+                framebuffer.key.texture,
+                framebuffer.key.drawingEnabled,
+                framebuffer.key.attachments[0],
+                framebuffer.key.attachments
+        ));
+
+        framebuffer.setDao(dao);
+        framebuffer.setSize(resolution);
+        framebuffer.key.resolution.set(resolution);
+    }
+
     private int createFrameBuffer(final int buffer) {
         int frameBuffer = glGenFramebuffers();
         glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer);

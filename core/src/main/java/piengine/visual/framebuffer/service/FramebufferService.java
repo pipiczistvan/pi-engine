@@ -1,5 +1,6 @@
 package piengine.visual.framebuffer.service;
 
+import org.joml.Vector2i;
 import piengine.core.base.resource.SupplierService;
 import piengine.visual.framebuffer.accessor.FramebufferAccessor;
 import piengine.visual.framebuffer.domain.Framebuffer;
@@ -28,7 +29,7 @@ public class FramebufferService extends SupplierService<FramebufferKey, Framebuf
 
     @Override
     protected Framebuffer createDomain(final FramebufferDao dao, final FramebufferData resource) {
-        return new Framebuffer(dao, resource.resolution);
+        return new Framebuffer(dao, resource.key, resource.resolution);
     }
 
     public void bind(final Framebuffer framebuffer) {
@@ -43,6 +44,11 @@ public class FramebufferService extends SupplierService<FramebufferKey, Framebuf
 
     public void blit(final Framebuffer src, final Framebuffer dest) {
         framebufferInterpreter.blit(src, dest);
+        rebindLast();
+    }
+
+    public void resize(final Framebuffer framebuffer, final Vector2i resolution) {
+        framebufferInterpreter.resize(framebuffer, resolution);
         rebindLast();
     }
 

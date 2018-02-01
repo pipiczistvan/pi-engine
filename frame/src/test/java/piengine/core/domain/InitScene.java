@@ -52,9 +52,8 @@ import static piengine.core.base.type.property.PropertyKeys.WINDOW_HEIGHT;
 import static piengine.core.base.type.property.PropertyKeys.WINDOW_WIDTH;
 import static piengine.core.input.domain.KeyEventType.PRESS;
 import static piengine.object.camera.domain.ProjectionType.PERSPECTIVE;
-import static piengine.visual.framebuffer.domain.FramebufferAttachment.COLOR_BUFFER_MULTISAMPLE_ATTACHMENT;
-import static piengine.visual.framebuffer.domain.FramebufferAttachment.DEPTH_BUFFER_MULTISAMPLE_ATTACHMENT;
-import static piengine.visual.postprocessing.domain.EffectType.ANTIALIAS_EFFECT;
+import static piengine.visual.framebuffer.domain.FramebufferAttachment.COLOR_TEXTURE_ATTACHMENT;
+import static piengine.visual.framebuffer.domain.FramebufferAttachment.DEPTH_BUFFER_ATTACHMENT;
 
 public class InitScene extends Scene implements Updatable {
 
@@ -108,7 +107,10 @@ public class InitScene extends Scene implements Updatable {
     public void initialize() {
         super.initialize();
         inputManager.addEvent(GLFW_KEY_ESCAPE, PRESS, windowManager::closeWindow);
-        inputManager.addEvent(GLFW_KEY_RIGHT_CONTROL, PRESS, () -> cameraAsset.lookingEnabled = !cameraAsset.lookingEnabled);
+        inputManager.addEvent(GLFW_KEY_RIGHT_CONTROL, PRESS, () -> {
+            cameraAsset.lookingEnabled = !cameraAsset.lookingEnabled;
+            windowManager.setCursorVisibility(!cameraAsset.lookingEnabled);
+        });
     }
 
     @Override
@@ -128,8 +130,8 @@ public class InitScene extends Scene implements Updatable {
 
         lampAsset = createAsset(LampAsset.class, new LampAssetArgument());
 
-        framebuffer = framebufferManager.supply(VIEWPORT, COLOR_BUFFER_MULTISAMPLE_ATTACHMENT, DEPTH_BUFFER_MULTISAMPLE_ATTACHMENT);
-        mainCanvas = canvasManager.supply(this, framebuffer, ANTIALIAS_EFFECT);
+        framebuffer = framebufferManager.supply(VIEWPORT, COLOR_TEXTURE_ATTACHMENT, DEPTH_BUFFER_ATTACHMENT);
+        mainCanvas = canvasManager.supply(this, framebuffer);
 
         buttonAsset = createAsset(ButtonAsset.class, new ButtonAssetArgument(
                 "buttonDefault", "buttonHover", "buttonPress",
@@ -183,10 +185,12 @@ public class InitScene extends Scene implements Updatable {
     }
 
     @Override
-    public void resize(int width, int height) {
+    public void resize(final int width, final int height) {
         VIEWPORT.x = width;
         VIEWPORT.y = height;
 
         camera.recalculateProjection();
+        framebufferManager.resize(framebuffer, VIEWPORT);
+        mapAsset.resize(VIEWPORT);
     }
 }
