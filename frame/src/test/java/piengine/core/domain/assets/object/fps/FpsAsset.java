@@ -1,5 +1,6 @@
 package piengine.core.domain.assets.object.fps;
 
+import org.joml.Vector2i;
 import piengine.core.time.manager.TimeManager;
 import piengine.object.asset.domain.GuiAsset;
 import piengine.object.asset.manager.AssetManager;
@@ -33,7 +34,7 @@ public class FpsAsset extends GuiAsset<FpsAssetArgument> {
 
     @Override
     public void initialize() {
-        font = fontManager.supply("candara");
+        font = fontManager.supply("candara", arguments.viewport);
         fpsText = textManager.supply(TextConfiguration.textConfig().withFont(font), this);
         fpsText.setPosition(0.85f, 0.85f, 0);
     }
@@ -48,5 +49,9 @@ public class FpsAsset extends GuiAsset<FpsAssetArgument> {
         return GuiRenderAssetContextBuilder.create()
                 .loadTexts(fpsText)
                 .build();
+    }
+
+    public void resize(final Vector2i resolution) {
+        fontManager.resize(font, resolution);
     }
 }

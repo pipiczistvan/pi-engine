@@ -1,5 +1,6 @@
 package piengine.visual.writing.font.accessor;
 
+import org.joml.Vector2i;
 import piengine.core.base.api.Accessor;
 import piengine.core.base.resource.ResourceLoader;
 import piengine.core.base.type.property.ApplicationProperties;
@@ -38,9 +39,9 @@ public class FontAccessor implements Accessor<FontKey, FontData> {
     @Override
     public FontData access(final FontKey key) {
         final String fontSource = loader.load(key.imageKey.file);
-        final FontContext context = new FontContext(fontSource.split("\n"));
+        final FontContext context = new FontContext(fontSource.split("\n"), key.resolution);
 
-        return new FontData(key.imageKey, parseSource(context), context.spaceWidth);
+        return new FontData(key, key.imageKey, parseSource(context), context.spaceWidth);
     }
 
     private Map<Integer, Character> parseSource(final FontContext context) {
@@ -115,9 +116,12 @@ public class FontAccessor implements Accessor<FontKey, FontData> {
         private int imageWidth;
         private Map<String, String> values;
 
-        private FontContext(final String[] source) {
+        private FontContext(final String[] source, final Vector2i resolution) {
             this.source = source;
-            this.aspectRatio = 800d / 600d; //todo: dinamikus
+            this.aspectRatio = (double) resolution.x / (double) resolution.y;
+            if (resolution.x < resolution.y) {
+                this.aspectRatio = 1d / this.aspectRatio;
+            }
             this.values = new HashMap<>();
         }
 

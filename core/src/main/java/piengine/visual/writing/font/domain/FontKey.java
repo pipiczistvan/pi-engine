@@ -1,5 +1,6 @@
 package piengine.visual.writing.font.domain;
 
+import org.joml.Vector2i;
 import piengine.core.base.domain.Key;
 import piengine.visual.image.domain.ImageKey;
 
@@ -8,9 +9,11 @@ import java.util.Objects;
 public class FontKey implements Key {
 
     public final ImageKey imageKey;
+    public final Vector2i resolution;
 
-    public FontKey(final ImageKey imageKey) {
+    public FontKey(final ImageKey imageKey, final Vector2i resolution) {
         this.imageKey = imageKey;
+        this.resolution = resolution;
     }
 
     @Override

@@ -1,5 +1,6 @@
 package piengine.visual.writing.font.manager;
 
+import org.joml.Vector2i;
 import piengine.visual.image.domain.ImageKey;
 import piengine.visual.writing.font.domain.Font;
 import piengine.visual.writing.font.domain.FontKey;
@@ -17,7 +18,11 @@ public class FontManager {
         this.fontService = fontService;
     }
 
-    public Font supply(final String file) {
-        return fontService.supply(new FontKey(new ImageKey(file)));
+    public Font supply(final String file, final Vector2i resolution) {
+        return fontService.supply(new FontKey(new ImageKey(file), resolution));
+    }
+
+    public void resize(final Font font, final Vector2i resolution) {
+        fontService.resize(font, resolution);
     }
 }

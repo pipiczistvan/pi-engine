@@ -137,7 +137,7 @@ public class InitScene extends Scene implements Updatable {
         buttonAsset = createAsset(ButtonAsset.class, new ButtonAssetArgument(
                 "buttonDefault", "buttonHover", "buttonPress",
                 VIEWPORT, "Please press me!", () -> System.out.println("Button clicked!")));
-        fpsAsset = createAsset(FpsAsset.class, new FpsAssetArgument());
+        fpsAsset = createAsset(FpsAsset.class, new FpsAssetArgument(VIEWPORT));
 
         skybox = skyboxManager.supply(150f,
                 "skybox/nightRight", "skybox/nightLeft", "skybox/nightTop",
@@ -193,6 +193,7 @@ public class InitScene extends Scene implements Updatable {
         camera.recalculateProjection();
         framebufferManager.resize(framebuffer, VIEWPORT);
         mapAsset.resize(VIEWPORT);
+        fpsAsset.resize(VIEWPORT);
         canvasManager.recreateEffects(mainCanvas);
     }
 }
