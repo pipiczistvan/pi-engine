@@ -2,12 +2,14 @@ package piengine.object.water.shader;
 
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
+import piengine.core.base.type.color.Color;
 import piengine.core.base.type.property.PropertyKeys;
 import piengine.visual.fog.Fog;
 import piengine.visual.lighting.directional.light.domain.DirectionalLight;
 import piengine.visual.lighting.point.light.domain.PointLight;
 import piengine.visual.shader.domain.Shader;
 import piengine.visual.shader.domain.ShaderDao;
+import piengine.visual.shader.domain.uniform.UniformColor;
 import piengine.visual.shader.domain.uniform.UniformFloat;
 import piengine.visual.shader.domain.uniform.UniformInteger;
 import piengine.visual.shader.domain.uniform.UniformMatrix4f;
@@ -21,6 +23,7 @@ import piengine.visual.shader.domain.uniform.struct.UniformPointShadow;
 import java.util.List;
 
 import static piengine.core.base.type.property.ApplicationProperties.get;
+import static piengine.visual.shader.domain.uniform.UniformColor.uniformColor;
 import static piengine.visual.shader.domain.uniform.UniformFloat.uniformFloat;
 import static piengine.visual.shader.domain.uniform.UniformInteger.uniformInteger;
 import static piengine.visual.shader.domain.uniform.UniformMatrix4f.uniformMatrix4f;
@@ -50,6 +53,7 @@ public class WaterShader extends Shader {
     private final UniformPointLight[] pointLights = uniformPointLight(this, "pointLights", POINT_LIGHT_COUNT);
     private final UniformInteger[] pointShadowMaps = uniformInteger(this, "pointShadowMaps", POINT_LIGHT_COUNT);
     private final UniformPointShadow[] pointShadows = uniformPointShadow(this, "pointShadows", POINT_LIGHT_COUNT);
+    private final UniformColor waterColor = uniformColor(this, "waterColor");
 
     public WaterShader(final ShaderDao dao) {
         super(dao);
@@ -126,6 +130,12 @@ public class WaterShader extends Shader {
 
     public WaterShader loadFog(final Fog value) {
         fog.load(value);
+
+        return this;
+    }
+
+    public WaterShader loadWaterColor(final Color value) {
+        waterColor.load(value);
 
         return this;
     }

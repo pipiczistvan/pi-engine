@@ -7,6 +7,7 @@ import piengine.core.domain.assets.object.lamp.LampAsset;
 import piengine.core.domain.assets.object.lamp.LampAssetArgument;
 import piengine.core.input.domain.KeyEventType;
 import piengine.core.input.manager.InputManager;
+import piengine.core.utils.ColorUtils;
 import piengine.object.animatedmodel.domain.AnimatedModel;
 import piengine.object.animatedmodel.manager.AnimatedModelManager;
 import piengine.object.animation.domain.Animation;
@@ -40,6 +41,7 @@ import static piengine.core.domain.InitScene.WATER_SCALE;
 public class MapAsset extends WorldAsset<MapAssetArgument> {
 
     private static final float WAVE_SPEED = get(WATER_WAVE_SPEED);
+    private static final Color WATER_COLOR = ColorUtils.createNormalizedColor(20, 192, 255);
 
     private final WaterManager waterManager;
     private final ModelManager modelManager;
@@ -85,7 +87,7 @@ public class MapAsset extends WorldAsset<MapAssetArgument> {
     @Override
     public void initialize() {
         terrain = arguments.terrain;
-        water = waterManager.supply(arguments.viewport, new Vector2i(WATER_SCALE, WATER_SCALE), new Vector3f(-TERRAIN_SCALE / 2, -4, -TERRAIN_SCALE / 2), new Vector3f(TERRAIN_SCALE, 0, TERRAIN_SCALE));
+        water = waterManager.supply(arguments.viewport, new Vector2i(WATER_SCALE, WATER_SCALE), new Vector3f(-TERRAIN_SCALE / 2, -4, -TERRAIN_SCALE / 2), new Vector3f(TERRAIN_SCALE, 0, TERRAIN_SCALE), WATER_COLOR);
 
         lampAsset1 = createAsset(LampAsset.class, new LampAssetArgument());
         lampAsset2 = createAsset(LampAsset.class, new LampAssetArgument());

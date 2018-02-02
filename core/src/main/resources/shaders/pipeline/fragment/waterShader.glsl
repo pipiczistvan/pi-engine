@@ -8,8 +8,6 @@ const float TOTAL_TEXELS = (DIRECTIONAL_SHADOW_PCF_COUNT * 2.0 + 1.0) * (DIRECTI
 const float POINT_SHADOW_DISTANCE = ${lighting.point.shadow.distance};
 const float POINT_SHADOW_TRANSITION_DISTANCE = ${lighting.point.shadow.transition.distance};
 const float POINT_SHADOW_TRANSITION_LENGTH = 1.0 - (POINT_SHADOW_DISTANCE - POINT_SHADOW_TRANSITION_DISTANCE) / POINT_SHADOW_DISTANCE;
-//const vec3 waterColor = vec3(0.604, 0.867, 0.851);
-const vec3 waterColor = vec3(0.2, 1.0, 0.898);
 const float WATER_FRESNEL_EFFECT = ${water.fresnel.effect};
 const float WATER_EDGE_SOFTNESS = ${water.edge.softness};
 const float WATER_MIN_COLOR = ${water.color.min};
@@ -58,6 +56,7 @@ uniform sampler2D refractionTexture;
 uniform sampler2D depthTexture;
 uniform Fog fog;
 uniform vec3 cameraPosition;
+uniform vec4 waterColor;
 
 float calculateDirectionalShadow(vec4 shadowCoords, sampler2D shadowMap, int mapSize) {
     float texelSize = 1.0 / mapSize;
@@ -97,7 +96,7 @@ float calculatePointShadow(vec3 fragPos, vec3 viewPosition, vec3 lightPosition, 
     return min(shadow / samples * strength, SHADOW_DARKNESS);
 }
 
-vec3 calculateMurkiness(vec3 refractColor, float waterDepth) {
+vec3 calculateMurkiness(vec3 refractColor, vec3 waterColor, float waterDepth) {
     float murkyFactor = smoothstep(0, WATER_MURKY_DEPTH, waterDepth);
     float murkiness = WATER_MIN_COLOR + murkyFactor * (WATER_MAX_COLOR - WATER_MIN_COLOR);
     return mix(refractColor, waterColor, murkiness);
@@ -142,8 +141,8 @@ void main(void) {
 
     float waterDepth = calculateWaterDepth(texCoordsReal);
 
-    refractColor = calculateMurkiness(refractColor, waterDepth);
-    reflectColor = mix(reflectColor, waterColor, WATER_MIN_COLOR);
+    refractColor = calculateMurkiness(refractColor, waterColor.rgb, waterDepth);
+    reflectColor = mix(reflectColor, waterColor.rgb, WATER_MIN_COLOR);
 
     vec3 textureColor = mix(reflectColor, refractColor, calculateFresnel(vToCameraVector, vNormal));
 

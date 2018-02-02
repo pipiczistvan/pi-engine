@@ -70,7 +70,8 @@ public class WaterRenderService extends AbstractRenderService<WaterShader, Rende
         }
 
         for (Water water : context.waters) {
-            shader.loadWaveFactor(water.waveFactor);
+            shader.loadWaveFactor(water.waveFactor)
+                    .loadWaterColor(water.color);
             textureService.bind(GL_TEXTURE0 + textureIndex++, water.reflectionBuffer);
             textureService.bind(GL_TEXTURE0 + textureIndex++, water.refractionBuffer);
             textureService.bind(GL_TEXTURE0 + textureIndex++, water.refractionBuffer.getDao().getAttachment(FramebufferAttachment.DEPTH_TEXTURE_ATTACHMENT));
