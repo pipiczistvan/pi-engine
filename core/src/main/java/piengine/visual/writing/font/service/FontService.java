@@ -1,6 +1,5 @@
 package piengine.visual.writing.font.service;
 
-import org.joml.Vector2i;
 import piengine.core.base.resource.SupplierService;
 import piengine.visual.writing.font.accessor.FontAccessor;
 import piengine.visual.writing.font.domain.Font;
@@ -14,14 +13,12 @@ import puppeteer.annotation.premade.Wire;
 @Component
 public class FontService extends SupplierService<FontKey, FontData, FontDao, Font> {
 
-    private final FontAccessor fontAccessor;
     private final FontInterpreter fontInterpreter;
 
     @Wire
     public FontService(final FontAccessor accessor, final FontInterpreter interpreter) {
         super(accessor, interpreter);
 
-        this.fontAccessor = accessor;
         this.fontInterpreter = interpreter;
     }
 
@@ -32,19 +29,5 @@ public class FontService extends SupplierService<FontKey, FontData, FontDao, Fon
 
     public void bind(final Font font) {
         fontInterpreter.bind(font.getDao());
-    }
-
-    public void resize(final Font font, final Vector2i resolution) {
-        fontAccessor.free(font.data);
-        fontInterpreter.free(font.getDao());
-        removeForKey(font.key);
-
-        FontKey key = font.key;
-        key.resolution.set(resolution);
-
-        Font newFont = supply(key);
-        font.data = newFont.data;
-        font.key = newFont.key;
-        font.setDao(newFont.getDao());
     }
 }

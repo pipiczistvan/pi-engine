@@ -106,7 +106,10 @@ public class InitScene extends Scene implements Updatable {
 
     @Override
     public void initialize() {
+        inputManager.clearEvents();
+        VIEWPORT.set(windowManager.getWidth(), windowManager.getHeight());
         super.initialize();
+
         inputManager.addEvent(GLFW_KEY_ESCAPE, PRESS, windowManager::closeWindow);
         inputManager.addEvent(GLFW_KEY_RIGHT_CONTROL, PRESS, () -> {
             cameraAsset.lookingEnabled = !cameraAsset.lookingEnabled;
@@ -183,17 +186,5 @@ public class InitScene extends Scene implements Updatable {
                 .loadAssets(fpsAsset)
                 .clearScreen(ColorUtils.BLACK)
                 .render();
-    }
-
-    @Override
-    public void resize(final int width, final int height) {
-        VIEWPORT.x = width;
-        VIEWPORT.y = height;
-
-        camera.recalculateProjection();
-        framebufferManager.resize(framebuffer, VIEWPORT);
-        mapAsset.resize(VIEWPORT);
-        fpsAsset.resize(VIEWPORT);
-        canvasManager.recreateEffects(mainCanvas);
     }
 }

@@ -10,6 +10,4 @@ public abstract class AbstractPostProcessingService<C extends PostProcessingEffe
     public abstract Texture process(final Texture inTexture, final C context);
 
     public abstract C createContext(final Vector2i outSize);
-
-    public abstract void cleanUp(final C context);
 }

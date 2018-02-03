@@ -21,8 +21,4 @@ public class FontManager {
     public Font supply(final String file, final Vector2i resolution) {
         return fontService.supply(new FontKey(new ImageKey(file), resolution));
     }
-
-    public void resize(final Font font, final Vector2i resolution) {
-        fontService.resize(font, resolution);
-    }
 }

@@ -41,12 +41,6 @@ public class BlurEffectService extends AbstractPostProcessingService<BlurEffectC
     }
 
     @Override
-    public void cleanUp(final BlurEffectContext context) {
-        horizontalBlurEffectService.cleanUp(context.horizontalBlurEffectContext);
-        verticalBlurEffectService.cleanUp(context.verticalBlurEffectContext);
-    }
-
-    @Override
     public EffectType getEffectType() {
         return BLUR_EFFECT;
     }

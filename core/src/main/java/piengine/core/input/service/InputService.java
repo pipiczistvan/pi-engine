@@ -64,4 +64,9 @@ public class InputService implements Service {
         return cursorPosCallback;
     }
 
+    public void clearEvents() {
+        pressEventMap.clear();
+        releaseEventMap.clear();
+        cursorEvents.clear();
+    }
 }

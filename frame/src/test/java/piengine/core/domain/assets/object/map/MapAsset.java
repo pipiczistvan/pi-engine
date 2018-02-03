@@ -117,7 +117,7 @@ public class MapAsset extends WorldAsset<MapAssetArgument> {
         sun.setPosition(1000, 1000, 300);
 
         particleSystem = particleSystemManager.supply(this, arguments.camera, 50, 7, 0.01f, 1, "fire", 8);
-        particleSystem.scale(2,2,2);
+        particleSystem.scale(2, 2, 2);
 
         initializeAssets();
     }
@@ -197,9 +197,5 @@ public class MapAsset extends WorldAsset<MapAssetArgument> {
 
         peasantModel.setScale(0.5f);
         placeEntityOnTerrain(peasantModel, 5, -5, 5);
-    }
-
-    public void resize(final Vector2i resolution) {
-        waterManager.resize(water, resolution);
     }
 }

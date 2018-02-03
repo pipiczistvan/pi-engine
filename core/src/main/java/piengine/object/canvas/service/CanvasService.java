@@ -36,12 +36,6 @@ public class CanvasService {
         return new Canvas(key.parent, key, mesh, effectContexts, key.texture, key.color);
     }
 
-    public void recreateEffects(final Canvas canvas) {
-        canvas.effectContexts.forEach(this::cleanUpEffectContext);
-        canvas.effectContexts.clear();
-        canvas.effectContexts.addAll(createEffects(canvas.key));
-    }
-
     private List<PostProcessingEffectContext> createEffects(final CanvasKey key) {
         List<PostProcessingEffectContext> effectContexts = new ArrayList<>();
         for (EffectType effectType : key.effects) {
@@ -53,10 +47,6 @@ public class CanvasService {
 
     private PostProcessingEffectContext createEffectContext(final EffectType effectType, final Texture texture) {
         return findPostProcessingService(effectType).createContext(texture.getSize());
-    }
-
-    private void cleanUpEffectContext(final PostProcessingEffectContext effectContext) {
-        findPostProcessingService(effectContext.getEffectType()).cleanUp(effectContext);
     }
 
     private AbstractPostProcessingService findPostProcessingService(final EffectType effectType) {

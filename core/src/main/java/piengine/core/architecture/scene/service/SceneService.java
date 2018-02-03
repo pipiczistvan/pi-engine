@@ -31,7 +31,10 @@ public class SceneService implements Service, Initializable, Updatable, Renderab
     @Override
     public void initialize() {
         setCurrentScene(defaultSceneClass);
-        windowService.addEvent(RESIZE, () -> currentScene.resize(windowService.getWidth(), windowService.getHeight()));
+        windowService.addEvent(RESIZE, () -> {
+            currentScene.initialize();
+            currentScene.setupRenderPlan();
+        });
     }
 
     @Override

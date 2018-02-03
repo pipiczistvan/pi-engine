@@ -26,6 +26,7 @@ import static org.lwjgl.glfw.GLFW.GLFW_HAND_CURSOR;
 import static org.lwjgl.glfw.GLFW.GLFW_OPENGL_CORE_PROFILE;
 import static org.lwjgl.glfw.GLFW.GLFW_OPENGL_FORWARD_COMPAT;
 import static org.lwjgl.glfw.GLFW.GLFW_OPENGL_PROFILE;
+import static org.lwjgl.glfw.GLFW.GLFW_RESIZABLE;
 import static org.lwjgl.glfw.GLFW.GLFW_TRUE;
 import static org.lwjgl.glfw.GLFW.GLFW_VISIBLE;
 import static org.lwjgl.glfw.GLFW.glfwCreateStandardCursor;
@@ -96,9 +97,9 @@ public class WindowInterpreter {
         this.windowCenter = new Vector2f();
     }
 
-    public void createWindow(String title, int width, int height, boolean fullScreen, int multiSampleCount, boolean cursorHidden, int major, int minor) {
+    public void createWindow(String title, int width, int height, boolean fullScreen, boolean resizable, boolean cursorHidden, int major, int minor) {
         setupGLFW();
-        setupHints(multiSampleCount, major, minor);
+        setupHints(resizable, major, minor);
         setupContext(title, width, height, fullScreen, cursorHidden);
 
         initializeWindow();
@@ -156,15 +157,14 @@ public class WindowInterpreter {
         }
     }
 
-    private void setupHints(int multiSampleCount, int major, int minor) {
+    private void setupHints(boolean resizable, int major, int minor) {
         glfwDefaultWindowHints();
         glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
-//        glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
+        glfwWindowHint(GLFW_RESIZABLE, resizable ? GLFW_TRUE : GLFW_FALSE);
         glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, major);
         glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, minor);
         glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE);
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-//        glfwWindowHint(GLFW_SAMPLES, multiSampleCount);
     }
 
     private void setupContext(String title, int width, int height, boolean fullScreen, boolean cursorHidden) {

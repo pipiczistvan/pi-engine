@@ -52,8 +52,6 @@ import static org.lwjgl.opengl.GL30.glGenRenderbuffers;
 import static org.lwjgl.opengl.GL30.glRenderbufferStorage;
 import static org.lwjgl.opengl.GL30.glRenderbufferStorageMultisample;
 import static org.lwjgl.opengl.GL32.glFramebufferTexture;
-import static piengine.core.base.type.property.ApplicationProperties.get;
-import static piengine.core.base.type.property.PropertyKeys.WINDOW_MULTI_SAMPLE_COUNT;
 import static piengine.visual.framebuffer.domain.FramebufferAttachment.COLOR_BUFFER_MULTISAMPLE_ATTACHMENT;
 import static piengine.visual.framebuffer.domain.FramebufferAttachment.DEPTH_BUFFER_ATTACHMENT;
 import static piengine.visual.framebuffer.domain.FramebufferAttachment.DEPTH_BUFFER_MULTISAMPLE_ATTACHMENT;
@@ -61,7 +59,7 @@ import static piengine.visual.framebuffer.domain.FramebufferAttachment.DEPTH_BUF
 @Component
 public class FramebufferInterpreter implements Interpreter<FramebufferData, FramebufferDao> {
 
-    private static final int SAMPLES = get(WINDOW_MULTI_SAMPLE_COUNT);
+    private static final int SAMPLES = 4;
 
     @Override
     public FramebufferDao create(final FramebufferData framebufferData) {
@@ -110,23 +108,6 @@ public class FramebufferInterpreter implements Interpreter<FramebufferData, Fram
                 0, 0, dest.getSize().x, dest.getSize().y,
                 GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT, GL_NEAREST);
         unbind();
-    }
-
-    public void resize(final Framebuffer framebuffer, final Vector2i resolution) {
-        free(framebuffer.getDao());
-
-        FramebufferDao dao = create(new FramebufferData(
-                framebuffer.key,
-                resolution,
-                framebuffer.key.texture,
-                framebuffer.key.drawingEnabled,
-                framebuffer.key.attachments[0],
-                framebuffer.key.attachments
-        ));
-
-        framebuffer.setDao(dao);
-        framebuffer.setSize(resolution);
-        framebuffer.key.resolution.set(resolution);
     }
 
     private int createFrameBuffer(final int buffer) {

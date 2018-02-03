@@ -41,8 +41,4 @@ public class CanvasManager {
     public Canvas supply(final Entity parent, final String imageFile, final EffectType... effects) {
         return supply(parent, imageFile, ColorUtils.WHITE, effects);
     }
-
-    public void recreateEffects(final Canvas canvas) {
-        canvasService.recreateEffects(canvas);
-    }
 }

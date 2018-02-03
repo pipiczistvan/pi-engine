@@ -34,4 +34,12 @@ public class WindowManager {
     public void setCursorVisibility(final boolean visible) {
         windowService.setCursorVisibility(visible);
     }
+
+    public int getWidth() {
+        return windowService.getWidth();
+    }
+
+    public int getHeight() {
+        return windowService.getHeight();
+    }
 }

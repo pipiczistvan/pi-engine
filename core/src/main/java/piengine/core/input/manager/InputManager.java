@@ -26,4 +26,7 @@ public class InputManager {
         inputService.addEvent(action);
     }
 
+    public void clearEvents() {
+        inputService.clearEvents();
+    }
 }

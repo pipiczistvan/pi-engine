@@ -58,11 +58,6 @@ public class HorizontalBlurEffectService extends AbstractPostProcessingRenderSer
     }
 
     @Override
-    public void cleanUp(final HorizontalBlurEffectContext context) {
-        framebufferManager.cleanUp(context.framebuffer);
-    }
-
-    @Override
     public EffectType getEffectType() {
         return HORIZONTAL_BLUR_EFFECT;
     }

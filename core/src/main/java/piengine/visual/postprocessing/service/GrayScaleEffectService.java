@@ -57,11 +57,6 @@ public class GrayScaleEffectService extends AbstractPostProcessingRenderService<
     }
 
     @Override
-    public void cleanUp(final GrayScaleEffectContext context) {
-        framebufferManager.cleanUp(context.framebuffer);
-    }
-
-    @Override
     public EffectType getEffectType() {
         return GRAY_SCALE_EFFECT;
     }

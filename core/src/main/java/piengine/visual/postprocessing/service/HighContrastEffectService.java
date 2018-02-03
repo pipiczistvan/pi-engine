@@ -57,11 +57,6 @@ public class HighContrastEffectService extends AbstractPostProcessingRenderServi
     }
 
     @Override
-    public void cleanUp(final HighContrastEffectContext context) {
-        framebufferManager.cleanUp(context.framebuffer);
-    }
-
-    @Override
     public EffectType getEffectType() {
         return HIGH_CONTRAST_EFFECT;
     }

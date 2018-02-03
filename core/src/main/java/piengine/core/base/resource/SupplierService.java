@@ -29,11 +29,13 @@ public abstract class SupplierService<K extends Key, R extends ResourceData, D e
     }
 
     public M supply(final K key) {
-        return domainMap.computeIfAbsent(key, this::computeDomain);
+        return computeDomain(key);
+//        return domainMap.computeIfAbsent(key, this::computeDomain); todo: fix this
     }
 
     public R load(final K key) {
-        return resourceMap.computeIfAbsent(key, this::computeResource);
+        return computeResource(key);
+//        return resourceMap.computeIfAbsent(key, this::computeResource); todo: fix this
     }
 
     @Override
