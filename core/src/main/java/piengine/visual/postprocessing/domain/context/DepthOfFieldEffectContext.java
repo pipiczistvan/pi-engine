@@ -1,7 +1,7 @@
 package piengine.visual.postprocessing.domain.context;
 
 import org.joml.Vector2f;
-import piengine.visual.framebuffer.domain.Framebuffer;
+import piengine.io.interpreter.framebuffer.Framebuffer;
 import piengine.visual.postprocessing.domain.EffectType;
 
 import static piengine.visual.postprocessing.domain.EffectType.DEPTH_OF_FIELD_EFFECT;
@@ -15,11 +15,17 @@ public class DepthOfFieldEffectContext extends PostProcessingEffectContext {
     public DepthOfFieldEffectContext(final Framebuffer framebuffer, final BlurEffectContext blurEffectContext) {
         this.framebuffer = framebuffer;
         this.blurEffectContext = blurEffectContext;
-        this.textureCenter = new Vector2f(framebuffer.getSize().x / 2, framebuffer.getSize().y / 2);
+        this.textureCenter = new Vector2f(framebuffer.width/ 2, framebuffer.height / 2);
     }
 
     @Override
     public EffectType getEffectType() {
         return DEPTH_OF_FIELD_EFFECT;
+    }
+
+    @Override
+    public void clear() {
+        framebuffer.clear();
+        blurEffectContext.clear();
     }
 }

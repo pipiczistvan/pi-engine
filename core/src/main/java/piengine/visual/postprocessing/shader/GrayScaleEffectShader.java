@@ -1,11 +1,11 @@
 package piengine.visual.postprocessing.shader;
 
-import piengine.visual.shader.domain.Shader;
-import piengine.visual.shader.domain.ShaderDao;
+import piengine.io.interpreter.shader.Shader;
+import piengine.io.loader.glsl.domain.GlslDto;
 
 public class GrayScaleEffectShader extends Shader {
 
-    public GrayScaleEffectShader(final ShaderDao dao) {
-        super(dao);
+    public GrayScaleEffectShader(final GlslDto glsl) {
+        super(glsl);
     }
 }

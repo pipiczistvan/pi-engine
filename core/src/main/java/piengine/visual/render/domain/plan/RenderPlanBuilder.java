@@ -1,7 +1,7 @@
 package piengine.visual.render.domain.plan;
 
 import piengine.core.base.type.color.Color;
-import piengine.visual.framebuffer.domain.Framebuffer;
+import piengine.io.interpreter.framebuffer.Framebuffer;
 import piengine.visual.render.domain.fragment.RenderFragment;
 import piengine.visual.render.domain.fragment.domain.BindFrameBufferPlanContext;
 import piengine.visual.render.domain.fragment.domain.ClearScreenPlanContext;
@@ -12,6 +12,7 @@ import java.util.List;
 
 import static piengine.visual.render.domain.fragment.domain.RenderFragmentType.BIND_FRAME_BUFFER;
 import static piengine.visual.render.domain.fragment.domain.RenderFragmentType.CLEAR_SCREEN;
+import static piengine.visual.render.domain.fragment.domain.RenderFragmentType.UNBIND_FRAME_BUFFER;
 
 public abstract class RenderPlanBuilder<B extends RenderPlanBuilder<B, C>, C extends PlanContext> {
 
@@ -30,7 +31,7 @@ public abstract class RenderPlanBuilder<B extends RenderPlanBuilder<B, C>, C ext
     public B bindFrameBuffer(final Framebuffer framebuffer, final RenderPlan renderPlan) {
         fragments.add(new RenderFragment<>(BIND_FRAME_BUFFER, new BindFrameBufferPlanContext(framebuffer)));
         fragments.addAll(renderPlan.fragments);
-        fragments.add(new RenderFragment<>(BIND_FRAME_BUFFER, new BindFrameBufferPlanContext()));
+        fragments.add(new RenderFragment<>(UNBIND_FRAME_BUFFER, new BindFrameBufferPlanContext(framebuffer)));
         return thiz();
     }
 

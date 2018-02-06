@@ -4,33 +4,33 @@ import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 import piengine.core.base.type.property.PropertyKeys;
+import piengine.io.interpreter.shader.Shader;
+import piengine.io.interpreter.shader.uniform.UniformInteger;
+import piengine.io.interpreter.shader.uniform.UniformMatrix4f;
+import piengine.io.interpreter.shader.uniform.UniformVector3f;
+import piengine.io.interpreter.shader.uniform.UniformVector4f;
+import piengine.io.interpreter.shader.uniform.struct.UniformDirectionalLight;
+import piengine.io.interpreter.shader.uniform.struct.UniformDirectionalShadow;
+import piengine.io.interpreter.shader.uniform.struct.UniformFog;
+import piengine.io.interpreter.shader.uniform.struct.UniformPointLight;
+import piengine.io.interpreter.shader.uniform.struct.UniformPointShadow;
+import piengine.io.loader.glsl.domain.GlslDto;
 import piengine.visual.fog.Fog;
 import piengine.visual.lighting.directional.light.domain.DirectionalLight;
 import piengine.visual.lighting.point.light.domain.PointLight;
-import piengine.visual.shader.domain.Shader;
-import piengine.visual.shader.domain.ShaderDao;
-import piengine.visual.shader.domain.uniform.UniformInteger;
-import piengine.visual.shader.domain.uniform.UniformMatrix4f;
-import piengine.visual.shader.domain.uniform.UniformVector3f;
-import piengine.visual.shader.domain.uniform.UniformVector4f;
-import piengine.visual.shader.domain.uniform.struct.UniformDirectionalLight;
-import piengine.visual.shader.domain.uniform.struct.UniformDirectionalShadow;
-import piengine.visual.shader.domain.uniform.struct.UniformFog;
-import piengine.visual.shader.domain.uniform.struct.UniformPointLight;
-import piengine.visual.shader.domain.uniform.struct.UniformPointShadow;
 
 import java.util.List;
 
 import static piengine.core.base.type.property.ApplicationProperties.get;
-import static piengine.visual.shader.domain.uniform.UniformInteger.uniformInteger;
-import static piengine.visual.shader.domain.uniform.UniformMatrix4f.uniformMatrix4f;
-import static piengine.visual.shader.domain.uniform.UniformVector3f.uniformVector3f;
-import static piengine.visual.shader.domain.uniform.UniformVector4f.uniformVector4f;
-import static piengine.visual.shader.domain.uniform.struct.UniformDirectionalLight.uniformDirectionalLight;
-import static piengine.visual.shader.domain.uniform.struct.UniformDirectionalShadow.uniformShadow;
-import static piengine.visual.shader.domain.uniform.struct.UniformFog.uniformFog;
-import static piengine.visual.shader.domain.uniform.struct.UniformPointLight.uniformPointLight;
-import static piengine.visual.shader.domain.uniform.struct.UniformPointShadow.uniformPointShadow;
+import static piengine.io.interpreter.shader.uniform.UniformInteger.uniformInteger;
+import static piengine.io.interpreter.shader.uniform.UniformMatrix4f.uniformMatrix4f;
+import static piengine.io.interpreter.shader.uniform.UniformVector3f.uniformVector3f;
+import static piengine.io.interpreter.shader.uniform.UniformVector4f.uniformVector4f;
+import static piengine.io.interpreter.shader.uniform.struct.UniformDirectionalLight.uniformDirectionalLight;
+import static piengine.io.interpreter.shader.uniform.struct.UniformDirectionalShadow.uniformShadow;
+import static piengine.io.interpreter.shader.uniform.struct.UniformFog.uniformFog;
+import static piengine.io.interpreter.shader.uniform.struct.UniformPointLight.uniformPointLight;
+import static piengine.io.interpreter.shader.uniform.struct.UniformPointShadow.uniformPointShadow;
 
 public class TerrainShader extends Shader {
 
@@ -49,8 +49,8 @@ public class TerrainShader extends Shader {
     private final UniformInteger[] pointShadowMaps = uniformInteger(this, "pointShadowMaps", POINT_LIGHT_COUNT);
     private final UniformPointShadow[] pointShadows = uniformPointShadow(this, "pointShadows", POINT_LIGHT_COUNT);
 
-    public TerrainShader(final ShaderDao dao) {
-        super(dao);
+    public TerrainShader(final GlslDto glsl) {
+        super(glsl);
     }
 
     public TerrainShader loadViewMatrix(final Matrix4f value) {

@@ -1,6 +1,6 @@
 package piengine.visual.postprocessing.domain.context;
 
-import piengine.visual.framebuffer.domain.Framebuffer;
+import piengine.io.interpreter.framebuffer.Framebuffer;
 import piengine.visual.postprocessing.domain.EffectType;
 
 import static piengine.visual.postprocessing.domain.EffectType.ANTIALIAS_EFFECT;
@@ -16,5 +16,10 @@ public class AntialiasEffectContext extends PostProcessingEffectContext {
     @Override
     public EffectType getEffectType() {
         return ANTIALIAS_EFFECT;
+    }
+
+    @Override
+    public void clear() {
+        framebuffer.clear();
     }
 }

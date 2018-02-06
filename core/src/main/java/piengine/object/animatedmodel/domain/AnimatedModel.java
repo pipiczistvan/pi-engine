@@ -1,23 +1,25 @@
 package piengine.object.animatedmodel.domain;
 
 import org.joml.Matrix4f;
-import piengine.object.entity.domain.Entity;
-import piengine.object.entity.domain.EntityDomain;
-import piengine.visual.texture.domain.Texture;
+import piengine.core.base.domain.Domain;
+import piengine.core.base.domain.Entity;
+import piengine.io.interpreter.texture.Texture;
+import piengine.io.interpreter.vertexarray.VertexArray;
+import piengine.io.loader.dae.domain.Joint;
 
-public class AnimatedModel extends EntityDomain<AnimatedModelDao> {
+public class AnimatedModel extends Entity implements Domain {
 
+    public final VertexArray vao;
     public final Texture texture;
     public final Joint rootJoint;
     private final int jointCount;
 
-    public AnimatedModel(final Entity parent, final AnimatedModelDao dao, final Texture texture, final Joint rootJoint, final int jointCount) {
-        super(parent, dao);
-
+    public AnimatedModel(final Entity parent, final VertexArray vao, final Texture texture, final Joint rootJoint, final int jointCount) {
+        super(parent);
+        this.vao = vao;
         this.texture = texture;
         this.rootJoint = rootJoint;
         this.jointCount = jointCount;
-
         this.rootJoint.calcInverseBindTransform(new Matrix4f());
     }
 

@@ -2,50 +2,57 @@ package piengine.visual.postprocessing.service;
 
 import piengine.core.base.api.Initializable;
 import piengine.core.base.api.Service;
-import piengine.object.mesh.domain.Mesh;
-import piengine.object.mesh.domain.MeshKey;
-import piengine.object.mesh.service.MeshService;
+import piengine.io.interpreter.shader.Shader;
+import piengine.io.interpreter.vertexarray.VertexArray;
+import piengine.io.loader.glsl.domain.GlslDto;
+import piengine.io.loader.glsl.loader.GlslLoader;
 import piengine.visual.postprocessing.domain.context.PostProcessingEffectContext;
 import piengine.visual.render.interpreter.RenderInterpreter;
-import piengine.visual.shader.domain.Shader;
-import piengine.visual.shader.domain.ShaderKey;
-import piengine.visual.shader.service.ShaderService;
 
 import static org.lwjgl.opengl.GL11.GL_TRIANGLES;
+import static piengine.io.interpreter.vertexarray.VertexAttribute.VERTEX;
 
 public abstract class AbstractPostProcessingRenderService<S extends Shader, C extends PostProcessingEffectContext> extends AbstractPostProcessingService<C> implements Service, Initializable {
 
+    private static final float[] VERTICES = {-0.5f, 0.5f, -0.5f, -0.5f, 0.5f, 0.5f, 0.5f, -0.5f};
+
     private final RenderInterpreter renderInterpreter;
-    private final ShaderService shaderService;
-    private final MeshService meshService;
+    private final GlslLoader glslLoader;
 
-    private Mesh canvas;
     protected S shader;
+    private VertexArray canvasVertexArray;
 
-    public AbstractPostProcessingRenderService(final RenderInterpreter renderInterpreter, final ShaderService shaderService,
-                                               final MeshService meshService) {
+    public AbstractPostProcessingRenderService(final RenderInterpreter renderInterpreter, final GlslLoader glslLoader) {
         this.renderInterpreter = renderInterpreter;
-        this.shaderService = shaderService;
-        this.meshService = meshService;
+        this.glslLoader = glslLoader;
     }
 
     @Override
     public void initialize() {
         this.shader = createShader();
-        this.canvas = meshService.supply(new MeshKey("canvas"));
+        this.canvasVertexArray = createVertexArray();
     }
 
     protected void draw() {
-        renderInterpreter.bindVertexArray(canvas.getDao().vaoId);
-        renderInterpreter.enableVertexAttribArray(canvas.getDao().getVertexAttribs());
-        renderInterpreter.drawElements(GL_TRIANGLES, canvas.getDao().vertexCount);
-        renderInterpreter.disableVertexAttribArray(canvas.getDao().getVertexAttribs());
-        renderInterpreter.unbindVertexArray();
+        canvasVertexArray.bind().enableAttributes();
+        renderInterpreter.drawElements(GL_TRIANGLES, canvasVertexArray.vertexCount);
+        canvasVertexArray.disableAttributes().unbind();
     }
 
     protected S createShader(final String file, final Class<S> shaderClass) {
-        return shaderService.supply(new ShaderKey("postprocessing/" + file)).castTo(shaderClass);
+        GlslDto glsl = glslLoader.load("postprocessing/" + file);
+
+        return Shader.newInstance(shaderClass, glsl);
     }
 
     protected abstract S createShader();
+
+    private VertexArray createVertexArray() {
+        VertexArray vertexArray = new VertexArray(VERTICES.length / 2);
+
+        return vertexArray
+                .bind()
+                .attachVertexBuffer(VERTEX, VERTICES, 2)
+                .unbind();
+    }
 }

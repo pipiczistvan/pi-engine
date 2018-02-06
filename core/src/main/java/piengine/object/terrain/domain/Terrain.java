@@ -3,20 +3,19 @@ package piengine.object.terrain.domain;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 import piengine.core.base.domain.Domain;
+import piengine.io.interpreter.vertexarray.VertexArray;
 
-public class Terrain implements Domain<TerrainDao> {
+public class Terrain implements Domain {
 
-    private final TerrainDao dao;
+    public final VertexArray vao;
     private final float[][] heights;
     private final Vector3f position;
-    private final Vector3f rotation;
     private final Vector3f scale;
 
-    public Terrain(final TerrainDao dao, final float[][] heights, final Vector3f position, final Vector3f rotation, final Vector3f scale) {
-        this.dao = dao;
+    public Terrain(final VertexArray vao, final float[][] heights, final Vector3f position, final Vector3f scale) {
+        this.vao = vao;
         this.heights = heights;
         this.position = position;
-        this.rotation = rotation;
         this.scale = scale;
     }
 
@@ -26,11 +25,6 @@ public class Terrain implements Domain<TerrainDao> {
         float l2 = ((p3.z - p1.z) * (pos.x - p3.x) + (p1.x - p3.x) * (pos.y - p3.z)) / det;
         float l3 = 1.0f - l1 - l2;
         return l1 * p1.y + l2 * p2.y + l3 * p3.y;
-    }
-
-    @Override
-    public TerrainDao getDao() {
-        return dao;
     }
 
     public float getHeight(final float x, final float z) {

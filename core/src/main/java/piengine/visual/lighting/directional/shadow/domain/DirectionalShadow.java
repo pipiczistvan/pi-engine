@@ -6,10 +6,10 @@ import org.joml.Vector3f;
 import org.joml.Vector4f;
 import piengine.core.base.api.Updatable;
 import piengine.core.base.domain.Domain;
+import piengine.io.interpreter.framebuffer.Framebuffer;
 import piengine.object.camera.domain.Camera;
 import piengine.object.camera.domain.CameraAttribute;
 import piengine.object.camera.domain.FirstPersonCamera;
-import piengine.visual.framebuffer.domain.Framebuffer;
 import piengine.visual.lighting.Light;
 import piengine.visual.lighting.Shadow;
 
@@ -19,7 +19,7 @@ import static piengine.core.base.type.property.PropertyKeys.LIGHTING_DIRECTIONAL
 import static piengine.core.base.type.property.PropertyKeys.LIGHTING_DIRECTIONAL_SHADOW_OFFSET;
 import static piengine.object.camera.domain.ProjectionType.ORTHOGRAPHIC;
 
-public class DirectionalShadow implements Shadow, Domain<DirectionalShadowDao>, Updatable {
+public class DirectionalShadow implements Shadow, Domain, Updatable {
 
     private static final Matrix4f OFFSET_MATRIX = createOffset();
     private static final float OFFSET = get(LIGHTING_DIRECTIONAL_SHADOW_OFFSET);
@@ -29,7 +29,6 @@ public class DirectionalShadow implements Shadow, Domain<DirectionalShadowDao>, 
     private static final Vector4f FORWARD = new Vector4f(0, 0, -1, 0);
     private final Framebuffer shadowMap;
     private final Matrix4f spaceMatrix;
-    private final DirectionalShadowDao dao;
     private final Camera playerCamera;
     private final Camera lightCamera;
 
@@ -42,8 +41,7 @@ public class DirectionalShadow implements Shadow, Domain<DirectionalShadowDao>, 
     private float maxZ = 0;
     private float minZ = 0;
 
-    public DirectionalShadow(final DirectionalShadowDao dao, final Camera playerCamera, final Framebuffer shadowMap) {
-        this.dao = dao;
+    public DirectionalShadow(final Camera playerCamera, final Framebuffer shadowMap) {
         this.playerCamera = playerCamera;
         this.shadowMap = shadowMap;
 
@@ -130,11 +128,6 @@ public class DirectionalShadow implements Shadow, Domain<DirectionalShadowDao>, 
 
         lightCamera.getProjection().mul(lightCamera.getView(), spaceMatrix);
         OFFSET_MATRIX.mul(spaceMatrix, spaceMatrix);
-    }
-
-    @Override
-    public DirectionalShadowDao getDao() {
-        return dao;
     }
 
     public Camera getLightCamera() {

@@ -2,9 +2,9 @@ package piengine.object.asset.domain;
 
 import piengine.core.base.api.Initializable;
 import piengine.core.base.api.Updatable;
+import piengine.core.base.domain.Entity;
 import piengine.object.asset.manager.AssetManager;
 import piengine.object.asset.plan.RenderAssetContext;
-import piengine.object.entity.domain.Entity;
 
 public abstract class Asset<A extends AssetArgument, C extends RenderAssetContext> extends Entity implements Initializable, Updatable {
 

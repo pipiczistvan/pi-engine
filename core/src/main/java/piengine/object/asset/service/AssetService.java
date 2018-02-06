@@ -2,10 +2,10 @@ package piengine.object.asset.service;
 
 import piengine.core.base.api.Service;
 import piengine.core.base.api.Updatable;
+import piengine.core.base.domain.Entity;
 import piengine.object.asset.domain.Asset;
 import piengine.object.asset.domain.AssetArgument;
 import piengine.object.asset.plan.RenderAssetContext;
-import piengine.object.entity.domain.Entity;
 import puppeteer.Puppeteer;
 import puppeteer.annotation.premade.Component;
 import puppeteer.annotation.premade.Wire;

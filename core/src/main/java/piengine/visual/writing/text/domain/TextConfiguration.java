@@ -1,10 +1,12 @@
 package piengine.visual.writing.text.domain;
 
+import piengine.core.base.domain.Entity;
 import piengine.core.base.type.color.Color;
 import piengine.visual.writing.font.domain.Font;
 
 public class TextConfiguration {
 
+    private final Entity parent;
     private String text;
     private Font font;
     private float fontSize;
@@ -12,7 +14,8 @@ public class TextConfiguration {
     private boolean centered;
     private Color color;
 
-    private TextConfiguration() {
+    private TextConfiguration(final Entity parent) {
+        this.parent = parent;
         this.text = "";
         this.fontSize = 1;
         this.maxLineLength = 1;
@@ -20,8 +23,8 @@ public class TextConfiguration {
         this.color = new Color(1);
     }
 
-    public static TextConfiguration textConfig() {
-        return new TextConfiguration();
+    public static TextConfiguration textConfig(final Entity parent) {
+        return new TextConfiguration(parent);
     }
 
     public TextConfiguration withText(final String text) {
@@ -52,6 +55,10 @@ public class TextConfiguration {
     public TextConfiguration withCentered(final boolean centered) {
         this.centered = centered;
         return this;
+    }
+
+    public Entity getParent() {
+        return parent;
     }
 
     public String getText() {

@@ -13,8 +13,7 @@ import piengine.core.domain.assets.object.map.MapAsset;
 import piengine.core.domain.assets.object.map.MapAssetArgument;
 import piengine.core.input.manager.InputManager;
 import piengine.core.utils.ColorUtils;
-import piengine.gui.asset.ButtonAsset;
-import piengine.gui.asset.ButtonAssetArgument;
+import piengine.io.interpreter.framebuffer.Framebuffer;
 import piengine.object.asset.manager.AssetManager;
 import piengine.object.asset.plan.GuiRenderAssetContextBuilder;
 import piengine.object.camera.asset.CameraAsset;
@@ -29,8 +28,6 @@ import piengine.object.skybox.manager.SkyboxManager;
 import piengine.object.terrain.domain.Terrain;
 import piengine.object.terrain.manager.TerrainManager;
 import piengine.visual.fog.Fog;
-import piengine.visual.framebuffer.domain.Framebuffer;
-import piengine.visual.framebuffer.manager.FramebufferManager;
 import piengine.visual.render.domain.plan.GuiRenderPlanBuilder;
 import piengine.visual.render.domain.plan.RenderPlan;
 import piengine.visual.render.domain.plan.WorldRenderPlanBuilder;
@@ -52,9 +49,6 @@ import static piengine.core.base.type.property.PropertyKeys.WINDOW_HEIGHT;
 import static piengine.core.base.type.property.PropertyKeys.WINDOW_WIDTH;
 import static piengine.core.input.domain.KeyEventType.PRESS;
 import static piengine.object.camera.domain.ProjectionType.PERSPECTIVE;
-import static piengine.visual.framebuffer.domain.FramebufferAttachment.COLOR_BUFFER_MULTISAMPLE_ATTACHMENT;
-import static piengine.visual.framebuffer.domain.FramebufferAttachment.DEPTH_BUFFER_MULTISAMPLE_ATTACHMENT;
-import static piengine.visual.postprocessing.domain.EffectType.ANTIALIAS_EFFECT;
 
 public class InitScene extends Scene implements Updatable {
 
@@ -71,7 +65,6 @@ public class InitScene extends Scene implements Updatable {
 
     private final InputManager inputManager;
     private final WindowManager windowManager;
-    private final FramebufferManager framebufferManager;
     private final SkyboxManager skyboxManager;
     private final CanvasManager canvasManager;
     private final TerrainManager terrainManager;
@@ -86,19 +79,17 @@ public class InitScene extends Scene implements Updatable {
     private CameraAsset cameraAsset;
     private LampAsset lampAsset;
     private MapAsset mapAsset;
-    private ButtonAsset buttonAsset;
     private FpsAsset fpsAsset;
 
     @Wire
     public InitScene(final RenderManager renderManager, final AssetManager assetManager,
                      final InputManager inputManager, final WindowManager windowManager,
-                     final FramebufferManager framebufferManager, final SkyboxManager skyboxManager,
-                     final CanvasManager canvasManager, final TerrainManager terrainManager) {
+                     final SkyboxManager skyboxManager, final CanvasManager canvasManager,
+                     final TerrainManager terrainManager) {
         super(renderManager, assetManager);
 
         this.inputManager = inputManager;
         this.windowManager = windowManager;
-        this.framebufferManager = framebufferManager;
         this.skyboxManager = skyboxManager;
         this.canvasManager = canvasManager;
         this.terrainManager = terrainManager;
@@ -134,15 +125,16 @@ public class InitScene extends Scene implements Updatable {
 
         lampAsset = createAsset(LampAsset.class, new LampAssetArgument());
 
-        framebuffer = framebufferManager.supply(VIEWPORT, COLOR_BUFFER_MULTISAMPLE_ATTACHMENT, DEPTH_BUFFER_MULTISAMPLE_ATTACHMENT);
-        mainCanvas = canvasManager.supply(this, framebuffer, ANTIALIAS_EFFECT);
+        framebuffer = new Framebuffer(VIEWPORT.x, VIEWPORT.y)
+                .bind()
+                .attachColorTexture()
+                .attachDepthTexture()
+                .unbind();
+        mainCanvas = canvasManager.supply(this, framebuffer);
 
-        buttonAsset = createAsset(ButtonAsset.class, new ButtonAssetArgument(
-                "buttonDefault", "buttonHover", "buttonPress",
-                VIEWPORT, "Please press me!", () -> System.out.println("Button clicked!")));
         fpsAsset = createAsset(FpsAsset.class, new FpsAssetArgument(VIEWPORT));
 
-        skybox = skyboxManager.supply(150f,
+        skybox = skyboxManager.supply(
                 "skybox/nightRight", "skybox/nightLeft", "skybox/nightTop",
                 "skybox/nightBottom", "skybox/nightBack", "skybox/nightFront");
 
@@ -151,8 +143,6 @@ public class InitScene extends Scene implements Updatable {
 
     @Override
     protected void initializeAssets() {
-        buttonAsset.setPosition(-0.75f, 0.875f, 0);
-
         cameraAsset.setPosition(-2, 0, 0);
 
         float lampX = 0;
@@ -174,8 +164,8 @@ public class InitScene extends Scene implements Updatable {
                         framebuffer,
                         WorldRenderPlanBuilder
                                 .createPlan(camera)
-                                .loadAssets(mapAsset)
-                                .clearScreen(ColorUtils.BLACK)
+//                                .loadAssets(mapAsset)
+                                .clearScreen(ColorUtils.WHITE)
                                 .render()
                 )
                 .loadAssetContext(GuiRenderAssetContextBuilder

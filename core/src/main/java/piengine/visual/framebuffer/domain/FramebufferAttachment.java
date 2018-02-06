@@ -1,9 +1,0 @@
-package piengine.visual.framebuffer.domain;
-
-public enum FramebufferAttachment {
-    COLOR_TEXTURE_ATTACHMENT,
-    DEPTH_TEXTURE_ATTACHMENT,
-    DEPTH_BUFFER_ATTACHMENT,
-    DEPTH_BUFFER_MULTISAMPLE_ATTACHMENT,
-    COLOR_BUFFER_MULTISAMPLE_ATTACHMENT
-}

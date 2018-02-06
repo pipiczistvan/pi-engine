@@ -17,7 +17,7 @@ public class piEngine {
             "piengine.*.domain",
             "piengine.*.manager",
             "piengine.*.service",
-            "piengine.*.accessor",
+            "piengine.*.loader",
             "piengine.*.interpreter",
             "piengine.*.handler"
     );

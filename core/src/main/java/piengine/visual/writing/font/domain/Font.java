@@ -1,20 +1,15 @@
 package piengine.visual.writing.font.domain;
 
-import piengine.visual.texture.domain.Texture;
+import piengine.core.base.domain.Domain;
+import piengine.io.interpreter.texture.Texture;
+import piengine.io.loader.fnt.FontDto;
 
-public class Font extends Texture<FontDao> {
+public class Font extends Texture implements Domain {
 
-    public FontKey key;
-    public FontData data;
+    public final FontDto fontDto;
 
-    public Font(final FontDao dao, final FontKey key, final FontData data) {
-        super(dao, null);
-
-        this.key = key;
-        this.data = data;
-    }
-
-    public void setDao(final FontDao dao) {
-        this.dao = dao;
+    public Font(final int width, final int height, final FontDto fontDto) {
+        super(width, height);
+        this.fontDto = fontDto;
     }
 }

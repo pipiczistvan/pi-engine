@@ -2,13 +2,13 @@ package piengine.visual.render.service;
 
 import piengine.core.base.api.Initializable;
 import piengine.core.base.api.Service;
-import piengine.object.mesh.domain.MeshDao;
-import piengine.object.particlesystem.domain.ParticleSysemDao;
+import piengine.io.interpreter.shader.Shader;
+import piengine.io.interpreter.vertexarray.VertexArray;
+import piengine.io.loader.glsl.domain.GlslDto;
+import piengine.io.loader.glsl.loader.GlslLoader;
 import piengine.visual.render.domain.config.RenderConfig;
 import piengine.visual.render.domain.context.RenderContext;
 import piengine.visual.render.interpreter.RenderInterpreter;
-import piengine.visual.shader.domain.Shader;
-import piengine.visual.shader.service.ShaderService;
 
 import static org.lwjgl.opengl.GL11.GL_TRIANGLE_STRIP;
 import static org.lwjgl.opengl.GL31.glDrawArraysInstanced;
@@ -16,19 +16,19 @@ import static org.lwjgl.opengl.GL31.glDrawArraysInstanced;
 public abstract class AbstractRenderService<S extends Shader, C extends RenderContext> implements Service, Initializable {
 
     protected final RenderInterpreter renderInterpreter;
-    private final ShaderService shaderService;
+    private final GlslLoader glslLoader;
+
     protected S shader;
     private RenderConfig renderConfig;
 
-    public AbstractRenderService(final ShaderService shaderService,
-                                 final RenderInterpreter renderInterpreter) {
-        this.shaderService = shaderService;
+    public AbstractRenderService(final RenderInterpreter renderInterpreter, final GlslLoader glslLoader) {
         this.renderInterpreter = renderInterpreter;
+        this.glslLoader = glslLoader;
     }
 
     @Override
     public void initialize() {
-        this.shader = createShader(shaderService);
+        this.shader = createShader();
         this.renderConfig = createRenderConfig();
     }
 
@@ -39,35 +39,32 @@ public abstract class AbstractRenderService<S extends Shader, C extends RenderCo
         shader.stop();
     }
 
-    protected void draw(final MeshDao dao) {
-        renderInterpreter.bindVertexArray(dao.vaoId);
-        renderInterpreter.enableVertexAttribArray(dao.getVertexAttribs());
-
+    protected void draw(final VertexArray vao) {
+        vao.bind().enableAttributes();
         switch (renderConfig.renderFunction) {
             case DRAW_ARRAYS:
-                renderInterpreter.drawArrays(renderConfig.drawMode, dao.vertexCount);
+                renderInterpreter.drawArrays(renderConfig.drawMode, vao.vertexCount);
                 break;
             case DRAW_ELEMENTS:
-                renderInterpreter.drawElements(renderConfig.drawMode, dao.vertexCount);
+                renderInterpreter.drawElements(renderConfig.drawMode, vao.vertexCount);
                 break;
         }
-
-        renderInterpreter.disableVertexAttribArray(dao.getVertexAttribs());
-        renderInterpreter.unbindVertexArray();
+        vao.disableAttributes().unbind();
     }
 
-    //todo: HACK
-    protected void drawInstanced(final ParticleSysemDao dao, final int primCount) {
-        renderInterpreter.bindVertexArray(dao.vaoId);
-        renderInterpreter.enableVertexAttribArray(dao.getVertexAttribs());
-
-        glDrawArraysInstanced(GL_TRIANGLE_STRIP, 0, dao.vertexCount, primCount);
-
-        renderInterpreter.disableVertexAttribArray(dao.getVertexAttribs());
-        renderInterpreter.unbindVertexArray();
+    protected void drawInstanced(final VertexArray vao, final int primCount) {
+        vao.bind().enableAttributes();
+        glDrawArraysInstanced(GL_TRIANGLE_STRIP, 0, vao.vertexCount, primCount);
+        vao.disableAttributes().unbind();
     }
 
-    protected abstract S createShader(final ShaderService shaderService);
+    protected S createShader(final String file, final Class<S> shaderClass) {
+        GlslDto glsl = glslLoader.load(file);
+
+        return Shader.newInstance(shaderClass, glsl);
+    }
+
+    protected abstract S createShader();
 
     protected abstract void render(final C context);
 

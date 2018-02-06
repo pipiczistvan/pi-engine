@@ -1,5 +1,5 @@
 package piengine.core.base.api;
 
-public interface Cloneable<T> {
-    T clone();
+public interface Cloneable<K, T> {
+    T clone(K key);
 }

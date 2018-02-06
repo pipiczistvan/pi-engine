@@ -2,8 +2,8 @@ package piengine.object.camera.domain;
 
 import org.joml.Matrix4f;
 import org.joml.Vector2i;
+import piengine.core.base.domain.Entity;
 import piengine.core.base.exception.PIEngineException;
-import piengine.object.entity.domain.Entity;
 
 import static piengine.core.utils.MatrixUtils.ORTHOGRAPHIC_PROJECTION_MATRIX;
 import static piengine.core.utils.MatrixUtils.PERSPECTIVE_PROJECTION_MATRIX;

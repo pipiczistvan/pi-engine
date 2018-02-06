@@ -3,8 +3,8 @@ package piengine.object.particlesystem.domain;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 import piengine.core.base.api.Updatable;
+import piengine.core.base.domain.Entity;
 import piengine.object.camera.domain.Camera;
-import piengine.object.entity.domain.Entity;
 
 public class Particle extends Entity implements Updatable {
 

@@ -1,11 +1,11 @@
 package piengine.visual.postprocessing.service;
 
 import org.joml.Vector2i;
+import piengine.io.interpreter.framebuffer.Framebuffer;
 import piengine.visual.postprocessing.domain.EffectType;
 import piengine.visual.postprocessing.domain.context.BlurEffectContext;
 import piengine.visual.postprocessing.domain.context.HorizontalBlurEffectContext;
 import piengine.visual.postprocessing.domain.context.VerticalBlurEffectContext;
-import piengine.visual.texture.domain.Texture;
 import puppeteer.annotation.premade.Component;
 import puppeteer.annotation.premade.Wire;
 
@@ -33,9 +33,9 @@ public class BlurEffectService extends AbstractPostProcessingService<BlurEffectC
     }
 
     @Override
-    public Texture process(final Texture inTexture, final BlurEffectContext context) {
-        Texture horizontalBlur = horizontalBlurEffectService.process(inTexture, context.horizontalBlurEffectContext);
-        Texture verticalBlur = verticalBlurEffectService.process(horizontalBlur, context.verticalBlurEffectContext);
+    public Framebuffer process(final Framebuffer inFramebuffer, final BlurEffectContext context) {
+        Framebuffer horizontalBlur = horizontalBlurEffectService.process(inFramebuffer, context.horizontalBlurEffectContext);
+        Framebuffer verticalBlur = verticalBlurEffectService.process(horizontalBlur, context.verticalBlurEffectContext);
 
         return verticalBlur;
     }

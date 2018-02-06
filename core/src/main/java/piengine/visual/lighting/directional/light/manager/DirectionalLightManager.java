@@ -1,9 +1,9 @@
 package piengine.visual.lighting.directional.light.manager;
 
 import org.joml.Vector2i;
+import piengine.core.base.domain.Entity;
 import piengine.core.base.type.color.Color;
 import piengine.object.camera.domain.Camera;
-import piengine.object.entity.domain.Entity;
 import piengine.visual.lighting.directional.light.domain.DirectionalLight;
 import piengine.visual.lighting.directional.shadow.domain.DirectionalShadow;
 import piengine.visual.lighting.directional.shadow.domain.DirectionalShadowKey;

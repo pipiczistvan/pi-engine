@@ -2,8 +2,8 @@ package piengine.visual.lighting.point.light.manager;
 
 import org.joml.Vector2i;
 import org.joml.Vector3f;
+import piengine.core.base.domain.Entity;
 import piengine.core.base.type.color.Color;
-import piengine.object.entity.domain.Entity;
 import piengine.visual.lighting.point.light.domain.PointLight;
 import piengine.visual.lighting.point.shadow.domain.PointShadow;
 import piengine.visual.lighting.point.shadow.domain.PointShadowKey;

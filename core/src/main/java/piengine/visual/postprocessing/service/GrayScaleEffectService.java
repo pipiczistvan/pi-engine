@@ -1,52 +1,45 @@
 package piengine.visual.postprocessing.service;
 
 import org.joml.Vector2i;
-import piengine.object.mesh.service.MeshService;
-import piengine.visual.framebuffer.domain.Framebuffer;
-import piengine.visual.framebuffer.manager.FramebufferManager;
+import piengine.io.interpreter.framebuffer.Framebuffer;
+import piengine.io.loader.glsl.loader.GlslLoader;
 import piengine.visual.postprocessing.domain.EffectType;
 import piengine.visual.postprocessing.domain.context.GrayScaleEffectContext;
 import piengine.visual.postprocessing.shader.GrayScaleEffectShader;
 import piengine.visual.render.interpreter.RenderInterpreter;
-import piengine.visual.shader.service.ShaderService;
-import piengine.visual.texture.domain.Texture;
-import piengine.visual.texture.service.TextureService;
 import puppeteer.annotation.premade.Component;
 import puppeteer.annotation.premade.Wire;
 
-import static piengine.visual.framebuffer.domain.FramebufferAttachment.COLOR_TEXTURE_ATTACHMENT;
+import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
+import static piengine.io.interpreter.framebuffer.FramebufferAttachment.COLOR;
 import static piengine.visual.postprocessing.domain.EffectType.GRAY_SCALE_EFFECT;
 
 @Component
 public class GrayScaleEffectService extends AbstractPostProcessingRenderService<GrayScaleEffectShader, GrayScaleEffectContext> {
 
-    private final FramebufferManager framebufferManager;
-    private final TextureService textureService;
-
     @Wire
-    public GrayScaleEffectService(final RenderInterpreter renderInterpreter, final ShaderService shaderService,
-                                  final MeshService meshService, final FramebufferManager framebufferManager,
-                                  final TextureService textureService) {
-        super(renderInterpreter, shaderService, meshService);
-        this.framebufferManager = framebufferManager;
-        this.textureService = textureService;
+    public GrayScaleEffectService(final RenderInterpreter renderInterpreter, final GlslLoader glslLoader) {
+        super(renderInterpreter, glslLoader);
     }
 
     @Override
     public GrayScaleEffectContext createContext(final Vector2i outSize) {
-        Framebuffer framebuffer = framebufferManager.supply(outSize, COLOR_TEXTURE_ATTACHMENT);
+        Framebuffer framebuffer = new Framebuffer(outSize.x, outSize.y)
+                .bind()
+                .attachColorTexture()
+                .unbind();
 
         return new GrayScaleEffectContext(framebuffer);
     }
 
     @Override
-    public Texture process(final Texture inTexture, final GrayScaleEffectContext context) {
-        framebufferManager.bind(context.framebuffer);
+    public Framebuffer process(final Framebuffer inFramebuffer, final GrayScaleEffectContext context) {
+        context.framebuffer.bind();
         shader.start();
-        textureService.bind(inTexture);
+        inFramebuffer.getTextureAttachment(COLOR).bind(GL_TEXTURE0);
         draw();
         shader.stop();
-        framebufferManager.unbind();
+        context.framebuffer.unbind();
 
         return context.framebuffer;
     }

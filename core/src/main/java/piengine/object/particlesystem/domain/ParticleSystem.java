@@ -2,30 +2,32 @@ package piengine.object.particlesystem.domain;
 
 import org.joml.Vector3f;
 import piengine.core.base.api.Updatable;
+import piengine.core.base.domain.Domain;
+import piengine.core.base.domain.Entity;
+import piengine.io.interpreter.vertexarray.VertexArray;
 import piengine.object.camera.domain.Camera;
-import piengine.object.entity.domain.Entity;
-import piengine.object.entity.domain.EntityDomain;
-import piengine.visual.sprite.domain.Sprite;
+import piengine.visual.texture.sprite.domain.Sprite;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public class ParticleSystem extends EntityDomain<ParticleSysemDao> implements Updatable {
+public class ParticleSystem extends Entity implements Domain, Updatable {
 
-    public final Sprite sprite;
-    public final List<Particle> particles;
-
+    private final VertexArray vao;
+    private final Sprite sprite;
+    private final List<Particle> particles;
     private final Camera camera;
     private final float pps;
     private final float speed;
     private final float gravityComplient;
     private final float lifeLength;
 
-    public ParticleSystem(final Entity parent, final ParticleSysemDao dao, final Sprite sprite,
+    public ParticleSystem(final Entity parent, final VertexArray vao, final Sprite sprite,
                           final Camera camera, final float pps, final float speed,
                           final float gravityComplient, final float lifeLength) {
-        super(parent, dao);
+        super(parent);
+        this.vao = vao;
         this.sprite = sprite;
         this.camera = camera;
         this.pps = pps;
@@ -50,6 +52,18 @@ public class ParticleSystem extends EntityDomain<ParticleSysemDao> implements Up
         sortHighToLow(particles);
     }
 
+    public VertexArray getVao() {
+        return vao;
+    }
+
+    public Sprite getSprite() {
+        return sprite;
+    }
+
+    public List<Particle> getParticles() {
+        return particles;
+    }
+
     private void generateParticles(final float delta) {
         float particlesToCreate = pps * delta;
         int count = (int) Math.floor(particlesToCreate);
@@ -69,7 +83,7 @@ public class ParticleSystem extends EntityDomain<ParticleSysemDao> implements Up
         velocity.normalize();
         velocity.mul(speed);
 
-        particles.add(new Particle(this, camera, velocity, gravityComplient, lifeLength, sprite.getNumberOfRows()));
+        particles.add(new Particle(this, camera, velocity, gravityComplient, lifeLength, sprite.numberOfRows));
     }
 
     private static void sortHighToLow(final List<Particle> list) {

@@ -1,11 +1,11 @@
 package piengine.object.particlesystem.domain;
 
-import piengine.core.base.domain.EntityKey;
+import piengine.core.base.domain.Entity;
 import piengine.object.camera.domain.Camera;
-import piengine.object.entity.domain.Entity;
 
-public class ParticleSystemKey extends EntityKey {
+public class ParticleSystemKey {
 
+    public final Entity parent;
     public final Camera camera;
     public final float pps;
     public final float speed;
@@ -17,7 +17,7 @@ public class ParticleSystemKey extends EntityKey {
     public ParticleSystemKey(final Entity parent, final Camera camera, final float pps,
                              final float speed, final float gravityComplient, final float lifeLength,
                              final String sprite, final int spriteSize) {
-        super(parent);
+        this.parent = parent;
         this.camera = camera;
         this.pps = pps;
         this.speed = speed;

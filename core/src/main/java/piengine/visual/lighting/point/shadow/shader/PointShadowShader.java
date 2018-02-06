@@ -2,18 +2,18 @@ package piengine.visual.lighting.point.shadow.shader;
 
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
-import piengine.visual.shader.domain.Shader;
-import piengine.visual.shader.domain.ShaderDao;
-import piengine.visual.shader.domain.uniform.UniformInteger;
-import piengine.visual.shader.domain.uniform.UniformMatrix4f;
-import piengine.visual.shader.domain.uniform.UniformVector3f;
+import piengine.io.interpreter.shader.Shader;
+import piengine.io.interpreter.shader.uniform.UniformInteger;
+import piengine.io.interpreter.shader.uniform.UniformMatrix4f;
+import piengine.io.interpreter.shader.uniform.UniformVector3f;
+import piengine.io.loader.glsl.domain.GlslDto;
 
 import static piengine.core.base.type.property.ApplicationProperties.get;
 import static piengine.core.base.type.property.PropertyKeys.ANIMATION_SKELETON_MAX_JOINTS;
+import static piengine.io.interpreter.shader.uniform.UniformInteger.uniformInteger;
+import static piengine.io.interpreter.shader.uniform.UniformMatrix4f.uniformMatrix4f;
+import static piengine.io.interpreter.shader.uniform.UniformVector3f.uniformVector3f;
 import static piengine.visual.lighting.point.shadow.domain.PointShadow.CAMERA_COUNT;
-import static piengine.visual.shader.domain.uniform.UniformInteger.uniformInteger;
-import static piengine.visual.shader.domain.uniform.UniformMatrix4f.uniformMatrix4f;
-import static piengine.visual.shader.domain.uniform.UniformVector3f.uniformVector3f;
 
 public class PointShadowShader extends Shader {
 
@@ -25,8 +25,8 @@ public class PointShadowShader extends Shader {
     private final UniformInteger renderStage = uniformInteger(this, "renderStage");
     private final UniformMatrix4f[] jointTransforms = uniformMatrix4f(this, "jointTransforms", MAX_JOINTS);
 
-    public PointShadowShader(final ShaderDao dao) {
-        super(dao);
+    public PointShadowShader(final GlslDto glsl) {
+        super(glsl);
     }
 
     public PointShadowShader loadModelMatrix(final Matrix4f value) {

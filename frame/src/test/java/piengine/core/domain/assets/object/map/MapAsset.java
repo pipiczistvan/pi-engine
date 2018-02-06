@@ -2,9 +2,9 @@ package piengine.core.domain.assets.object.map;
 
 import org.joml.Vector2i;
 import org.joml.Vector3f;
+import piengine.core.base.domain.Entity;
 import piengine.core.base.type.color.Color;
 import piengine.core.domain.assets.object.lamp.LampAsset;
-import piengine.core.domain.assets.object.lamp.LampAssetArgument;
 import piengine.core.input.domain.KeyEventType;
 import piengine.core.input.manager.InputManager;
 import piengine.core.utils.ColorUtils;
@@ -18,7 +18,6 @@ import piengine.object.asset.domain.WorldAsset;
 import piengine.object.asset.manager.AssetManager;
 import piengine.object.asset.plan.WorldRenderAssetContext;
 import piengine.object.asset.plan.WorldRenderAssetContextBuilder;
-import piengine.object.entity.domain.Entity;
 import piengine.object.model.domain.Model;
 import piengine.object.model.manager.ModelManager;
 import piengine.object.particlesystem.domain.ParticleSystem;
@@ -89,26 +88,26 @@ public class MapAsset extends WorldAsset<MapAssetArgument> {
         terrain = arguments.terrain;
         water = waterManager.supply(arguments.viewport, new Vector2i(WATER_SCALE, WATER_SCALE), new Vector3f(-TERRAIN_SCALE / 2, -4, -TERRAIN_SCALE / 2), new Vector3f(TERRAIN_SCALE, 0, TERRAIN_SCALE), WATER_COLOR);
 
-        lampAsset1 = createAsset(LampAsset.class, new LampAssetArgument());
-        lampAsset2 = createAsset(LampAsset.class, new LampAssetArgument());
-
-        cubeModel1 = modelManager.supply(this, "cube", false);
-        cubeModel2 = modelManager.supply(this, "cube", false);
-        cubeModel3 = modelManager.supply(this, "cube", false);
-        cubeModel4 = modelManager.supply(this, "cube", false);
-
-        treeModel1 = modelManager.supply(this, "lowPolyTree", "lowPolyTree", false);
-        treeModel2 = modelManager.supply(this, "lowPolyTree", "lowPolyTree", false);
-        treeModel3 = modelManager.supply(this, "lowPolyTree", "lowPolyTree", false);
-        treeModel4 = modelManager.supply(this, "lowPolyTree", "lowPolyTree", false);
-
-        for (int i = 0; i < treeModels.length; i++) {
-            treeModels[i] = modelManager.supply(this, "lowPolyTree", "lowPolyTree", false);
-        }
-
-        peasantModel = animatedModelManager.supply(this, "peasant", "peasant");
-        peasantAnimation = animationManager.supply("peasant");
-        peasantAnimator = animatorManager.supply(peasantModel);
+//        lampAsset1 = createAsset(LampAsset.class, new LampAssetArgument());
+//        lampAsset2 = createAsset(LampAsset.class, new LampAssetArgument());
+//
+//        cubeModel1 = modelManager.supply(this, "cube", false);
+//        cubeModel2 = modelManager.supply(this, "cube", false);
+//        cubeModel3 = modelManager.supply(this, "cube", false);
+//        cubeModel4 = modelManager.supply(this, "cube", false);
+//
+//        treeModel1 = modelManager.supply(this, "lowPolyTree", "lowPolyTree", false);
+//        treeModel2 = modelManager.supply(this, "lowPolyTree", "lowPolyTree", false);
+//        treeModel3 = modelManager.supply(this, "lowPolyTree", "lowPolyTree", false);
+//        treeModel4 = modelManager.supply(this, "lowPolyTree", "lowPolyTree", false);
+//
+//        for (int i = 0; i < treeModels.length; i++) {
+//            treeModels[i] = modelManager.supply(this, "lowPolyTree", "lowPolyTree", false);
+//        }
+//
+//        peasantModel = animatedModelManager.supply(this, "peasant", "peasant");
+//        peasantAnimation = animationManager.supply("peasant");
+//        peasantAnimator = animatorManager.supply(peasantModel);
 
         inputManager.addEvent(GLFW_KEY_R, KeyEventType.PRESS, () -> peasantAnimator.doAnimation(peasantAnimation));
         inputManager.addEvent(GLFW_KEY_R, KeyEventType.RELEASE, () -> peasantAnimator.doAnimation(null));
@@ -119,7 +118,7 @@ public class MapAsset extends WorldAsset<MapAssetArgument> {
         particleSystem = particleSystemManager.supply(this, arguments.camera, 50, 7, 0.01f, 1, "fire", 8);
         particleSystem.scale(2, 2, 2);
 
-        initializeAssets();
+//        initializeAssets();
     }
 
     @Override
@@ -128,23 +127,23 @@ public class MapAsset extends WorldAsset<MapAssetArgument> {
 
         wave += delta;
 
-        cubeModel1.translateRotate(0, (float) (Math.sin(wave) * 0.01f), 0, 5f * delta, 10f * delta, 15f * delta);
-        cubeModel2.translateRotate(0, (float) (Math.sin(wave - 0.5) * 0.01f), 0, 5f * delta, 10f * delta, 15f * delta);
-        cubeModel3.translateRotate(0, (float) (Math.sin(wave - 1) * 0.01f), 0, 5f * delta, 10f * delta, 15f * delta);
-        cubeModel4.translateRotate(0, (float) (Math.sin(wave - 1.5) * 0.01f), 0, 5f * delta, 10f * delta, 15f * delta);
+//        cubeModel1.translateRotate(0, (float) (Math.sin(wave) * 0.01f), 0, 5f * delta, 10f * delta, 15f * delta);
+//        cubeModel2.translateRotate(0, (float) (Math.sin(wave - 0.5) * 0.01f), 0, 5f * delta, 10f * delta, 15f * delta);
+//        cubeModel3.translateRotate(0, (float) (Math.sin(wave - 1) * 0.01f), 0, 5f * delta, 10f * delta, 15f * delta);
+//        cubeModel4.translateRotate(0, (float) (Math.sin(wave - 1.5) * 0.01f), 0, 5f * delta, 10f * delta, 15f * delta);
     }
 
     @Override
     public WorldRenderAssetContext getAssetContext() {
         return WorldRenderAssetContextBuilder.create()
-                .loadModels(treeModel1, treeModel2, treeModel3, treeModel4)
-                .loadModels(cubeModel1)
+//                .loadModels(treeModel1, treeModel2, treeModel3, treeModel4)
+//                .loadModels(cubeModel1)
                 .loadTerrains(terrain)
                 .loadWaters(water)
-                .loadModels(treeModels)
-                .loadAnimatedModels(peasantModel)
-//                .loadDirectionalLights(sun)
-                .loadAssets(lampAsset1)
+//                .loadModels(treeModels)
+//                .loadAnimatedModels(peasantModel)
+                .loadDirectionalLights(sun)
+//                .loadAssets(lampAsset1)
 //                .loadAssets(lampAsset2)
                 .loadParticleSystems(particleSystem)
                 .build();

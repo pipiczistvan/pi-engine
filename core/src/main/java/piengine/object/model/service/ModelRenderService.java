@@ -1,5 +1,6 @@
 package piengine.object.model.service;
 
+import piengine.io.loader.glsl.loader.GlslLoader;
 import piengine.object.model.domain.Model;
 import piengine.object.model.shader.ModelShader;
 import piengine.visual.render.domain.config.RenderConfig;
@@ -7,31 +8,23 @@ import piengine.visual.render.domain.config.RenderConfigBuilder;
 import piengine.visual.render.domain.fragment.domain.RenderWorldPlanContext;
 import piengine.visual.render.interpreter.RenderInterpreter;
 import piengine.visual.render.service.AbstractRenderService;
-import piengine.visual.shader.domain.ShaderKey;
-import piengine.visual.shader.service.ShaderService;
-import piengine.visual.texture.service.TextureService;
 import puppeteer.annotation.premade.Component;
 import puppeteer.annotation.premade.Wire;
 
+import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
 import static piengine.visual.render.domain.config.ProvokingVertex.FIRST_VERTEX_CONVENTION;
 
 @Component
 public class ModelRenderService extends AbstractRenderService<ModelShader, RenderWorldPlanContext> {
 
-    private final TextureService textureService;
-
     @Wire
-    public ModelRenderService(final ShaderService shaderService,
-                              final TextureService textureService,
-                              final RenderInterpreter renderInterpreter) {
-        super(shaderService, renderInterpreter);
-
-        this.textureService = textureService;
+    public ModelRenderService(final RenderInterpreter renderInterpreter, final GlslLoader glslLoader) {
+        super(renderInterpreter, glslLoader);
     }
 
     @Override
-    protected ModelShader createShader(final ShaderService shaderService) {
-        return shaderService.supply(new ShaderKey("modelShader")).castTo(ModelShader.class);
+    protected ModelShader createShader() {
+        return createShader("modelShader", ModelShader.class);
     }
 
     @Override
@@ -53,12 +46,12 @@ public class ModelRenderService extends AbstractRenderService<ModelShader, Rende
 
             if (model.texture != null) {
                 shader.loadTextureEnabled(true);
-                textureService.bind(model.texture);
+                model.texture.bind(GL_TEXTURE0);
             } else {
                 shader.loadTextureEnabled(false);
             }
 
-            draw(model.mesh.getDao());
+            draw(model.vao);
         }
     }
 

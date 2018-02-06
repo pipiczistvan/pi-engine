@@ -1,29 +1,15 @@
 package piengine.object.animation.domain;
 
 import piengine.core.base.domain.Domain;
+import piengine.io.loader.dae.domain.KeyFrame;
 
-public class Animation implements Domain<AnimationDao> {
+public class Animation implements Domain {
 
-    private final AnimationDao dao;
-    private final float length;
-    private final KeyFrame[] keyFrames;
+    public final float length;
+    public final KeyFrame[] keyFrames;
 
-    public Animation(final AnimationDao dao, final float length, final KeyFrame[] keyFrames) {
-        this.dao = dao;
+    public Animation(final float length, final KeyFrame[] keyFrames) {
         this.length = length;
         this.keyFrames = keyFrames;
-    }
-
-    public float getLength() {
-        return length;
-    }
-
-    public KeyFrame[] getKeyFrames() {
-        return keyFrames;
-    }
-
-    @Override
-    public AnimationDao getDao() {
-        return dao;
     }
 }

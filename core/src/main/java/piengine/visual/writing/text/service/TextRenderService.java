@@ -1,36 +1,30 @@
 package piengine.visual.writing.text.service;
 
+import piengine.io.loader.glsl.loader.GlslLoader;
 import piengine.visual.render.domain.config.RenderConfig;
 import piengine.visual.render.domain.config.RenderConfigBuilder;
 import piengine.visual.render.domain.config.RenderFunction;
 import piengine.visual.render.domain.fragment.domain.RenderGuiPlanContext;
 import piengine.visual.render.interpreter.RenderInterpreter;
 import piengine.visual.render.service.AbstractRenderService;
-import piengine.visual.shader.domain.ShaderKey;
-import piengine.visual.shader.service.ShaderService;
-import piengine.visual.writing.font.service.FontService;
 import piengine.visual.writing.text.domain.Text;
 import piengine.visual.writing.text.shader.TextShader;
 import puppeteer.annotation.premade.Component;
 import puppeteer.annotation.premade.Wire;
 
+import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
+
 @Component
 public class TextRenderService extends AbstractRenderService<TextShader, RenderGuiPlanContext> {
 
-    private final FontService fontService;
-
     @Wire
-    public TextRenderService(final ShaderService shaderService,
-                             final FontService fontService,
-                             final RenderInterpreter renderInterpreter) {
-        super(shaderService, renderInterpreter);
-
-        this.fontService = fontService;
+    public TextRenderService(final RenderInterpreter renderInterpreter, final GlslLoader glslLoader) {
+        super(renderInterpreter, glslLoader);
     }
 
     @Override
-    protected TextShader createShader(final ShaderService shaderService) {
-        return shaderService.supply(new ShaderKey("textShader")).castTo(TextShader.class);
+    protected TextShader createShader() {
+        return createShader("textShader", TextShader.class);
     }
 
     @Override
@@ -41,9 +35,9 @@ public class TextRenderService extends AbstractRenderService<TextShader, RenderG
         for (Text text : context.texts) {
             shader.loadModelMatrix(text.getTransformation())
                     .loadColor(text.color);
-            fontService.bind(text.font);
+            text.font.bind(GL_TEXTURE0);
 
-            draw(text.getDao());
+            draw(text.vao);
         }
         shader.stop();
     }

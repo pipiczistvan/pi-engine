@@ -1,49 +1,69 @@
 package piengine.object.water.service;
 
-import org.joml.Vector2i;
-import piengine.core.base.resource.SupplierService;
-import piengine.object.water.accessor.WaterAccessor;
+import piengine.core.architecture.service.SupplierService;
+import piengine.io.interpreter.framebuffer.Framebuffer;
+import piengine.io.interpreter.vertexarray.VertexArray;
 import piengine.object.water.domain.Water;
-import piengine.object.water.domain.WaterDao;
-import piengine.object.water.domain.WaterData;
+import piengine.object.water.domain.WaterGrid;
 import piengine.object.water.domain.WaterKey;
-import piengine.object.water.interpreter.WaterInterpreter;
-import piengine.visual.framebuffer.domain.Framebuffer;
-import piengine.visual.framebuffer.manager.FramebufferManager;
+import piengine.object.water.generator.WaterGridGenerator;
 import puppeteer.annotation.premade.Component;
-import puppeteer.annotation.premade.Wire;
 
-import static piengine.visual.framebuffer.domain.FramebufferAttachment.COLOR_TEXTURE_ATTACHMENT;
-import static piengine.visual.framebuffer.domain.FramebufferAttachment.DEPTH_BUFFER_ATTACHMENT;
-import static piengine.visual.framebuffer.domain.FramebufferAttachment.DEPTH_TEXTURE_ATTACHMENT;
+import java.util.HashMap;
+import java.util.Map;
+
+import static piengine.io.interpreter.vertexarray.VertexAttribute.INDICATOR;
+import static piengine.io.interpreter.vertexarray.VertexAttribute.VERTEX;
 
 @Component
-public class WaterService extends SupplierService<WaterKey, WaterData, WaterDao, Water> {
+public class WaterService extends SupplierService<WaterKey, Water> {
 
-    private final FramebufferManager framebufferManager;
+    private final WaterGridGenerator waterGridGenerator;
+    private final Map<WaterKey, Water> waterMap;
 
-    @Wire
-    public WaterService(final WaterAccessor waterAccessor, final WaterInterpreter waterInterpreter,
-                        final FramebufferManager framebufferManager) {
-        super(waterAccessor, waterInterpreter);
-
-        this.framebufferManager = framebufferManager;
+    public WaterService() {
+        this.waterGridGenerator = new WaterGridGenerator();
+        this.waterMap = new HashMap<>();
     }
 
     @Override
-    protected Water createDomain(final WaterDao dao, final WaterData resource) {
-        Vector2i reflectionResolution = new Vector2i(
-                resource.resolution.x,
-                resource.resolution.y
-        );
-        Vector2i refractionResolution = new Vector2i(
-                resource.resolution.x / 2,
-                resource.resolution.y / 2
-        );
+    public Water supply(final WaterKey key) {
+        return waterMap.computeIfAbsent(key, this::createWater);
+    }
 
-        Framebuffer reflectionBuffer = framebufferManager.supply(reflectionResolution, COLOR_TEXTURE_ATTACHMENT, DEPTH_BUFFER_ATTACHMENT);
-        Framebuffer refractionBuffer = framebufferManager.supply(refractionResolution, COLOR_TEXTURE_ATTACHMENT, DEPTH_TEXTURE_ATTACHMENT);
+    @Override
+    public void terminate() {
+        waterMap.values().forEach(water -> {
+            water.vao.clear();
+            water.reflectionBuffer.clear();
+            water.refractionBuffer.clear();
+        });
+    }
 
-        return new Water(dao, reflectionBuffer, refractionBuffer, resource.position, resource.rotation, resource.scale, resource.color);
+    private Water createWater(final WaterKey key) {
+        VertexArray vertexArray = createVertexArray(key);
+        Framebuffer reflectionBuffer = new Framebuffer(key.resolution.x, key.resolution.y)
+                .bind()
+                .attachColorTexture()
+                .attachDepthBuffer()
+                .unbind();
+        Framebuffer refractionBuffer = new Framebuffer(key.resolution.x / 2, key.resolution.y / 2)
+                .bind()
+                .attachColorTexture()
+                .attachDepthTexture()
+                .unbind();
+
+        return new Water(vertexArray, reflectionBuffer, refractionBuffer, key.position, key.rotation, key.scale, key.color);
+    }
+
+    private VertexArray createVertexArray(final WaterKey key) {
+        WaterGrid grid = waterGridGenerator.generate(key.size, key.position, key.rotation, key.scale);
+
+        // todo: mayba multiple ?
+        return new VertexArray(grid.positions.length / 2)
+                .bind()
+                .attachVertexBuffer(VERTEX, grid.positions, 3)
+                .attachVertexBuffer(INDICATOR, grid.indicators, 4)
+                .unbind();
     }
 }

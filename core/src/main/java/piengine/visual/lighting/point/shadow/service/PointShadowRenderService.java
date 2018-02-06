@@ -1,6 +1,7 @@
 package piengine.visual.lighting.point.shadow.service;
 
 import org.joml.Matrix4f;
+import piengine.io.loader.glsl.loader.GlslLoader;
 import piengine.object.animatedmodel.domain.AnimatedModel;
 import piengine.object.camera.domain.Camera;
 import piengine.object.model.domain.Model;
@@ -11,8 +12,6 @@ import piengine.visual.render.domain.config.RenderConfigBuilder;
 import piengine.visual.render.domain.fragment.domain.RenderWorldPlanContext;
 import piengine.visual.render.interpreter.RenderInterpreter;
 import piengine.visual.render.service.AbstractRenderService;
-import piengine.visual.shader.domain.ShaderKey;
-import piengine.visual.shader.service.ShaderService;
 import puppeteer.annotation.premade.Component;
 import puppeteer.annotation.premade.Wire;
 
@@ -23,13 +22,13 @@ import static piengine.visual.lighting.point.shadow.domain.PointShadow.CAMERA_CO
 public class PointShadowRenderService extends AbstractRenderService<PointShadowShader, RenderWorldPlanContext> {
 
     @Wire
-    public PointShadowRenderService(final ShaderService shaderService, final RenderInterpreter renderInterpreter) {
-        super(shaderService, renderInterpreter);
+    public PointShadowRenderService(final RenderInterpreter renderInterpreter, final GlslLoader glslLoader) {
+        super(renderInterpreter, glslLoader);
     }
 
     @Override
-    protected PointShadowShader createShader(final ShaderService shaderService) {
-        return shaderService.supply(new ShaderKey("pointShadowShader")).castTo(PointShadowShader.class);
+    protected PointShadowShader createShader() {
+        return createShader("pointShadowShader", PointShadowShader.class);
     }
 
     @Override
@@ -49,14 +48,14 @@ public class PointShadowRenderService extends AbstractRenderService<PointShadowS
         for (Model model : context.models) {
             if (!model.lightEmitter) {
                 shader.loadModelMatrix(model.getTransformation());
-                draw(model.mesh.getDao());
+                draw(model.vao);
             }
         }
         shader.loadRenderStage(1);
         for (AnimatedModel animatedModel : context.animatedModels) {
             shader.loadModelMatrix(animatedModel.getTransformation())
                     .loadJointTransforms(animatedModel.getJointTransforms());
-            draw(animatedModel.getDao());
+            draw(animatedModel.vao);
         }
     }
 

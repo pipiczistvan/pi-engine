@@ -3,23 +3,27 @@ package piengine.object.skybox.domain;
 import org.joml.Matrix4f;
 import piengine.core.base.domain.Domain;
 import piengine.core.utils.VectorUtils;
+import piengine.io.interpreter.vertexarray.VertexArray;
 import piengine.object.camera.domain.Camera;
-import piengine.visual.cubemap.domain.CubeMap;
+import piengine.visual.texture.cubeimage.domain.CubeImage;
 
-public class Skybox implements Domain<SkyboxDao> {
+public class Skybox implements Domain {
 
-    public final CubeMap cubeMap;
-    private final SkyboxDao dao;
+    private final CubeImage cubeImage;
+    private final VertexArray vao;
     private float rotation = 0;
 
-    public Skybox(final SkyboxDao dao, final CubeMap cubeMap) {
-        this.dao = dao;
-        this.cubeMap = cubeMap;
+    public Skybox(final CubeImage cubeImage, final VertexArray vao) {
+        this.cubeImage = cubeImage;
+        this.vao = vao;
     }
 
-    @Override
-    public SkyboxDao getDao() {
-        return dao;
+    public CubeImage getCubeImage() {
+        return cubeImage;
+    }
+
+    public VertexArray getVao() {
+        return vao;
     }
 
     public Matrix4f getView(final Camera camera) {

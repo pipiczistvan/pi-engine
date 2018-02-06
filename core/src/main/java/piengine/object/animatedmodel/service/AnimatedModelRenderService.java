@@ -1,5 +1,6 @@
 package piengine.object.animatedmodel.service;
 
+import piengine.io.loader.glsl.loader.GlslLoader;
 import piengine.object.animatedmodel.domain.AnimatedModel;
 import piengine.object.animatedmodel.shader.AnimatedModelShader;
 import piengine.visual.render.domain.config.RenderConfig;
@@ -7,30 +8,23 @@ import piengine.visual.render.domain.config.RenderConfigBuilder;
 import piengine.visual.render.domain.fragment.domain.RenderWorldPlanContext;
 import piengine.visual.render.interpreter.RenderInterpreter;
 import piengine.visual.render.service.AbstractRenderService;
-import piengine.visual.shader.domain.ShaderKey;
-import piengine.visual.shader.service.ShaderService;
-import piengine.visual.texture.service.TextureService;
 import puppeteer.annotation.premade.Component;
 import puppeteer.annotation.premade.Wire;
 
+import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
 import static piengine.visual.render.domain.config.ProvokingVertex.FIRST_VERTEX_CONVENTION;
 
 @Component
 public class AnimatedModelRenderService extends AbstractRenderService<AnimatedModelShader, RenderWorldPlanContext> {
 
-    private final TextureService textureService;
-
     @Wire
-    public AnimatedModelRenderService(final ShaderService shaderService, final RenderInterpreter renderInterpreter,
-                                      final TextureService textureService) {
-        super(shaderService, renderInterpreter);
-
-        this.textureService = textureService;
+    public AnimatedModelRenderService(final RenderInterpreter renderInterpreter, final GlslLoader glslLoader) {
+        super(renderInterpreter, glslLoader);
     }
 
     @Override
-    protected AnimatedModelShader createShader(final ShaderService shaderService) {
-        return shaderService.supply(new ShaderKey("animatedModelShader")).castTo(AnimatedModelShader.class);
+    protected AnimatedModelShader createShader() {
+        return createShader("animatedModelShader", AnimatedModelShader.class);
     }
 
     @Override
@@ -50,8 +44,8 @@ public class AnimatedModelRenderService extends AbstractRenderService<AnimatedMo
                     .loadModelMatrix(animatedModel.getTransformation())
                     .loadLightEmitter(false);
 
-            textureService.bind(animatedModel.texture);
-            draw(animatedModel.getDao());
+            animatedModel.texture.bind(GL_TEXTURE0);
+            draw(animatedModel.vao);
         }
     }
 

@@ -1,7 +1,7 @@
 package piengine.core.base.type.property;
 
 import piengine.core.base.exception.PIEngineException;
-import piengine.core.base.resource.ResourceLoader;
+import piengine.io.loader.ResourceLoader;
 
 import java.io.IOException;
 import java.io.InputStream;

@@ -1,25 +1,82 @@
 package piengine.object.skybox.service;
 
-import piengine.core.base.resource.SupplierService;
-import piengine.object.skybox.accessor.SkyboxAccessor;
+import piengine.core.architecture.service.SupplierService;
+import piengine.core.base.api.Initializable;
+import piengine.io.interpreter.vertexarray.VertexArray;
 import piengine.object.skybox.domain.Skybox;
-import piengine.object.skybox.domain.SkyboxDao;
-import piengine.object.skybox.domain.SkyboxData;
-import piengine.object.skybox.domain.SkyboxKey;
-import piengine.object.skybox.interpreter.SkyboxInterpreter;
+import piengine.visual.texture.cubeimage.domain.CubeImage;
 import puppeteer.annotation.premade.Component;
-import puppeteer.annotation.premade.Wire;
+
+import static piengine.io.interpreter.vertexarray.VertexAttribute.VERTEX;
 
 @Component
-public class SkyboxService extends SupplierService<SkyboxKey, SkyboxData, SkyboxDao, Skybox> {
+public class SkyboxService extends SupplierService<CubeImage, Skybox> implements Initializable {
 
-    @Wire
-    public SkyboxService(final SkyboxAccessor skyboxAccessor, final SkyboxInterpreter skyboxInterpreter) {
-        super(skyboxAccessor, skyboxInterpreter);
+    private static final float[] VERTICES = {
+            -1f, 1f, -1f,
+            -1f, -1f, -1f,
+            1f, -1f, -1f,
+            1f, -1f, -1f,
+            1f, 1f, -1f,
+            -1f, 1f, -1f,
+
+            -1f, -1f, 1f,
+            -1f, -1f, -1f,
+            -1f, 1f, -1f,
+            -1f, 1f, -1f,
+            -1f, 1f, 1f,
+            -1f, -1f, 1f,
+
+            1f, -1f, -1f,
+            1f, -1f, 1f,
+            1f, 1f, 1f,
+            1f, 1f, 1f,
+            1f, 1f, -1f,
+            1f, -1f, -1f,
+
+            -1f, -1f, 1f,
+            -1f, 1f, 1f,
+            1f, 1f, 1f,
+            1f, 1f, 1f,
+            1f, -1f, 1f,
+            -1f, -1f, 1f,
+
+            -1f, 1f, -1f,
+            1f, 1f, -1f,
+            1f, 1f, 1f,
+            1f, 1f, 1f,
+            -1f, 1f, 1f,
+            -1f, 1f, -1f,
+
+            -1f, -1f, -1f,
+            -1f, -1f, 1f,
+            1f, -1f, -1f,
+            1f, -1f, -1f,
+            -1f, -1f, 1f,
+            1f, -1f, 1f
+    };
+
+    private VertexArray skyboxVertexArray;
+
+    @Override
+    public void initialize() {
+        skyboxVertexArray = createVertexArray();
     }
 
     @Override
-    protected Skybox createDomain(final SkyboxDao dao, final SkyboxData resource) {
-        return new Skybox(dao, resource.cubeMap);
+    public Skybox supply(final CubeImage key) {
+        return new Skybox(key, skyboxVertexArray);
+    }
+
+    @Override
+    public void terminate() {
+        skyboxVertexArray.clear();
+    }
+
+    private VertexArray createVertexArray() {
+        return new VertexArray(VERTICES.length / 3)
+                .bind()
+                .attachVertexBuffer(VERTEX, VERTICES, 3)
+                .unbind();
     }
 }

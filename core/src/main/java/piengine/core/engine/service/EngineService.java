@@ -74,7 +74,9 @@ public class EngineService {
     }
 
     private void terminate() {
-        terminatableServices.forEach(Terminatable::terminate);
+        for (Terminatable terminatableService : terminatableServices) {
+            terminatableService.terminate();
+        }
     }
 
     @SuppressWarnings("unchecked")

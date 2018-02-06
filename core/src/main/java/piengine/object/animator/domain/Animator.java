@@ -1,11 +1,11 @@
 package piengine.object.animator.domain;
 
 import org.joml.Matrix4f;
+import piengine.io.loader.dae.domain.Joint;
+import piengine.io.loader.dae.domain.JointTransform;
+import piengine.io.loader.dae.domain.KeyFrame;
 import piengine.object.animatedmodel.domain.AnimatedModel;
-import piengine.object.animatedmodel.domain.Joint;
 import piengine.object.animation.domain.Animation;
-import piengine.object.animation.domain.JointTransform;
-import piengine.object.animation.domain.KeyFrame;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -37,8 +37,8 @@ public class Animator {
 
     private void increaseAnimationTime(final float delta) {
         animationTime += delta;
-        if (animationTime > currentAnimation.getLength()) {
-            this.animationTime %= currentAnimation.getLength();
+        if (animationTime > currentAnimation.length) {
+            this.animationTime %= currentAnimation.length;
         }
     }
 
@@ -59,7 +59,7 @@ public class Animator {
     }
 
     private KeyFrame[] getPreviousAndNextFrames() {
-        KeyFrame[] allFrames = currentAnimation.getKeyFrames();
+        KeyFrame[] allFrames = currentAnimation.keyFrames;
         KeyFrame previousFrame = allFrames[0];
         KeyFrame nextFrame = allFrames[0];
         for (int i = 1; i < allFrames.length; i++) {

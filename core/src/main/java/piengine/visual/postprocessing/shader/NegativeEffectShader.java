@@ -1,11 +1,11 @@
 package piengine.visual.postprocessing.shader;
 
-import piengine.visual.shader.domain.Shader;
-import piengine.visual.shader.domain.ShaderDao;
+import piengine.io.interpreter.shader.Shader;
+import piengine.io.loader.glsl.domain.GlslDto;
 
 public class NegativeEffectShader extends Shader {
 
-    public NegativeEffectShader(final ShaderDao dao) {
-        super(dao);
+    public NegativeEffectShader(final GlslDto glsl) {
+        super(glsl);
     }
 }

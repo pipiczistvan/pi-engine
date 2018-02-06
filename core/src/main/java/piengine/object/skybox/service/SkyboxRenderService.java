@@ -1,14 +1,13 @@
 package piengine.object.skybox.service;
 
+import org.lwjgl.opengl.GL13;
+import piengine.io.loader.glsl.loader.GlslLoader;
 import piengine.object.skybox.shader.SkyboxShader;
 import piengine.visual.render.domain.config.RenderConfig;
 import piengine.visual.render.domain.config.RenderConfigBuilder;
 import piengine.visual.render.domain.fragment.domain.RenderWorldPlanContext;
 import piengine.visual.render.interpreter.RenderInterpreter;
 import piengine.visual.render.service.AbstractRenderService;
-import piengine.visual.shader.domain.ShaderKey;
-import piengine.visual.shader.service.ShaderService;
-import piengine.visual.texture.service.TextureService;
 import puppeteer.annotation.premade.Component;
 import puppeteer.annotation.premade.Wire;
 
@@ -17,19 +16,14 @@ import static piengine.visual.render.domain.config.RenderFunction.DRAW_ARRAYS;
 @Component
 public class SkyboxRenderService extends AbstractRenderService<SkyboxShader, RenderWorldPlanContext> {
 
-    private final TextureService textureService;
-
     @Wire
-    public SkyboxRenderService(final ShaderService shaderService, final RenderInterpreter renderInterpreter,
-                               final TextureService textureService) {
-        super(shaderService, renderInterpreter);
-
-        this.textureService = textureService;
+    public SkyboxRenderService(final RenderInterpreter renderInterpreter, final GlslLoader glslLoader) {
+        super(renderInterpreter, glslLoader);
     }
 
     @Override
-    protected SkyboxShader createShader(final ShaderService shaderService) {
-        return shaderService.supply(new ShaderKey("skyboxShader")).castTo(SkyboxShader.class);
+    protected SkyboxShader createShader() {
+        return createShader("skyboxShader", SkyboxShader.class);
     }
 
     @Override
@@ -47,8 +41,8 @@ public class SkyboxRenderService extends AbstractRenderService<SkyboxShader, Ren
                 .loadViewMatrix(context.skybox.getView(context.currentCamera))
                 .loadFog(context.fog);
 
-        textureService.bindCubeMap(context.skybox.cubeMap);
-        draw(context.skybox.getDao());
+        context.skybox.getCubeImage().bind(GL13.GL_TEXTURE0);
+        draw(context.skybox.getVao());
     }
 
     @Override

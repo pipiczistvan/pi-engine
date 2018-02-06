@@ -18,4 +18,10 @@ public class BlurEffectContext extends PostProcessingEffectContext {
     public EffectType getEffectType() {
         return BLUR_EFFECT;
     }
+
+    @Override
+    public void clear() {
+        horizontalBlurEffectContext.clear();
+        verticalBlurEffectContext.clear();
+    }
 }

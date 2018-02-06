@@ -34,13 +34,13 @@ public class FpsAsset extends GuiAsset<FpsAssetArgument> {
     @Override
     public void initialize() {
         font = fontManager.supply("candara", arguments.viewport);
-        fpsText = textManager.supply(TextConfiguration.textConfig().withFont(font), this);
+        fpsText = textManager.supply(TextConfiguration.textConfig(this).withFont(font));
         fpsText.setPosition(0.85f, 0.85f, 0);
     }
 
     @Override
     public void update(final float delta) {
-        textManager.update(fpsText, TextConfiguration.textConfig().withFont(font).withFontSize(2).withText("FPS: " + timeManager.getFPS()));
+        textManager.update(fpsText, TextConfiguration.textConfig(this).withFont(font).withFontSize(2).withText("FPS: " + timeManager.getFPS()));
     }
 
     @Override

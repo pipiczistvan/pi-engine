@@ -2,7 +2,6 @@ package piengine.visual.render.interpreter;
 
 import org.joml.Vector2i;
 import piengine.core.base.type.color.Color;
-import piengine.object.mesh.domain.MeshDataType;
 import piengine.visual.render.domain.config.ProvokingVertex;
 import puppeteer.annotation.premade.Component;
 
@@ -29,10 +28,7 @@ import static org.lwjgl.opengl.GL11.glDrawElements;
 import static org.lwjgl.opengl.GL11.glEnable;
 import static org.lwjgl.opengl.GL11.glPolygonMode;
 import static org.lwjgl.opengl.GL11.glViewport;
-import static org.lwjgl.opengl.GL20.glDisableVertexAttribArray;
-import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
 import static org.lwjgl.opengl.GL30.GL_CLIP_DISTANCE0;
-import static org.lwjgl.opengl.GL30.glBindVertexArray;
 import static org.lwjgl.opengl.GL32.glProvokingVertex;
 
 @Component
@@ -52,26 +48,6 @@ public class RenderInterpreter {
 
     public void setProvokingVertex(final ProvokingVertex provokingVertex) {
         glProvokingVertex(provokingVertex.value);
-    }
-
-    public void bindVertexArray(final int id) {
-        glBindVertexArray(id);
-    }
-
-    public void unbindVertexArray() {
-        bindVertexArray(0);
-    }
-
-    public void enableVertexAttribArray(MeshDataType... types) {
-        for (MeshDataType type : types) {
-            glEnableVertexAttribArray(type.value);
-        }
-    }
-
-    public void disableVertexAttribArray(MeshDataType... types) {
-        for (MeshDataType type : types) {
-            glDisableVertexAttribArray(type.value);
-        }
     }
 
     public void drawArrays(int mode, int count) {

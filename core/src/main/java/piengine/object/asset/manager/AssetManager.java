@@ -1,10 +1,10 @@
 package piengine.object.asset.manager;
 
+import piengine.core.base.domain.Entity;
 import piengine.object.asset.domain.Asset;
 import piengine.object.asset.domain.AssetArgument;
 import piengine.object.asset.plan.RenderAssetContext;
 import piengine.object.asset.service.AssetService;
-import piengine.object.entity.domain.Entity;
 import puppeteer.annotation.premade.Component;
 import puppeteer.annotation.premade.Wire;
 

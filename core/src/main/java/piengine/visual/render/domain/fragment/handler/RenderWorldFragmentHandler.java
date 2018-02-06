@@ -8,7 +8,6 @@ import piengine.object.skybox.service.SkyboxRenderService;
 import piengine.object.terrain.service.TerrainRenderService;
 import piengine.object.water.domain.Water;
 import piengine.object.water.service.WaterRenderService;
-import piengine.visual.framebuffer.service.FramebufferService;
 import piengine.visual.lighting.directional.light.domain.DirectionalLight;
 import piengine.visual.lighting.directional.shadow.domain.DirectionalShadow;
 import piengine.visual.lighting.directional.shadow.service.DirectionalShadowRenderService;
@@ -31,7 +30,6 @@ public class RenderWorldFragmentHandler implements FragmentHandler<RenderWorldPl
     private final WaterRenderService waterRenderService;
     private final DirectionalShadowRenderService directionalShadowRenderService;
     private final SkyboxRenderService skyboxRenderService;
-    private final FramebufferService framebufferService;
     private final ClearScreenRenderService clearScreenRenderService;
     private final PointShadowRenderService pointShadowRenderService;
     private final AnimatedModelRenderService animatedModelRenderService;
@@ -40,15 +38,14 @@ public class RenderWorldFragmentHandler implements FragmentHandler<RenderWorldPl
     @Wire
     public RenderWorldFragmentHandler(final ModelRenderService modelRenderService, final TerrainRenderService terrainRenderService,
                                       final WaterRenderService waterRenderService, final DirectionalShadowRenderService directionalShadowRenderService,
-                                      final SkyboxRenderService skyboxRenderService, final FramebufferService framebufferService,
-                                      final ClearScreenRenderService clearScreenRenderService, final PointShadowRenderService pointShadowRenderService,
-                                      final AnimatedModelRenderService animatedModelRenderService, final ParticleSystemRenderService particleSystemRenderService) {
+                                      final SkyboxRenderService skyboxRenderService, final ClearScreenRenderService clearScreenRenderService,
+                                      final PointShadowRenderService pointShadowRenderService, final AnimatedModelRenderService animatedModelRenderService,
+                                      final ParticleSystemRenderService particleSystemRenderService) {
         this.modelRenderService = modelRenderService;
         this.terrainRenderService = terrainRenderService;
         this.waterRenderService = waterRenderService;
         this.directionalShadowRenderService = directionalShadowRenderService;
         this.skyboxRenderService = skyboxRenderService;
-        this.framebufferService = framebufferService;
         this.clearScreenRenderService = clearScreenRenderService;
         this.pointShadowRenderService = pointShadowRenderService;
         this.animatedModelRenderService = animatedModelRenderService;
@@ -57,10 +54,10 @@ public class RenderWorldFragmentHandler implements FragmentHandler<RenderWorldPl
 
     @Override
     public void handle(final RenderWorldPlanContext context) {
-        renderToDirectionalShadow(context);
-        renderToPointShadow(context);
-        renderToWater(context);
-        renderToWorld(context);
+//        renderToDirectionalShadow(context);
+//        renderToPointShadow(context);
+//        renderToWater(context);
+//        renderToWorld(context);
     }
 
     @Override
@@ -72,15 +69,15 @@ public class RenderWorldFragmentHandler implements FragmentHandler<RenderWorldPl
         for (DirectionalLight light : context.directionalLights) {
             DirectionalShadow shadow = light.getShadow();
             if (shadow != null) {
-                framebufferService.bind(shadow.getShadowMap());
+                shadow.getShadowMap().bind();
                 {
                     context.currentCamera = shadow.getLightCamera();
                     context.clippingPlane.set(0, 0, 0, 0);
-                    context.viewport.set(shadow.getShadowMap().getSize());
+                    context.viewport.set(shadow.getShadowMap().width, shadow.getShadowMap().height);
                     clearScreenRenderService.clearScreen(ColorUtils.BLACK);
                     directionalShadowRenderService.process(context);
                 }
-                framebufferService.unbind();
+                shadow.getShadowMap().unbind();
             }
         }
     }
@@ -90,14 +87,14 @@ public class RenderWorldFragmentHandler implements FragmentHandler<RenderWorldPl
             PointShadow shadow = light.getShadow();
             if (shadow != null) {
                 context.currentPointShadow = shadow;
-                framebufferService.bind(context.currentPointShadow.getShadowMap());
+                context.currentPointShadow.getShadowMap().bind();
                 {
                     context.clippingPlane.set(0, 0, 0, 0);
-                    context.viewport.set(context.currentPointShadow.getShadowMap().getSize());
+                    context.viewport.set(context.currentPointShadow.getShadowMap().width, context.currentPointShadow.getShadowMap().height);
                     clearScreenRenderService.clearScreen(ColorUtils.BLACK);
                     pointShadowRenderService.process(context);
                 }
-                framebufferService.unbind();
+                context.currentPointShadow.getShadowMap().unbind();
             }
         }
     }
@@ -111,12 +108,12 @@ public class RenderWorldFragmentHandler implements FragmentHandler<RenderWorldPl
             float waterHeight = water.position.y;
             float distance = 2 * (cameraHeight - waterHeight);
 
-            framebufferService.bind(water.reflectionBuffer);
+            water.reflectionBuffer.bind();
             {
                 context.currentCamera.translateRotate(0, -distance, 0, 0, -cameraPitch * 2, 0);
 
                 context.clippingPlane.set(0, 1, 0, -waterHeight + 0.1f);
-                context.viewport.set(water.reflectionBuffer.getSize());
+                context.viewport.set(water.reflectionBuffer.width, water.reflectionBuffer.height);
                 clearScreenRenderService.clearScreen(ColorUtils.BLACK);
                 terrainRenderService.process(context);
                 modelRenderService.process(context);
@@ -125,19 +122,19 @@ public class RenderWorldFragmentHandler implements FragmentHandler<RenderWorldPl
 
                 context.currentCamera.translateRotate(0, distance, 0, 0, cameraPitch * 2, 0);
             }
-            framebufferService.unbind();
+            water.reflectionBuffer.unbind();
 
-            framebufferService.bind(water.refractionBuffer);
+            water.refractionBuffer.bind();
             {
                 context.clippingPlane.set(0, -1, 0, waterHeight + 1);
-                context.viewport.set(water.refractionBuffer.getSize());
+                context.viewport.set(water.refractionBuffer.width, water.refractionBuffer.height);
                 clearScreenRenderService.clearScreen(ColorUtils.BLACK);
                 terrainRenderService.process(context);
                 modelRenderService.process(context);
                 animatedModelRenderService.process(context);
                 skyboxRenderService.process(context);
             }
-            framebufferService.unbind();
+            water.refractionBuffer.unbind();
         }
     }
 

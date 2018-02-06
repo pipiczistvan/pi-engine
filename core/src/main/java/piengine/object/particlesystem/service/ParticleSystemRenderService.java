@@ -3,49 +3,42 @@ package piengine.object.particlesystem.service;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.lwjgl.BufferUtils;
+import org.lwjgl.opengl.GL13;
+import piengine.core.base.domain.Entity;
+import piengine.io.loader.glsl.loader.GlslLoader;
 import piengine.object.camera.domain.Camera;
-import piengine.object.entity.domain.Entity;
 import piengine.object.particlesystem.domain.Particle;
 import piengine.object.particlesystem.domain.ParticleSystem;
-import piengine.object.particlesystem.interpreter.ParticleSystemInterpreter;
 import piengine.object.particlesystem.shader.ParticleSystemShader;
 import piengine.visual.render.domain.config.RenderConfig;
 import piengine.visual.render.domain.config.RenderConfigBuilder;
 import piengine.visual.render.domain.fragment.domain.RenderWorldPlanContext;
 import piengine.visual.render.interpreter.RenderInterpreter;
 import piengine.visual.render.service.AbstractRenderService;
-import piengine.visual.shader.domain.ShaderKey;
-import piengine.visual.shader.service.ShaderService;
-import piengine.visual.texture.service.TextureService;
 import puppeteer.annotation.premade.Component;
 import puppeteer.annotation.premade.Wire;
 
 import java.nio.FloatBuffer;
 
-import static piengine.object.particlesystem.interpreter.ParticleSystemInterpreter.INSTANCE_DATA_LENGTH;
-import static piengine.object.particlesystem.interpreter.ParticleSystemInterpreter.MAX_INSTANCES;
+import static piengine.io.interpreter.vertexarray.VertexAttribute.EMPTY;
+import static piengine.object.particlesystem.service.ParticleSystemService.INSTANCE_DATA_LENGTH;
+import static piengine.object.particlesystem.service.ParticleSystemService.MAX_INSTANCES;
 
 @Component
 public class ParticleSystemRenderService extends AbstractRenderService<ParticleSystemShader, RenderWorldPlanContext> {
 
     private static final FloatBuffer buffer = BufferUtils.createFloatBuffer(MAX_INSTANCES * INSTANCE_DATA_LENGTH);
 
-    private final ParticleSystemInterpreter particleSystemInterpreter;
-    private final TextureService textureService;
-
     private int pointer = 0;
 
     @Wire
-    public ParticleSystemRenderService(final ShaderService shaderService, final RenderInterpreter renderInterpreter,
-                                       final TextureService textureService, final ParticleSystemInterpreter particleSystemInterpreter) {
-        super(shaderService, renderInterpreter);
-        this.textureService = textureService;
-        this.particleSystemInterpreter = particleSystemInterpreter;
+    public ParticleSystemRenderService(final RenderInterpreter renderInterpreter, final GlslLoader glslLoader) {
+        super(renderInterpreter, glslLoader);
     }
 
     @Override
-    protected ParticleSystemShader createShader(final ShaderService shaderService) {
-        return shaderService.supply(new ShaderKey("particleSystemShader")).castTo(ParticleSystemShader.class);
+    protected ParticleSystemShader createShader() {
+        return createShader("particleSystemShader", ParticleSystemShader.class);
     }
 
     @Override
@@ -53,19 +46,17 @@ public class ParticleSystemRenderService extends AbstractRenderService<ParticleS
         shader.loadProjectionMatrix(context.currentCamera.getProjection());
 
         for (ParticleSystem particleSystem : context.particleSystems) {
-            shader.loadNumberOfRows(particleSystem.sprite.getNumberOfRows());
-            textureService.bind(particleSystem.sprite);
+            shader.loadNumberOfRows(particleSystem.getSprite().numberOfRows);
+            particleSystem.getSprite().bind(GL13.GL_TEXTURE0);
 
             pointer = 0;
-            float[] vboData = new float[particleSystem.particles.size() * INSTANCE_DATA_LENGTH];
-            for (Particle particle : particleSystem.particles) {
+            float[] vboData = new float[particleSystem.getParticles().size() * INSTANCE_DATA_LENGTH];
+            for (Particle particle : particleSystem.getParticles()) {
                 updateModelView(particle, context.currentCamera, vboData);
                 updateTextureInfo(particle, vboData);
-
-//                draw(particleSystem.getDao());
             }
-            particleSystemInterpreter.updateVbo(particleSystem.getDao(), vboData, buffer);
-            drawInstanced(particleSystem.getDao(), particleSystem.particles.size());
+            particleSystem.getVao().vertexBuffers.get(EMPTY).update(vboData, buffer);
+            drawInstanced(particleSystem.getVao(), particleSystem.getParticles().size());
         }
     }
 

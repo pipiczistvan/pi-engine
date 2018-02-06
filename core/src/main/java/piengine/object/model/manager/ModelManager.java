@@ -1,31 +1,33 @@
 package piengine.object.model.manager;
 
+import piengine.core.architecture.manager.SupplierManager;
+import piengine.core.base.domain.Entity;
 import piengine.core.base.type.color.Color;
 import piengine.core.utils.ColorUtils;
-import piengine.object.entity.domain.Entity;
+import piengine.io.interpreter.texture.Texture;
 import piengine.object.model.domain.Model;
 import piengine.object.model.domain.ModelKey;
 import piengine.object.model.service.ModelService;
-import piengine.visual.image.domain.Image;
-import piengine.visual.image.manager.ImageManager;
-import piengine.visual.texture.domain.Texture;
+import piengine.visual.texture.image.domain.Image;
+import piengine.visual.texture.image.manager.ImageManager;
 import puppeteer.annotation.premade.Component;
+import puppeteer.annotation.premade.Unique;
 import puppeteer.annotation.premade.Wire;
 
+@Unique
 @Component
-public class ModelManager {
+public class ModelManager extends SupplierManager<ModelKey, Model> {
 
-    private final ModelService modelService;
     private final ImageManager imageManager;
 
     @Wire
     public ModelManager(final ModelService modelService, final ImageManager imageManager) {
-        this.modelService = modelService;
+        super(modelService);
         this.imageManager = imageManager;
     }
 
     public Model supply(final Entity parent, final String meshFile, final Texture texture, final Color color, final boolean lightEmitter) {
-        return modelService.supply(new ModelKey(parent, meshFile, texture, color, lightEmitter));
+        return supply(new ModelKey(parent, meshFile, texture, color, lightEmitter));
     }
 
     public Model supply(final Entity parent, final String meshFile, final Texture texture, final boolean lightEmitter) {

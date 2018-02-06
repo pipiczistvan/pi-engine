@@ -3,7 +3,7 @@ package piengine.object.camera.domain;
 import org.joml.Matrix4f;
 import org.joml.Vector2i;
 import org.joml.Vector3f;
-import piengine.object.entity.domain.Entity;
+import piengine.core.base.domain.Entity;
 
 import static piengine.core.utils.MatrixUtils.VIEW_MATRIX;
 
