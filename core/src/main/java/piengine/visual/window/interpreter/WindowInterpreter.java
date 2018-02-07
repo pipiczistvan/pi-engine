@@ -41,7 +41,6 @@ import static org.lwjgl.glfw.GLFW.glfwGetPrimaryMonitor;
 import static org.lwjgl.glfw.GLFW.glfwGetVideoMode;
 import static org.lwjgl.glfw.GLFW.glfwGetWindowPos;
 import static org.lwjgl.glfw.GLFW.glfwGetWindowSize;
-import static org.lwjgl.glfw.GLFW.glfwIconifyWindow;
 import static org.lwjgl.glfw.GLFW.glfwInit;
 import static org.lwjgl.glfw.GLFW.glfwMakeContextCurrent;
 import static org.lwjgl.glfw.GLFW.glfwPollEvents;
@@ -114,7 +113,9 @@ public class WindowInterpreter {
         this.windowSizeCallback = new GLFWWindowSizeCallback() {
             @Override
             public void invoke(long window, int width, int height) {
-                resized = true;
+                if (width != 0 && height != 0) {
+                    resized = true;
+                }
             }
         };
         this.oldWindowSize = new Vector2i();
@@ -218,7 +219,6 @@ public class WindowInterpreter {
                 (vidMode.height() - windowSize.y) / 2
         );
         glfwSetWindowSizeLimits(windowId, get(WINDOW_MIN_WIDTH), get(WINDOW_MIN_HEIGHT), GLFW_DONT_CARE, GLFW_DONT_CARE);
-        glfwIconifyWindow(windowId);
 
         glfwSetCursor(windowId, cursorId);
 
