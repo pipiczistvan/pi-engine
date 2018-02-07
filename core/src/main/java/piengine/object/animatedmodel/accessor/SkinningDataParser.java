@@ -6,7 +6,6 @@ import piengine.core.xml.collada.domain.controller.Controller;
 import piengine.core.xml.collada.domain.controller.Skin;
 import piengine.object.animatedmodel.domain.SkinningData;
 import piengine.object.animatedmodel.domain.VertexSkinData;
-import puppeteer.annotation.premade.Component;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -15,7 +14,6 @@ import java.util.List;
 import static piengine.core.xml.collada.domain.common.Input.findInputBySemantic;
 import static piengine.core.xml.collada.domain.common.Source.findSourceById;
 
-@Component
 public class SkinningDataParser {
 
     public SkinningData parse(final Controller controller, final int maxWeights) {

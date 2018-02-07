@@ -12,7 +12,6 @@ import piengine.core.xml.collada.domain.geometry.Polylist;
 import piengine.object.animatedmodel.domain.GeometryData;
 import piengine.object.animatedmodel.domain.Vertex;
 import piengine.object.animatedmodel.domain.VertexSkinData;
-import puppeteer.annotation.premade.Component;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +19,6 @@ import java.util.List;
 import static piengine.core.xml.collada.domain.common.Input.findInputBySemantic;
 import static piengine.core.xml.collada.domain.common.Source.findSourceById;
 
-@Component
 public class GeometryDataParser {
 
     private static final Matrix4f CORRECTION = new Matrix4f().rotate((float) Math.toRadians(-90), new Vector3f(1, 0, 0));

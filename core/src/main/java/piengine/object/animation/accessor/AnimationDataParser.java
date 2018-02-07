@@ -11,14 +11,12 @@ import piengine.core.xml.collada.domain.visualscene.VisualScene;
 import piengine.object.animation.domain.AnimationData;
 import piengine.object.animation.domain.JointTransformData;
 import piengine.object.animation.domain.KeyFrameData;
-import puppeteer.annotation.premade.Component;
 
 import java.nio.FloatBuffer;
 
 import static piengine.core.xml.collada.domain.common.Input.findInputBySemantic;
 import static piengine.core.xml.collada.domain.common.Source.findSourceById;
 
-@Component
 public class AnimationDataParser {
 
     private static final Matrix4f CORRECTION = new Matrix4f().rotate((float) Math.toRadians(-90), new Vector3f(1, 0, 0));

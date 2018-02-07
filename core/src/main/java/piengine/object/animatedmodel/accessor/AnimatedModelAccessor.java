@@ -20,12 +20,11 @@ public class AnimatedModelAccessor extends Accessor<AnimatedModelKey, AnimatedMo
     private final GeometryDataParser geometryDataParser;
 
     @Wire
-    public AnimatedModelAccessor(final ColladaParser colladaParser, final SkinningDataParser skinningDataParser,
-                                 final SkeletonDataParser skeletonDataParser, final GeometryDataParser geometryDataParser) {
+    public AnimatedModelAccessor(final ColladaParser colladaParser) {
         this.colladaParser = colladaParser;
-        this.skinningDataParser = skinningDataParser;
-        this.skeletonDataParser = skeletonDataParser;
-        this.geometryDataParser = geometryDataParser;
+        this.skinningDataParser = new SkinningDataParser();
+        this.skeletonDataParser = new SkeletonDataParser();
+        this.geometryDataParser = new GeometryDataParser();
     }
 
     @Override

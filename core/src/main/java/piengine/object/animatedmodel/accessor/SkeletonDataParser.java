@@ -6,13 +6,11 @@ import piengine.core.xml.collada.domain.common.Node;
 import piengine.core.xml.collada.domain.visualscene.VisualScene;
 import piengine.object.animatedmodel.domain.JointData;
 import piengine.object.animatedmodel.domain.SkeletonData;
-import puppeteer.annotation.premade.Component;
 
 import java.util.List;
 
 import static piengine.core.xml.collada.domain.common.Node.findNodeById;
 
-@Component
 public class SkeletonDataParser {
 
     private static final Matrix4f CORRECTION = new Matrix4f().rotate((float) Math.toRadians(-90), new Vector3f(1, 0, 0));

@@ -15,9 +15,9 @@ public class AnimationAccessor extends Accessor<AnimationKey, AnimationData> {
     private final AnimationDataParser animationDataParser;
 
     @Wire
-    public AnimationAccessor(final ColladaParser colladaParser, final AnimationDataParser animationDataParser) {
+    public AnimationAccessor(final ColladaParser colladaParser) {
         this.colladaParser = colladaParser;
-        this.animationDataParser = animationDataParser;
+        this.animationDataParser = new AnimationDataParser();
     }
 
     @Override
