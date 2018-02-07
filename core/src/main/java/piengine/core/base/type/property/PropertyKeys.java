@@ -8,6 +8,8 @@ public class PropertyKeys {
     static final Set<String> KEYS = new HashSet<>();
 
     public static final StringProperty WINDOW_TITLE = new StringProperty("window.title");
+    public static final IntegerProperty WINDOW_MIN_WIDTH = new IntegerProperty("window.min.width");
+    public static final IntegerProperty WINDOW_MIN_HEIGHT = new IntegerProperty("window.min.height");
     public static final IntegerProperty WINDOW_WIDTH = new IntegerProperty("window.width");
     public static final IntegerProperty WINDOW_HEIGHT = new IntegerProperty("window.height");
     public static final BooleanProperty WINDOW_FULL_SCREEN = new BooleanProperty("window.full.screen");

@@ -22,6 +22,7 @@ import static org.lwjgl.glfw.GLFW.GLFW_CONTEXT_VERSION_MINOR;
 import static org.lwjgl.glfw.GLFW.GLFW_CURSOR;
 import static org.lwjgl.glfw.GLFW.GLFW_CURSOR_HIDDEN;
 import static org.lwjgl.glfw.GLFW.GLFW_CURSOR_NORMAL;
+import static org.lwjgl.glfw.GLFW.GLFW_DONT_CARE;
 import static org.lwjgl.glfw.GLFW.GLFW_FALSE;
 import static org.lwjgl.glfw.GLFW.GLFW_HAND_CURSOR;
 import static org.lwjgl.glfw.GLFW.GLFW_OPENGL_CORE_PROFILE;
@@ -40,6 +41,7 @@ import static org.lwjgl.glfw.GLFW.glfwGetPrimaryMonitor;
 import static org.lwjgl.glfw.GLFW.glfwGetVideoMode;
 import static org.lwjgl.glfw.GLFW.glfwGetWindowPos;
 import static org.lwjgl.glfw.GLFW.glfwGetWindowSize;
+import static org.lwjgl.glfw.GLFW.glfwIconifyWindow;
 import static org.lwjgl.glfw.GLFW.glfwInit;
 import static org.lwjgl.glfw.GLFW.glfwMakeContextCurrent;
 import static org.lwjgl.glfw.GLFW.glfwPollEvents;
@@ -53,6 +55,7 @@ import static org.lwjgl.glfw.GLFW.glfwSetMouseButtonCallback;
 import static org.lwjgl.glfw.GLFW.glfwSetWindowPos;
 import static org.lwjgl.glfw.GLFW.glfwSetWindowShouldClose;
 import static org.lwjgl.glfw.GLFW.glfwSetWindowSizeCallback;
+import static org.lwjgl.glfw.GLFW.glfwSetWindowSizeLimits;
 import static org.lwjgl.glfw.GLFW.glfwShowWindow;
 import static org.lwjgl.glfw.GLFW.glfwSwapBuffers;
 import static org.lwjgl.glfw.GLFW.glfwSwapInterval;
@@ -61,6 +64,17 @@ import static org.lwjgl.glfw.GLFW.glfwWindowHint;
 import static org.lwjgl.glfw.GLFW.glfwWindowShouldClose;
 import static org.lwjgl.opengl.GL.createCapabilities;
 import static org.lwjgl.system.MemoryUtil.NULL;
+import static piengine.core.base.type.property.ApplicationProperties.get;
+import static piengine.core.base.type.property.PropertyKeys.WINDOW_CURSOR_HIDDEN;
+import static piengine.core.base.type.property.PropertyKeys.WINDOW_FULL_SCREEN;
+import static piengine.core.base.type.property.PropertyKeys.WINDOW_HEIGHT;
+import static piengine.core.base.type.property.PropertyKeys.WINDOW_MAJOR_VERSION;
+import static piengine.core.base.type.property.PropertyKeys.WINDOW_MINOR_VERSION;
+import static piengine.core.base.type.property.PropertyKeys.WINDOW_MIN_HEIGHT;
+import static piengine.core.base.type.property.PropertyKeys.WINDOW_MIN_WIDTH;
+import static piengine.core.base.type.property.PropertyKeys.WINDOW_RESIZABLE;
+import static piengine.core.base.type.property.PropertyKeys.WINDOW_TITLE;
+import static piengine.core.base.type.property.PropertyKeys.WINDOW_WIDTH;
 import static piengine.visual.window.domain.WindowEventType.CLOSE;
 import static piengine.visual.window.domain.WindowEventType.INITIALIZE;
 import static piengine.visual.window.domain.WindowEventType.RESIZE;
@@ -111,10 +125,10 @@ public class WindowInterpreter {
         this.windowPosition = new Vector2f();
     }
 
-    public void createWindow(String title, int width, int height, boolean fullScreen, boolean resizable, boolean cursorHidden, int major, int minor) {
+    public void createWindow() {
         setupGLFW();
-        setupHints(resizable, major, minor);
-        setupContext(title, width, height, fullScreen, cursorHidden);
+        setupHints();
+        setupContext();
 
         initializeWindow();
         updateWindow();
@@ -179,18 +193,18 @@ public class WindowInterpreter {
         }
     }
 
-    private void setupHints(boolean resizable, int major, int minor) {
+    private void setupHints() {
         glfwDefaultWindowHints();
         glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
-        glfwWindowHint(GLFW_RESIZABLE, resizable ? GLFW_TRUE : GLFW_FALSE);
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, major);
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, minor);
+        glfwWindowHint(GLFW_RESIZABLE, get(WINDOW_RESIZABLE) ? GLFW_TRUE : GLFW_FALSE);
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, get(WINDOW_MAJOR_VERSION));
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, get(WINDOW_MINOR_VERSION));
         glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE);
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     }
 
-    private void setupContext(String title, int width, int height, boolean fullScreen, boolean cursorHidden) {
-        windowId = glfwCreateWindow(width, height, title, fullScreen ? glfwGetPrimaryMonitor() : NULL, NULL);
+    private void setupContext() {
+        windowId = glfwCreateWindow(get(WINDOW_WIDTH), get(WINDOW_HEIGHT), get(WINDOW_TITLE), get(WINDOW_FULL_SCREEN) ? glfwGetPrimaryMonitor() : NULL, NULL);
         if (windowId == NULL) {
             throw new PIEngineException("Failed to create the GLFW window");
         }
@@ -203,10 +217,12 @@ public class WindowInterpreter {
                 (vidMode.width() - windowSize.x) / 2,
                 (vidMode.height() - windowSize.y) / 2
         );
+        glfwSetWindowSizeLimits(windowId, get(WINDOW_MIN_WIDTH), get(WINDOW_MIN_HEIGHT), GLFW_DONT_CARE, GLFW_DONT_CARE);
+        glfwIconifyWindow(windowId);
 
         glfwSetCursor(windowId, cursorId);
 
-        setCursorVisibility(!cursorHidden);
+        setCursorVisibility(!get(WINDOW_CURSOR_HIDDEN));
         glfwMakeContextCurrent(windowId);
         glfwSwapInterval(1);
         glfwShowWindow(windowId);
