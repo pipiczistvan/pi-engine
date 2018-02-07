@@ -40,7 +40,13 @@ public class TextRenderService extends AbstractRenderService<TextShader, RenderG
         shader.start();
         for (Text text : context.texts) {
             shader.loadModelMatrix(text.getTransformation())
-                    .loadColor(text.color);
+                    .loadColor(text.color)
+                    .loadWidth(text.width)
+                    .loadEdge(text.edge)
+                    .loadBorderWidth(text.borderWidth)
+                    .loadBorderEdge(text.borderEdge)
+                    .loadOutlineColor(text.outlineColor)
+                    .loadOffset(text.offset);
             fontService.bind(text.font);
 
             draw(text.getDao());

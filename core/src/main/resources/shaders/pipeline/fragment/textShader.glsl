@@ -6,13 +6,12 @@ out vec4 fColor;
 
 uniform vec4 color;
 uniform sampler2D fontAtlas;
-
-const float width = 0.5;
-const float edge = 0.1;
-const float borderWidth = 0.5;
-const float borderEdge = 0.4;
-const vec3 outlineColor = vec3(0.1, 0.6, 0.7);
-const vec2 offset = vec2(0.0, 0.0);
+uniform float width;
+uniform float edge;
+uniform float borderWidth;
+uniform float borderEdge;
+uniform vec4 outlineColor;
+uniform vec2 offset;
 
 void main(void){
     float distance = 1.0 - texture(fontAtlas, vTextureCoord).a;
@@ -22,7 +21,7 @@ void main(void){
     float outlineAlpha = 1.0 - smoothstep(borderWidth, borderWidth + borderEdge, distance2);
 
     float overallAlpha = alpha + (1.0 - alpha) * outlineAlpha;
-    vec3 overallColor = mix(outlineColor, color.xyz, alpha / overallAlpha) * color.w;
+    vec3 overallColor = mix(outlineColor.rgb, color.xyz, alpha / overallAlpha) * color.w;
 
     fColor = vec4(overallColor, overallAlpha);
 }

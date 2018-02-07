@@ -26,7 +26,10 @@ public class TextService {
         TextData data = textAccessor.access(config);
         TextDao dao = textInterpreter.create(data);
 
-        return new Text(config.getFont(), config.getColor(), parent, dao);
+        return new Text(parent, dao, config.getFont(),
+                config.getColor(), config.getWidth(), config.getEdge(),
+                config.getBorderWidth(), config.getBorderEdge(), config.getOutlineColor(),
+                config.getOffset());
     }
 
     public void update(final Text text, final TextConfiguration config) {
