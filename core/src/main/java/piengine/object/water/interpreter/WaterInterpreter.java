@@ -25,10 +25,10 @@ import static piengine.object.mesh.domain.MeshDataType.INDICATOR;
 import static piengine.object.mesh.domain.MeshDataType.VERTEX;
 
 @Component
-public class WaterInterpreter implements Interpreter<WaterData, WaterDao> {
+public class WaterInterpreter extends Interpreter<WaterData, WaterDao> {
 
     @Override
-    public WaterDao create(final WaterData waterData) {
+    protected WaterDao createDao(final WaterData waterData) {
         final WaterDao dao = new WaterDao(glGenVertexArrays(), new ArrayList<>(), waterData.vertices.length / 2);
         bind(dao);
 
@@ -41,9 +41,21 @@ public class WaterInterpreter implements Interpreter<WaterData, WaterDao> {
     }
 
     @Override
-    public void free(final WaterDao dao) {
+    protected boolean freeDao(final WaterDao dao) {
         glDeleteVertexArrays(dao.vaoId);
         dao.vboIds.forEach(GL15::glDeleteBuffers);
+
+        return true;
+    }
+
+    @Override
+    protected String getCreateInfo(final WaterDao dao, final WaterData resource) {
+        return String.format("Vao id: %s", dao.vaoId);
+    }
+
+    @Override
+    protected String getFreeInfo(final WaterDao dao) {
+        return String.format("Vao id: %s", dao.vaoId);
     }
 
     private void bind(final MeshDao dao) {

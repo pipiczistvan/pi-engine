@@ -1,6 +1,5 @@
 package piengine.visual.shader.accessor;
 
-import org.apache.log4j.Logger;
 import piengine.core.base.api.Accessor;
 import piengine.core.base.exception.PIEngineException;
 import piengine.core.base.resource.ResourceLoader;
@@ -18,13 +17,12 @@ import static piengine.core.base.type.property.ApplicationProperties.get;
 import static piengine.core.base.type.property.PropertyKeys.SHADERS_LOCATION;
 
 @Component
-public class ShaderAccessor implements Accessor<ShaderKey, ShaderData> {
+public class ShaderAccessor extends Accessor<ShaderKey, ShaderData> {
 
     private static final String ROOT = get(SHADERS_LOCATION);
     private static final String SHADER_EXT = "glsl";
     private static Pattern VARIABLE_PATTERN = Pattern.compile("\\$\\{.+}");
     private static Pattern IMPORT_PATTERN = Pattern.compile("#import \".+\";");
-    private final Logger logger = Logger.getLogger(getClass());
 
     private final ResourceLoader loader;
 
@@ -33,16 +31,19 @@ public class ShaderAccessor implements Accessor<ShaderKey, ShaderData> {
     }
 
     @Override
-    public ShaderData access(final ShaderKey key) {
+    protected ShaderData accessResource(final ShaderKey key) {
         final String vertexSource = tryToReadShader("vertex", key.file);
         final String tessControlSource = tryToReadShader("tessellation/control", key.file);
         final String tessEvalSource = tryToReadShader("tessellation/evaluation", key.file);
         final String geometrySource = tryToReadShader("geometry", key.file);
         final String fragmentSource = tryToReadShader("fragment", key.file);
 
-        logger.info(String.format("Successfully loaded shader: %s", key.file));
-
         return new ShaderData(vertexSource, tessControlSource, tessEvalSource, geometrySource, fragmentSource);
+    }
+
+    @Override
+    protected String getAccessInfo(final ShaderKey key, final ShaderData resource) {
+        return String.format("File: %s", key.file);
     }
 
     private String tryToReadShader(final String shaderType, final String shaderName) {

@@ -25,10 +25,10 @@ import static org.lwjgl.opengl.GL13.GL_TEXTURE_CUBE_MAP_POSITIVE_X;
 import static org.lwjgl.opengl.GL13.glActiveTexture;
 
 @Component
-public class CubeMapInterpreter implements Interpreter<CubeMapData, CubeMapDao> {
+public class CubeMapInterpreter extends Interpreter<CubeMapData, CubeMapDao> {
 
     @Override
-    public CubeMapDao create(final CubeMapData cubeMapData) {
+    protected CubeMapDao createDao(final CubeMapData cubeMapData) {
         CubeMapDao dao = new CubeMapDao(glGenTextures());
 
         glEnable(GL_TEXTURE_CUBE_MAP);
@@ -52,7 +52,19 @@ public class CubeMapInterpreter implements Interpreter<CubeMapData, CubeMapDao> 
     }
 
     @Override
-    public void free(final CubeMapDao dao) {
+    protected boolean freeDao(final CubeMapDao dao) {
         glDeleteTextures(dao.getTexture());
+
+        return true;
+    }
+
+    @Override
+    protected String getCreateInfo(final CubeMapDao dao, final CubeMapData resource) {
+        return String.format("Texture id: %s", dao.getTexture());
+    }
+
+    @Override
+    protected String getFreeInfo(final CubeMapDao dao) {
+        return String.format("Texture id: %s", dao.getTexture());
     }
 }

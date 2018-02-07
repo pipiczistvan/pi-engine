@@ -29,10 +29,10 @@ import static piengine.object.mesh.domain.MeshDataType.NORMAL;
 import static piengine.object.mesh.domain.MeshDataType.VERTEX;
 
 @Component
-public class TerrainInterpreter implements Interpreter<TerrainData, TerrainDao> {
+public class TerrainInterpreter extends Interpreter<TerrainData, TerrainDao> {
 
     @Override
-    public TerrainDao create(final TerrainData terrainData) {
+    protected TerrainDao createDao(final TerrainData terrainData) {
         final TerrainDao dao = new TerrainDao(glGenVertexArrays(), new ArrayList<>(), terrainData.indices.length);
         bind(dao);
 
@@ -47,9 +47,21 @@ public class TerrainInterpreter implements Interpreter<TerrainData, TerrainDao> 
     }
 
     @Override
-    public void free(final TerrainDao dao) {
+    protected boolean freeDao(final TerrainDao dao) {
         glDeleteVertexArrays(dao.vaoId);
         dao.vboIds.forEach(GL15::glDeleteBuffers);
+
+        return true;
+    }
+
+    @Override
+    protected String getCreateInfo(final TerrainDao dao, final TerrainData resource) {
+        return String.format("Vao id: %s", dao.vaoId);
+    }
+
+    @Override
+    protected String getFreeInfo(final TerrainDao dao) {
+        return String.format("Vao id: %s", dao.vaoId);
     }
 
     private void bind(final MeshDao dao) {

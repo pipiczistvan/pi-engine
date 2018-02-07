@@ -24,10 +24,10 @@ import static piengine.core.utils.BufferUtils.convertToFloatBuffer;
 import static piengine.object.mesh.domain.MeshDataType.VERTEX;
 
 @Component
-public class SkyboxInterpreter implements Interpreter<SkyboxData, SkyboxDao> {
+public class SkyboxInterpreter extends Interpreter<SkyboxData, SkyboxDao> {
 
     @Override
-    public SkyboxDao create(final SkyboxData skyboxData) {
+    protected SkyboxDao createDao(final SkyboxData skyboxData) {
         final SkyboxDao dao = new SkyboxDao(glGenVertexArrays(), new ArrayList<>(), skyboxData.vertices.length / 3);
         bind(dao);
 
@@ -39,9 +39,21 @@ public class SkyboxInterpreter implements Interpreter<SkyboxData, SkyboxDao> {
     }
 
     @Override
-    public void free(final SkyboxDao dao) {
+    protected boolean freeDao(final SkyboxDao dao) {
         glDeleteVertexArrays(dao.vaoId);
         dao.vboIds.forEach(GL15::glDeleteBuffers);
+
+        return true;
+    }
+
+    @Override
+    protected String getCreateInfo(final SkyboxDao dao, final SkyboxData resource) {
+        return String.format("Vao id: %s", dao.vaoId);
+    }
+
+    @Override
+    protected String getFreeInfo(final SkyboxDao dao) {
+        return String.format("Vao id: %s", dao.vaoId);
     }
 
     private void bind(final MeshDao dao) {

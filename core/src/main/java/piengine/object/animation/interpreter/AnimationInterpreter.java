@@ -6,10 +6,10 @@ import piengine.object.animation.domain.AnimationData;
 import puppeteer.annotation.premade.Component;
 
 @Component
-public class AnimationInterpreter implements Interpreter<AnimationData, AnimationDao> {
+public class AnimationInterpreter extends Interpreter<AnimationData, AnimationDao> {
 
     @Override
-    public AnimationDao create(final AnimationData animationData) {
+    protected AnimationDao createDao(final AnimationData animationData) {
         return new AnimationDao();
     }
 }

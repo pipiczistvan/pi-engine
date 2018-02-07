@@ -6,10 +6,10 @@ import piengine.visual.lighting.point.shadow.domain.PointShadowData;
 import puppeteer.annotation.premade.Component;
 
 @Component
-public class PointShadowInterpreter implements Interpreter<PointShadowData, PointShadowDao> {
+public class PointShadowInterpreter extends Interpreter<PointShadowData, PointShadowDao> {
 
     @Override
-    public PointShadowDao create(final PointShadowData pointShadowData) {
+    protected PointShadowDao createDao(final PointShadowData pointShadowData) {
         return new PointShadowDao();
     }
 }

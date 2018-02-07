@@ -45,12 +45,12 @@ import static org.lwjgl.opengl.GL40.GL_TESS_CONTROL_SHADER;
 import static org.lwjgl.opengl.GL40.GL_TESS_EVALUATION_SHADER;
 
 @Component
-public class ShaderInterpreter implements Interpreter<ShaderData, ShaderDao> {
+public class ShaderInterpreter extends Interpreter<ShaderData, ShaderDao> {
 
     private static FloatBuffer matrixBuffer = BufferUtils.createFloatBuffer(16);
 
     @Override
-    public ShaderDao create(final ShaderData shaderData) {
+    protected ShaderDao createDao(final ShaderData shaderData) {
         Integer vertexShaderId = createShader(shaderData.vertexSource, GL_VERTEX_SHADER);
         Integer tessControlShaderId = createShader(shaderData.tessControlSource, GL_TESS_CONTROL_SHADER);
         Integer tessEvalShaderId = createShader(shaderData.tessEvalSource, GL_TESS_EVALUATION_SHADER);
@@ -119,7 +119,7 @@ public class ShaderInterpreter implements Interpreter<ShaderData, ShaderDao> {
     }
 
     @Override
-    public void free(final ShaderDao dao) {
+    protected boolean freeDao(final ShaderDao dao) {
         stopShader();
 
         detachShader(dao.programId, dao.vertexShaderId);
@@ -135,6 +135,18 @@ public class ShaderInterpreter implements Interpreter<ShaderData, ShaderDao> {
         deleteShader(dao.fragmentShaderId);
 
         glDeleteProgram(dao.programId);
+
+        return true;
+    }
+
+    @Override
+    protected String getCreateInfo(final ShaderDao dao, final ShaderData resource) {
+        return String.format("Program id: %s", dao.programId);
+    }
+
+    @Override
+    protected String getFreeInfo(final ShaderDao dao) {
+        return String.format("Program id: %s", dao.programId);
     }
 
     private Integer createShader(final String shaderSource, final int type) {

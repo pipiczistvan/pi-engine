@@ -15,7 +15,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Component
-public class FontAccessor implements Accessor<FontKey, FontData> {
+public class FontAccessor extends Accessor<FontKey, FontData> {
 
     private static final String ROOT = ApplicationProperties.get(PropertyKeys.FONTS_LOCATION);
     private static final String FONT_EXT = "fnt";
@@ -37,11 +37,16 @@ public class FontAccessor implements Accessor<FontKey, FontData> {
     }
 
     @Override
-    public FontData access(final FontKey key) {
+    protected FontData accessResource(final FontKey key) {
         final String fontSource = loader.load(key.imageKey.file);
         final FontContext context = new FontContext(fontSource.split("\n"), key.resolution);
 
         return new FontData(key, key.imageKey, parseSource(context), context.spaceWidth);
+    }
+
+    @Override
+    protected String getAccessInfo(final FontKey key, final FontData resource) {
+        return String.format("File: %s", key.imageKey.file);
     }
 
     private Map<Integer, Character> parseSource(final FontContext context) {

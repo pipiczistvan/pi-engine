@@ -22,7 +22,7 @@ import static piengine.core.base.type.property.ApplicationProperties.get;
 import static piengine.core.base.type.property.PropertyKeys.IMAGES_LOCATION;
 
 @Component
-public class ImageAccessor implements Accessor<ImageKey, ImageData> {
+public class ImageAccessor extends Accessor<ImageKey, ImageData> {
 
     private static final String ROOT = get(IMAGES_LOCATION);
     private static final String PNG_EXT = "png";
@@ -35,7 +35,7 @@ public class ImageAccessor implements Accessor<ImageKey, ImageData> {
     }
 
     @Override
-    public ImageData access(final ImageKey key) {
+    protected ImageData accessResource(final ImageKey key) {
         ByteBuffer imageBuffer;
         try {
             imageBuffer = loader.loadByteBuffer(key.file, BUFFER_LIMIT);
@@ -60,7 +60,14 @@ public class ImageAccessor implements Accessor<ImageKey, ImageData> {
     }
 
     @Override
-    public void free(final ImageData resource) {
+    protected boolean freeResource(final ImageData resource) {
         stbi_image_free(resource.buffer);
+
+        return true;
+    }
+
+    @Override
+    protected String getAccessInfo(final ImageKey key, final ImageData resource) {
+        return String.format("File: %s", key.file);
     }
 }

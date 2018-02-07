@@ -16,10 +16,10 @@ import java.nio.FloatBuffer;
 import java.util.ArrayList;
 
 @Component
-public class TextInterpreter implements Interpreter<TextData, TextDao> {
+public class TextInterpreter extends Interpreter<TextData, TextDao> {
 
     @Override
-    public TextDao create(TextData textData) {
+    protected TextDao createDao(final TextData textData) {
         final TextDao dao = new TextDao(GL30.glGenVertexArrays(), new ArrayList<>(), textData.vertices.length / 2);
         bind(dao);
 
@@ -42,9 +42,21 @@ public class TextInterpreter implements Interpreter<TextData, TextDao> {
     }
 
     @Override
-    public void free(final TextDao dao) {
+    protected boolean freeDao(final TextDao dao) {
         GL30.glDeleteVertexArrays(dao.vaoId);
         dao.vboIds.forEach(GL15::glDeleteBuffers);
+
+        return true;
+    }
+
+    @Override
+    protected String getCreateInfo(final TextDao dao, final TextData resource) {
+        return String.format("Vao: %s", dao.vaoId);
+    }
+
+    @Override
+    protected String getFreeInfo(final TextDao dao) {
+        return String.format("Vao: %s", dao.vaoId);
     }
 
     private void bind(final MeshDao dao) {
@@ -73,4 +85,8 @@ public class TextInterpreter implements Interpreter<TextData, TextDao> {
         return buffer;
     }
 
+    @Override
+    protected boolean shouldLog() {
+        return false;
+    }
 }

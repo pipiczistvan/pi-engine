@@ -32,14 +32,14 @@ import static piengine.object.mesh.domain.MeshDataType.TEXTURE_OFFSET;
 import static piengine.object.mesh.domain.MeshDataType.VERTEX;
 
 @Component
-public class ParticleSystemInterpreter implements Interpreter<ParticleSystemData, ParticleSysemDao> {
+public class ParticleSystemInterpreter extends Interpreter<ParticleSystemData, ParticleSysemDao> {
 
     public static final int MAX_INSTANCES = 10_000;
     public static final int INSTANCE_DATA_LENGTH = 21;
     private static final int FLOAT_SIZE = 4;
 
     @Override
-    public ParticleSysemDao create(final ParticleSystemData particleSystemData) {
+    protected ParticleSysemDao createDao(final ParticleSystemData particleSystemData) {
         final ParticleSysemDao dao = new ParticleSysemDao(glGenVertexArrays(), new ArrayList<>(), particleSystemData.vertices.length / 2);
         bind(dao);
 
@@ -60,9 +60,21 @@ public class ParticleSystemInterpreter implements Interpreter<ParticleSystemData
     }
 
     @Override
-    public void free(final ParticleSysemDao dao) {
+    protected boolean freeDao(final ParticleSysemDao dao) {
         glDeleteVertexArrays(dao.vaoId);
         dao.vboIds.forEach(GL15::glDeleteBuffers);
+
+        return true;
+    }
+
+    @Override
+    protected String getCreateInfo(final ParticleSysemDao dao, final ParticleSystemData resource) {
+        return String.format("Vao id: %s", dao.vaoId);
+    }
+
+    @Override
+    protected String getFreeInfo(final ParticleSysemDao dao) {
+        return String.format("Vao id: %s", dao.vaoId);
     }
 
     public void updateVbo(final ParticleSysemDao dao, final float[] data, final FloatBuffer buffer) {

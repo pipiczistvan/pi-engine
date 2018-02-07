@@ -6,10 +6,10 @@ import piengine.visual.lighting.directional.shadow.domain.DirectionalShadowData;
 import puppeteer.annotation.premade.Component;
 
 @Component
-public class DirectionalShadowInterpreter implements Interpreter<DirectionalShadowData, DirectionalShadowDao> {
+public class DirectionalShadowInterpreter extends Interpreter<DirectionalShadowData, DirectionalShadowDao> {
 
     @Override
-    public DirectionalShadowDao create(final DirectionalShadowData directionalShadowData) {
+    protected DirectionalShadowDao createDao(final DirectionalShadowData directionalShadowData) {
         return new DirectionalShadowDao();
     }
 }

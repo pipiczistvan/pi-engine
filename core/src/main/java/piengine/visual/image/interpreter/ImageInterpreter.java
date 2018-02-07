@@ -33,10 +33,10 @@ import static org.lwjgl.opengl.GL13.glActiveTexture;
 import static org.lwjgl.opengl.GL30.glGenerateMipmap;
 
 @Component
-public class ImageInterpreter implements Interpreter<ImageData, ImageDao> {
+public class ImageInterpreter extends Interpreter<ImageData, ImageDao> {
 
     @Override
-    public ImageDao create(final ImageData imageData) {
+    protected ImageDao createDao(final ImageData imageData) {
         ImageDao dao = new ImageDao(glGenTextures());
         bind(dao);
 
@@ -61,8 +61,20 @@ public class ImageInterpreter implements Interpreter<ImageData, ImageDao> {
     }
 
     @Override
-    public void free(final ImageDao dao) {
+    protected boolean freeDao(final ImageDao dao) {
         glDeleteTextures(dao.getTexture());
+
+        return true;
+    }
+
+    @Override
+    protected String getCreateInfo(final ImageDao dao, final ImageData resource) {
+        return String.format("Texture id: %s", dao.getTexture());
+    }
+
+    @Override
+    protected String getFreeInfo(final ImageDao dao) {
+        return String.format("Texture id: %s", dao.getTexture());
     }
 
     private void bind(final TextureDao dao) {

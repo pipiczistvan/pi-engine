@@ -12,7 +12,7 @@ import puppeteer.annotation.premade.Component;
 import puppeteer.annotation.premade.Wire;
 
 @Component
-public class AnimatedModelAccessor implements Accessor<AnimatedModelKey, AnimatedModelData> {
+public class AnimatedModelAccessor extends Accessor<AnimatedModelKey, AnimatedModelData> {
 
     private final ColladaParser colladaParser;
     private final SkinningDataParser skinningDataParser;
@@ -29,12 +29,17 @@ public class AnimatedModelAccessor implements Accessor<AnimatedModelKey, Animate
     }
 
     @Override
-    public AnimatedModelData access(final AnimatedModelKey key) {
+    protected AnimatedModelData accessResource(final AnimatedModelKey key) {
         Collada collada = colladaParser.parse(key.colladaFile);
         SkinningData skinningData = skinningDataParser.parse(collada.library_controllers[0], key.maxWeights);
         SkeletonData skeletonData = skeletonDataParser.parse(collada.library_visual_scenes[0], skinningData.jointOrder);
         GeometryData geometryData = geometryDataParser.parse(collada.library_geometries[0], skinningData.verticesSkinData);
 
         return new AnimatedModelData(key.parent, key.texture, skeletonData, geometryData);
+    }
+
+    @Override
+    protected String getAccessInfo(final AnimatedModelKey key, final AnimatedModelData resource) {
+        return String.format("File: %s", key.colladaFile);
     }
 }

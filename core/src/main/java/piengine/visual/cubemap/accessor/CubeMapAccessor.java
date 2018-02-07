@@ -6,10 +6,15 @@ import piengine.visual.cubemap.domain.CubeMapKey;
 import puppeteer.annotation.premade.Component;
 
 @Component
-public class CubeMapAccessor implements Accessor<CubeMapKey, CubeMapData> {
+public class CubeMapAccessor extends Accessor<CubeMapKey, CubeMapData> {
 
     @Override
-    public CubeMapData access(final CubeMapKey key) {
+    protected CubeMapData accessResource(final CubeMapKey key) {
         return new CubeMapData(key.format, key.type, key.textureData);
+    }
+
+    @Override
+    protected String getAccessInfo(final CubeMapKey key, final CubeMapData resource) {
+        return "";
     }
 }

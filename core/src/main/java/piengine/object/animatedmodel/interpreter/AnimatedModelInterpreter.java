@@ -33,10 +33,10 @@ import static piengine.object.mesh.domain.MeshDataType.VERTEX;
 import static piengine.object.mesh.domain.MeshDataType.WEIGHT;
 
 @Component
-public class AnimatedModelInterpreter implements Interpreter<AnimatedModelData, AnimatedModelDao> {
+public class AnimatedModelInterpreter extends Interpreter<AnimatedModelData, AnimatedModelDao> {
 
     @Override
-    public AnimatedModelDao create(final AnimatedModelData animatedModelData) {
+    protected AnimatedModelDao createDao(final AnimatedModelData animatedModelData) {
         final AnimatedModelDao dao = new AnimatedModelDao(glGenVertexArrays(), new ArrayList<>(), animatedModelData.mesh.indices.length);
         bind(dao);
 
@@ -53,9 +53,21 @@ public class AnimatedModelInterpreter implements Interpreter<AnimatedModelData, 
     }
 
     @Override
-    public void free(final AnimatedModelDao dao) {
+    protected boolean freeDao(final AnimatedModelDao dao) {
         glDeleteVertexArrays(dao.vaoId);
         dao.vboIds.forEach(GL15::glDeleteBuffers);
+
+        return true;
+    }
+
+    @Override
+    protected String getCreateInfo(final AnimatedModelDao dao, final AnimatedModelData resource) {
+        return String.format("Vao id: %s", dao.vaoId);
+    }
+
+    @Override
+    protected String getFreeInfo(final AnimatedModelDao dao) {
+        return String.format("Vao id: %s", dao.vaoId);
     }
 
     private void bind(final MeshDao dao) {

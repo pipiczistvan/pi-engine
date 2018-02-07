@@ -16,7 +16,7 @@ import static piengine.core.base.type.property.ApplicationProperties.get;
 import static piengine.core.base.type.property.PropertyKeys.IMAGES_LOCATION;
 
 @Component
-public class TerrainAccessor implements Accessor<TerrainKey, TerrainData> {
+public class TerrainAccessor extends Accessor<TerrainKey, TerrainData> {
 
     private static final String ROOT = get(IMAGES_LOCATION);
     private static final String PNG_EXT = "png";
@@ -32,7 +32,7 @@ public class TerrainAccessor implements Accessor<TerrainKey, TerrainData> {
     }
 
     @Override
-    public TerrainData access(final TerrainKey key) {
+    protected TerrainData accessResource(final TerrainKey key) {
         TerrainColorGenerator colorGenerator = new TerrainColorGenerator(key.biomColors, COLOR_SPREAD);
 
         BufferedImage heightmap;
@@ -68,6 +68,11 @@ public class TerrainAccessor implements Accessor<TerrainKey, TerrainData> {
                 grid.colors,
                 grid.normals,
                 heights);
+    }
+
+    @Override
+    protected String getAccessInfo(final TerrainKey key, final TerrainData resource) {
+        return String.format("Heightmap: %s", key.heightmap);
     }
 
     private float getHeight(final int x, final int z, final BufferedImage image) {

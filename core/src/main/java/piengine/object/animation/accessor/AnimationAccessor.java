@@ -9,7 +9,7 @@ import puppeteer.annotation.premade.Component;
 import puppeteer.annotation.premade.Wire;
 
 @Component
-public class AnimationAccessor implements Accessor<AnimationKey, AnimationData> {
+public class AnimationAccessor extends Accessor<AnimationKey, AnimationData> {
 
     private final ColladaParser colladaParser;
     private final AnimationDataParser animationDataParser;
@@ -21,9 +21,14 @@ public class AnimationAccessor implements Accessor<AnimationKey, AnimationData> 
     }
 
     @Override
-    public AnimationData access(final AnimationKey key) {
+    protected AnimationData accessResource(final AnimationKey key) {
         Collada collada = colladaParser.parse(key.file);
 
         return animationDataParser.parse(collada.library_animations, collada.library_visual_scenes[0]);
+    }
+
+    @Override
+    protected String getAccessInfo(final AnimationKey key, final AnimationData resource) {
+        return String.format("File: %s", key.file);
     }
 }

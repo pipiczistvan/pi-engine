@@ -1,6 +1,5 @@
 package piengine.visual.framebuffer.interpreter;
 
-import org.apache.log4j.Logger;
 import org.joml.Vector2i;
 import piengine.core.base.api.Interpreter;
 import piengine.core.base.exception.PIEngineException;
@@ -59,14 +58,12 @@ import static piengine.visual.framebuffer.domain.FramebufferAttachment.DEPTH_BUF
 import static piengine.visual.framebuffer.domain.FramebufferAttachment.DEPTH_BUFFER_MULTISAMPLE_ATTACHMENT;
 
 @Component
-public class FramebufferInterpreter implements Interpreter<FramebufferData, FramebufferDao> {
+public class FramebufferInterpreter extends Interpreter<FramebufferData, FramebufferDao> {
 
     private static final int SAMPLES = 4;
 
-    private final Logger logger = Logger.getLogger(getClass());
-
     @Override
-    public FramebufferDao create(final FramebufferData framebufferData) {
+    protected FramebufferDao createDao(final FramebufferData framebufferData) {
         int drawBuffer = framebufferData.drawingEnabled ? GL_COLOR_ATTACHMENT0 : GL_NONE;
         int fbo = createFrameBuffer(drawBuffer);
 
@@ -77,13 +74,11 @@ public class FramebufferInterpreter implements Interpreter<FramebufferData, Fram
 
         unbind();
 
-        logger.info(String.format("Created framebuffer: id: %s, width: %s, height: %s", fbo, framebufferData.width, framebufferData.height));
-
         return new FramebufferDao(fbo, attachments, framebufferData.textureAttachment);
     }
 
     @Override
-    public void free(final FramebufferDao dao) {
+    protected boolean freeDao(final FramebufferDao dao) {
         glDeleteFramebuffers(dao.getFbo());
 
         for (Map.Entry<FramebufferAttachment, Integer> attachment : dao.getAttachments().entrySet()) {
@@ -96,7 +91,17 @@ public class FramebufferInterpreter implements Interpreter<FramebufferData, Fram
             }
         }
 
-        logger.info(String.format("Deleted framebuffer: id: %s", dao.getFbo()));
+        return true;
+    }
+
+    @Override
+    protected String getCreateInfo(final FramebufferDao dao, final FramebufferData resource) {
+        return String.format("Framebuffer id: %s, texture id: %s", dao.getFbo(), dao.getTexture());
+    }
+
+    @Override
+    protected String getFreeInfo(final FramebufferDao dao) {
+        return String.format("Framebuffer id: %s, texture id: %s", dao.getFbo(), dao.getTexture());
     }
 
     public void bind(final FramebufferDao dao) {

@@ -16,7 +16,7 @@ import static org.lwjgl.opengl.GL11.GL_RGB8;
 import static org.lwjgl.opengl.GL11.GL_RGBA8;
 
 @Component
-public class FontInterpreter implements Interpreter<FontData, FontDao> {
+public class FontInterpreter extends Interpreter<FontData, FontDao> {
 
     private final ImageAccessor imageAccessor;
 
@@ -26,7 +26,7 @@ public class FontInterpreter implements Interpreter<FontData, FontDao> {
     }
 
     @Override
-    public FontDao create(final FontData fontData) {
+    protected FontDao createDao(final FontData fontData) {
         ImageData imageData = imageAccessor.access(fontData.imageKey);
 
         FontDao dao = new FontDao(GL11.glGenTextures());
@@ -59,8 +59,19 @@ public class FontInterpreter implements Interpreter<FontData, FontDao> {
     }
 
     @Override
-    public void free(final FontDao dao) {
+    protected boolean freeDao(final FontDao dao) {
         GL11.glDeleteTextures(dao.getTexture());
+
+        return true;
     }
 
+    @Override
+    protected String getCreateInfo(final FontDao dao, final FontData resource) {
+        return String.format("Texture id: %s", dao.getTexture());
+    }
+
+    @Override
+    protected String getFreeInfo(final FontDao dao) {
+        return String.format("Texture id: %s", dao.getTexture());
+    }
 }

@@ -1,6 +1,5 @@
 package piengine.object.mesh.interpreter;
 
-import org.apache.log4j.Logger;
 import org.lwjgl.opengl.GL15;
 import piengine.core.base.api.Interpreter;
 import piengine.object.mesh.domain.MeshDao;
@@ -29,12 +28,10 @@ import static piengine.object.mesh.domain.MeshDataType.TEXTURE_COORD;
 import static piengine.object.mesh.domain.MeshDataType.VERTEX;
 
 @Component
-public class MeshInterpreter implements Interpreter<MeshData, MeshDao> {
-
-    private final Logger logger = Logger.getLogger(getClass());
+public class MeshInterpreter extends Interpreter<MeshData, MeshDao> {
 
     @Override
-    public MeshDao create(final MeshData meshData) {
+    protected MeshDao createDao(final MeshData meshData) {
         final MeshDao dao = new MeshDao(glGenVertexArrays(), new ArrayList<>(), meshData.indices.length);
         bind(dao);
 
@@ -45,15 +42,25 @@ public class MeshInterpreter implements Interpreter<MeshData, MeshDao> {
 
         unbind();
 
-        logger.info(String.format("Created vao: id: %s", dao.vaoId));
-
         return dao;
     }
 
     @Override
-    public void free(final MeshDao dao) {
+    protected boolean freeDao(final MeshDao dao) {
         glDeleteVertexArrays(dao.vaoId);
         dao.vboIds.forEach(GL15::glDeleteBuffers);
+
+        return true;
+    }
+
+    @Override
+    protected String getCreateInfo(final MeshDao dao, final MeshData resource) {
+        return String.format("Vao id: %s", dao.vaoId);
+    }
+
+    @Override
+    protected String getFreeInfo(final MeshDao dao) {
+        return String.format("Vao id: %s", dao.vaoId);
     }
 
     private void bind(final MeshDao dao) {

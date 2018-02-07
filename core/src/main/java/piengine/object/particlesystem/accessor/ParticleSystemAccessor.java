@@ -6,12 +6,17 @@ import piengine.object.particlesystem.domain.ParticleSystemKey;
 import puppeteer.annotation.premade.Component;
 
 @Component
-public class ParticleSystemAccessor implements Accessor<ParticleSystemKey, ParticleSystemData> {
+public class ParticleSystemAccessor extends Accessor<ParticleSystemKey, ParticleSystemData> {
 
     private static final float[] VERTICES = {-0.5f, 0.5f, -0.5f, -0.5f, 0.5f, 0.5f, 0.5f, -0.5f};
 
     @Override
-    public ParticleSystemData access(final ParticleSystemKey key) {
+    protected ParticleSystemData accessResource(final ParticleSystemKey key) {
         return new ParticleSystemData(key, VERTICES);
+    }
+
+    @Override
+    protected String getAccessInfo(final ParticleSystemKey key, final ParticleSystemData resource) {
+        return String.format("Sprite: %s", key.sprite);
     }
 }
