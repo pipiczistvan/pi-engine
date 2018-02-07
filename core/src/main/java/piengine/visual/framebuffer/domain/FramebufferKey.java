@@ -9,17 +9,18 @@ public class FramebufferKey implements Key {
     public final Vector2i resolution;
     public final Texture texture;
     public final boolean drawingEnabled;
+    public final boolean fixed;
     public final FramebufferAttachment[] attachments;
 
-    public FramebufferKey(final Vector2i resolution, final Texture texture, final boolean drawingEnabled, final FramebufferAttachment textureAttachment, final FramebufferAttachment... attachments) {
+    public FramebufferKey(final Vector2i resolution, final Texture texture, final boolean drawingEnabled,
+                          final boolean fixed, final FramebufferAttachment textureAttachment, final FramebufferAttachment... attachments) {
         this.resolution = resolution;
         this.texture = texture;
         this.drawingEnabled = drawingEnabled;
+        this.fixed = fixed;
 
         this.attachments = new FramebufferAttachment[attachments.length + 1];
         this.attachments[0] = textureAttachment;
-        for (int i = 0; i < attachments.length; i++) {
-            this.attachments[i + 1] = attachments[i];
-        }
+        System.arraycopy(attachments, 0, this.attachments, 1, attachments.length);
     }
 }

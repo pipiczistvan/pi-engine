@@ -11,7 +11,9 @@ import static org.lwjgl.opengl.GL11.GL_NEAREST;
 import static org.lwjgl.opengl.GL11.GL_NEAREST_MIPMAP_NEAREST;
 import static org.lwjgl.opengl.GL11.GL_ONE_MINUS_SRC_ALPHA;
 import static org.lwjgl.opengl.GL11.GL_RGB;
+import static org.lwjgl.opengl.GL11.GL_RGB8;
 import static org.lwjgl.opengl.GL11.GL_RGBA;
+import static org.lwjgl.opengl.GL11.GL_RGBA8;
 import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_MAG_FILTER;
@@ -42,9 +44,9 @@ public class ImageInterpreter implements Interpreter<ImageData, ImageDao> {
             if ((imageData.width & 3) != 0) {
                 glPixelStorei(GL_UNPACK_ALIGNMENT, 2 - (imageData.width & 1));
             }
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, imageData.width, imageData.height, 0, GL_RGB, GL_UNSIGNED_BYTE, imageData.buffer);
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, imageData.width, imageData.height, 0, GL_RGB, GL_UNSIGNED_BYTE, imageData.buffer);
         } else {
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, imageData.width, imageData.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, imageData.buffer);
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, imageData.width, imageData.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, imageData.buffer);
 
             glEnable(GL_BLEND);
             glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);

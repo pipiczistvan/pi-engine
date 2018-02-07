@@ -4,6 +4,7 @@ import piengine.core.architecture.scene.domain.Scene;
 import piengine.core.architecture.scene.service.SceneService;
 import piengine.core.base.api.Initializable;
 import piengine.core.base.api.Renderable;
+import piengine.core.base.api.Resizable;
 import piengine.core.base.api.Service;
 import piengine.core.base.api.Terminatable;
 import piengine.core.base.api.Updatable;
@@ -17,6 +18,7 @@ import java.util.stream.Collectors;
 
 import static piengine.visual.window.domain.WindowEventType.CLOSE;
 import static piengine.visual.window.domain.WindowEventType.INITIALIZE;
+import static piengine.visual.window.domain.WindowEventType.RESIZE;
 import static piengine.visual.window.domain.WindowEventType.UPDATE;
 
 @Component
@@ -30,6 +32,7 @@ public class EngineService {
     private final List<Updatable> updatableServices;
     private final List<Renderable> renderableServices;
     private final List<Terminatable> terminatableServices;
+    private final List<Resizable> resizableServices;
 
     @Wire
     public EngineService(final WindowService windowService,
@@ -44,6 +47,7 @@ public class EngineService {
         this.updatableServices = getServicesOf(services, Updatable.class);
         this.renderableServices = getServicesOf(services, Renderable.class);
         this.terminatableServices = getServicesOf(services, Terminatable.class);
+        this.resizableServices = getServicesOf(services, Resizable.class);
     }
 
     public void start(Class<? extends Scene> sceneClass) {
@@ -52,6 +56,7 @@ public class EngineService {
         windowService.addEvent(INITIALIZE, this::initialize);
         windowService.addEvent(UPDATE, this::update);
         windowService.addEvent(CLOSE, this::terminate);
+        windowService.addEvent(RESIZE, this::resize);
         windowService.createWindow();
     }
 
@@ -75,6 +80,15 @@ public class EngineService {
 
     private void terminate() {
         terminatableServices.forEach(Terminatable::terminate);
+    }
+
+    private void resize() {
+        int width = windowService.getWidth();
+        int height = windowService.getHeight();
+        int oldWidth = windowService.getOldWidth();
+        int oldHeight = windowService.getOldHeight();
+
+        resizableServices.forEach(r -> r.resize(oldWidth, oldHeight, width, height));
     }
 
     @SuppressWarnings("unchecked")

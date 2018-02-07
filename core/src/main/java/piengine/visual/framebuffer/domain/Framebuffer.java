@@ -5,12 +5,16 @@ import piengine.visual.texture.domain.Texture;
 
 public class Framebuffer extends Texture<FramebufferDao> {
 
-    public final FramebufferKey key;
+    private final boolean fixed;
 
-    public Framebuffer(final FramebufferDao dao, final FramebufferKey key, final Vector2i resolution) {
+    public Framebuffer(final FramebufferDao dao, final Vector2i resolution, final boolean fixed) {
         super(dao, resolution);
 
-        this.key = key;
+        this.fixed = fixed;
+    }
+
+    public boolean isFixed() {
+        return fixed;
     }
 
     public void setDao(final FramebufferDao dao) {

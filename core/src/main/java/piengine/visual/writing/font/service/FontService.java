@@ -1,5 +1,6 @@
 package piengine.visual.writing.font.service;
 
+import org.joml.Vector2i;
 import piengine.core.base.resource.SupplierService;
 import piengine.visual.writing.font.accessor.FontAccessor;
 import piengine.visual.writing.font.domain.Font;
@@ -24,7 +25,7 @@ public class FontService extends SupplierService<FontKey, FontData, FontDao, Fon
 
     @Override
     protected Font createDomain(final FontDao dao, final FontData resource) {
-        return new Font(dao, resource.key, resource);
+        return new Font(dao, resource, new Vector2i(resource.key.resolution));
     }
 
     public void bind(final Font font) {

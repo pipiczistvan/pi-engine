@@ -65,7 +65,7 @@ public class TextAccessor {
     private List<Line> createStructure(final TextConfiguration config) {
         char[] chars = config.getText().toCharArray();
         List<Line> lines = new ArrayList<>();
-        Line currentLine = new Line(config.getFont().data.spaceWidth, config.getFontSize(), config.getMaxLineLength());
+        Line currentLine = new Line(config.getFont().getData().spaceWidth, config.getFontSize(), config.getMaxLineLength());
         Word currentWord = new Word(config.getFontSize());
         for (char c : chars) {
             int ascii = (int) c;
@@ -73,13 +73,13 @@ public class TextAccessor {
                 boolean added = currentLine.attemptToAddWord(currentWord);
                 if (!added) {
                     lines.add(currentLine);
-                    currentLine = new Line(config.getFont().data.spaceWidth, config.getFontSize(), config.getMaxLineLength());
+                    currentLine = new Line(config.getFont().getData().spaceWidth, config.getFontSize(), config.getMaxLineLength());
                     currentLine.attemptToAddWord(currentWord);
                 }
                 currentWord = new Word(config.getFontSize());
                 continue;
             }
-            Character character = config.getFont().data.characterMap.get(ascii);
+            Character character = config.getFont().getData().characterMap.get(ascii);
             currentWord.addCharacter(character);
         }
         completeStructure(lines, currentLine, currentWord, config);
@@ -90,7 +90,7 @@ public class TextAccessor {
         boolean added = currentLine.attemptToAddWord(currentWord);
         if (!added) {
             lines.add(currentLine);
-            currentLine = new Line(config.getFont().data.spaceWidth, config.getFontSize(), config.getMaxLineLength());
+            currentLine = new Line(config.getFont().getData().spaceWidth, config.getFontSize(), config.getMaxLineLength());
             currentLine.attemptToAddWord(currentWord);
         }
         lines.add(currentLine);
@@ -119,7 +119,7 @@ public class TextAccessor {
 
                     cursorX += letter.xAdvance * config.getFontSize();
                 }
-                cursorX += config.getFont().data.spaceWidth * config.getFontSize();
+                cursorX += config.getFont().getData().spaceWidth * config.getFontSize();
             }
             cursorX = 0;
             cursorY += lineHeight;

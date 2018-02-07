@@ -36,7 +36,7 @@ public class ParticleSystemService extends EntitySupplierService<ParticleSystemK
 
     @Override
     public void update(final float delta) {
-        for (ParticleSystem particleSystem : getDomainValues()) {
+        for (ParticleSystem particleSystem : domainMap.values()) {
             particleSystem.update(delta);
         }
     }

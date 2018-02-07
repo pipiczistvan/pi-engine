@@ -30,14 +30,14 @@ public class DirectionalShadowService extends SupplierService<DirectionalShadowK
 
     @Override
     protected DirectionalShadow createDomain(final DirectionalShadowDao dao, final DirectionalShadowData resource) {
-        Framebuffer shadowMap = framebufferManager.supply(resource.resolution, false, DEPTH_TEXTURE_ATTACHMENT);
+        Framebuffer shadowMap = framebufferManager.supply(resource.resolution, true, DEPTH_TEXTURE_ATTACHMENT);
 
         return new DirectionalShadow(dao, resource.playerCamera, shadowMap);
     }
 
     @Override
     public void update(final float delta) {
-        for (DirectionalShadow directionalShadow : getDomainValues()) {
+        for (DirectionalShadow directionalShadow : domainMap.values()) {
             directionalShadow.update(delta);
         }
     }

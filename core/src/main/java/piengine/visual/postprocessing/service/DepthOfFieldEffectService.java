@@ -41,7 +41,7 @@ public class DepthOfFieldEffectService extends AbstractPostProcessingRenderServi
 
     @Override
     public DepthOfFieldEffectContext createContext(final Vector2i outSize) {
-        Framebuffer framebuffer = framebufferManager.supply(outSize, COLOR_TEXTURE_ATTACHMENT);
+        Framebuffer framebuffer = framebufferManager.supply(outSize, false, COLOR_TEXTURE_ATTACHMENT);
         BlurEffectContext blurEffectContext = blurEffectService.createContext(outSize);
 
         return new DepthOfFieldEffectContext(framebuffer, blurEffectContext);

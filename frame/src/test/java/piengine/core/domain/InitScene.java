@@ -3,7 +3,6 @@ package piengine.core.domain;
 import org.joml.Vector2i;
 import org.joml.Vector3f;
 import piengine.core.architecture.scene.domain.Scene;
-import piengine.core.base.api.Updatable;
 import piengine.core.base.type.color.Color;
 import piengine.core.domain.assets.object.fps.FpsAsset;
 import piengine.core.domain.assets.object.fps.FpsAssetArgument;
@@ -56,7 +55,7 @@ import static piengine.visual.framebuffer.domain.FramebufferAttachment.COLOR_BUF
 import static piengine.visual.framebuffer.domain.FramebufferAttachment.DEPTH_BUFFER_MULTISAMPLE_ATTACHMENT;
 import static piengine.visual.postprocessing.domain.EffectType.ANTIALIAS_EFFECT;
 
-public class InitScene extends Scene implements Updatable {
+public class InitScene extends Scene {
 
     public static final int TERRAIN_SCALE = 256;
     public static final int WATER_SCALE = TERRAIN_SCALE / 2;
@@ -106,10 +105,7 @@ public class InitScene extends Scene implements Updatable {
 
     @Override
     public void initialize() {
-        inputManager.clearEvents();
-        VIEWPORT.set(windowManager.getWidth(), windowManager.getHeight());
         super.initialize();
-
         inputManager.addEvent(GLFW_KEY_ESCAPE, PRESS, windowManager::closeWindow);
         inputManager.addEvent(GLFW_KEY_RIGHT_CONTROL, PRESS, () -> {
             cameraAsset.lookingEnabled = !cameraAsset.lookingEnabled;
@@ -118,7 +114,7 @@ public class InitScene extends Scene implements Updatable {
     }
 
     @Override
-    protected void createAssets() {
+    public void createAssets() {
         terrain = terrainManager.supply(new Vector3f(-TERRAIN_SCALE / 2, 0, -TERRAIN_SCALE / 2), new Vector3f(TERRAIN_SCALE, 10, TERRAIN_SCALE), "heightmap2", BIOME_COLORS);
 
         cameraAsset = createAsset(CameraAsset.class, new CameraAssetArgument(
@@ -127,14 +123,21 @@ public class InitScene extends Scene implements Updatable {
                 get(CAMERA_LOOK_DOWN_LIMIT),
                 get(CAMERA_LOOK_SPEED),
                 get(CAMERA_MOVE_SPEED)));
+        cameraAsset.setPosition(-2, 0, 0);
 
         camera = new FirstPersonCamera(cameraAsset, VIEWPORT, new CameraAttribute(get(CAMERA_FOV), get(CAMERA_NEAR_PLANE), get(CAMERA_FAR_PLANE)), PERSPECTIVE);
+
+        fog = new Fog(ColorUtils.BLACK, 0.015f, 1.5f);
+
+        skybox = skyboxManager.supply(150f,
+                "skybox/nightRight", "skybox/nightLeft", "skybox/nightTop",
+                "skybox/nightBottom", "skybox/nightBack", "skybox/nightFront");
 
         mapAsset = createAsset(MapAsset.class, new MapAssetArgument(VIEWPORT, camera, terrain));
 
         lampAsset = createAsset(LampAsset.class, new LampAssetArgument());
 
-        framebuffer = framebufferManager.supply(VIEWPORT, COLOR_BUFFER_MULTISAMPLE_ATTACHMENT, DEPTH_BUFFER_MULTISAMPLE_ATTACHMENT);
+        framebuffer = framebufferManager.supply(VIEWPORT, false, COLOR_BUFFER_MULTISAMPLE_ATTACHMENT, DEPTH_BUFFER_MULTISAMPLE_ATTACHMENT);
         mainCanvas = canvasManager.supply(this, framebuffer, ANTIALIAS_EFFECT);
 
         buttonAsset = createAsset(ButtonAsset.class, new ButtonAssetArgument(
@@ -186,5 +189,11 @@ public class InitScene extends Scene implements Updatable {
                 .loadAssets(fpsAsset)
                 .clearScreen(ColorUtils.BLACK)
                 .render();
+    }
+
+    @Override
+    public void resize(final int oldWidth, final int oldHeight, final int width, final int height) {
+        VIEWPORT.set(width, height);
+        camera.recalculateProjection();
     }
 }

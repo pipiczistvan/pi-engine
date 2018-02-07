@@ -12,6 +12,9 @@ import piengine.visual.writing.font.domain.FontData;
 import puppeteer.annotation.premade.Component;
 import puppeteer.annotation.premade.Wire;
 
+import static org.lwjgl.opengl.GL11.GL_RGB8;
+import static org.lwjgl.opengl.GL11.GL_RGBA8;
+
 @Component
 public class FontInterpreter implements Interpreter<FontData, FontDao> {
 
@@ -33,9 +36,9 @@ public class FontInterpreter implements Interpreter<FontData, FontDao> {
             if ((imageData.width & 3) != 0) {
                 GL11.glPixelStorei(GL11.GL_UNPACK_ALIGNMENT, 2 - (imageData.width & 1));
             }
-            GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGB, imageData.width, imageData.height, 0, GL11.GL_RGB, GL11.GL_UNSIGNED_BYTE, imageData.buffer);
+            GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL_RGB8, imageData.width, imageData.height, 0, GL11.GL_RGB, GL11.GL_UNSIGNED_BYTE, imageData.buffer);
         } else {
-            GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA, imageData.width, imageData.height, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, imageData.buffer);
+            GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL_RGBA8, imageData.width, imageData.height, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, imageData.buffer);
 
             GL11.glEnable(GL11.GL_BLEND);
             GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);

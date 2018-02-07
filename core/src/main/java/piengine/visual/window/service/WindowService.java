@@ -72,6 +72,14 @@ public class WindowService {
         return windowInterpreter.getHeight();
     }
 
+    public int getOldWidth() {
+        return windowInterpreter.getOldWidth();
+    }
+
+    public int getOldHeight() {
+        return windowInterpreter.getOldHeight();
+    }
+
     public void setCursorVisibility(final boolean visible) {
         windowInterpreter.setCursorVisibility(visible);
     }

@@ -34,7 +34,7 @@ public class GrayScaleEffectService extends AbstractPostProcessingRenderService<
 
     @Override
     public GrayScaleEffectContext createContext(final Vector2i outSize) {
-        Framebuffer framebuffer = framebufferManager.supply(outSize, COLOR_TEXTURE_ATTACHMENT);
+        Framebuffer framebuffer = framebufferManager.supply(outSize, false, COLOR_TEXTURE_ATTACHMENT);
 
         return new GrayScaleEffectContext(framebuffer);
     }

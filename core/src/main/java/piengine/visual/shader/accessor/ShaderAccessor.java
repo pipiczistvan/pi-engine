@@ -40,6 +40,8 @@ public class ShaderAccessor implements Accessor<ShaderKey, ShaderData> {
         final String geometrySource = tryToReadShader("geometry", key.file);
         final String fragmentSource = tryToReadShader("fragment", key.file);
 
+        logger.info(String.format("Successfully loaded shader: %s", key.file));
+
         return new ShaderData(vertexSource, tessControlSource, tessEvalSource, geometrySource, fragmentSource);
     }
 
@@ -50,7 +52,6 @@ public class ShaderAccessor implements Accessor<ShaderKey, ShaderData> {
 
             return readFile("pipeline", shaderPath, processedImports);
         } catch (PIEngineException e) {
-            logger.warn("Could not load shader file!", e);
             return null;
         }
     }

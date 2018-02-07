@@ -1,5 +1,6 @@
 package piengine.visual.window.interpreter;
 
+import org.apache.log4j.Logger;
 import org.joml.Vector2f;
 import org.joml.Vector2i;
 import org.lwjgl.BufferUtils;
@@ -37,6 +38,7 @@ import static org.lwjgl.glfw.GLFW.glfwGetCursorPos;
 import static org.lwjgl.glfw.GLFW.glfwGetFramebufferSize;
 import static org.lwjgl.glfw.GLFW.glfwGetPrimaryMonitor;
 import static org.lwjgl.glfw.GLFW.glfwGetVideoMode;
+import static org.lwjgl.glfw.GLFW.glfwGetWindowPos;
 import static org.lwjgl.glfw.GLFW.glfwGetWindowSize;
 import static org.lwjgl.glfw.GLFW.glfwInit;
 import static org.lwjgl.glfw.GLFW.glfwMakeContextCurrent;
@@ -70,8 +72,12 @@ public class WindowInterpreter {
     private final InputService inputService;
     private final ListMap<WindowEventType, Event> eventMap;
     private final GLFWWindowSizeCallback windowSizeCallback;
+    private final Vector2i oldWindowSize;
     private final Vector2i windowSize;
+    private final Vector2i oldFramebufferSize;
+    private final Vector2i framebufferSize;
     private final Vector2f windowCenter;
+    private final Vector2f windowPosition;
 
     private long windowId;
     private long cursorId;
@@ -79,9 +85,13 @@ public class WindowInterpreter {
     private IntBuffer windowHeight = BufferUtils.createIntBuffer(1);
     private IntBuffer frameBufferWidth = BufferUtils.createIntBuffer(1);
     private IntBuffer frameBufferHeight = BufferUtils.createIntBuffer(1);
+    private IntBuffer windowPosX = BufferUtils.createIntBuffer(1);
+    private IntBuffer windowPosY = BufferUtils.createIntBuffer(1);
     private DoubleBuffer xBuffer = BufferUtils.createDoubleBuffer(1);
     private DoubleBuffer yBuffer = BufferUtils.createDoubleBuffer(1);
     private boolean resized = false;
+
+    private final Logger logger = Logger.getLogger(getClass());
 
     @Wire
     public WindowInterpreter(final InputService inputService) {
@@ -93,8 +103,12 @@ public class WindowInterpreter {
                 resized = true;
             }
         };
+        this.oldWindowSize = new Vector2i();
         this.windowSize = new Vector2i();
+        this.oldFramebufferSize = new Vector2i();
+        this.framebufferSize = new Vector2i();
         this.windowCenter = new Vector2f();
+        this.windowPosition = new Vector2f();
     }
 
     public void createWindow(String title, int width, int height, boolean fullScreen, boolean resizable, boolean cursorHidden, int major, int minor) {
@@ -136,11 +150,19 @@ public class WindowInterpreter {
     }
 
     public int getWidth() {
-        return frameBufferWidth.get(0);
+        return framebufferSize.x;
     }
 
     public int getHeight() {
-        return frameBufferHeight.get(0);
+        return framebufferSize.y;
+    }
+
+    public int getOldWidth() {
+        return oldFramebufferSize.x;
+    }
+
+    public int getOldHeight() {
+        return oldFramebufferSize.y;
     }
 
     public void setCursorVisibility(final boolean visible) {
@@ -185,15 +207,15 @@ public class WindowInterpreter {
         glfwSetCursor(windowId, cursorId);
 
         setCursorVisibility(!cursorHidden);
+        glfwMakeContextCurrent(windowId);
+        glfwSwapInterval(1);
+        glfwShowWindow(windowId);
 
         glfwSetKeyCallback(windowId, inputService.getKeyCallback());
         glfwSetMouseButtonCallback(windowId, inputService.getMouseButtonCallback());
         glfwSetCursorPosCallback(windowId, inputService.getCursorPosCallback());
         glfwSetWindowSizeCallback(windowId, windowSizeCallback);
 
-        glfwMakeContextCurrent(windowId);
-        glfwSwapInterval(1);
-        glfwShowWindow(windowId);
         createCapabilities();
     }
 
@@ -206,6 +228,7 @@ public class WindowInterpreter {
             glfwPollEvents();
             if (resized) {
                 updateSizeBuffers();
+                logger.info(String.format("Window resized to width: %s, height: %s", windowSize.x, windowSize.y));
                 eventMap.get(RESIZE).forEach(Event::invoke);
                 resized = false;
             }
@@ -227,10 +250,17 @@ public class WindowInterpreter {
         windowHeight.clear();
         frameBufferWidth.clear();
         frameBufferHeight.clear();
+        windowPosX.clear();
+        windowPosY.clear();
         glfwGetFramebufferSize(windowId, frameBufferWidth, frameBufferHeight);
         glfwGetWindowSize(windowId, windowWidth, windowHeight);
+        glfwGetWindowPos(windowId, windowPosX, windowPosY);
 
+        oldWindowSize.set(windowSize);
         windowSize.set(windowWidth.get(), windowHeight.get());
+        oldFramebufferSize.set(framebufferSize);
+        framebufferSize.set(frameBufferWidth.get(), frameBufferHeight.get());
+        windowPosition.set(windowPosX.get(), windowPosY.get());
         windowCenter.set(windowSize.x / 2f, windowSize.y / 2f);
     }
 }

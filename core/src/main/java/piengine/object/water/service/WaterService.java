@@ -41,8 +41,8 @@ public class WaterService extends SupplierService<WaterKey, WaterData, WaterDao,
                 resource.resolution.y / 2
         );
 
-        Framebuffer reflectionBuffer = framebufferManager.supply(reflectionResolution, COLOR_TEXTURE_ATTACHMENT, DEPTH_BUFFER_ATTACHMENT);
-        Framebuffer refractionBuffer = framebufferManager.supply(refractionResolution, COLOR_TEXTURE_ATTACHMENT, DEPTH_TEXTURE_ATTACHMENT);
+        Framebuffer reflectionBuffer = framebufferManager.supply(reflectionResolution, false, COLOR_TEXTURE_ATTACHMENT, DEPTH_BUFFER_ATTACHMENT);
+        Framebuffer refractionBuffer = framebufferManager.supply(refractionResolution, false, COLOR_TEXTURE_ATTACHMENT, DEPTH_TEXTURE_ATTACHMENT);
 
         return new Water(dao, reflectionBuffer, refractionBuffer, resource.position, resource.rotation, resource.scale, resource.color);
     }

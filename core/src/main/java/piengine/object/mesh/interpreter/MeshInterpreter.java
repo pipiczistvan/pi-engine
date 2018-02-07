@@ -1,5 +1,6 @@
 package piengine.object.mesh.interpreter;
 
+import org.apache.log4j.Logger;
 import org.lwjgl.opengl.GL15;
 import piengine.core.base.api.Interpreter;
 import piengine.object.mesh.domain.MeshDao;
@@ -30,6 +31,8 @@ import static piengine.object.mesh.domain.MeshDataType.VERTEX;
 @Component
 public class MeshInterpreter implements Interpreter<MeshData, MeshDao> {
 
+    private final Logger logger = Logger.getLogger(getClass());
+
     @Override
     public MeshDao create(final MeshData meshData) {
         final MeshDao dao = new MeshDao(glGenVertexArrays(), new ArrayList<>(), meshData.indices.length);
@@ -41,6 +44,8 @@ public class MeshInterpreter implements Interpreter<MeshData, MeshDao> {
         dao.vboIds.add(createVbo(NORMAL.value, meshData.normals, 3));
 
         unbind();
+
+        logger.info(String.format("Created vao: id: %s", dao.vaoId));
 
         return dao;
     }

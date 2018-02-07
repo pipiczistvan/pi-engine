@@ -1,5 +1,6 @@
 package piengine.visual.framebuffer.interpreter;
 
+import org.apache.log4j.Logger;
 import org.joml.Vector2i;
 import piengine.core.base.api.Interpreter;
 import piengine.core.base.exception.PIEngineException;
@@ -22,6 +23,7 @@ import static org.lwjgl.opengl.GL11.GL_LINEAR;
 import static org.lwjgl.opengl.GL11.GL_NEAREST;
 import static org.lwjgl.opengl.GL11.GL_NONE;
 import static org.lwjgl.opengl.GL11.GL_RGB;
+import static org.lwjgl.opengl.GL11.GL_RGB8;
 import static org.lwjgl.opengl.GL11.GL_RGBA8;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_MAG_FILTER;
@@ -61,6 +63,8 @@ public class FramebufferInterpreter implements Interpreter<FramebufferData, Fram
 
     private static final int SAMPLES = 4;
 
+    private final Logger logger = Logger.getLogger(getClass());
+
     @Override
     public FramebufferDao create(final FramebufferData framebufferData) {
         int drawBuffer = framebufferData.drawingEnabled ? GL_COLOR_ATTACHMENT0 : GL_NONE;
@@ -73,12 +77,13 @@ public class FramebufferInterpreter implements Interpreter<FramebufferData, Fram
 
         unbind();
 
+        logger.info(String.format("Created framebuffer: id: %s, width: %s, height: %s", fbo, framebufferData.width, framebufferData.height));
+
         return new FramebufferDao(fbo, attachments, framebufferData.textureAttachment);
     }
 
     @Override
     public void free(final FramebufferDao dao) {
-        unbind();
         glDeleteFramebuffers(dao.getFbo());
 
         for (Map.Entry<FramebufferAttachment, Integer> attachment : dao.getAttachments().entrySet()) {
@@ -90,6 +95,8 @@ public class FramebufferInterpreter implements Interpreter<FramebufferData, Fram
                 glDeleteTextures(attachment.getValue());
             }
         }
+
+        logger.info(String.format("Deleted framebuffer: id: %s", dao.getFbo()));
     }
 
     public void bind(final FramebufferDao dao) {
@@ -121,7 +128,7 @@ public class FramebufferInterpreter implements Interpreter<FramebufferData, Fram
 
     private int createColorTextureAttachment(final Vector2i resolution, final Texture texture) {
         int textureId = texture != null ? texture.getDao().getTexture() :
-                generateTexture(resolution, GL_RGB, GL_RGB, GL_UNSIGNED_BYTE);
+                generateTexture(resolution, GL_RGB8, GL_RGB, GL_UNSIGNED_BYTE);
         glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, textureId, 0);
 
         return textureId;
@@ -155,7 +162,7 @@ public class FramebufferInterpreter implements Interpreter<FramebufferData, Fram
     private int createDepthBufferAttachment(final Vector2i resolution) {
         int rbo = glGenRenderbuffers();
         glBindRenderbuffer(GL_RENDERBUFFER, rbo);
-        glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, resolution.x, resolution.y);
+        glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, resolution.x, resolution.y);
         glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, rbo);
 
         return rbo;
@@ -164,7 +171,7 @@ public class FramebufferInterpreter implements Interpreter<FramebufferData, Fram
     private int createDepthBufferMultisampleAttachment(final Vector2i resolution) {
         int rbo = glGenRenderbuffers();
         glBindRenderbuffer(GL_RENDERBUFFER, rbo);
-        glRenderbufferStorageMultisample(GL_RENDERBUFFER, SAMPLES, GL_DEPTH_COMPONENT, resolution.x, resolution.y);
+        glRenderbufferStorageMultisample(GL_RENDERBUFFER, SAMPLES, GL_DEPTH_COMPONENT24, resolution.x, resolution.y);
         glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, rbo);
 
         return rbo;

@@ -25,7 +25,7 @@ public class AntialiasEffectService extends AbstractPostProcessingService<Antial
 
     @Override
     public AntialiasEffectContext createContext(final Vector2i outSize) {
-        Framebuffer framebuffer = framebufferManager.supply(outSize, COLOR_TEXTURE_ATTACHMENT, DEPTH_TEXTURE_ATTACHMENT);
+        Framebuffer framebuffer = framebufferManager.supply(outSize, false, COLOR_TEXTURE_ATTACHMENT, DEPTH_TEXTURE_ATTACHMENT);
 
         return new AntialiasEffectContext(framebuffer);
     }

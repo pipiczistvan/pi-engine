@@ -34,7 +34,7 @@ public class HighContrastEffectService extends AbstractPostProcessingRenderServi
 
     @Override
     public HighContrastEffectContext createContext(final Vector2i outSize) {
-        Framebuffer framebuffer = framebufferManager.supply(outSize, COLOR_TEXTURE_ATTACHMENT);
+        Framebuffer framebuffer = framebufferManager.supply(outSize, false, COLOR_TEXTURE_ATTACHMENT);
 
         return new HighContrastEffectContext(framebuffer);
     }

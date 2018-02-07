@@ -3,38 +3,29 @@ package piengine.core.architecture.scene.service;
 import piengine.core.architecture.scene.domain.Scene;
 import piengine.core.base.api.Initializable;
 import piengine.core.base.api.Renderable;
+import piengine.core.base.api.Resizable;
 import piengine.core.base.api.Service;
 import piengine.core.base.api.Updatable;
-import piengine.visual.window.service.WindowService;
 import puppeteer.Puppeteer;
 import puppeteer.annotation.premade.Component;
 import puppeteer.annotation.premade.Wire;
 
-import static piengine.visual.window.domain.WindowEventType.RESIZE;
-
 @Component
-public class SceneService implements Service, Initializable, Updatable, Renderable {
+public class SceneService implements Service, Initializable, Updatable, Renderable, Resizable {
 
     private final Puppeteer puppeteer;
-    private final WindowService windowService;
 
     private Class<? extends Scene> defaultSceneClass;
     private Scene currentScene;
 
     @Wire
-    public SceneService(final Puppeteer puppeteer,
-                        final WindowService windowService) {
+    public SceneService(final Puppeteer puppeteer) {
         this.puppeteer = puppeteer;
-        this.windowService = windowService;
     }
 
     @Override
     public void initialize() {
         setCurrentScene(defaultSceneClass);
-        windowService.addEvent(RESIZE, () -> {
-            currentScene.initialize();
-            currentScene.setupRenderPlan();
-        });
     }
 
     @Override
@@ -49,6 +40,11 @@ public class SceneService implements Service, Initializable, Updatable, Renderab
         if (currentScene != null) {
             currentScene.render();
         }
+    }
+
+    @Override
+    public void resize(final int oldWidth, final int oldHeight, final int width, final int height) {
+        currentScene.resize(oldWidth, oldHeight, width, height);
     }
 
     public void setDefaultSceneClass(Class<? extends Scene> defaultSceneClass) {

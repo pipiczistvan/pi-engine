@@ -1,5 +1,6 @@
 package piengine.object.mesh.accessor;
 
+import org.apache.log4j.Logger;
 import piengine.core.base.api.Accessor;
 import piengine.core.base.resource.ResourceLoader;
 import piengine.object.mesh.domain.MeshData;
@@ -19,6 +20,7 @@ public class MeshAccessor implements Accessor<MeshKey, MeshData> {
 
     private final ObjParser objParser;
     private final ResourceLoader loader;
+    private final Logger logger = Logger.getLogger(getClass());
 
     @Wire
     public MeshAccessor(final ObjParser objParser) {
@@ -30,6 +32,8 @@ public class MeshAccessor implements Accessor<MeshKey, MeshData> {
     public MeshData access(final MeshKey key) {
         final String meshSource = loader.load(key.file);
         final ParsedMeshData parsedMeshData = objParser.parseSource(meshSource.split("\n"));
+
+        logger.info(String.format("Successfully loaded mesh: %s", key.file));
 
         return new MeshData(parsedMeshData.vertices, parsedMeshData.indices, parsedMeshData.textureCoords, parsedMeshData.normals);
     }

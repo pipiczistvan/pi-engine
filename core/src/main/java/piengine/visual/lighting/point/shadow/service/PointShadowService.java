@@ -36,7 +36,7 @@ public class PointShadowService extends SupplierService<PointShadowKey, PointSha
     @Override
     protected PointShadow createDomain(final PointShadowDao dao, final PointShadowData resource) {
         CubeMap shadowCubeMap = cubeMapManager.supply(GL_DEPTH_COMPONENT, GL_FLOAT, resource.resolution);
-        Framebuffer shadowMap = framebufferManager.supply(resource.resolution, shadowCubeMap, false, DEPTH_TEXTURE_ATTACHMENT);
+        Framebuffer shadowMap = framebufferManager.supply(resource.resolution, shadowCubeMap, false, true, DEPTH_TEXTURE_ATTACHMENT);
 
         return new PointShadow(dao, shadowMap);
     }
