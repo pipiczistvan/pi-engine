@@ -110,8 +110,8 @@ public class MapAsset extends WorldAsset<MapAssetArgument> {
         peasantAnimation = animationManager.supply("peasant");
         peasantAnimator = animatorManager.supply(peasantModel);
 
-        inputManager.addEvent(GLFW_KEY_R, KeyEventType.PRESS, () -> peasantAnimator.doAnimation(peasantAnimation));
-        inputManager.addEvent(GLFW_KEY_R, KeyEventType.RELEASE, () -> peasantAnimator.doAnimation(null));
+        inputManager.addKeyEvent(GLFW_KEY_R, KeyEventType.PRESS, () -> peasantAnimator.doAnimation(peasantAnimation));
+        inputManager.addKeyEvent(GLFW_KEY_R, KeyEventType.RELEASE, () -> peasantAnimator.doAnimation(null));
 
         sun = directionalLightManager.supply(this, new Color(1.0f, 0.9f, 0.6f), arguments.camera, new Vector2i(2048));
         sun.setPosition(1000, 1000, 300);

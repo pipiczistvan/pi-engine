@@ -50,19 +50,19 @@ public class CameraAsset extends Asset<CameraAssetArgument, RenderAssetContext> 
 
     @Override
     public void initialize() {
-        inputManager.addEvent(GLFW_KEY_SPACE, PRESS, this::pressSpace);
-        inputManager.addEvent(GLFW_KEY_SPACE, RELEASE, this::releaseSpace);
-        inputManager.addEvent(GLFW_KEY_LEFT_SHIFT, PRESS, this::pressShift);
-        inputManager.addEvent(GLFW_KEY_LEFT_SHIFT, RELEASE, this::releaseShift);
-        inputManager.addEvent(GLFW_KEY_A, PRESS, this::moveLeft);
-        inputManager.addEvent(GLFW_KEY_S, PRESS, this::moveBackward);
-        inputManager.addEvent(GLFW_KEY_D, PRESS, this::moveRight);
-        inputManager.addEvent(GLFW_KEY_W, PRESS, this::moveForward);
-        inputManager.addEvent(GLFW_KEY_A, RELEASE, this::moveRight);
-        inputManager.addEvent(GLFW_KEY_S, RELEASE, this::moveForward);
-        inputManager.addEvent(GLFW_KEY_D, RELEASE, this::moveLeft);
-        inputManager.addEvent(GLFW_KEY_W, RELEASE, this::moveBackward);
-        inputManager.addEvent(v -> {
+        inputManager.addKeyEvent(GLFW_KEY_SPACE, PRESS, this::pressSpace);
+        inputManager.addKeyEvent(GLFW_KEY_SPACE, RELEASE, this::releaseSpace);
+        inputManager.addKeyEvent(GLFW_KEY_LEFT_SHIFT, PRESS, this::pressShift);
+        inputManager.addKeyEvent(GLFW_KEY_LEFT_SHIFT, RELEASE, this::releaseShift);
+        inputManager.addKeyEvent(GLFW_KEY_A, PRESS, this::moveLeft);
+        inputManager.addKeyEvent(GLFW_KEY_S, PRESS, this::moveBackward);
+        inputManager.addKeyEvent(GLFW_KEY_D, PRESS, this::moveRight);
+        inputManager.addKeyEvent(GLFW_KEY_W, PRESS, this::moveForward);
+        inputManager.addKeyEvent(GLFW_KEY_A, RELEASE, this::moveRight);
+        inputManager.addKeyEvent(GLFW_KEY_S, RELEASE, this::moveForward);
+        inputManager.addKeyEvent(GLFW_KEY_D, RELEASE, this::moveLeft);
+        inputManager.addKeyEvent(GLFW_KEY_W, RELEASE, this::moveBackward);
+        inputManager.addCursorEvent(v -> {
             if (lookingEnabled) {
                 Vector2f delta = new Vector2f();
                 Vector2f windowCenter = windowManager.getWindowCenter();

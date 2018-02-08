@@ -51,6 +51,7 @@ import static org.lwjgl.glfw.GLFW.glfwSetErrorCallback;
 import static org.lwjgl.glfw.GLFW.glfwSetInputMode;
 import static org.lwjgl.glfw.GLFW.glfwSetKeyCallback;
 import static org.lwjgl.glfw.GLFW.glfwSetMouseButtonCallback;
+import static org.lwjgl.glfw.GLFW.glfwSetScrollCallback;
 import static org.lwjgl.glfw.GLFW.glfwSetWindowPos;
 import static org.lwjgl.glfw.GLFW.glfwSetWindowShouldClose;
 import static org.lwjgl.glfw.GLFW.glfwSetWindowSizeCallback;
@@ -230,6 +231,7 @@ public class WindowInterpreter {
         glfwSetKeyCallback(windowId, inputService.getKeyCallback());
         glfwSetMouseButtonCallback(windowId, inputService.getMouseButtonCallback());
         glfwSetCursorPosCallback(windowId, inputService.getCursorPosCallback());
+        glfwSetScrollCallback(windowId, inputService.getScrollCallback());
         glfwSetWindowSizeCallback(windowId, windowSizeCallback);
 
         createCapabilities();

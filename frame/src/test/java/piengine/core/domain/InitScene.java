@@ -106,8 +106,8 @@ public class InitScene extends Scene {
     @Override
     public void initialize() {
         super.initialize();
-        inputManager.addEvent(GLFW_KEY_ESCAPE, PRESS, windowManager::closeWindow);
-        inputManager.addEvent(GLFW_KEY_RIGHT_CONTROL, PRESS, () -> {
+        inputManager.addKeyEvent(GLFW_KEY_ESCAPE, PRESS, windowManager::closeWindow);
+        inputManager.addKeyEvent(GLFW_KEY_RIGHT_CONTROL, PRESS, () -> {
             cameraAsset.lookingEnabled = !cameraAsset.lookingEnabled;
             windowManager.setCursorVisibility(!cameraAsset.lookingEnabled);
         });

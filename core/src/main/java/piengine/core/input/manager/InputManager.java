@@ -18,12 +18,16 @@ public class InputManager {
         this.inputService = inputService;
     }
 
-    public void addEvent(int key, KeyEventType type, Event event) {
-        inputService.addEvent(key, type, event);
+    public void addKeyEvent(final int key, final KeyEventType type, final Event event) {
+        inputService.addKeyEvent(key, type, event);
     }
 
-    public void addEvent(Action<Vector2f> action) {
-        inputService.addEvent(action);
+    public void addCursorEvent(final Action<Vector2f> action) {
+        inputService.addCursorEvent(action);
+    }
+
+    public void addScrollEvent(final Action<Vector2f> action) {
+        inputService.addScrollEvent(action);
     }
 
     public void clearEvents() {
