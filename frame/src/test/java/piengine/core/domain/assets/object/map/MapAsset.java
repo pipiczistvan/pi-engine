@@ -92,7 +92,7 @@ public class MapAsset extends WorldAsset<MapAssetArgument> {
         lampAsset1 = createAsset(LampAsset.class, new LampAssetArgument());
         lampAsset2 = createAsset(LampAsset.class, new LampAssetArgument());
 
-        cubeModel1 = modelManager.supply(this, "cube", false);
+        cubeModel1 = modelManager.supply(this, "box", "box", false);
         cubeModel2 = modelManager.supply(this, "cube", false);
         cubeModel3 = modelManager.supply(this, "cube", false);
         cubeModel4 = modelManager.supply(this, "cube", false);

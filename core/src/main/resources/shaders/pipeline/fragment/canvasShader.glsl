@@ -11,6 +11,10 @@ void main(void) {
     // TEXTURE
     vec4 textureFactor = texture(textureSampler, vTextureCoord);
 
+    if (textureFactor.a < 0.5) {
+        discard;
+    }
+
     // FINAL OUTPUT
     fColor = textureFactor * color;
 }
