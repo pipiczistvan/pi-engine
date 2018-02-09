@@ -27,6 +27,7 @@ import piengine.object.skybox.domain.Skybox;
 import piengine.object.skybox.manager.SkyboxManager;
 import piengine.object.terrain.domain.Terrain;
 import piengine.object.terrain.manager.TerrainManager;
+import piengine.visual.display.manager.DisplayManager;
 import piengine.visual.fog.Fog;
 import piengine.visual.framebuffer.domain.Framebuffer;
 import piengine.visual.framebuffer.manager.FramebufferManager;
@@ -34,7 +35,6 @@ import piengine.visual.render.domain.plan.GuiRenderPlanBuilder;
 import piengine.visual.render.domain.plan.RenderPlan;
 import piengine.visual.render.domain.plan.WorldRenderPlanBuilder;
 import piengine.visual.render.manager.RenderManager;
-import piengine.visual.window.manager.WindowManager;
 import puppeteer.annotation.premade.Wire;
 
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
@@ -69,7 +69,7 @@ public class InitScene extends Scene {
     };
 
     private final InputManager inputManager;
-    private final WindowManager windowManager;
+    private final DisplayManager displayManager;
     private final FramebufferManager framebufferManager;
     private final SkyboxManager skyboxManager;
     private final CanvasManager canvasManager;
@@ -90,13 +90,13 @@ public class InitScene extends Scene {
 
     @Wire
     public InitScene(final RenderManager renderManager, final AssetManager assetManager,
-                     final InputManager inputManager, final WindowManager windowManager,
+                     final InputManager inputManager, final DisplayManager displayManager,
                      final FramebufferManager framebufferManager, final SkyboxManager skyboxManager,
                      final CanvasManager canvasManager, final TerrainManager terrainManager) {
         super(renderManager, assetManager);
 
         this.inputManager = inputManager;
-        this.windowManager = windowManager;
+        this.displayManager = displayManager;
         this.framebufferManager = framebufferManager;
         this.skyboxManager = skyboxManager;
         this.canvasManager = canvasManager;
@@ -106,10 +106,10 @@ public class InitScene extends Scene {
     @Override
     public void initialize() {
         super.initialize();
-        inputManager.addKeyEvent(GLFW_KEY_ESCAPE, PRESS, windowManager::closeWindow);
+        inputManager.addKeyEvent(GLFW_KEY_ESCAPE, PRESS, displayManager::closeDisplay);
         inputManager.addKeyEvent(GLFW_KEY_RIGHT_CONTROL, PRESS, () -> {
             cameraAsset.lookingEnabled = !cameraAsset.lookingEnabled;
-            windowManager.setCursorVisibility(!cameraAsset.lookingEnabled);
+            displayManager.setCursorVisibility(!cameraAsset.lookingEnabled);
         });
     }
 

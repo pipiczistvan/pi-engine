@@ -1,4 +1,4 @@
-package piengine.visual.window.interpreter;
+package piengine.visual.display.interpreter;
 
 import org.apache.log4j.Logger;
 import org.joml.Vector2f;
@@ -9,7 +9,7 @@ import org.lwjgl.glfw.GLFWWindowSizeCallback;
 import piengine.core.base.event.Event;
 import piengine.core.base.exception.PIEngineException;
 import piengine.core.input.service.InputService;
-import piengine.visual.window.domain.WindowEventType;
+import piengine.visual.display.domain.DisplayEventType;
 import piutils.map.ListMap;
 import puppeteer.annotation.premade.Component;
 import puppeteer.annotation.premade.Wire;
@@ -75,22 +75,22 @@ import static piengine.core.base.type.property.PropertyKeys.WINDOW_MIN_WIDTH;
 import static piengine.core.base.type.property.PropertyKeys.WINDOW_RESIZABLE;
 import static piengine.core.base.type.property.PropertyKeys.WINDOW_TITLE;
 import static piengine.core.base.type.property.PropertyKeys.WINDOW_WIDTH;
-import static piengine.visual.window.domain.WindowEventType.CLOSE;
-import static piengine.visual.window.domain.WindowEventType.INITIALIZE;
-import static piengine.visual.window.domain.WindowEventType.RESIZE;
-import static piengine.visual.window.domain.WindowEventType.UPDATE;
+import static piengine.visual.display.domain.DisplayEventType.CLOSE;
+import static piengine.visual.display.domain.DisplayEventType.INITIALIZE;
+import static piengine.visual.display.domain.DisplayEventType.RESIZE;
+import static piengine.visual.display.domain.DisplayEventType.UPDATE;
 
 @Component
-public class WindowInterpreter {
+public class DisplayInterpreter {
 
     private final InputService inputService;
-    private final ListMap<WindowEventType, Event> eventMap;
+    private final ListMap<DisplayEventType, Event> eventMap;
     private final GLFWWindowSizeCallback windowSizeCallback;
     private final Vector2i oldWindowSize;
     private final Vector2i windowSize;
     private final Vector2i oldFramebufferSize;
     private final Vector2i framebufferSize;
-    private final Vector2f windowCenter;
+    private final Vector2f displayCenter;
     private final Vector2f windowPosition;
 
     private long windowId;
@@ -108,7 +108,7 @@ public class WindowInterpreter {
     private final Logger logger = Logger.getLogger(getClass());
 
     @Wire
-    public WindowInterpreter(final InputService inputService) {
+    public DisplayInterpreter(final InputService inputService) {
         this.inputService = inputService;
         this.eventMap = new ListMap<>();
         this.windowSizeCallback = new GLFWWindowSizeCallback() {
@@ -123,21 +123,21 @@ public class WindowInterpreter {
         this.windowSize = new Vector2i();
         this.oldFramebufferSize = new Vector2i();
         this.framebufferSize = new Vector2i();
-        this.windowCenter = new Vector2f();
+        this.displayCenter = new Vector2f();
         this.windowPosition = new Vector2f();
     }
 
-    public void createWindow() {
+    public void createDisplay() {
         setupGLFW();
         setupHints();
         setupContext();
 
-        initializeWindow();
-        updateWindow();
-        terminateWindow();
+        initializeDisplay();
+        updateDisplay();
+        terminateDisplay();
     }
 
-    public void addEvent(WindowEventType type, Event event) {
+    public void addEvent(DisplayEventType type, Event event) {
         eventMap.put(type, event);
     }
 
@@ -153,11 +153,11 @@ public class WindowInterpreter {
         glfwSetCursorPos(windowId, position.x, position.y);
     }
 
-    public Vector2f getWindowCenter() {
-        return windowCenter;
+    public Vector2f getDisplayCenter() {
+        return displayCenter;
     }
 
-    public void closeWindow() {
+    public void closeDisplay() {
         glfwSetWindowShouldClose(windowId, GLFW_TRUE);
     }
 
@@ -208,7 +208,7 @@ public class WindowInterpreter {
     private void setupContext() {
         windowId = glfwCreateWindow(get(WINDOW_WIDTH), get(WINDOW_HEIGHT), get(WINDOW_TITLE), get(WINDOW_FULL_SCREEN) ? glfwGetPrimaryMonitor() : NULL, NULL);
         if (windowId == NULL) {
-            throw new PIEngineException("Failed to create the GLFW window");
+            throw new PIEngineException("Failed to create the GLFW display");
         }
         cursorId = glfwCreateStandardCursor(GLFW_HAND_CURSOR);
 
@@ -237,16 +237,16 @@ public class WindowInterpreter {
         createCapabilities();
     }
 
-    private void initializeWindow() {
+    private void initializeDisplay() {
         eventMap.get(INITIALIZE).forEach(Event::invoke);
     }
 
-    private void updateWindow() {
+    private void updateDisplay() {
         while (glfwWindowShouldClose(windowId) != GLFW_TRUE) {
             glfwPollEvents();
             if (resized) {
                 updateSizeBuffers();
-                logger.info(String.format("Window resized to width: %s, height: %s", windowSize.x, windowSize.y));
+                logger.info(String.format("Display resized to width: %s, height: %s", framebufferSize.x, framebufferSize.y));
                 eventMap.get(RESIZE).forEach(Event::invoke);
                 resized = false;
             }
@@ -254,7 +254,7 @@ public class WindowInterpreter {
         }
     }
 
-    private void terminateWindow() {
+    private void terminateDisplay() {
         eventMap.get(CLOSE).forEach(Event::invoke);
 
         glfwDestroyWindow(windowId);
@@ -279,6 +279,6 @@ public class WindowInterpreter {
         oldFramebufferSize.set(framebufferSize);
         framebufferSize.set(frameBufferWidth.get(), frameBufferHeight.get());
         windowPosition.set(windowPosX.get(), windowPosY.get());
-        windowCenter.set(windowSize.x / 2f, windowSize.y / 2f);
+        displayCenter.set(windowSize.x / 2f, windowSize.y / 2f);
     }
 }

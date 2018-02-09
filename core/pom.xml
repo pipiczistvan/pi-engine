@@ -33,6 +33,11 @@
             <artifactId>lwjgl-platform</artifactId>
             <classifier>natives-linux</classifier>
         </dependency>
+        <!-- LWJGL AWT -->
+        <dependency>
+            <groupId>com.github.pipiczistvan</groupId>
+            <artifactId>lwjgl3-awt</artifactId>
+        </dependency>
         <!-- JOML (MATH LIBRARY) -->
         <dependency>
             <groupId>org.joml</groupId>

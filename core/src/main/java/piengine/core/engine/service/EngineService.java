@@ -9,22 +9,22 @@ import piengine.core.base.api.Service;
 import piengine.core.base.api.Terminatable;
 import piengine.core.base.api.Updatable;
 import piengine.core.time.service.TimeService;
-import piengine.visual.window.service.WindowService;
+import piengine.visual.display.service.DisplayService;
 import puppeteer.annotation.premade.Component;
 import puppeteer.annotation.premade.Wire;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static piengine.visual.window.domain.WindowEventType.CLOSE;
-import static piengine.visual.window.domain.WindowEventType.INITIALIZE;
-import static piengine.visual.window.domain.WindowEventType.RESIZE;
-import static piengine.visual.window.domain.WindowEventType.UPDATE;
+import static piengine.visual.display.domain.DisplayEventType.CLOSE;
+import static piengine.visual.display.domain.DisplayEventType.INITIALIZE;
+import static piengine.visual.display.domain.DisplayEventType.RESIZE;
+import static piengine.visual.display.domain.DisplayEventType.UPDATE;
 
 @Component
 public class EngineService {
 
-    private final WindowService windowService;
+    private final DisplayService displayService;
     private final TimeService timeService;
     private final SceneService sceneService;
 
@@ -35,11 +35,11 @@ public class EngineService {
     private final List<Resizable> resizableServices;
 
     @Wire
-    public EngineService(final WindowService windowService,
+    public EngineService(final DisplayService displayService,
                          final TimeService timeService,
                          final SceneService sceneService,
                          final List<Service> services) {
-        this.windowService = windowService;
+        this.displayService = displayService;
         this.timeService = timeService;
         this.sceneService = sceneService;
 
@@ -53,11 +53,11 @@ public class EngineService {
     public void start(Class<? extends Scene> sceneClass) {
         sceneService.setDefaultSceneClass(sceneClass);
 
-        windowService.addEvent(INITIALIZE, this::initialize);
-        windowService.addEvent(UPDATE, this::update);
-        windowService.addEvent(CLOSE, this::terminate);
-        windowService.addEvent(RESIZE, this::resize);
-        windowService.createWindow();
+        displayService.addEvent(INITIALIZE, this::initialize);
+        displayService.addEvent(UPDATE, this::update);
+        displayService.addEvent(CLOSE, this::terminate);
+        displayService.addEvent(RESIZE, this::resize);
+        displayService.createDisplay();
     }
 
     private void initialize() {
@@ -72,7 +72,7 @@ public class EngineService {
 
             updatableServices.forEach(u -> u.update(delta));
             renderableServices.forEach(Renderable::render);
-            windowService.swapBuffers();
+            displayService.swapBuffers();
 
             timeService.frameUpdated();
         }
@@ -83,10 +83,10 @@ public class EngineService {
     }
 
     private void resize() {
-        int width = windowService.getWidth();
-        int height = windowService.getHeight();
-        int oldWidth = windowService.getOldWidth();
-        int oldHeight = windowService.getOldHeight();
+        int width = displayService.getWidth();
+        int height = displayService.getHeight();
+        int oldWidth = displayService.getOldWidth();
+        int oldHeight = displayService.getOldHeight();
 
         resizableServices.forEach(r -> r.resize(oldWidth, oldHeight, width, height));
     }

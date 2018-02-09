@@ -6,7 +6,7 @@ import piengine.core.input.manager.InputManager;
 import piengine.object.asset.domain.Asset;
 import piengine.object.asset.manager.AssetManager;
 import piengine.object.asset.plan.RenderAssetContext;
-import piengine.visual.window.manager.WindowManager;
+import piengine.visual.display.manager.DisplayManager;
 import puppeteer.annotation.premade.Wire;
 
 import static java.lang.Math.cos;
@@ -29,7 +29,7 @@ public class CameraAsset extends Asset<CameraAssetArgument, RenderAssetContext> 
     private final Vector2f movement;
     private final Vector2f looking;
     private final InputManager inputManager;
-    private final WindowManager windowManager;
+    private final DisplayManager displayManager;
     public boolean movingEnabled = true;
     public boolean lookingEnabled = true;
     public boolean flyingEnabled = true;
@@ -38,11 +38,11 @@ public class CameraAsset extends Asset<CameraAssetArgument, RenderAssetContext> 
     private boolean isFlying = false;
 
     @Wire
-    public CameraAsset(final AssetManager assetManager, final InputManager inputManager, final WindowManager windowManager) {
+    public CameraAsset(final AssetManager assetManager, final InputManager inputManager, final DisplayManager displayManager) {
         super(assetManager);
 
         this.inputManager = inputManager;
-        this.windowManager = windowManager;
+        this.displayManager = displayManager;
 
         this.movement = new Vector2f();
         this.looking = new Vector2f();
@@ -65,11 +65,11 @@ public class CameraAsset extends Asset<CameraAssetArgument, RenderAssetContext> 
         inputManager.addCursorEvent(v -> {
             if (lookingEnabled) {
                 Vector2f delta = new Vector2f();
-                Vector2f windowCenter = windowManager.getWindowCenter();
+                Vector2f windowCenter = displayManager.getDisplayCenter();
                 v.sub(windowCenter, delta);
                 if (Math.abs(delta.x) >= 1 || Math.abs(delta.y) >= 1) {
                     looking.set(delta);
-                    windowManager.setPointer(windowCenter);
+                    displayManager.setPointer(windowCenter);
                 }
             }
         });

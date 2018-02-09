@@ -29,6 +29,7 @@
         <mockito.version>1.9.5</mockito.version>
         <hamcrest.version>1.3</hamcrest.version>
         <piengine.version>1.0-SNAPSHOT</piengine.version>
+        <lwjgl-awt.version>-SNAPSHOT</lwjgl-awt.version>
     </properties>
 
     <dependencyManagement>
@@ -72,6 +73,12 @@
                 <artifactId>lwjgl-platform</artifactId>
                 <version>${lwjgl.version}</version>
                 <classifier>natives-linux</classifier>
+            </dependency>
+            <!-- LWJGL ATW -->
+            <dependency>
+                <groupId>com.github.pipiczistvan</groupId>
+                <artifactId>lwjgl3-awt</artifactId>
+                <version>${lwjgl-awt.version}</version>
             </dependency>
             <!-- JOML (MATH LIBRARY) -->
             <dependency>
