@@ -117,7 +117,7 @@ public class Frame extends Display {
         GLData glData = new GLData();
 
         glData.samples = 4;
-        glData.swapInterval = 1;
+        glData.swapInterval = 0;
         glData.majorVersion = get(DISPLAY_MAJOR_VERSION);
         glData.minorVersion = get(DISPLAY_MINOR_VERSION);
         glData.profile = GLData.Profile.CORE;
@@ -134,13 +134,14 @@ public class Frame extends Display {
 
         @Override
         public void initGL() {
-            interpreter.hey();
+            interpreter.initializeDisplay();
         }
 
         @Override
         public void paintGL() {
+            interpreter.updateDisplay();
             this.swapBuffers();
-            this.repaint();
+//            this.repaint();
         }
     }
 }

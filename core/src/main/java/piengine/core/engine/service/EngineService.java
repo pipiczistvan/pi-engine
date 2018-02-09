@@ -67,15 +67,15 @@ public class EngineService {
     private void update() {
         timeService.update();
 
-        if (timeService.waitTimeSpent()) {
+//        if (timeService.waitTimeSpent()) {
             float delta = timeService.getDelta();
 
             updatableServices.forEach(u -> u.update(delta));
             renderableServices.forEach(Renderable::render);
-            displayService.render();
+//            displayService.render();
 
             timeService.frameUpdated();
-        }
+//        }
     }
 
     private void terminate() {
