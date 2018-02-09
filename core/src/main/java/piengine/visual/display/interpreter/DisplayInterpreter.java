@@ -8,6 +8,7 @@ import piutils.map.ListMap;
 import puppeteer.annotation.premade.Component;
 import puppeteer.annotation.premade.Wire;
 
+import static org.lwjgl.opengl.GL.createCapabilities;
 import static piengine.core.base.type.property.ApplicationProperties.get;
 import static piengine.core.base.type.property.PropertyKeys.DISPLAY_IN_CANVAS;
 import static piengine.visual.display.domain.DisplayEventType.CLOSE;
@@ -30,8 +31,9 @@ public class DisplayInterpreter {
     }
 
     public void createDisplay() {
-        display = get(DISPLAY_IN_CANVAS) ? new Canvas() : new Window(inputService);
+        display = get(DISPLAY_IN_CANVAS) ? new Frame(this) : new Window(inputService);
         display.initialize();
+        //todo: ez frame esetén rossz
         eventMap.get(INITIALIZE).forEach(Event::invoke);
         while (display.shouldUpdate()) {
             eventMap.get(UPDATE).forEach(Event::invoke);
@@ -43,6 +45,12 @@ public class DisplayInterpreter {
         }
         eventMap.get(CLOSE).forEach(Event::invoke);
         display.terminate();
+    }
+
+    public void hey() {
+        createCapabilities(true);
+        eventMap.get(INITIALIZE).forEach(Event::invoke);
+        //todo: opengl context frame esetén csak így érhető el :|
     }
 
     public void addEvent(final DisplayEventType type, final Event event) {

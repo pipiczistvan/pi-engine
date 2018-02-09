@@ -16,27 +16,15 @@
         <!-- LWJGL -->
         <dependency>
             <groupId>org.lwjgl</groupId>
-            <artifactId>lwjgl</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.lwjgl</groupId>
-            <artifactId>lwjgl-platform</artifactId>
-            <classifier>natives-windows</classifier>
-        </dependency>
-        <dependency>
-            <groupId>org.lwjgl</groupId>
-            <artifactId>lwjgl-platform</artifactId>
-            <classifier>natives-osx</classifier>
-        </dependency>
-        <dependency>
-            <groupId>org.lwjgl</groupId>
-            <artifactId>lwjgl-platform</artifactId>
-            <classifier>natives-linux</classifier>
-        </dependency>
-        <!-- LWJGL AWT -->
-        <dependency>
-            <groupId>com.github.pipiczistvan</groupId>
             <artifactId>lwjgl3-awt</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.lwjgl</groupId>
+            <artifactId>lwjgl-glfw</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.lwjgl</groupId>
+            <artifactId>lwjgl-stb</artifactId>
         </dependency>
         <!-- JOML (MATH LIBRARY) -->
         <dependency>
@@ -86,5 +74,4 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-
 </project>

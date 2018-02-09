@@ -167,7 +167,7 @@ public class Window extends Display {
 
     @Override
     public void closeDisplay() {
-        glfwSetWindowShouldClose(windowId, GLFW_TRUE);
+        glfwSetWindowShouldClose(windowId, true);
     }
 
     @Override
@@ -199,11 +199,11 @@ public class Window extends Display {
 
     @Override
     protected boolean shouldUpdate() {
-        return glfwWindowShouldClose(windowId) != GLFW_TRUE;
+        return !glfwWindowShouldClose(windowId);
     }
 
     private void createGlfwWindow() {
-        if (glfwInit() != GLFW_TRUE) {
+        if (!glfwInit()) {
             throw new PIEngineException("Unable to initialize GLFW!");
         }
         glfwDefaultWindowHints();

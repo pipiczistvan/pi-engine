@@ -13,7 +13,6 @@ import java.net.URISyntaxException;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 
-import static org.lwjgl.opengl.GL11.GL_FALSE;
 import static org.lwjgl.stb.STBImage.stbi_failure_reason;
 import static org.lwjgl.stb.STBImage.stbi_image_free;
 import static org.lwjgl.stb.STBImage.stbi_info_from_memory;
@@ -47,7 +46,7 @@ public class ImageAccessor extends Accessor<ImageKey, ImageData> {
         IntBuffer h = BufferUtils.createIntBuffer(1);
         IntBuffer comp = BufferUtils.createIntBuffer(1);
 
-        if (stbi_info_from_memory(imageBuffer, w, h, comp) == GL_FALSE) {
+        if (!stbi_info_from_memory(imageBuffer, w, h, comp)) {
             throw new PIEngineException("Failed to read image information %s!", stbi_failure_reason());
         }
 

@@ -4,17 +4,48 @@ import org.joml.Vector2f;
 import org.lwjgl.opengl.awt.AWTGLCanvas;
 import org.lwjgl.opengl.awt.GLData;
 
-import static org.lwjgl.opengl.GL.createCapabilities;
+import javax.swing.*;
+import java.awt.*;
+
 import static piengine.core.base.type.property.ApplicationProperties.get;
 import static piengine.core.base.type.property.PropertyKeys.DISPLAY_MAJOR_VERSION;
 import static piengine.core.base.type.property.PropertyKeys.DISPLAY_MINOR_VERSION;
+import static piengine.core.base.type.property.PropertyKeys.WINDOW_TITLE;
 
-public class Canvas extends Display {
+public class Frame extends Display {
 
+    private final DisplayInterpreter interpreter;
+    private final JFrame frame;
     private final AWTGLCanvas canvas;
 
-    public Canvas() {
+    public Frame(final DisplayInterpreter interpreter) {
+        this.frame = new JFrame();
         this.canvas = new AwtCanvas(createGlData());
+        this.interpreter = interpreter;
+    }
+
+    @Override
+    public void initialize() {
+        frame.setTitle(get(WINDOW_TITLE));
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        frame.setLayout(new BorderLayout());
+        frame.setPreferredSize(new Dimension(600, 600));
+
+        frame.add(canvas, BorderLayout.CENTER);
+        frame.pack();
+        frame.setVisible(true);
+        frame.transferFocus();
+
+        canvas.render();
+    }
+
+    @Override
+    public void update(float delta) {
+    }
+
+    @Override
+    public void terminate() {
+
     }
 
     @Override
@@ -24,7 +55,7 @@ public class Canvas extends Display {
 
     @Override
     protected boolean shouldUpdate() {
-        return false;
+        return true;
     }
 
     @Override
@@ -39,7 +70,7 @@ public class Canvas extends Display {
 
     @Override
     protected Vector2f getPointer() {
-        return null;
+        return new Vector2f(0);
     }
 
     @Override
@@ -49,7 +80,7 @@ public class Canvas extends Display {
 
     @Override
     protected Vector2f getDisplayCenter() {
-        return null;
+        return new Vector2f(0);
     }
 
     @Override
@@ -85,6 +116,7 @@ public class Canvas extends Display {
     private GLData createGlData() {
         GLData glData = new GLData();
 
+        glData.samples = 4;
         glData.swapInterval = 1;
         glData.majorVersion = get(DISPLAY_MAJOR_VERSION);
         glData.minorVersion = get(DISPLAY_MINOR_VERSION);
@@ -94,22 +126,7 @@ public class Canvas extends Display {
         return glData;
     }
 
-    @Override
-    public void initialize() {
-
-    }
-
-    @Override
-    public void terminate() {
-
-    }
-
-    @Override
-    public void update(float delta) {
-
-    }
-
-    private class AwtCanvas extends AWTGLCanvas {
+    public class AwtCanvas extends AWTGLCanvas {
 
         private AwtCanvas(final GLData data) {
             super(data);
@@ -117,12 +134,13 @@ public class Canvas extends Display {
 
         @Override
         public void initGL() {
-            createCapabilities();
+            interpreter.hey();
         }
 
         @Override
         public void paintGL() {
-
+            this.swapBuffers();
+            this.repaint();
         }
     }
 }
