@@ -18,6 +18,7 @@ import java.util.stream.Collectors;
 
 import static piengine.visual.display.domain.DisplayEventType.CLOSE;
 import static piengine.visual.display.domain.DisplayEventType.INITIALIZE;
+import static piengine.visual.display.domain.DisplayEventType.RENDER;
 import static piengine.visual.display.domain.DisplayEventType.RESIZE;
 import static piengine.visual.display.domain.DisplayEventType.UPDATE;
 
@@ -55,6 +56,7 @@ public class EngineService {
 
         displayService.addEvent(INITIALIZE, this::initialize);
         displayService.addEvent(UPDATE, this::update);
+        displayService.addEvent(RENDER, this::render);
         displayService.addEvent(CLOSE, this::terminate);
         displayService.addEvent(RESIZE, this::resize);
         displayService.createDisplay();
@@ -65,17 +67,11 @@ public class EngineService {
     }
 
     private void update() {
-        timeService.update();
+        updatableServices.forEach(u -> u.update(timeService.getDelta()));
+    }
 
-//        if (timeService.waitTimeSpent()) {
-            float delta = timeService.getDelta();
-
-            updatableServices.forEach(u -> u.update(delta));
-            renderableServices.forEach(Renderable::render);
-//            displayService.render();
-
-            timeService.frameUpdated();
-//        }
+    private void render() {
+        renderableServices.forEach(Renderable::render);
     }
 
     private void terminate() {
@@ -83,10 +79,10 @@ public class EngineService {
     }
 
     private void resize() {
-        int width = displayService.getWidth();
-        int height = displayService.getHeight();
-        int oldWidth = displayService.getOldWidth();
-        int oldHeight = displayService.getOldHeight();
+        int width = displayService.getViewport().x;
+        int height = displayService.getViewport().y;
+        int oldWidth = displayService.getOldViewport().x;
+        int oldHeight = displayService.getOldViewport().y;
 
         resizableServices.forEach(r -> r.resize(oldWidth, oldHeight, width, height));
     }

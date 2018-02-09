@@ -15,7 +15,7 @@
     <dependencies>
         <!-- LWJGL -->
         <dependency>
-            <groupId>org.lwjgl</groupId>
+            <groupId>com.github.pipiczistvan</groupId>
             <artifactId>lwjgl3-awt</artifactId>
         </dependency>
         <dependency>

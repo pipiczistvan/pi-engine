@@ -1,12 +1,14 @@
-package piengine.visual.display.interpreter;
+package piengine.visual.display.domain;
 
 import org.joml.Vector2f;
 import org.joml.Vector2i;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.glfw.GLFWWindowSizeCallback;
+import piengine.core.base.event.Event;
 import piengine.core.base.exception.PIEngineException;
 import piengine.core.input.service.InputService;
+import piengine.core.time.service.TimeService;
 
 import java.nio.DoubleBuffer;
 import java.nio.IntBuffer;
@@ -69,16 +71,23 @@ import static piengine.core.base.type.property.PropertyKeys.WINDOW_MIN_WIDTH;
 import static piengine.core.base.type.property.PropertyKeys.WINDOW_RESIZABLE;
 import static piengine.core.base.type.property.PropertyKeys.WINDOW_TITLE;
 import static piengine.core.base.type.property.PropertyKeys.WINDOW_WIDTH;
+import static piengine.visual.display.domain.DisplayEventType.CLOSE;
+import static piengine.visual.display.domain.DisplayEventType.INITIALIZE;
+import static piengine.visual.display.domain.DisplayEventType.RENDER;
+import static piengine.visual.display.domain.DisplayEventType.RESIZE;
+import static piengine.visual.display.domain.DisplayEventType.UPDATE;
 
-public class Window extends Display {
+public class GlfwWindow extends Display {
 
+    private final TimeService timeService;
     private final InputService inputService;
     private final GLFWWindowSizeCallback windowSizeCallback;
+
     private final Vector2i oldWindowSize;
     private final Vector2i windowSize;
-    private final Vector2i oldFramebufferSize;
-    private final Vector2i framebufferSize;
-    private final Vector2f displayCenter;
+    private final Vector2i oldViewport;
+    private final Vector2i viewport;
+    private final Vector2f viewportCenter;
     private final Vector2f windowPosition;
 
     private long windowId;
@@ -93,7 +102,8 @@ public class Window extends Display {
     private DoubleBuffer yBuffer = BufferUtils.createDoubleBuffer(1);
     private boolean resized = false;
 
-    public Window(final InputService inputService) {
+    public GlfwWindow(final TimeService timeService, final InputService inputService) {
+        this.timeService = timeService;
         this.inputService = inputService;
         this.windowSizeCallback = new GLFWWindowSizeCallback() {
             @Override
@@ -105,46 +115,61 @@ public class Window extends Display {
         };
         this.oldWindowSize = new Vector2i();
         this.windowSize = new Vector2i();
-        this.oldFramebufferSize = new Vector2i();
-        this.framebufferSize = new Vector2i();
-        this.displayCenter = new Vector2f();
+        this.oldViewport = new Vector2i();
+        this.viewport = new Vector2i();
+        this.viewportCenter = new Vector2f();
         this.windowPosition = new Vector2f();
     }
 
+    // Interventions
+
     @Override
-    public void initialize() {
+    public void startLoop() {
         createGlfwWindow();
-    }
+        eventMap.get(INITIALIZE).forEach(Event::invoke);
 
-    @Override
-    public void update(float delta) {
-        glfwPollEvents();
-    }
+        while (!glfwWindowShouldClose(windowId)) {
+            timeService.update();
 
-    @Override
-    protected boolean isResized() {
-        return resized;
-    }
+            if (timeService.waitTimeSpent()) {
+                glfwPollEvents();
+                eventMap.get(UPDATE).forEach(Event::invoke);
+                eventMap.get(RENDER).forEach(Event::invoke);
 
-    @Override
-    protected void resize() {
-        updateSizeBuffers();
-        resized = false;
-    }
+                if (resized) {
+                    updateSizeBuffers();
+                    eventMap.get(RESIZE).forEach(Event::invoke);
+                    resized = false;
+                }
 
-    @Override
-    protected void render() {
-        glfwSwapBuffers(windowId);
-    }
+                glfwSwapBuffers(windowId);
 
-    @Override
-    public void terminate() {
+                timeService.frameUpdated();
+            }
+        }
+
+        eventMap.get(CLOSE).forEach(Event::invoke);
         glfwDestroyWindow(windowId);
         glfwTerminate();
         glfwSetErrorCallback(null);
         System.exit(0);
     }
 
+    @Override
+    public void setCursorVisibility(final boolean visible) {
+        if (visible) {
+            glfwSetInputMode(windowId, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+        } else {
+            glfwSetInputMode(windowId, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+        }
+    }
+
+    @Override
+    public void closeDisplay() {
+        glfwSetWindowShouldClose(windowId, true);
+    }
+
+    // Pointer
 
     @Override
     public Vector2f getPointer() {
@@ -160,46 +185,31 @@ public class Window extends Display {
         glfwSetCursorPos(windowId, position.x, position.y);
     }
 
-    @Override
-    public Vector2f getDisplayCenter() {
-        return displayCenter;
-    }
+    // Window and viewport
 
     @Override
-    public void closeDisplay() {
-        glfwSetWindowShouldClose(windowId, true);
+    public Vector2i getWindowSize() {
+        return windowSize;
     }
 
     @Override
-    public int getWidth() {
-        return framebufferSize.x;
-    }
-
-    public int getHeight() {
-        return framebufferSize.y;
-    }
-
-    public int getOldWidth() {
-        return oldFramebufferSize.x;
+    public Vector2i getOldWindowSize() {
+        return oldWindowSize;
     }
 
     @Override
-    public int getOldHeight() {
-        return oldFramebufferSize.y;
+    public Vector2i getViewport() {
+        return viewport;
     }
 
     @Override
-    public void setCursorVisibility(final boolean visible) {
-        if (visible) {
-            glfwSetInputMode(windowId, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-        } else {
-            glfwSetInputMode(windowId, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
-        }
+    public Vector2i getOldViewport() {
+        return oldViewport;
     }
 
     @Override
-    protected boolean shouldUpdate() {
-        return !glfwWindowShouldClose(windowId);
+    public Vector2f getViewportCenter() {
+        return viewportCenter;
     }
 
     private void createGlfwWindow() {
@@ -258,9 +268,9 @@ public class Window extends Display {
 
         oldWindowSize.set(windowSize);
         windowSize.set(windowWidth.get(), windowHeight.get());
-        oldFramebufferSize.set(framebufferSize);
-        framebufferSize.set(frameBufferWidth.get(), frameBufferHeight.get());
+        oldViewport.set(viewport);
+        viewport.set(frameBufferWidth.get(), frameBufferHeight.get());
         windowPosition.set(windowPosX.get(), windowPosY.get());
-        displayCenter.set(windowSize.x / 2f, windowSize.y / 2f);
+        viewportCenter.set(windowSize.x / 2f, windowSize.y / 2f);
     }
 }

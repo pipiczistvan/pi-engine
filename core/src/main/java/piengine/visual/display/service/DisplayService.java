@@ -1,6 +1,7 @@
 package piengine.visual.display.service;
 
 import org.joml.Vector2f;
+import org.joml.Vector2i;
 import piengine.core.base.event.Event;
 import piengine.visual.display.domain.DisplayEventType;
 import piengine.visual.display.interpreter.DisplayInterpreter;
@@ -17,51 +18,53 @@ public class DisplayService {
         this.displayInterpreter = displayInterpreter;
     }
 
-    public void createDisplay() {
-        displayInterpreter.createDisplay();
-    }
-
     public void addEvent(final DisplayEventType type, final Event event) {
         displayInterpreter.addEvent(type, event);
     }
 
-    public void render() {
-        displayInterpreter.render();
-    }
+    // Interventions
 
-    public Vector2f getPointer() {
-        return displayInterpreter.getPointer();
-    }
-
-    public void setPointer(Vector2f position) {
-        displayInterpreter.setPointer(position);
-    }
-
-    public Vector2f getDisplayCenter() {
-        return displayInterpreter.getDisplayCenter();
+    public void createDisplay() {
+        displayInterpreter.createDisplay();
     }
 
     public void closeDisplay() {
         displayInterpreter.closeDisplay();
     }
 
-    public int getWidth() {
-        return displayInterpreter.getWidth();
-    }
-
-    public int getHeight() {
-        return displayInterpreter.getHeight();
-    }
-
-    public int getOldWidth() {
-        return displayInterpreter.getOldWidth();
-    }
-
-    public int getOldHeight() {
-        return displayInterpreter.getOldHeight();
-    }
-
     public void setCursorVisibility(final boolean visible) {
         displayInterpreter.setCursorVisibility(visible);
+    }
+
+    // Pointer
+
+    public Vector2f getPointer() {
+        return displayInterpreter.getPointer();
+    }
+
+    public void setPointer(final Vector2f position) {
+        displayInterpreter.setPointer(position);
+    }
+
+    // Window and viewport
+
+    public Vector2i getWindowSize() {
+        return displayInterpreter.getWindowSize();
+    }
+
+    public Vector2i getOldWindowSize() {
+        return displayInterpreter.getOldWindowSize();
+    }
+
+    public Vector2i getViewport() {
+        return displayInterpreter.getViewport();
+    }
+
+    public Vector2i getOldViewport() {
+        return displayInterpreter.getOldViewport();
+    }
+
+    public Vector2f getViewportCenter() {
+        return displayInterpreter.getViewportCenter();
     }
 }

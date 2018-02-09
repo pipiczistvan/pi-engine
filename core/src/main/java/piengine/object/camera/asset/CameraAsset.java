@@ -65,7 +65,7 @@ public class CameraAsset extends Asset<CameraAssetArgument, RenderAssetContext> 
         inputManager.addCursorEvent(v -> {
             if (lookingEnabled) {
                 Vector2f delta = new Vector2f();
-                Vector2f windowCenter = displayManager.getDisplayCenter();
+                Vector2f windowCenter = displayManager.getViewportCenter();
                 v.sub(windowCenter, delta);
                 if (Math.abs(delta.x) >= 1 || Math.abs(delta.y) >= 1) {
                     looking.set(delta);

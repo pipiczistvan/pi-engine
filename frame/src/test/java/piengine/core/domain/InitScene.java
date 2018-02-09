@@ -47,8 +47,6 @@ import static piengine.core.base.type.property.PropertyKeys.CAMERA_LOOK_SPEED;
 import static piengine.core.base.type.property.PropertyKeys.CAMERA_LOOK_UP_LIMIT;
 import static piengine.core.base.type.property.PropertyKeys.CAMERA_MOVE_SPEED;
 import static piengine.core.base.type.property.PropertyKeys.CAMERA_NEAR_PLANE;
-import static piengine.core.base.type.property.PropertyKeys.WINDOW_HEIGHT;
-import static piengine.core.base.type.property.PropertyKeys.WINDOW_WIDTH;
 import static piengine.core.input.domain.KeyEventType.PRESS;
 import static piengine.object.camera.domain.ProjectionType.PERSPECTIVE;
 import static piengine.visual.framebuffer.domain.FramebufferAttachment.COLOR_BUFFER_MULTISAMPLE_ATTACHMENT;
@@ -59,7 +57,6 @@ public class InitScene extends Scene {
 
     public static final int TERRAIN_SCALE = 256;
     public static final int WATER_SCALE = TERRAIN_SCALE / 2;
-    private static final Vector2i VIEWPORT = new Vector2i(get(WINDOW_WIDTH), get(WINDOW_HEIGHT));
     private static final Color[] BIOME_COLORS = {
             new Color(0.78823529412f, 0.69803921569f, 0.38823529412f),
             new Color(0.52941176471f, 0.72156862745f, 0.32156862745f),
@@ -75,6 +72,7 @@ public class InitScene extends Scene {
     private final CanvasManager canvasManager;
     private final TerrainManager terrainManager;
 
+    private Vector2i viewport;
     private Framebuffer framebuffer;
     private Fog fog;
     private Skybox skybox;
@@ -105,6 +103,7 @@ public class InitScene extends Scene {
 
     @Override
     public void initialize() {
+        viewport = displayManager.getViewport();
         super.initialize();
         inputManager.addKeyEvent(GLFW_KEY_ESCAPE, PRESS, displayManager::closeDisplay);
         inputManager.addKeyEvent(GLFW_KEY_RIGHT_CONTROL, PRESS, () -> {
@@ -125,7 +124,7 @@ public class InitScene extends Scene {
                 get(CAMERA_MOVE_SPEED)));
         cameraAsset.setPosition(-2, 0, 0);
 
-        camera = new FirstPersonCamera(cameraAsset, VIEWPORT, new CameraAttribute(get(CAMERA_FOV), get(CAMERA_NEAR_PLANE), get(CAMERA_FAR_PLANE)), PERSPECTIVE);
+        camera = new FirstPersonCamera(cameraAsset, viewport, new CameraAttribute(get(CAMERA_FOV), get(CAMERA_NEAR_PLANE), get(CAMERA_FAR_PLANE)), PERSPECTIVE);
 
         fog = new Fog(ColorUtils.BLACK, 0.015f, 1.5f);
 
@@ -133,17 +132,17 @@ public class InitScene extends Scene {
                 "skybox/nightRight", "skybox/nightLeft", "skybox/nightTop",
                 "skybox/nightBottom", "skybox/nightBack", "skybox/nightFront");
 
-        mapAsset = createAsset(MapAsset.class, new MapAssetArgument(VIEWPORT, camera, terrain));
+        mapAsset = createAsset(MapAsset.class, new MapAssetArgument(viewport, camera, terrain));
 
         lampAsset = createAsset(LampAsset.class, new LampAssetArgument());
 
-        framebuffer = framebufferManager.supply(VIEWPORT, false, COLOR_BUFFER_MULTISAMPLE_ATTACHMENT, DEPTH_BUFFER_MULTISAMPLE_ATTACHMENT);
+        framebuffer = framebufferManager.supply(viewport, false, COLOR_BUFFER_MULTISAMPLE_ATTACHMENT, DEPTH_BUFFER_MULTISAMPLE_ATTACHMENT);
         mainCanvas = canvasManager.supply(this, framebuffer, ANTIALIAS_EFFECT);
 
         buttonAsset = createAsset(ButtonAsset.class, new ButtonAssetArgument(
                 "buttonDefault", "buttonHover", "buttonPress",
-                VIEWPORT, "Please press me!", () -> System.out.println("Button clicked!")));
-        fpsAsset = createAsset(FpsAsset.class, new FpsAssetArgument(VIEWPORT));
+                viewport, "Please press me!", () -> System.out.println("Button clicked!")));
+        fpsAsset = createAsset(FpsAsset.class, new FpsAssetArgument(viewport));
 
         skybox = skyboxManager.supply(150f,
                 "skybox/nightRight", "skybox/nightLeft", "skybox/nightTop",
@@ -172,7 +171,7 @@ public class InitScene extends Scene {
     @Override
     protected RenderPlan createRenderPlan() {
         return GuiRenderPlanBuilder
-                .createPlan(VIEWPORT)
+                .createPlan(viewport)
                 .bindFrameBuffer(
                         framebuffer,
                         WorldRenderPlanBuilder
@@ -193,7 +192,7 @@ public class InitScene extends Scene {
 
     @Override
     public void resize(final int oldWidth, final int oldHeight, final int width, final int height) {
-        VIEWPORT.set(width, height);
+        viewport.set(width, height);
         camera.recalculateProjection();
     }
 }

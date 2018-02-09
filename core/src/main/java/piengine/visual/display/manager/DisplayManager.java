@@ -1,6 +1,7 @@
 package piengine.visual.display.manager;
 
 import org.joml.Vector2f;
+import org.joml.Vector2i;
 import piengine.visual.display.service.DisplayService;
 import puppeteer.annotation.premade.Component;
 import puppeteer.annotation.premade.Wire;
@@ -15,31 +16,45 @@ public class DisplayManager {
         this.displayService = displayService;
     }
 
+    // Interventions
+
     public void closeDisplay() {
         displayService.closeDisplay();
-    }
-
-    public Vector2f getPointer() {
-        return displayService.getPointer();
-    }
-
-    public void setPointer(Vector2f position) {
-        displayService.setPointer(position);
-    }
-
-    public Vector2f getDisplayCenter() {
-        return displayService.getDisplayCenter();
     }
 
     public void setCursorVisibility(final boolean visible) {
         displayService.setCursorVisibility(visible);
     }
 
-    public int getWidth() {
-        return displayService.getWidth();
+    // Pointer
+
+    public Vector2f getPointer() {
+        return displayService.getPointer();
     }
 
-    public int getHeight() {
-        return displayService.getHeight();
+    public void setPointer(final Vector2f position) {
+        displayService.setPointer(position);
+    }
+
+    // Window and viewport
+
+    public Vector2i getWindowSize() {
+        return displayService.getWindowSize();
+    }
+
+    public Vector2i getOldWindowSize() {
+        return displayService.getOldWindowSize();
+    }
+
+    public Vector2i getViewport() {
+        return displayService.getViewport();
+    }
+
+    public Vector2i getOldViewport() {
+        return displayService.getOldViewport();
+    }
+
+    public Vector2f getViewportCenter() {
+        return displayService.getViewportCenter();
     }
 }

@@ -1,69 +1,59 @@
 package piengine.visual.display.interpreter;
 
 import org.joml.Vector2f;
+import org.joml.Vector2i;
 import piengine.core.base.event.Event;
+import piengine.core.base.exception.PIEngineException;
 import piengine.core.input.service.InputService;
+import piengine.core.time.service.TimeService;
+import piengine.visual.display.domain.AwtFrame;
+import piengine.visual.display.domain.Display;
 import piengine.visual.display.domain.DisplayEventType;
-import piutils.map.ListMap;
+import piengine.visual.display.domain.GlfwWindow;
 import puppeteer.annotation.premade.Component;
 import puppeteer.annotation.premade.Wire;
 
-import static org.lwjgl.opengl.GL.createCapabilities;
 import static piengine.core.base.type.property.ApplicationProperties.get;
-import static piengine.core.base.type.property.PropertyKeys.DISPLAY_IN_CANVAS;
-import static piengine.visual.display.domain.DisplayEventType.CLOSE;
-import static piengine.visual.display.domain.DisplayEventType.INITIALIZE;
-import static piengine.visual.display.domain.DisplayEventType.UPDATE;
+import static piengine.core.base.type.property.PropertyKeys.DISPLAY_MODE;
 
 @Component
 public class DisplayInterpreter {
 
-    private final InputService inputService;
-    private final ListMap<DisplayEventType, Event> eventMap;
-
-    private Display display;
+    private final Display display;
 
     @Wire
-    public DisplayInterpreter(final InputService inputService) {
-        this.inputService = inputService;
-        this.eventMap = new ListMap<>();
-    }
-
-    public void createDisplay() {
-        display = get(DISPLAY_IN_CANVAS) ? new Frame(this) : new Window(inputService);
-        display.initialize();
-        //todo: ez frame esetén rossz
-//        eventMap.get(INITIALIZE).forEach(Event::invoke);
-        while (display.shouldUpdate()) {
-            display.render();
-//            eventMap.get(UPDATE).forEach(Event::invoke);
-//            display.update(0);
-//            if (display.isResized()) {
-//                display.resize();
-//                eventMap.get(RESIZE).forEach(Event::invoke);
-//            }
+    public DisplayInterpreter(final TimeService timeService, final InputService inputService) {
+        switch (get(DISPLAY_MODE)) {
+            case AWT:
+                this.display = new AwtFrame(timeService);
+                break;
+            case GLFW:
+                this.display = new GlfwWindow(timeService, inputService);
+                break;
+            default:
+                throw new PIEngineException("Could not create window!");
         }
-        eventMap.get(CLOSE).forEach(Event::invoke);
-        display.terminate();
-    }
-
-    public void initializeDisplay() {
-        createCapabilities(true);
-        eventMap.get(INITIALIZE).forEach(Event::invoke);
-        //todo: opengl context frame esetén csak így érhető el :|
-    }
-
-    public void updateDisplay() {
-        eventMap.get(UPDATE).forEach(Event::invoke);
     }
 
     public void addEvent(final DisplayEventType type, final Event event) {
-        eventMap.put(type, event);
+        display.addEvent(type, event);
     }
 
-    public void render() {
-        display.render();
+    // Interventions
+
+    public void createDisplay() {
+        display.startLoop();
     }
+
+    public void closeDisplay() {
+        display.closeDisplay();
+    }
+
+    public void setCursorVisibility(final boolean visible) {
+        display.setCursorVisibility(visible);
+    }
+
+    // Pointer
 
     public Vector2f getPointer() {
         return display.getPointer();
@@ -73,31 +63,25 @@ public class DisplayInterpreter {
         display.setPointer(position);
     }
 
-    public Vector2f getDisplayCenter() {
-        return display.getDisplayCenter();
+    // Window and viewport
+
+    public Vector2i getWindowSize() {
+        return display.getWindowSize();
     }
 
-    public void closeDisplay() {
-        display.closeDisplay();
+    public Vector2i getOldWindowSize() {
+        return display.getOldWindowSize();
     }
 
-    public int getWidth() {
-        return display.getWidth();
+    public Vector2i getViewport() {
+        return display.getViewport();
     }
 
-    public int getHeight() {
-        return display.getHeight();
+    public Vector2i getOldViewport() {
+        return display.getOldViewport();
     }
 
-    public int getOldWidth() {
-        return display.getOldWidth();
-    }
-
-    public int getOldHeight() {
-        return display.getOldHeight();
-    }
-
-    public void setCursorVisibility(final boolean visible) {
-        display.setCursorVisibility(visible);
+    public Vector2f getViewportCenter() {
+        return display.getViewportCenter();
     }
 }

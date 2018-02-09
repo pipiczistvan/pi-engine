@@ -7,7 +7,7 @@ import puppeteer.annotation.premade.Component;
 public class TimeInterpreter {
 
     public double getTime() {
-        return System.currentTimeMillis() % 1000;
+        return System.currentTimeMillis() / 1000d;
     }
 
     public void sleep() {

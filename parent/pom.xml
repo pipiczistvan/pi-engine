@@ -21,15 +21,15 @@
     <properties>
         <lwjgl.version>3.1.6</lwjgl.version>
         <joml.version>1.8.1</joml.version>
-        <puppeteer.version>0.0.5</puppeteer.version>
+        <puppeteer.version>0.0.6</puppeteer.version>
         <super-csv.version>2.4.0</super-csv.version>
         <jaxb.version>2.3.0</jaxb.version>
         <log4j.version>1.2.17</log4j.version>
         <junit.version>4.12</junit.version>
         <mockito.version>1.9.5</mockito.version>
         <hamcrest.version>1.3</hamcrest.version>
+        <lwjgl3-awt.version>0.0.1</lwjgl3-awt.version>
         <piengine.version>1.0-SNAPSHOT</piengine.version>
-        <lwjgl3-awt.version>1.0.0-SNAPSHOT</lwjgl3-awt.version>
     </properties>
 
     <profiles>
@@ -88,7 +88,7 @@
             </dependency>
             <!-- LWJGL AWT -->
             <dependency>
-                <groupId>org.lwjgl</groupId>
+                <groupId>com.github.pipiczistvan</groupId>
                 <artifactId>lwjgl3-awt</artifactId>
                 <version>${lwjgl3-awt.version}</version>
             </dependency>
