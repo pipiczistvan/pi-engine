@@ -3,36 +3,30 @@ package piengine.visual.display.interpreter;
 import org.joml.Vector2f;
 import org.joml.Vector2i;
 import piengine.core.base.event.Event;
-import piengine.core.base.exception.PIEngineException;
 import piengine.core.input.service.InputService;
 import piengine.core.time.service.TimeService;
-import piengine.visual.display.domain.AwtFrame;
 import piengine.visual.display.domain.Display;
 import piengine.visual.display.domain.DisplayEventType;
-import piengine.visual.display.domain.GlfwWindow;
+import piengine.visual.display.domain.awt.AwtCanvas;
+import piengine.visual.display.domain.awt.AwtFrame;
+import piengine.visual.display.domain.glfw.GlfwWindow;
 import puppeteer.annotation.premade.Component;
 import puppeteer.annotation.premade.Wire;
 
-import static piengine.core.base.type.property.ApplicationProperties.get;
-import static piengine.core.base.type.property.PropertyKeys.DISPLAY_MODE;
+import javax.swing.*;
 
 @Component
 public class DisplayInterpreter {
 
-    private final Display display;
+    private final TimeService timeService;
+    private final InputService inputService;
+
+    private Display display;
 
     @Wire
     public DisplayInterpreter(final TimeService timeService, final InputService inputService) {
-        switch (get(DISPLAY_MODE)) {
-            case AWT:
-                this.display = new AwtFrame(timeService);
-                break;
-            case GLFW:
-                this.display = new GlfwWindow(timeService, inputService);
-                break;
-            default:
-                throw new PIEngineException("Could not create window!");
-        }
+        this.timeService = timeService;
+        this.inputService = inputService;
     }
 
     public void addEvent(final DisplayEventType type, final Event event) {
@@ -42,6 +36,14 @@ public class DisplayInterpreter {
     // Interventions
 
     public void createDisplay() {
+        this.display = new GlfwWindow(timeService, inputService);
+    }
+
+    public void createDisplay(final JFrame frame, final AwtCanvas canvas) {
+        this.display = new AwtFrame(timeService, frame, canvas);
+    }
+
+    public void startLoop() {
         display.startLoop();
     }
 

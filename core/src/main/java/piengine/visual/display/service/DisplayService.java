@@ -4,9 +4,12 @@ import org.joml.Vector2f;
 import org.joml.Vector2i;
 import piengine.core.base.event.Event;
 import piengine.visual.display.domain.DisplayEventType;
+import piengine.visual.display.domain.awt.AwtCanvas;
 import piengine.visual.display.interpreter.DisplayInterpreter;
 import puppeteer.annotation.premade.Component;
 import puppeteer.annotation.premade.Wire;
+
+import javax.swing.*;
 
 @Component
 public class DisplayService {
@@ -26,6 +29,14 @@ public class DisplayService {
 
     public void createDisplay() {
         displayInterpreter.createDisplay();
+    }
+
+    public void createDisplay(final JFrame frame, final AwtCanvas canvas) {
+        displayInterpreter.createDisplay(frame, canvas);
+    }
+
+    public void startLoop() {
+        displayInterpreter.startLoop();
     }
 
     public void closeDisplay() {

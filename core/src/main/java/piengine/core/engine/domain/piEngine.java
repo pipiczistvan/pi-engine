@@ -3,8 +3,10 @@ package piengine.core.engine.domain;
 import piengine.core.architecture.scene.domain.Scene;
 import piengine.core.base.type.property.ApplicationProperties;
 import piengine.core.engine.service.EngineService;
+import piengine.visual.display.domain.awt.AwtCanvas;
 import puppeteer.Puppeteer;
 
+import javax.swing.*;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -38,8 +40,15 @@ public class piEngine {
         engineService = puppeteer.getInstanceOf(EngineService.class);
     }
 
+    public void createGlfwDisplay() {
+        engineService.createDisplay();
+    }
+
+    public void createAwtDisplay(final JFrame frame, final AwtCanvas canvas) {
+        engineService.createDisplay(frame, canvas);
+    }
+
     public void start(Class<? extends Scene> sceneClass) {
         engineService.start(sceneClass);
     }
-
 }

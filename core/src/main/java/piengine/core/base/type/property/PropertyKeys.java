@@ -1,7 +1,5 @@
 package piengine.core.base.type.property;
 
-import piengine.visual.display.domain.DisplayMode;
-
 import java.util.HashSet;
 import java.util.Set;
 
@@ -9,7 +7,6 @@ public class PropertyKeys {
 
     static final Set<String> KEYS = new HashSet<>();
 
-    public static final EnumProperty<DisplayMode> DISPLAY_MODE = new EnumProperty<>("display.mode", DisplayMode.class);
     public static final IntegerProperty DISPLAY_MAJOR_VERSION = new IntegerProperty("display.major.version");
     public static final IntegerProperty DISPLAY_MINOR_VERSION = new IntegerProperty("display.minor.version");
 

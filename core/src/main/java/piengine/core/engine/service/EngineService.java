@@ -9,10 +9,12 @@ import piengine.core.base.api.Service;
 import piengine.core.base.api.Terminatable;
 import piengine.core.base.api.Updatable;
 import piengine.core.time.service.TimeService;
+import piengine.visual.display.domain.awt.AwtCanvas;
 import piengine.visual.display.service.DisplayService;
 import puppeteer.annotation.premade.Component;
 import puppeteer.annotation.premade.Wire;
 
+import javax.swing.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -59,7 +61,15 @@ public class EngineService {
         displayService.addEvent(RENDER, this::render);
         displayService.addEvent(CLOSE, this::terminate);
         displayService.addEvent(RESIZE, this::resize);
+        displayService.startLoop();
+    }
+
+    public void createDisplay() {
         displayService.createDisplay();
+    }
+
+    public void createDisplay(final JFrame frame, final AwtCanvas canvas) {
+        displayService.createDisplay(frame, canvas);
     }
 
     private void initialize() {

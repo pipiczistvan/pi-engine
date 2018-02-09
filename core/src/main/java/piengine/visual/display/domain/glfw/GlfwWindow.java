@@ -1,4 +1,4 @@
-package piengine.visual.display.domain;
+package piengine.visual.display.domain.glfw;
 
 import org.joml.Vector2f;
 import org.joml.Vector2i;
@@ -9,6 +9,7 @@ import piengine.core.base.event.Event;
 import piengine.core.base.exception.PIEngineException;
 import piengine.core.input.service.InputService;
 import piengine.core.time.service.TimeService;
+import piengine.visual.display.domain.Display;
 
 import java.nio.DoubleBuffer;
 import java.nio.IntBuffer;
@@ -132,15 +133,16 @@ public class GlfwWindow extends Display {
             timeService.update();
 
             if (timeService.waitTimeSpent()) {
-                glfwPollEvents();
-                eventMap.get(UPDATE).forEach(Event::invoke);
-                eventMap.get(RENDER).forEach(Event::invoke);
-
                 if (resized) {
                     updateSizeBuffers();
                     eventMap.get(RESIZE).forEach(Event::invoke);
                     resized = false;
                 }
+
+                glfwPollEvents();
+
+                eventMap.get(UPDATE).forEach(Event::invoke);
+                eventMap.get(RENDER).forEach(Event::invoke);
 
                 glfwSwapBuffers(windowId);
 
@@ -271,6 +273,6 @@ public class GlfwWindow extends Display {
         oldViewport.set(viewport);
         viewport.set(frameBufferWidth.get(), frameBufferHeight.get());
         windowPosition.set(windowPosX.get(), windowPosY.get());
-        viewportCenter.set(windowSize.x / 2f, windowSize.y / 2f);
+        viewportCenter.set(viewport.x / 2f, viewport.y / 2f);
     }
 }

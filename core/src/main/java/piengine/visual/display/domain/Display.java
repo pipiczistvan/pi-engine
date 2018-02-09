@@ -7,7 +7,7 @@ import piutils.map.ListMap;
 
 public abstract class Display {
 
-    final ListMap<DisplayEventType, Event> eventMap = new ListMap<>();
+    protected final ListMap<DisplayEventType, Event> eventMap = new ListMap<>();
 
     public void addEvent(final DisplayEventType type, final Event event) {
         eventMap.put(type, event);
