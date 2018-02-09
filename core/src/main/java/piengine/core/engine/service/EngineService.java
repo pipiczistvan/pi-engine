@@ -72,7 +72,7 @@ public class EngineService {
 
             updatableServices.forEach(u -> u.update(delta));
             renderableServices.forEach(Renderable::render);
-            displayService.swapBuffers();
+            displayService.render();
 
             timeService.frameUpdated();
         }

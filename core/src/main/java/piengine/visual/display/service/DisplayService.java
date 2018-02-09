@@ -13,7 +13,7 @@ public class DisplayService {
     private final DisplayInterpreter displayInterpreter;
 
     @Wire
-    public DisplayService(DisplayInterpreter displayInterpreter) {
+    public DisplayService(final DisplayInterpreter displayInterpreter) {
         this.displayInterpreter = displayInterpreter;
     }
 
@@ -21,8 +21,12 @@ public class DisplayService {
         displayInterpreter.createDisplay();
     }
 
-    public void addEvent(DisplayEventType type, Event event) {
+    public void addEvent(final DisplayEventType type, final Event event) {
         displayInterpreter.addEvent(type, event);
+    }
+
+    public void render() {
+        displayInterpreter.render();
     }
 
     public Vector2f getPointer() {
@@ -35,10 +39,6 @@ public class DisplayService {
 
     public Vector2f getDisplayCenter() {
         return displayInterpreter.getDisplayCenter();
-    }
-
-    public void swapBuffers() {
-        displayInterpreter.swapBuffers();
     }
 
     public void closeDisplay() {

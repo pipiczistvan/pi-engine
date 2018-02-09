@@ -7,6 +7,10 @@ public class PropertyKeys {
 
     static final Set<String> KEYS = new HashSet<>();
 
+    public static final BooleanProperty DISPLAY_IN_CANVAS = new BooleanProperty("display.in.canvas");
+    public static final IntegerProperty DISPLAY_MAJOR_VERSION = new IntegerProperty("display.major.version");
+    public static final IntegerProperty DISPLAY_MINOR_VERSION = new IntegerProperty("display.minor.version");
+
     public static final StringProperty WINDOW_TITLE = new StringProperty("window.title");
     public static final IntegerProperty WINDOW_MIN_WIDTH = new IntegerProperty("window.min.width");
     public static final IntegerProperty WINDOW_MIN_HEIGHT = new IntegerProperty("window.min.height");
@@ -15,8 +19,6 @@ public class PropertyKeys {
     public static final BooleanProperty WINDOW_FULL_SCREEN = new BooleanProperty("window.full.screen");
     public static final BooleanProperty WINDOW_RESIZABLE = new BooleanProperty("window.resizable");
     public static final BooleanProperty WINDOW_CURSOR_HIDDEN = new BooleanProperty("window.cursor.hidden");
-    public static final IntegerProperty WINDOW_MAJOR_VERSION = new IntegerProperty("window.major.version");
-    public static final IntegerProperty WINDOW_MINOR_VERSION = new IntegerProperty("window.minor.version");
 
     public static final IntegerProperty TIME_FPS_CAP = new IntegerProperty("time.fps.cap");
 
