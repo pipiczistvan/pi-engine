@@ -9,6 +9,7 @@ import piengine.core.base.event.Event;
 import piengine.visual.display.domain.DisplayEventType;
 import piutils.map.ListMap;
 
+import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 
@@ -28,8 +29,6 @@ public class AwtCanvas extends AWTGLCanvas {
     private Vector2i viewport;
     private Vector2i oldViewport;
     private Vector2f viewportCenter;
-    private Vector2i windowSize;
-    private Vector2i contentSize;
     private boolean closed = false;
     private boolean resized = false;
 
@@ -75,23 +74,23 @@ public class AwtCanvas extends AWTGLCanvas {
         this.closed = true;
     }
 
-    void initialize(final Vector2i viewport, final Vector2i oldViewport, final Vector2f viewportCenter, final Vector2i windowSize, final Vector2i contentSize, final ListMap<DisplayEventType, Event> eventMap) {
+    void initialize(final Vector2i viewport, final Vector2i oldViewport, final Vector2f viewportCenter, final ListMap<DisplayEventType, Event> eventMap) {
         this.viewport = viewport;
         this.oldViewport = oldViewport;
         this.viewportCenter = viewportCenter;
-        this.windowSize = windowSize;
-        this.contentSize = contentSize;
         this.eventMap = eventMap;
+    }
+
+    void updateViewportCenter() {
+        Point location = getLocationOnScreen();
+        viewportCenter.set(location.x + viewport.x / 2f, location.y + viewport.y / 2f);
     }
 
     private void updateViewportBuffers() {
         oldViewport.set(viewport);
         viewport.set(getWidth(), getHeight());
 
-        int windowEdge = (windowSize.x - contentSize.x) / 2;
-        int windowHeader = (windowSize.y - contentSize.y) - windowEdge;
-
-        viewportCenter.set(windowEdge + getX() + viewport.x / 2f, windowHeader + getY() + viewport.y / 2f);
+        updateViewportCenter();
     }
 
     private static GLData createGlData() {

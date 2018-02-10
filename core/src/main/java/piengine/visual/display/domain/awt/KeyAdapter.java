@@ -5,11 +5,15 @@ import piutils.map.ListMap;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.HashMap;
+import java.util.Map;
 
 class KeyAdapter implements KeyListener {
 
     private final ListMap<Integer, Event> releaseEventMap;
     private final ListMap<Integer, Event> pressEventMap;
+
+    private final Map<Integer, Boolean> pressedMap = new HashMap<>();
 
     KeyAdapter(final ListMap<Integer, Event> releaseEventMap, final ListMap<Integer, Event> pressEventMap) {
         this.releaseEventMap = releaseEventMap;
@@ -18,12 +22,18 @@ class KeyAdapter implements KeyListener {
 
     @Override
     public void keyPressed(final KeyEvent e) {
-        pressEventMap.get(e.getKeyCode()).forEach(Event::invoke);
+        if (!pressedMap.containsKey(e.getKeyCode()) || !pressedMap.get(e.getKeyCode())) {
+            pressEventMap.get(e.getKeyCode()).forEach(Event::invoke);
+        }
+        pressedMap.put(e.getKeyCode(), true);
     }
 
     @Override
     public void keyReleased(final KeyEvent e) {
-        releaseEventMap.get(e.getKeyCode()).forEach(Event::invoke);
+        if (!pressedMap.containsKey(e.getKeyCode()) || pressedMap.get(e.getKeyCode())) {
+            releaseEventMap.get(e.getKeyCode()).forEach(Event::invoke);
+        }
+        pressedMap.put(e.getKeyCode(), false);
     }
 
     @Override

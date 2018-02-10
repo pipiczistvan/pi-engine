@@ -38,6 +38,7 @@ import piengine.visual.render.manager.RenderManager;
 import puppeteer.annotation.premade.Wire;
 
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_Q;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_RIGHT_CONTROL;
 import static piengine.core.base.type.property.ApplicationProperties.get;
 import static piengine.core.base.type.property.PropertyKeys.CAMERA_FAR_PLANE;
@@ -106,6 +107,7 @@ public class InitScene extends Scene {
         viewport = displayManager.getViewport();
         super.initialize();
         inputManager.addKeyEvent(GLFW_KEY_ESCAPE, PRESS, displayManager::closeDisplay);
+        inputManager.addKeyEvent(GLFW_KEY_Q, PRESS, displayManager::closeDisplay);
         inputManager.addKeyEvent(GLFW_KEY_RIGHT_CONTROL, PRESS, () -> {
             cameraAsset.lookingEnabled = !cameraAsset.lookingEnabled;
             displayManager.setCursorVisibility(!cameraAsset.lookingEnabled);
