@@ -55,6 +55,8 @@ public abstract class Display {
 
     public abstract void setCursorVisibility(final boolean visible);
 
+    public abstract Vector2f getPointer();
+
     public abstract void setPointer(final Vector2f position);
 
     // Window and viewport

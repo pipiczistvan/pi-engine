@@ -11,6 +11,7 @@ import piengine.core.input.domain.Key;
 import piengine.core.time.service.TimeService;
 import piengine.visual.display.domain.Display;
 
+import java.nio.DoubleBuffer;
 import java.nio.IntBuffer;
 
 import static org.lwjgl.glfw.GLFW.GLFW_CONTEXT_VERSION_MAJOR;
@@ -31,6 +32,7 @@ import static org.lwjgl.glfw.GLFW.glfwCreateStandardCursor;
 import static org.lwjgl.glfw.GLFW.glfwCreateWindow;
 import static org.lwjgl.glfw.GLFW.glfwDefaultWindowHints;
 import static org.lwjgl.glfw.GLFW.glfwDestroyWindow;
+import static org.lwjgl.glfw.GLFW.glfwGetCursorPos;
 import static org.lwjgl.glfw.GLFW.glfwGetFramebufferSize;
 import static org.lwjgl.glfw.GLFW.glfwGetPrimaryMonitor;
 import static org.lwjgl.glfw.GLFW.glfwGetVideoMode;
@@ -101,6 +103,8 @@ public class GlfwWindow extends Display {
     private IntBuffer frameBufferHeight = BufferUtils.createIntBuffer(1);
     private IntBuffer windowPosX = BufferUtils.createIntBuffer(1);
     private IntBuffer windowPosY = BufferUtils.createIntBuffer(1);
+    private DoubleBuffer xBuffer = BufferUtils.createDoubleBuffer(1);
+    private DoubleBuffer yBuffer = BufferUtils.createDoubleBuffer(1);
     private boolean resized = false;
 
     public GlfwWindow(final TimeService timeService) {
@@ -162,7 +166,16 @@ public class GlfwWindow extends Display {
     }
 
     @Override
-    public void setPointer(Vector2f position) {
+    public Vector2f getPointer() {
+        xBuffer.clear();
+        yBuffer.clear();
+        glfwGetCursorPos(windowId, xBuffer, yBuffer);
+
+        return new Vector2f((float) xBuffer.get(), (float) yBuffer.get());
+    }
+
+    @Override
+    public void setPointer(final Vector2f position) {
         glfwSetCursorPos(windowId, position.x, position.y);
     }
 

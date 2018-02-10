@@ -16,11 +16,6 @@ import java.awt.image.BufferedImage;
 
 import static piengine.core.base.type.property.ApplicationProperties.get;
 import static piengine.core.base.type.property.PropertyKeys.WINDOW_CURSOR_HIDDEN;
-import static piengine.core.base.type.property.PropertyKeys.WINDOW_HEIGHT;
-import static piengine.core.base.type.property.PropertyKeys.WINDOW_MIN_HEIGHT;
-import static piengine.core.base.type.property.PropertyKeys.WINDOW_MIN_WIDTH;
-import static piengine.core.base.type.property.PropertyKeys.WINDOW_TITLE;
-import static piengine.core.base.type.property.PropertyKeys.WINDOW_WIDTH;
 
 public class AwtFrame extends Display {
 
@@ -41,6 +36,7 @@ public class AwtFrame extends Display {
     private final Vector2i oldViewport = new Vector2i();
     private final Vector2i viewport = new Vector2i();
     private final Vector2f viewportCenter = new Vector2f();
+    private final Vector2f cursorPosition = new Vector2f();
 
     private final Cursor hiddenCursor;
 
@@ -93,6 +89,13 @@ public class AwtFrame extends Display {
     }
 
     @Override
+    public Vector2f getPointer() {
+        Point mousePosition = frame.getMousePosition();
+        cursorPosition.set(mousePosition.x, mousePosition.y);
+        return cursorPosition;
+    }
+
+    @Override
     public void setPointer(final Vector2f position) {
         robot.mouseMove((int) position.x, (int) position.y);
     }
@@ -138,10 +141,6 @@ public class AwtFrame extends Display {
     }
 
     private void initializeFrame(final JFrame frame) {
-        frame.setTitle(get(WINDOW_TITLE));
-        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        frame.setPreferredSize(new Dimension(get(WINDOW_WIDTH), get(WINDOW_HEIGHT)));
-        frame.setMinimumSize(new Dimension(get(WINDOW_MIN_WIDTH), get(WINDOW_MIN_HEIGHT)));
         frame.pack();
         frame.setVisible(true);
         frame.transferFocus();

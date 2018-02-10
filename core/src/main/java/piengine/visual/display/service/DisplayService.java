@@ -62,6 +62,10 @@ public class DisplayService {
         displayInterpreter.setCursorVisibility(visible);
     }
 
+    public Vector2f getPointer() {
+        return displayInterpreter.getPointer();
+    }
+
     public void setPointer(final Vector2f position) {
         displayInterpreter.setPointer(position);
     }

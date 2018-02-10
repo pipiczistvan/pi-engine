@@ -11,6 +11,12 @@ import java.awt.*;
 
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
+import static piengine.core.base.type.property.ApplicationProperties.get;
+import static piengine.core.base.type.property.PropertyKeys.WINDOW_HEIGHT;
+import static piengine.core.base.type.property.PropertyKeys.WINDOW_MIN_HEIGHT;
+import static piengine.core.base.type.property.PropertyKeys.WINDOW_MIN_WIDTH;
+import static piengine.core.base.type.property.PropertyKeys.WINDOW_TITLE;
+import static piengine.core.base.type.property.PropertyKeys.WINDOW_WIDTH;
 
 @Ignore
 public class EngineTester {
@@ -31,11 +37,16 @@ public class EngineTester {
 
         JFrame frame = new JFrame();
         frame.setLayout(new BorderLayout());
+        frame.setTitle(get(WINDOW_TITLE));
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        frame.setPreferredSize(new Dimension(get(WINDOW_WIDTH), get(WINDOW_HEIGHT)));
+        frame.setMinimumSize(new Dimension(get(WINDOW_MIN_WIDTH), get(WINDOW_MIN_HEIGHT)));
 
         AwtCanvas canvas = new AwtCanvas();
-        frame.getContentPane().add(canvas, BorderLayout.CENTER);
+        frame.add(canvas, BorderLayout.CENTER);
 
         engine.createAwtDisplay(frame, canvas);
+
         engine.start(InitScene.class);
     }
 
