@@ -2,12 +2,10 @@ package piengine.visual.display.domain.awt;
 
 import org.joml.Vector2f;
 import org.joml.Vector2i;
-import piengine.core.base.event.Action;
-import piengine.core.base.event.Event;
 import piengine.core.base.exception.PIEngineException;
+import piengine.core.input.domain.Key;
 import piengine.core.time.service.TimeService;
 import piengine.visual.display.domain.Display;
-import piutils.map.ListMap;
 
 import javax.swing.*;
 import java.awt.*;
@@ -15,7 +13,6 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
-import java.util.List;
 
 import static piengine.core.base.type.property.ApplicationProperties.get;
 import static piengine.core.base.type.property.PropertyKeys.WINDOW_CURSOR_HIDDEN;
@@ -47,10 +44,7 @@ public class AwtFrame extends Display {
 
     private final Cursor hiddenCursor;
 
-    public AwtFrame(final TimeService timeService, final JFrame frame, final AwtCanvas canvas,
-                    final ListMap<Integer, Event> releaseEventMap, final ListMap<Integer, Event> pressEventMap,
-                    final List<Action<Vector2f>> cursorEvents, final List<Action<Vector2f>> scrollEvents) {
-        super(releaseEventMap, pressEventMap, cursorEvents, scrollEvents);
+    public AwtFrame(final TimeService timeService, final JFrame frame, final AwtCanvas canvas) {
         this.timeService = timeService;
         this.frame = frame;
         this.canvas = canvas;
@@ -128,6 +122,11 @@ public class AwtFrame extends Display {
     @Override
     public Vector2i getViewport() {
         return viewport;
+    }
+
+    @Override
+    protected int keyToCode(final Key key) {
+        return key.getAwtCode();
     }
 
     private Robot createRobot() {

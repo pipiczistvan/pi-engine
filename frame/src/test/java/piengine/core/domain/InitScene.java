@@ -37,9 +37,6 @@ import piengine.visual.render.domain.plan.WorldRenderPlanBuilder;
 import piengine.visual.render.manager.RenderManager;
 import puppeteer.annotation.premade.Wire;
 
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_Q;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_RIGHT_CONTROL;
 import static piengine.core.base.type.property.ApplicationProperties.get;
 import static piengine.core.base.type.property.PropertyKeys.CAMERA_FAR_PLANE;
 import static piengine.core.base.type.property.PropertyKeys.CAMERA_FOV;
@@ -48,6 +45,8 @@ import static piengine.core.base.type.property.PropertyKeys.CAMERA_LOOK_SPEED;
 import static piengine.core.base.type.property.PropertyKeys.CAMERA_LOOK_UP_LIMIT;
 import static piengine.core.base.type.property.PropertyKeys.CAMERA_MOVE_SPEED;
 import static piengine.core.base.type.property.PropertyKeys.CAMERA_NEAR_PLANE;
+import static piengine.core.input.domain.Key.KEY_ESCAPE;
+import static piengine.core.input.domain.Key.KEY_RIGHT_CONTROL;
 import static piengine.core.input.domain.KeyEventType.PRESS;
 import static piengine.object.camera.domain.ProjectionType.PERSPECTIVE;
 import static piengine.visual.framebuffer.domain.FramebufferAttachment.COLOR_BUFFER_MULTISAMPLE_ATTACHMENT;
@@ -106,9 +105,8 @@ public class InitScene extends Scene {
     public void initialize() {
         viewport = displayManager.getViewport();
         super.initialize();
-        inputManager.addKeyEvent(GLFW_KEY_ESCAPE, PRESS, displayManager::closeDisplay);
-        inputManager.addKeyEvent(GLFW_KEY_Q, PRESS, displayManager::closeDisplay);
-        inputManager.addKeyEvent(GLFW_KEY_RIGHT_CONTROL, PRESS, () -> {
+        inputManager.addKeyEvent(KEY_ESCAPE, PRESS, displayManager::closeDisplay);
+        inputManager.addKeyEvent(KEY_RIGHT_CONTROL, PRESS, () -> {
             cameraAsset.lookingEnabled = !cameraAsset.lookingEnabled;
             displayManager.setCursorVisibility(!cameraAsset.lookingEnabled);
         });

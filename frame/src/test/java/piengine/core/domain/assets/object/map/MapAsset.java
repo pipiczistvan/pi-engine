@@ -32,11 +32,11 @@ import puppeteer.annotation.premade.Wire;
 
 import java.util.Random;
 
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_R;
 import static piengine.core.base.type.property.ApplicationProperties.get;
 import static piengine.core.base.type.property.PropertyKeys.WATER_WAVE_SPEED;
 import static piengine.core.domain.InitScene.TERRAIN_SCALE;
 import static piengine.core.domain.InitScene.WATER_SCALE;
+import static piengine.core.input.domain.Key.KEY_R;
 
 public class MapAsset extends WorldAsset<MapAssetArgument> {
 
@@ -110,8 +110,8 @@ public class MapAsset extends WorldAsset<MapAssetArgument> {
         peasantAnimation = animationManager.supply("peasant");
         peasantAnimator = animatorManager.supply(peasantModel);
 
-        inputManager.addKeyEvent(GLFW_KEY_R, KeyEventType.PRESS, () -> peasantAnimator.doAnimation(peasantAnimation));
-        inputManager.addKeyEvent(GLFW_KEY_R, KeyEventType.RELEASE, () -> peasantAnimator.doAnimation(null));
+        inputManager.addKeyEvent(KEY_R, KeyEventType.PRESS, () -> peasantAnimator.doAnimation(peasantAnimation));
+        inputManager.addKeyEvent(KEY_R, KeyEventType.RELEASE, () -> peasantAnimator.doAnimation(null));
 
         sun = directionalLightManager.supply(this, new Color(1.0f, 0.9f, 0.6f), arguments.camera, new Vector2i(2048));
         sun.setPosition(1000, 1000, 300);

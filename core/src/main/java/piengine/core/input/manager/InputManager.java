@@ -3,6 +3,7 @@ package piengine.core.input.manager;
 import org.joml.Vector2f;
 import piengine.core.base.event.Action;
 import piengine.core.base.event.Event;
+import piengine.core.input.domain.Key;
 import piengine.core.input.domain.KeyEventType;
 import piengine.core.input.service.InputService;
 import puppeteer.annotation.premade.Component;
@@ -18,7 +19,7 @@ public class InputManager {
         this.inputService = inputService;
     }
 
-    public void addKeyEvent(final int key, final KeyEventType type, final Event event) {
+    public void addKeyEvent(final Key key, final KeyEventType type, final Event event) {
         inputService.addKeyEvent(key, type, event);
     }
 
@@ -28,9 +29,5 @@ public class InputManager {
 
     public void addScrollEvent(final Action<Vector2f> action) {
         inputService.addScrollEvent(action);
-    }
-
-    public void clearEvents() {
-        inputService.clearEvents();
     }
 }

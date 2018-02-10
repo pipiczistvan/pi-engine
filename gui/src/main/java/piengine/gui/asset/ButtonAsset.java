@@ -1,7 +1,6 @@
 package piengine.gui.asset;
 
 import org.joml.Vector3f;
-import org.lwjgl.glfw.GLFW;
 import piengine.core.input.domain.KeyEventType;
 import piengine.core.input.manager.InputManager;
 import piengine.object.asset.domain.Asset;
@@ -18,6 +17,7 @@ import piengine.visual.writing.text.domain.Text;
 import piengine.visual.writing.text.manager.TextManager;
 import puppeteer.annotation.premade.Wire;
 
+import static piengine.core.input.domain.Key.MOUSE_BUTTON_1;
 import static piengine.visual.writing.text.domain.TextConfiguration.textConfig;
 
 public class ButtonAsset extends Asset<ButtonAssetArgument, GuiRenderAssetContext> {
@@ -81,13 +81,13 @@ public class ButtonAsset extends Asset<ButtonAssetArgument, GuiRenderAssetContex
                 }
             }
         });
-        inputManager.addKeyEvent(GLFW.GLFW_MOUSE_BUTTON_1, KeyEventType.PRESS, () -> {
+        inputManager.addKeyEvent(MOUSE_BUTTON_1, KeyEventType.PRESS, () -> {
             pressed = hover;
             if (pressed) {
                 buttonCanvas.texture = pressImage;
             }
         });
-        inputManager.addKeyEvent(GLFW.GLFW_MOUSE_BUTTON_1, KeyEventType.RELEASE, () -> {
+        inputManager.addKeyEvent(MOUSE_BUTTON_1, KeyEventType.RELEASE, () -> {
             if (pressed && hover) {
                 arguments.onClickEvent.invoke();
             }

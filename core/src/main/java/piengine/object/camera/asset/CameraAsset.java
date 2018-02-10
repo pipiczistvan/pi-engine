@@ -12,12 +12,12 @@ import puppeteer.annotation.premade.Wire;
 import static java.lang.Math.cos;
 import static java.lang.Math.sin;
 import static java.lang.Math.toRadians;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_A;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_D;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_LEFT_SHIFT;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_S;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_SPACE;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_W;
+import static piengine.core.input.domain.Key.KEY_A;
+import static piengine.core.input.domain.Key.KEY_D;
+import static piengine.core.input.domain.Key.KEY_LEFT_SHIFT;
+import static piengine.core.input.domain.Key.KEY_S;
+import static piengine.core.input.domain.Key.KEY_SPACE;
+import static piengine.core.input.domain.Key.KEY_W;
 import static piengine.core.input.domain.KeyEventType.PRESS;
 import static piengine.core.input.domain.KeyEventType.RELEASE;
 
@@ -50,18 +50,18 @@ public class CameraAsset extends Asset<CameraAssetArgument, RenderAssetContext> 
 
     @Override
     public void initialize() {
-        inputManager.addKeyEvent(GLFW_KEY_SPACE, PRESS, this::pressSpace);
-        inputManager.addKeyEvent(GLFW_KEY_SPACE, RELEASE, this::releaseSpace);
-        inputManager.addKeyEvent(GLFW_KEY_LEFT_SHIFT, PRESS, this::pressShift);
-        inputManager.addKeyEvent(GLFW_KEY_LEFT_SHIFT, RELEASE, this::releaseShift);
-        inputManager.addKeyEvent(GLFW_KEY_A, PRESS, this::moveLeft);
-        inputManager.addKeyEvent(GLFW_KEY_S, PRESS, this::moveBackward);
-        inputManager.addKeyEvent(GLFW_KEY_D, PRESS, this::moveRight);
-        inputManager.addKeyEvent(GLFW_KEY_W, PRESS, this::moveForward);
-        inputManager.addKeyEvent(GLFW_KEY_A, RELEASE, this::moveRight);
-        inputManager.addKeyEvent(GLFW_KEY_S, RELEASE, this::moveForward);
-        inputManager.addKeyEvent(GLFW_KEY_D, RELEASE, this::moveLeft);
-        inputManager.addKeyEvent(GLFW_KEY_W, RELEASE, this::moveBackward);
+        inputManager.addKeyEvent(KEY_SPACE, PRESS, this::pressSpace);
+        inputManager.addKeyEvent(KEY_SPACE, RELEASE, this::releaseSpace);
+        inputManager.addKeyEvent(KEY_LEFT_SHIFT, PRESS, this::pressShift);
+        inputManager.addKeyEvent(KEY_LEFT_SHIFT, RELEASE, this::releaseShift);
+        inputManager.addKeyEvent(KEY_A, PRESS, this::moveLeft);
+        inputManager.addKeyEvent(KEY_S, PRESS, this::moveBackward);
+        inputManager.addKeyEvent(KEY_D, PRESS, this::moveRight);
+        inputManager.addKeyEvent(KEY_W, PRESS, this::moveForward);
+        inputManager.addKeyEvent(KEY_A, RELEASE, this::moveRight);
+        inputManager.addKeyEvent(KEY_S, RELEASE, this::moveForward);
+        inputManager.addKeyEvent(KEY_D, RELEASE, this::moveLeft);
+        inputManager.addKeyEvent(KEY_W, RELEASE, this::moveBackward);
         inputManager.addCursorEvent(v -> {
             if (lookingEnabled) {
                 Vector2f delta = new Vector2f();

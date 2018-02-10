@@ -4,29 +4,48 @@ import org.joml.Vector2f;
 import org.joml.Vector2i;
 import piengine.core.base.event.Action;
 import piengine.core.base.event.Event;
+import piengine.core.base.exception.PIEngineException;
+import piengine.core.input.domain.Key;
+import piengine.core.input.domain.KeyEventType;
 import piutils.map.ListMap;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public abstract class Display {
 
-    public final ListMap<Integer, Event> releaseEventMap;
-    public final ListMap<Integer, Event> pressEventMap;
-    public final List<Action<Vector2f>> cursorEvents;
-    public final List<Action<Vector2f>> scrollEvents;
-
-    public Display(final ListMap<Integer, Event> releaseEventMap, final ListMap<Integer, Event> pressEventMap, final List<Action<Vector2f>> cursorEvents, final List<Action<Vector2f>> scrollEvents) {
-        this.releaseEventMap = releaseEventMap;
-        this.pressEventMap = pressEventMap;
-        this.cursorEvents = cursorEvents;
-        this.scrollEvents = scrollEvents;
-    }
-
+    protected final ListMap<Integer, Event> releaseEventMap = new ListMap<>();
+    protected final ListMap<Integer, Event> pressEventMap = new ListMap<>();
+    protected final List<Action<Vector2f>> cursorEvents = new ArrayList<>();
+    protected final List<Action<Vector2f>> scrollEvents = new ArrayList<>();
     protected final ListMap<DisplayEventType, Event> eventMap = new ListMap<>();
 
     public void addEvent(final DisplayEventType type, final Event event) {
         eventMap.put(type, event);
     }
+
+    public void addKeyEvent(final Key key, final KeyEventType type, final Event event) {
+        switch (type) {
+            case PRESS:
+                pressEventMap.put(keyToCode(key), event);
+                break;
+            case RELEASE:
+                releaseEventMap.put(keyToCode(key), event);
+                break;
+            default:
+                throw new PIEngineException("Invalid key event domain!");
+        }
+    }
+
+    public void addCursorEvent(final Action<Vector2f> action) {
+        cursorEvents.add(action);
+    }
+
+    public void addScrollEvent(final Action<Vector2f> action) {
+        scrollEvents.add(action);
+    }
+
+    protected abstract int keyToCode(final Key key);
 
     // Interventions
 

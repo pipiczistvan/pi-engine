@@ -4,15 +4,15 @@ import org.joml.Vector2f;
 import org.joml.Vector2i;
 import piengine.core.base.event.Action;
 import piengine.core.base.event.Event;
+import piengine.core.input.domain.Key;
+import piengine.core.input.domain.KeyEventType;
 import piengine.visual.display.domain.DisplayEventType;
 import piengine.visual.display.domain.awt.AwtCanvas;
 import piengine.visual.display.interpreter.DisplayInterpreter;
-import piutils.map.ListMap;
 import puppeteer.annotation.premade.Component;
 import puppeteer.annotation.premade.Wire;
 
 import javax.swing.*;
-import java.util.List;
 
 @Component
 public class DisplayService {
@@ -26,6 +26,18 @@ public class DisplayService {
 
     public void addEvent(final DisplayEventType type, final Event event) {
         displayInterpreter.addEvent(type, event);
+    }
+
+    public void addKeyEvent(final Key key, final KeyEventType type, final Event event) {
+        displayInterpreter.addKeyEvent(key, type, event);
+    }
+
+    public void addCursorEvent(final Action<Vector2f> action) {
+        displayInterpreter.addCursorEvent(action);
+    }
+
+    public void addScrollEvent(final Action<Vector2f> action) {
+        displayInterpreter.addScrollEvent(action);
     }
 
     // Interventions
@@ -74,23 +86,5 @@ public class DisplayService {
 
     public Vector2f getViewportCenter() {
         return displayInterpreter.getViewportCenter();
-    }
-
-    // Events
-
-    public ListMap<Integer, Event> getReleaseEventMap() {
-        return displayInterpreter.getReleaseEventMap();
-    }
-
-    public ListMap<Integer, Event> getPressEventMap() {
-        return displayInterpreter.getPressEventMap();
-    }
-
-    public List<Action<Vector2f>> getCursorEvents() {
-        return displayInterpreter.getCursorEvents();
-    }
-
-    public List<Action<Vector2f>> getScrollEvents() {
-        return displayInterpreter.getScrollEvents();
     }
 }

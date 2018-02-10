@@ -5,15 +5,13 @@ import org.joml.Vector2i;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.glfw.GLFWWindowSizeCallback;
-import piengine.core.base.event.Action;
 import piengine.core.base.event.Event;
 import piengine.core.base.exception.PIEngineException;
+import piengine.core.input.domain.Key;
 import piengine.core.time.service.TimeService;
 import piengine.visual.display.domain.Display;
-import piutils.map.ListMap;
 
 import java.nio.IntBuffer;
-import java.util.List;
 
 import static org.lwjgl.glfw.GLFW.GLFW_CONTEXT_VERSION_MAJOR;
 import static org.lwjgl.glfw.GLFW.GLFW_CONTEXT_VERSION_MINOR;
@@ -105,9 +103,7 @@ public class GlfwWindow extends Display {
     private IntBuffer windowPosY = BufferUtils.createIntBuffer(1);
     private boolean resized = false;
 
-    public GlfwWindow(final TimeService timeService, final ListMap<Integer, Event> releaseEventMap, final ListMap<Integer, Event> pressEventMap,
-                      final List<Action<Vector2f>> cursorEvents, final List<Action<Vector2f>> scrollEvents) {
-        super(releaseEventMap, pressEventMap, cursorEvents, scrollEvents);
+    public GlfwWindow(final TimeService timeService) {
         this.timeService = timeService;
         this.windowSizeCallback = new WindowSizeCallback();
         this.keyCallback = new KeyCallback(releaseEventMap, pressEventMap);
@@ -195,6 +191,11 @@ public class GlfwWindow extends Display {
     @Override
     public Vector2f getViewportCenter() {
         return viewportCenter;
+    }
+
+    @Override
+    protected int keyToCode(final Key key) {
+        return key.getGlfwCode();
     }
 
     private void createGlfwWindow() {
