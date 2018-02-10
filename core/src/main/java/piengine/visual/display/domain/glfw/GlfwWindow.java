@@ -5,14 +5,15 @@ import org.joml.Vector2i;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.glfw.GLFWWindowSizeCallback;
+import piengine.core.base.event.Action;
 import piengine.core.base.event.Event;
 import piengine.core.base.exception.PIEngineException;
-import piengine.core.input.service.InputService;
 import piengine.core.time.service.TimeService;
 import piengine.visual.display.domain.Display;
+import piutils.map.ListMap;
 
-import java.nio.DoubleBuffer;
 import java.nio.IntBuffer;
+import java.util.List;
 
 import static org.lwjgl.glfw.GLFW.GLFW_CONTEXT_VERSION_MAJOR;
 import static org.lwjgl.glfw.GLFW.GLFW_CONTEXT_VERSION_MINOR;
@@ -32,7 +33,6 @@ import static org.lwjgl.glfw.GLFW.glfwCreateStandardCursor;
 import static org.lwjgl.glfw.GLFW.glfwCreateWindow;
 import static org.lwjgl.glfw.GLFW.glfwDefaultWindowHints;
 import static org.lwjgl.glfw.GLFW.glfwDestroyWindow;
-import static org.lwjgl.glfw.GLFW.glfwGetCursorPos;
 import static org.lwjgl.glfw.GLFW.glfwGetFramebufferSize;
 import static org.lwjgl.glfw.GLFW.glfwGetPrimaryMonitor;
 import static org.lwjgl.glfw.GLFW.glfwGetVideoMode;
@@ -81,15 +81,19 @@ import static piengine.visual.display.domain.DisplayEventType.UPDATE;
 public class GlfwWindow extends Display {
 
     private final TimeService timeService;
-    private final InputService inputService;
-    private final GLFWWindowSizeCallback windowSizeCallback;
 
-    private final Vector2i oldWindowSize;
-    private final Vector2i windowSize;
-    private final Vector2i oldViewport;
-    private final Vector2i viewport;
-    private final Vector2f viewportCenter;
-    private final Vector2f windowPosition;
+    private final GLFWWindowSizeCallback windowSizeCallback;
+    private final KeyCallback keyCallback;
+    private final MouseButtonCallback mouseButtonCallback;
+    private final CursorPosCallback cursorPosCallback;
+    private final ScrollCallback scrollCallback;
+
+    private final Vector2i oldWindowSize = new Vector2i();
+    private final Vector2i windowSize = new Vector2i();
+    private final Vector2i oldViewport = new Vector2i();
+    private final Vector2i viewport = new Vector2i();
+    private final Vector2f viewportCenter = new Vector2f();
+    private final Vector2f windowPosition = new Vector2f();
 
     private long windowId;
     private long cursorId;
@@ -99,27 +103,17 @@ public class GlfwWindow extends Display {
     private IntBuffer frameBufferHeight = BufferUtils.createIntBuffer(1);
     private IntBuffer windowPosX = BufferUtils.createIntBuffer(1);
     private IntBuffer windowPosY = BufferUtils.createIntBuffer(1);
-    private DoubleBuffer xBuffer = BufferUtils.createDoubleBuffer(1);
-    private DoubleBuffer yBuffer = BufferUtils.createDoubleBuffer(1);
     private boolean resized = false;
 
-    public GlfwWindow(final TimeService timeService, final InputService inputService) {
+    public GlfwWindow(final TimeService timeService, final ListMap<Integer, Event> releaseEventMap, final ListMap<Integer, Event> pressEventMap,
+                      final List<Action<Vector2f>> cursorEvents, final List<Action<Vector2f>> scrollEvents) {
+        super(releaseEventMap, pressEventMap, cursorEvents, scrollEvents);
         this.timeService = timeService;
-        this.inputService = inputService;
-        this.windowSizeCallback = new GLFWWindowSizeCallback() {
-            @Override
-            public void invoke(long window, int width, int height) {
-                if (width != 0 && height != 0) {
-                    resized = true;
-                }
-            }
-        };
-        this.oldWindowSize = new Vector2i();
-        this.windowSize = new Vector2i();
-        this.oldViewport = new Vector2i();
-        this.viewport = new Vector2i();
-        this.viewportCenter = new Vector2f();
-        this.windowPosition = new Vector2f();
+        this.windowSizeCallback = new WindowSizeCallback();
+        this.keyCallback = new KeyCallback(releaseEventMap, pressEventMap);
+        this.mouseButtonCallback = new MouseButtonCallback(releaseEventMap, pressEventMap);
+        this.cursorPosCallback = new CursorPosCallback(cursorEvents);
+        this.scrollCallback = new ScrollCallback(scrollEvents);
     }
 
     // Interventions
@@ -169,17 +163,6 @@ public class GlfwWindow extends Display {
     @Override
     public void closeDisplay() {
         glfwSetWindowShouldClose(windowId, true);
-    }
-
-    // Pointer
-
-    @Override
-    public Vector2f getPointer() {
-        xBuffer.clear();
-        yBuffer.clear();
-        glfwGetCursorPos(windowId, xBuffer, yBuffer);
-
-        return new Vector2f((float) xBuffer.get(), (float) yBuffer.get());
     }
 
     @Override
@@ -248,10 +231,10 @@ public class GlfwWindow extends Display {
         glfwSwapInterval(1);
         glfwShowWindow(windowId);
 
-        glfwSetKeyCallback(windowId, inputService.getKeyCallback());
-        glfwSetMouseButtonCallback(windowId, inputService.getMouseButtonCallback());
-        glfwSetCursorPosCallback(windowId, inputService.getCursorPosCallback());
-        glfwSetScrollCallback(windowId, inputService.getScrollCallback());
+        glfwSetKeyCallback(windowId, keyCallback);
+        glfwSetMouseButtonCallback(windowId, mouseButtonCallback);
+        glfwSetCursorPosCallback(windowId, cursorPosCallback);
+        glfwSetScrollCallback(windowId, scrollCallback);
         glfwSetWindowSizeCallback(windowId, windowSizeCallback);
 
         createCapabilities();
@@ -274,5 +257,15 @@ public class GlfwWindow extends Display {
         viewport.set(frameBufferWidth.get(), frameBufferHeight.get());
         windowPosition.set(windowPosX.get(), windowPosY.get());
         viewportCenter.set(viewport.x / 2f, viewport.y / 2f);
+    }
+
+    private class WindowSizeCallback extends GLFWWindowSizeCallback {
+
+        @Override
+        public void invoke(final long window, final int width, final int height) {
+            if (width != 0 && height != 0) {
+                resized = true;
+            }
+        }
     }
 }

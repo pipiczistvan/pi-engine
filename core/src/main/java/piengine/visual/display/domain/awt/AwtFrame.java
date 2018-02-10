@@ -2,13 +2,19 @@ package piengine.visual.display.domain.awt;
 
 import org.joml.Vector2f;
 import org.joml.Vector2i;
+import piengine.core.base.event.Action;
+import piengine.core.base.event.Event;
+import piengine.core.base.exception.PIEngineException;
 import piengine.core.time.service.TimeService;
 import piengine.visual.display.domain.Display;
+import piutils.map.ListMap;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.WindowAdapter;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.event.WindowEvent;
+import java.util.List;
 
 import static piengine.core.base.type.property.ApplicationProperties.get;
 import static piengine.core.base.type.property.PropertyKeys.WINDOW_HEIGHT;
@@ -20,42 +26,44 @@ import static piengine.core.base.type.property.PropertyKeys.WINDOW_WIDTH;
 public class AwtFrame extends Display {
 
     private final TimeService timeService;
-    private final JFrame frame;
     private final AwtCanvas canvas;
+    private final Robot robot;
 
-    private final Vector2i oldWindowSize;
-    private final Vector2i windowSize;
-    private final Vector2i oldViewport;
-    private final Vector2i viewport;
-    private final Vector2f viewportCenter;
+    private final WindowAdapter windowAdapter;
+    private final KeyAdapter keyAdapter;
+    private final MouseWheelAdapter mouseWheelAdapter;
+    private final MouseButtonAdapter mouseButtonAdapter;
+    private final MouseMoveAdapter mouseMoveAdapter;
+    private final WindowResizedAdapter windowResizedAdapter;
 
-    public AwtFrame(final TimeService timeService, final JFrame frame, final AwtCanvas canvas) {
+    private final Vector2i oldWindowSize = new Vector2i();
+    private final Vector2i windowSize = new Vector2i();
+    private final Vector2i contentSize = new Vector2i();
+    private final Vector2i oldViewport = new Vector2i();
+    private final Vector2i viewport = new Vector2i();
+    private final Vector2f viewportCenter = new Vector2f();
+
+    public AwtFrame(final TimeService timeService, final JFrame frame, final AwtCanvas canvas,
+                    final ListMap<Integer, Event> releaseEventMap, final ListMap<Integer, Event> pressEventMap,
+                    final List<Action<Vector2f>> cursorEvents, final List<Action<Vector2f>> scrollEvents) {
+        super(releaseEventMap, pressEventMap, cursorEvents, scrollEvents);
         this.timeService = timeService;
-        this.frame = frame;
         this.canvas = canvas;
-        this.oldWindowSize = new Vector2i();
-        this.windowSize = new Vector2i();
-        this.oldViewport = new Vector2i();
-        this.viewport = new Vector2i();
-        this.viewportCenter = new Vector2f();
+        try {
+            this.robot = new Robot();
+        } catch (AWTException e) {
+            throw new PIEngineException(e, "Could not create robot!");
+        }
 
-        this.frame.setTitle(get(WINDOW_TITLE));
-        this.frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        this.frame.setPreferredSize(new Dimension(get(WINDOW_WIDTH), get(WINDOW_HEIGHT)));
-        this.frame.setMinimumSize(new Dimension(get(WINDOW_MIN_WIDTH), get(WINDOW_MIN_HEIGHT)));
-        this.frame.pack();
-        this.frame.setVisible(true);
-        this.frame.transferFocus();
-        this.frame.addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosed(final WindowEvent e) {
-                canvas.sendCloseSignal();
-            }
-        });
+        this.windowAdapter = new WindowAdapter();
+        this.keyAdapter = new KeyAdapter(releaseEventMap, pressEventMap);
+        this.mouseWheelAdapter = new MouseWheelAdapter(scrollEvents);
+        this.mouseButtonAdapter = new MouseButtonAdapter(releaseEventMap, pressEventMap);
+        this.mouseMoveAdapter = new MouseMoveAdapter(cursorEvents);
+        this.windowResizedAdapter = new WindowResizedAdapter();
 
-        this.canvas.initialize(viewport, oldViewport, viewportCenter, eventMap);
-
-        Toolkit.getDefaultToolkit().setDynamicLayout(false);
+        initializeFrame(frame);
+        initializeCanvas(canvas);
     }
 
     // Interventions
@@ -84,17 +92,9 @@ public class AwtFrame extends Display {
         //todo: implement
     }
 
-    // Pointer
-
-    @Override
-    public Vector2f getPointer() {
-        //todo: implement
-        return new Vector2f();
-    }
-
     @Override
     public void setPointer(final Vector2f position) {
-        //todo: implement
+        robot.mouseMove((int) position.x, (int) position.y);
     }
 
     // Window and viewport
@@ -122,5 +122,51 @@ public class AwtFrame extends Display {
     @Override
     public Vector2i getViewport() {
         return viewport;
+    }
+
+    private void initializeFrame(final JFrame frame) {
+        frame.setTitle(get(WINDOW_TITLE));
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        frame.setPreferredSize(new Dimension(get(WINDOW_WIDTH), get(WINDOW_HEIGHT)));
+        frame.setMinimumSize(new Dimension(get(WINDOW_MIN_WIDTH), get(WINDOW_MIN_HEIGHT)));
+        frame.pack();
+        frame.setVisible(true);
+        frame.transferFocus();
+
+        frame.addComponentListener(windowResizedAdapter);
+        frame.addWindowListener(windowAdapter);
+
+        Toolkit.getDefaultToolkit().setDynamicLayout(false);
+    }
+
+    private void initializeCanvas(final AwtCanvas canvas) {
+        canvas.setFocusable(true);
+
+        canvas.addMouseMotionListener(mouseMoveAdapter);
+        canvas.addMouseWheelListener(mouseWheelAdapter);
+        canvas.addMouseListener(mouseButtonAdapter);
+        canvas.addKeyListener(keyAdapter);
+
+        canvas.initialize(viewport, oldViewport, viewportCenter, windowSize, contentSize, eventMap);
+    }
+
+    private class WindowResizedAdapter extends ComponentAdapter{
+
+        @Override
+        public void componentResized(final ComponentEvent e) {
+            JFrame frame = (JFrame) e.getComponent();
+
+            oldWindowSize.set(windowSize);
+            windowSize.set(frame.getWidth(), e.getComponent().getHeight());
+            contentSize.set(frame.getContentPane().getWidth(), frame.getContentPane().getHeight());
+        }
+    }
+
+    private class WindowAdapter extends java.awt.event.WindowAdapter {
+
+        @Override
+        public void windowClosing(final WindowEvent e) {
+            canvas.sendCloseSignal();
+        }
     }
 }

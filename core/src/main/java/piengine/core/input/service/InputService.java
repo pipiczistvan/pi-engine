@@ -6,38 +6,27 @@ import piengine.core.base.event.Action;
 import piengine.core.base.event.Event;
 import piengine.core.base.exception.PIEngineException;
 import piengine.core.input.domain.KeyEventType;
-import piengine.core.input.interpreter.CursorPosCallback;
-import piengine.core.input.interpreter.KeyCallback;
-import piengine.core.input.interpreter.MouseButtonCallback;
-import piengine.core.input.interpreter.ScrollCallback;
+import piengine.visual.display.service.DisplayService;
 import piutils.map.ListMap;
 import puppeteer.annotation.premade.Component;
+import puppeteer.annotation.premade.Wire;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Component
 public class InputService implements Service {
-
-    private final KeyCallback keyCallback;
-    private final MouseButtonCallback mouseButtonCallback;
-    private final CursorPosCallback cursorPosCallback;
-    private final ScrollCallback scrollCallback;
 
     private final ListMap<Integer, Event> releaseEventMap;
     private final ListMap<Integer, Event> pressEventMap;
     private final List<Action<Vector2f>> cursorEvents;
     private final List<Action<Vector2f>> scrollEvents;
 
-    public InputService() {
-        this.releaseEventMap = new ListMap<>();
-        this.pressEventMap = new ListMap<>();
-        this.cursorEvents = new ArrayList<>();
-        this.scrollEvents = new ArrayList<>();
-        this.keyCallback = new KeyCallback(releaseEventMap, pressEventMap);
-        this.mouseButtonCallback = new MouseButtonCallback(releaseEventMap, pressEventMap);
-        this.cursorPosCallback = new CursorPosCallback(cursorEvents);
-        this.scrollCallback = new ScrollCallback(scrollEvents);
+    @Wire
+    public InputService(final DisplayService displayService) {
+        this.releaseEventMap = displayService.getReleaseEventMap();
+        this.pressEventMap = displayService.getPressEventMap();
+        this.cursorEvents = displayService.getCursorEvents();
+        this.scrollEvents = displayService.getScrollEvents();
     }
 
     public void addKeyEvent(final int key, final KeyEventType type, final Event event) {
@@ -59,22 +48,6 @@ public class InputService implements Service {
 
     public void addScrollEvent(final Action<Vector2f> action) {
         scrollEvents.add(action);
-    }
-
-    public KeyCallback getKeyCallback() {
-        return keyCallback;
-    }
-
-    public MouseButtonCallback getMouseButtonCallback() {
-        return mouseButtonCallback;
-    }
-
-    public CursorPosCallback getCursorPosCallback() {
-        return cursorPosCallback;
-    }
-
-    public ScrollCallback getScrollCallback() {
-        return scrollCallback;
     }
 
     public void clearEvents() {

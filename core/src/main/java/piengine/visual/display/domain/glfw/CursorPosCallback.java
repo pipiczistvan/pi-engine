@@ -1,4 +1,4 @@
-package piengine.core.input.interpreter;
+package piengine.visual.display.domain.glfw;
 
 import org.joml.Vector2f;
 import org.lwjgl.glfw.GLFWCursorPosCallback;
@@ -6,13 +6,13 @@ import piengine.core.base.event.Action;
 
 import java.util.List;
 
-public class CursorPosCallback extends GLFWCursorPosCallback {
+class CursorPosCallback extends GLFWCursorPosCallback {
 
     private static final Vector2f CURSOR_POSITION = new Vector2f();
 
     private final List<Action<Vector2f>> cursorEvents;
 
-    public CursorPosCallback(final List<Action<Vector2f>> cursorEvents) {
+    CursorPosCallback(final List<Action<Vector2f>> cursorEvents) {
         this.cursorEvents = cursorEvents;
     }
 

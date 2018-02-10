@@ -2,14 +2,17 @@ package piengine.visual.display.service;
 
 import org.joml.Vector2f;
 import org.joml.Vector2i;
+import piengine.core.base.event.Action;
 import piengine.core.base.event.Event;
 import piengine.visual.display.domain.DisplayEventType;
 import piengine.visual.display.domain.awt.AwtCanvas;
 import piengine.visual.display.interpreter.DisplayInterpreter;
+import piutils.map.ListMap;
 import puppeteer.annotation.premade.Component;
 import puppeteer.annotation.premade.Wire;
 
 import javax.swing.*;
+import java.util.List;
 
 @Component
 public class DisplayService {
@@ -47,12 +50,6 @@ public class DisplayService {
         displayInterpreter.setCursorVisibility(visible);
     }
 
-    // Pointer
-
-    public Vector2f getPointer() {
-        return displayInterpreter.getPointer();
-    }
-
     public void setPointer(final Vector2f position) {
         displayInterpreter.setPointer(position);
     }
@@ -77,5 +74,23 @@ public class DisplayService {
 
     public Vector2f getViewportCenter() {
         return displayInterpreter.getViewportCenter();
+    }
+
+    // Events
+
+    public ListMap<Integer, Event> getReleaseEventMap() {
+        return displayInterpreter.getReleaseEventMap();
+    }
+
+    public ListMap<Integer, Event> getPressEventMap() {
+        return displayInterpreter.getPressEventMap();
+    }
+
+    public List<Action<Vector2f>> getCursorEvents() {
+        return displayInterpreter.getCursorEvents();
+    }
+
+    public List<Action<Vector2f>> getScrollEvents() {
+        return displayInterpreter.getScrollEvents();
     }
 }

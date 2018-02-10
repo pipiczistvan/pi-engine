@@ -1,4 +1,4 @@
-package piengine.core.input.interpreter;
+package piengine.visual.display.domain.glfw;
 
 import org.lwjgl.glfw.GLFWMouseButtonCallback;
 import piengine.core.base.event.Event;
@@ -7,12 +7,12 @@ import piutils.map.ListMap;
 import static org.lwjgl.glfw.GLFW.GLFW_PRESS;
 import static org.lwjgl.glfw.GLFW.GLFW_RELEASE;
 
-public class MouseButtonCallback extends GLFWMouseButtonCallback {
+class MouseButtonCallback extends GLFWMouseButtonCallback {
 
     private final ListMap<Integer, Event> releaseEventMap;
     private final ListMap<Integer, Event> pressEventMap;
 
-    public MouseButtonCallback(final ListMap<Integer, Event> releaseEventMap, final ListMap<Integer, Event> pressEventMap) {
+    MouseButtonCallback(final ListMap<Integer, Event> releaseEventMap, final ListMap<Integer, Event> pressEventMap) {
         this.releaseEventMap = releaseEventMap;
         this.pressEventMap = pressEventMap;
     }
