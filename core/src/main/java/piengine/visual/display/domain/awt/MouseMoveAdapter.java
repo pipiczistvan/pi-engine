@@ -24,4 +24,9 @@ public class MouseMoveAdapter extends MouseMotionAdapter {
             cursorEvents.forEach(event -> event.invoke(CURSOR_POSITION));
         }
     }
+
+    @Override
+    public void mouseDragged(final MouseEvent e) {
+        mouseMoved(e);
+    }
 }
