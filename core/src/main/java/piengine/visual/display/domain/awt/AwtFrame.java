@@ -90,7 +90,7 @@ public class AwtFrame extends Display {
 
     @Override
     public Vector2f getPointer() {
-        Point mousePosition = frame.getMousePosition();
+        Point mousePosition = MouseInfo.getPointerInfo().getLocation();
         cursorPosition.set(mousePosition.x, mousePosition.y);
         return cursorPosition;
     }
