@@ -40,9 +40,11 @@ public class DirectionalShadowRenderService extends AbstractRenderService<Direct
         shader.start();
         shader.loadRenderStage(0);
         for (Model model : context.models) {
-            Matrix4f transformationMatrix = createTransformation(projectionViewMatrix, model);
-            shader.loadTransformationMatrix(transformationMatrix);
-            draw(model.mesh.getDao());
+            if (!model.lightEmitter && model.visible) {
+                Matrix4f transformationMatrix = createTransformation(projectionViewMatrix, model);
+                shader.loadTransformationMatrix(transformationMatrix);
+                draw(model.mesh.getDao());
+            }
         }
         shader.loadRenderStage(1);
         for (AnimatedModel animatedModel : context.animatedModels) {

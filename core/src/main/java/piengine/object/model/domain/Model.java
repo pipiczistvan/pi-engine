@@ -11,6 +11,7 @@ public class Model extends Entity {
     public final boolean lightEmitter;
     public Texture texture;
     public final Color color;
+    public boolean visible = true;
 
     public Model(final Entity parent, final Mesh mesh, final Texture texture, final Color color, final boolean lightEmitter) {
         super(parent);

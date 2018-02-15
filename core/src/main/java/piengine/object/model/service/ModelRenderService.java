@@ -47,18 +47,20 @@ public class ModelRenderService extends AbstractRenderService<ModelShader, Rende
                 .loadClippingPlane(context.clippingPlane);
 
         for (Model model : context.models) {
-            shader.loadModelMatrix(model.getTransformation())
-                    .loadLightEmitter(model.lightEmitter)
-                    .loadColor(model.color);
+            if (model.visible) {
+                shader.loadModelMatrix(model.getTransformation())
+                        .loadLightEmitter(model.lightEmitter)
+                        .loadColor(model.color);
 
-            if (model.texture != null) {
-                shader.loadTextureEnabled(true);
-                textureService.bind(model.texture);
-            } else {
-                shader.loadTextureEnabled(false);
+                if (model.texture != null) {
+                    shader.loadTextureEnabled(true);
+                    textureService.bind(model.texture);
+                } else {
+                    shader.loadTextureEnabled(false);
+                }
+
+                draw(model.mesh.getDao());
             }
-
-            draw(model.mesh.getDao());
         }
     }
 
