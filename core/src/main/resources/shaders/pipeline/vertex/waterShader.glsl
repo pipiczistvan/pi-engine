@@ -15,8 +15,9 @@ const float shineDamper = 20.0;
 #import "struct/pointLight";
 #import "struct/directionalShadow";
 
-#import "function/light";
-#import "function/attenuation";
+#import "function/light/diffuse";
+#import "function/light/attenuation";
+#import "function/light/specular";
 #import "function/fog";
 
 layout (location = 0) in vec3 Position;
@@ -63,17 +64,6 @@ vec4 applyDistortion(vec4 vertex){
 	return vertex + vec4(xDistortion, yDistortion, zDistortion, 0.0);
 }
 
-vec3 calculateSpecularFactor(vec3 lightPosition, vec3 lightColor, vec3 toCamVector, vec3 vertexPosition, vec3 vertexNormal) {
-    vec3 toLightVector = lightPosition - vertexPosition;
-    vec3 normal = normalize(toLightVector);
-	vec3 reflectedLightDirection = reflect(-normal, vertexNormal);
-	float specularFactor = dot(reflectedLightDirection, toCamVector);
-
-	specularFactor = max(specularFactor, 0.0);
-	specularFactor = pow(specularFactor, shineDamper);
-	return specularFactor * specularReflectivity * lightColor;
-}
-
 void main(void) {
     vec4 worldPosition = vec4(Position, 1.0);
     vec4 worldNeighbourPosition1 = worldPosition + vec4(Indicator.x, 0.0, Indicator.y, 0.0);
@@ -109,15 +99,15 @@ void main(void) {
     // LIGHTING
     for(int i = 0; i < DIRECTIONAL_LIGHT_COUNT; i++) {
         if (directionalLights[i].enabled > 0.5) {
-            vdDiffuse[i] = calculateLightFactor(directionalLights[i].position, directionalLights[i].color.rgb, vPosition.xyz, vNormal);
-            vdSpecular[i] = calculateSpecularFactor(directionalLights[i].position, directionalLights[i].color.rgb, vToCameraVector, vPosition.xyz, vNormal);
+            vdDiffuse[i] = calculateDiffuseLightFactor(directionalLights[i].position, directionalLights[i].color.rgb, vPosition.xyz, vNormal);
+            vdSpecular[i] = calculateSpecularLightFactor(directionalLights[i].position, directionalLights[i].color.rgb, vPosition.xyz, vNormal, vToCameraVector);
         }
     }
     for (int i = 0; i < POINT_LIGHT_COUNT; i++) {
         if (pointLights[i].enabled > 0.5) {
-            vAttenuation[i] = calculateAttenuationFactor(pointLights[i].attenuation, pointLights[i].position, vPosition.xyz);
-            vpDiffuse[i] = calculateLightFactor(pointLights[i].position, pointLights[i].color.rgb, vPosition.xyz, vNormal);
-            vpSpecular[i] = calculateSpecularFactor(directionalLights[i].position, directionalLights[i].color.rgb, vToCameraVector, vPosition.xyz, vNormal);
+            vAttenuation[i] = calculateLightAttenuationFactor(pointLights[i].attenuation, pointLights[i].position, vPosition.xyz);
+            vpDiffuse[i] = calculateDiffuseLightFactor(pointLights[i].position, pointLights[i].color.rgb, vPosition.xyz, vNormal);
+            vpSpecular[i] = calculateSpecularLightFactor(directionalLights[i].position, directionalLights[i].color.rgb, vPosition.xyz, vNormal, vToCameraVector);
         }
     }
 }

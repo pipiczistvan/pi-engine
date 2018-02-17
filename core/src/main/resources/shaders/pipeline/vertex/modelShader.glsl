@@ -7,8 +7,8 @@ const int POINT_LIGHT_COUNT = ${lighting.point.light.count};
 #import "struct/directionalLight";
 #import "struct/pointLight";
 
-#import "function/light";
-#import "function/attenuation";
+#import "function/light/diffuse";
+#import "function/light/attenuation";
 #import "function/fog";
 
 layout (location = 0) in vec3 Position;
@@ -42,13 +42,13 @@ void main(void) {
     } else {
         for (int i = 0; i < DIRECTIONAL_LIGHT_COUNT; i++) {
             if (directionalLights[i].enabled > 0.5) {
-                lightFactor += calculateLightFactor(directionalLights[i].position, directionalLights[i].color.rgb, worldPosition.xyz, normalizedVertexNormal);
+                lightFactor += calculateDiffuseLightFactor(directionalLights[i].position, directionalLights[i].color.rgb, worldPosition.xyz, normalizedVertexNormal);
             }
         }
         for (int i = 0; i < POINT_LIGHT_COUNT; i++) {
             if (pointLights[i].enabled > 0.5) {
-                lightFactor += calculateLightFactor(pointLights[i].position, pointLights[i].color.rgb, worldPosition.xyz, normalizedVertexNormal) /
-                        calculateAttenuationFactor(pointLights[i].attenuation, pointLights[i].position, worldPosition.xyz);
+                lightFactor += calculateDiffuseLightFactor(pointLights[i].position, pointLights[i].color.rgb, worldPosition.xyz, normalizedVertexNormal) /
+                        calculateLightAttenuationFactor(pointLights[i].attenuation, pointLights[i].position, worldPosition.xyz);
             }
         }
 

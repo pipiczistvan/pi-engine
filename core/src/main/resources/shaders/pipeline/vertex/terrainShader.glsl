@@ -10,8 +10,8 @@ const float DIRECTIONAL_SHADOW_TRANSITION_DISTANCE = ${lighting.directional.shad
 #import "struct/pointLight";
 #import "struct/directionalShadow";
 
-#import "function/light";
-#import "function/attenuation";
+#import "function/light/diffuse";
+#import "function/light/attenuation";
 #import "function/fog";
 
 layout (location = 0) in vec3 Position;
@@ -58,13 +58,13 @@ void main(void) {
     // LIGHTING
     for(int i = 0; i < DIRECTIONAL_LIGHT_COUNT; i++) {
         if (directionalLights[i].enabled > 0.5) {
-            vdDiffuse[i] = calculateLightFactor(directionalLights[i].position, directionalLights[i].color.rgb, vPosition.xyz, vNormal);
+            vdDiffuse[i] = calculateDiffuseLightFactor(directionalLights[i].position, directionalLights[i].color.rgb, vPosition.xyz, vNormal);
         }
     }
     for (int i = 0; i < POINT_LIGHT_COUNT; i++) {
         if (pointLights[i].enabled > 0.5) {
-            vAttenuation[i] = calculateAttenuationFactor(pointLights[i].attenuation, pointLights[i].position, vPosition.xyz);
-            vpDiffuse[i] = calculateLightFactor(pointLights[i].position, pointLights[i].color.rgb, vPosition.xyz, vNormal);
+            vAttenuation[i] = calculateLightAttenuationFactor(pointLights[i].attenuation, pointLights[i].position, vPosition.xyz);
+            vpDiffuse[i] = calculateDiffuseLightFactor(pointLights[i].position, pointLights[i].color.rgb, vPosition.xyz, vNormal);
         }
     }
 

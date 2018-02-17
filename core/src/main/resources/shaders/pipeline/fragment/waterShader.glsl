@@ -30,6 +30,9 @@ const vec3 sampleOffsetDirections[20] = vec3[]
 #import "struct/directionalShadow";
 #import "struct/pointShadow";
 
+#import "function/shadow/point";
+#import "function/shadow/directional";
+
 in vec4 vClipSpaceGrid;
 in vec4 vClipSpaceReal;
 in vec3 vToCameraVector;
@@ -57,44 +60,6 @@ uniform sampler2D depthTexture;
 uniform Fog fog;
 uniform vec3 cameraPosition;
 uniform vec4 waterColor;
-
-float calculateDirectionalShadow(vec4 shadowCoords, sampler2D shadowMap, int mapSize) {
-    float texelSize = 1.0 / mapSize;
-    float total = 0.0;
-
-    for (int x = -DIRECTIONAL_SHADOW_PCF_COUNT; x <= DIRECTIONAL_SHADOW_PCF_COUNT; x++) {
-        for (int y = -DIRECTIONAL_SHADOW_PCF_COUNT; y <= DIRECTIONAL_SHADOW_PCF_COUNT; y++) {
-            float objectNearestToLight = texture(shadowMap, shadowCoords.xy + vec2(x, y) * texelSize).r;
-            if (shadowCoords.z > objectNearestToLight) {
-                total += 1.0;
-            }
-        }
-    }
-    total /= TOTAL_TEXELS;
-
-    return min(total * shadowCoords.w, SHADOW_DARKNESS);
-}
-
-float calculatePointShadow(vec3 fragPos, vec3 viewPosition, vec3 lightPosition, samplerCube shadowCubeMap) {
-    vec3 fragToLight = fragPos - lightPosition;
-    float currentDepth = length(fragToLight);
-    currentDepth /= POINT_SHADOW_DISTANCE;
-    float viewDistance = length(viewPosition - fragPos);
-
-    float shadow  = 0.0;
-    float samples = 20;
-    float diskRadius = (1.0 + (viewDistance / POINT_SHADOW_DISTANCE)) / 25.0;
-    for(int i = 0; i < samples; i++) {
-        float closestDepth = texture(shadowCubeMap, fragToLight + sampleOffsetDirections[i] * diskRadius).r;
-        if(currentDepth > closestDepth) {
-            shadow += 1.0;
-        }
-    }
-
-    float strength = max(1.0 - currentDepth, 0.0) / POINT_SHADOW_TRANSITION_LENGTH;
-
-    return min(shadow / samples * strength, SHADOW_DARKNESS);
-}
 
 vec3 calculateMurkiness(vec3 refractColor, vec3 waterColor, float waterDepth) {
     float murkyFactor = smoothstep(0, WATER_MURKY_DEPTH, waterDepth);
@@ -154,7 +119,7 @@ void main(void) {
         if (directionalLights[i].enabled > 0.5) {
             float shadowFactor = 0.0;
             if (directionalShadows[i].enabled > 0.5) {
-                shadowFactor = calculateDirectionalShadow(vShadowCoords[i], directionalShadowMaps[i], directionalShadows[i].mapSize);
+                shadowFactor = calculateDirectionalShadowFactor(vShadowCoords[i], directionalShadowMaps[i], directionalShadows[i].mapSize);
             }
             finalDiffuse += max(vdDiffuse[i] - shadowFactor, 0.0);
             finalSpecular += max(vdSpecular[i] - shadowFactor, 0.0);
@@ -164,7 +129,7 @@ void main(void) {
         if (pointLights[i].enabled > 0.5) {
             float shadowFactor = 0.0;
             if (pointShadows[i].enabled > 0.5) {
-                shadowFactor = calculatePointShadow(vPosition.xyz, cameraPosition, pointShadows[i].position, pointShadowMaps[i]);
+                shadowFactor = calculatePointShadowFactor(vPosition.xyz, cameraPosition, pointShadows[i].position, pointShadowMaps[i]);
             }
             finalDiffuse += max(vpDiffuse[i] - shadowFactor, 0.0) / vAttenuation[i];
             finalSpecular += max(vpSpecular[i] - shadowFactor, 0.0) / vAttenuation[i];
