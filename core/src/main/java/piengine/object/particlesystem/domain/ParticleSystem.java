@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public class ParticleSystem extends EntityDomain<ParticleSysemDao> implements Updatable {
+public class ParticleSystem extends EntityDomain<ParticleSystemDao> implements Updatable {
 
     public final Sprite sprite;
     public final List<Particle> particles;
@@ -22,7 +22,7 @@ public class ParticleSystem extends EntityDomain<ParticleSysemDao> implements Up
     private final float gravityComplient;
     private final float lifeLength;
 
-    public ParticleSystem(final Entity parent, final ParticleSysemDao dao, final Sprite sprite,
+    public ParticleSystem(final Entity parent, final ParticleSystemDao dao, final Sprite sprite,
                           final Camera camera, final float pps, final float speed,
                           final float gravityComplient, final float lifeLength) {
         super(parent, dao);

@@ -3,7 +3,7 @@ package piengine.visual.render.service;
 import piengine.core.base.api.Initializable;
 import piengine.core.base.api.Service;
 import piengine.object.mesh.domain.MeshDao;
-import piengine.object.particlesystem.domain.ParticleSysemDao;
+import piengine.object.particlesystem.domain.ParticleSystemDao;
 import piengine.visual.render.domain.config.RenderConfig;
 import piengine.visual.render.domain.context.RenderContext;
 import piengine.visual.render.interpreter.RenderInterpreter;
@@ -57,7 +57,7 @@ public abstract class AbstractRenderService<S extends Shader, C extends RenderCo
     }
 
     //todo: HACK
-    protected void drawInstanced(final ParticleSysemDao dao, final int primCount) {
+    protected void drawInstanced(final ParticleSystemDao dao, final int primCount) {
         renderInterpreter.bindVertexArray(dao.vaoId);
         renderInterpreter.enableVertexAttribArray(dao.getVertexAttribs());
 

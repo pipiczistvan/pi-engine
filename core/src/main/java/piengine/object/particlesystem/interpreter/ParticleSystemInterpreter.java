@@ -2,7 +2,7 @@ package piengine.object.particlesystem.interpreter;
 
 import org.lwjgl.opengl.GL15;
 import piengine.core.base.api.Interpreter;
-import piengine.object.particlesystem.domain.ParticleSysemDao;
+import piengine.object.particlesystem.domain.ParticleSystemDao;
 import piengine.object.particlesystem.domain.ParticleSystemData;
 import puppeteer.annotation.premade.Component;
 
@@ -32,15 +32,15 @@ import static piengine.object.mesh.domain.MeshDataType.TEXTURE_OFFSET;
 import static piengine.object.mesh.domain.MeshDataType.VERTEX;
 
 @Component
-public class ParticleSystemInterpreter extends Interpreter<ParticleSystemData, ParticleSysemDao> {
+public class ParticleSystemInterpreter extends Interpreter<ParticleSystemData, ParticleSystemDao> {
 
     public static final int MAX_INSTANCES = 10_000;
     public static final int INSTANCE_DATA_LENGTH = 21;
     private static final int FLOAT_SIZE = 4;
 
     @Override
-    protected ParticleSysemDao createDao(final ParticleSystemData particleSystemData) {
-        final ParticleSysemDao dao = new ParticleSysemDao(glGenVertexArrays(), new ArrayList<>(), particleSystemData.vertices.length / 2);
+    protected ParticleSystemDao createDao(final ParticleSystemData particleSystemData) {
+        final ParticleSystemDao dao = new ParticleSystemDao(glGenVertexArrays(), new ArrayList<>(), particleSystemData.vertices.length / 2);
         bind(dao);
 
         dao.vboIds.add(createVbo(VERTEX.value, particleSystemData.vertices, 2));
@@ -60,7 +60,7 @@ public class ParticleSystemInterpreter extends Interpreter<ParticleSystemData, P
     }
 
     @Override
-    protected boolean freeDao(final ParticleSysemDao dao) {
+    protected boolean freeDao(final ParticleSystemDao dao) {
         glDeleteVertexArrays(dao.vaoId);
         dao.vboIds.forEach(GL15::glDeleteBuffers);
 
@@ -68,16 +68,16 @@ public class ParticleSystemInterpreter extends Interpreter<ParticleSystemData, P
     }
 
     @Override
-    protected String getCreateInfo(final ParticleSysemDao dao, final ParticleSystemData resource) {
+    protected String getCreateInfo(final ParticleSystemDao dao, final ParticleSystemData resource) {
         return String.format("Vao id: %s", dao.vaoId);
     }
 
     @Override
-    protected String getFreeInfo(final ParticleSysemDao dao) {
+    protected String getFreeInfo(final ParticleSystemDao dao) {
         return String.format("Vao id: %s", dao.vaoId);
     }
 
-    public void updateVbo(final ParticleSysemDao dao, final float[] data, final FloatBuffer buffer) {
+    public void updateVbo(final ParticleSystemDao dao, final float[] data, final FloatBuffer buffer) {
         buffer.clear();
         buffer.put(data);
         buffer.flip();
@@ -87,7 +87,7 @@ public class ParticleSystemInterpreter extends Interpreter<ParticleSystemData, P
         glBindBuffer(GL_ARRAY_BUFFER, 0);
     }
 
-    private void bind(final ParticleSysemDao dao) {
+    private void bind(final ParticleSystemDao dao) {
         glBindVertexArray(dao.vaoId);
     }
 

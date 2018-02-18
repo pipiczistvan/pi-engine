@@ -13,7 +13,7 @@ import static piengine.object.mesh.domain.MeshDataType.MODEL_VIEW_MATRIX_4;
 import static piengine.object.mesh.domain.MeshDataType.TEXTURE_OFFSET;
 import static piengine.object.mesh.domain.MeshDataType.VERTEX;
 
-public class ParticleSysemDao extends MeshDao {
+public class ParticleSystemDao extends MeshDao {
 
     private static MeshDataType[] MESH_DATA_TYPES = {
             VERTEX,
@@ -25,7 +25,7 @@ public class ParticleSysemDao extends MeshDao {
             BLEND
     };
 
-    public ParticleSysemDao(final int vaoId, final List<Integer> vboIds, final int vertexCount) {
+    public ParticleSystemDao(final int vaoId, final List<Integer> vboIds, final int vertexCount) {
         super(vaoId, vboIds, vertexCount);
     }
 
