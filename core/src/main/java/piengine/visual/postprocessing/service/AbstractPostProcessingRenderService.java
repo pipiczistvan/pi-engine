@@ -36,11 +36,11 @@ public abstract class AbstractPostProcessingRenderService<S extends Shader, C ex
     }
 
     protected void draw() {
-        renderInterpreter.bindVertexArray(canvas.getDao().vaoId);
-        renderInterpreter.enableVertexAttribArray(canvas.getDao().getVertexAttribs());
-        renderInterpreter.drawElements(GL_TRIANGLES, canvas.getDao().vertexCount);
-        renderInterpreter.disableVertexAttribArray(canvas.getDao().getVertexAttribs());
-        renderInterpreter.unbindVertexArray();
+        canvas.getDao().vertexArray.bind().enableAttributes();
+
+        renderInterpreter.drawElements(GL_TRIANGLES, canvas.getDao().vertexArray.vertexCount);
+
+        canvas.getDao().vertexArray.disableAttributes().unbind();
     }
 
     protected S createShader(final String file, final Class<S> shaderClass) {

@@ -1,7 +1,6 @@
 package piengine.core.opengl.vertexarray;
 
 import piengine.core.opengl.OpenglObject;
-import piengine.core.opengl.vertexarray.vertexbuffer.VertexBuffer;
 
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
@@ -52,7 +51,6 @@ public class VertexArray implements OpenglObject {
         IntBuffer buffer = convertToIntBuffer(data);
 
         vertexBuffers.put(INDEX, new VertexBuffer()
-                .bind()
                 .attachIndexBuffer(buffer)
         );
 
@@ -62,7 +60,7 @@ public class VertexArray implements OpenglObject {
     public VertexArray attachVertexBuffer(final VertexAttribute attribute, final float[] data, final int size) {
         FloatBuffer buffer = convertToFloatBuffer(data);
 
-        return attachVertexBuffer(attribute, createVertexBuffer()
+        return attachVertexBuffer(attribute, new VertexBuffer()
                 .bind()
                 .attachFloatBuffer(attribute, buffer, size)
                 .unbind()
@@ -72,7 +70,7 @@ public class VertexArray implements OpenglObject {
     public VertexArray attachVertexBuffer(final VertexAttribute attribute, final int[] data, final int size) {
         IntBuffer buffer = convertToIntBuffer(data);
 
-        return attachVertexBuffer(attribute, createVertexBuffer()
+        return attachVertexBuffer(attribute, new VertexBuffer()
                 .bind()
                 .attachIntBuffer(attribute, buffer, size)
                 .unbind()
@@ -85,21 +83,17 @@ public class VertexArray implements OpenglObject {
         return this;
     }
 
-    public VertexBuffer createVertexBuffer() {
-        return new VertexBuffer();
-    }
-
     public VertexArray enableAttributes() {
-        vertexBuffers.keySet().stream()
-                .filter(attribute -> attribute.index >= 0)
+        vertexBuffers.values().stream()
+                .flatMap(vbo -> vbo.attributes.stream())
                 .forEach(attribute -> glEnableVertexAttribArray(attribute.index));
 
         return this;
     }
 
     public VertexArray disableAttributes() {
-        vertexBuffers.keySet().stream()
-                .filter(attribute -> attribute.index >= 0)
+        vertexBuffers.values().stream()
+                .flatMap(vbo -> vbo.attributes.stream())
                 .forEach(attribute -> glDisableVertexAttribArray(attribute.index));
 
         return this;

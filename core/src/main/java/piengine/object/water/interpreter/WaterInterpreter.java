@@ -1,79 +1,40 @@
 package piengine.object.water.interpreter;
 
-import org.lwjgl.opengl.GL15;
 import piengine.core.base.api.Interpreter;
-import piengine.object.mesh.domain.MeshDao;
+import piengine.core.opengl.vertexarray.VertexArray;
+import piengine.core.opengl.vertexarray.VertexAttribute;
 import piengine.object.water.domain.WaterDao;
 import piengine.object.water.domain.WaterData;
 import puppeteer.annotation.premade.Component;
-
-import java.nio.FloatBuffer;
-import java.util.ArrayList;
-
-import static org.lwjgl.opengl.GL11.GL_FLOAT;
-import static org.lwjgl.opengl.GL15.GL_ARRAY_BUFFER;
-import static org.lwjgl.opengl.GL15.GL_STATIC_DRAW;
-import static org.lwjgl.opengl.GL15.glBindBuffer;
-import static org.lwjgl.opengl.GL15.glBufferData;
-import static org.lwjgl.opengl.GL15.glGenBuffers;
-import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
-import static org.lwjgl.opengl.GL30.glBindVertexArray;
-import static org.lwjgl.opengl.GL30.glDeleteVertexArrays;
-import static org.lwjgl.opengl.GL30.glGenVertexArrays;
-import static piengine.core.utils.BufferUtils.convertToFloatBuffer;
-import static piengine.object.mesh.domain.MeshDataType.INDICATOR;
-import static piengine.object.mesh.domain.MeshDataType.VERTEX;
 
 @Component
 public class WaterInterpreter extends Interpreter<WaterData, WaterDao> {
 
     @Override
     protected WaterDao createDao(final WaterData waterData) {
-        final WaterDao dao = new WaterDao(glGenVertexArrays(), new ArrayList<>(), waterData.vertices.length / 2);
-        bind(dao);
+        VertexArray vertexArray = new VertexArray(waterData.vertices.length / 3)
+                .bind()
+                .attachVertexBuffer(VertexAttribute.VERTEX, waterData.vertices, 3)
+                .attachVertexBuffer(VertexAttribute.INDICATOR, waterData.indicators, 4)
+                .unbind();
 
-        dao.vboIds.add(createVbo(VERTEX.value, waterData.vertices, 3));
-        dao.vboIds.add(createVbo(INDICATOR.value, waterData.indicators, 4));
-
-        unbind();
-
-        return dao;
+        return new WaterDao(vertexArray);
     }
 
     @Override
     protected boolean freeDao(final WaterDao dao) {
-        glDeleteVertexArrays(dao.vaoId);
-        dao.vboIds.forEach(GL15::glDeleteBuffers);
+        dao.vertexArray.clear();
 
         return true;
     }
 
     @Override
     protected String getCreateInfo(final WaterDao dao, final WaterData resource) {
-        return String.format("Vao id: %s", dao.vaoId);
+        return String.format("Vao id: %s", dao.vertexArray.id);
     }
 
     @Override
     protected String getFreeInfo(final WaterDao dao) {
-        return String.format("Vao id: %s", dao.vaoId);
-    }
-
-    private void bind(final MeshDao dao) {
-        glBindVertexArray(dao.vaoId);
-    }
-
-    private void unbind() {
-        glBindVertexArray(0);
-    }
-
-    private int createVbo(int index, float[] data, int size) {
-        int vbo = glGenBuffers();
-        glBindBuffer(GL_ARRAY_BUFFER, vbo);
-        FloatBuffer buffer = convertToFloatBuffer(data);
-        glBufferData(GL_ARRAY_BUFFER, buffer, GL_STATIC_DRAW);
-        glVertexAttribPointer(index, size, GL_FLOAT, false, 0, 0);
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-        return vbo;
+        return String.format("Vao id: %s", dao.vertexArray.id);
     }
 }

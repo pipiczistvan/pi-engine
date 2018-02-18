@@ -61,8 +61,6 @@ public class ParticleSystemRenderService extends AbstractRenderService<ParticleS
             for (Particle particle : particleSystem.particles) {
                 updateModelView(particle, context.currentCamera, vboData);
                 updateTextureInfo(particle, vboData);
-
-//                draw(particleSystem.getDao());
             }
             particleSystemInterpreter.updateVbo(particleSystem.getDao(), vboData, buffer);
             drawInstanced(particleSystem.getDao(), particleSystem.particles.size());

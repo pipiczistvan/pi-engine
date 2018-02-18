@@ -40,31 +40,22 @@ public abstract class AbstractRenderService<S extends Shader, C extends RenderCo
     }
 
     protected void draw(final MeshDao dao) {
-        renderInterpreter.bindVertexArray(dao.vaoId);
-        renderInterpreter.enableVertexAttribArray(dao.getVertexAttribs());
-
+        dao.vertexArray.bind().enableAttributes();
         switch (renderConfig.renderFunction) {
             case DRAW_ARRAYS:
-                renderInterpreter.drawArrays(renderConfig.drawMode, dao.vertexCount);
+                renderInterpreter.drawArrays(renderConfig.drawMode, dao.vertexArray.vertexCount);
                 break;
             case DRAW_ELEMENTS:
-                renderInterpreter.drawElements(renderConfig.drawMode, dao.vertexCount);
+                renderInterpreter.drawElements(renderConfig.drawMode, dao.vertexArray.vertexCount);
                 break;
         }
-
-        renderInterpreter.disableVertexAttribArray(dao.getVertexAttribs());
-        renderInterpreter.unbindVertexArray();
+        dao.vertexArray.disableAttributes().unbind();
     }
 
-    //todo: HACK
     protected void drawInstanced(final ParticleSystemDao dao, final int primCount) {
-        renderInterpreter.bindVertexArray(dao.vaoId);
-        renderInterpreter.enableVertexAttribArray(dao.getVertexAttribs());
-
-        glDrawArraysInstanced(GL_TRIANGLE_STRIP, 0, dao.vertexCount, primCount);
-
-        renderInterpreter.disableVertexAttribArray(dao.getVertexAttribs());
-        renderInterpreter.unbindVertexArray();
+        dao.vertexArray.bind().enableAttributes();
+        glDrawArraysInstanced(GL_TRIANGLE_STRIP, 0, dao.vertexArray.vertexCount, primCount);
+        dao.vertexArray.disableAttributes().unbind();
     }
 
     protected abstract S createShader(final ShaderService shaderService);
