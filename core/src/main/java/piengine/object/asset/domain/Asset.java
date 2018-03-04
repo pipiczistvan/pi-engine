@@ -24,7 +24,11 @@ public abstract class Asset<A extends AssetArgument, C extends RenderAssetContex
     public abstract C getAssetContext();
 
     protected <T extends Asset<A, C>, A extends AssetArgument, C extends RenderAssetContext> T createAsset(final Class<T> assetClass, final A arguments) {
-        return assetManager.supply(assetClass, this, arguments);
+        return assetManager.supplyNew(assetClass, this, arguments);
+    }
+
+    protected <T extends Asset<A, C>, A extends AssetArgument, C extends RenderAssetContext> T supplyAsset(final Class<T> assetClass, final A arguments) {
+        return assetManager.supplyCommon(assetClass, this, arguments);
     }
 
     @Override

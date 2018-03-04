@@ -25,8 +25,17 @@ public class AssetService implements Service, Updatable {
         this.assets = new ArrayList<>();
     }
 
-    public <T extends Asset<A, C>, A extends AssetArgument, C extends RenderAssetContext> T supply(final Class<T> assetClass, final Entity parent, final A arguments) {
+    public <T extends Asset<A, C>, A extends AssetArgument, C extends RenderAssetContext> T supplyNew(final Class<T> assetClass, final Entity parent, final A arguments) {
         T asset = puppeteer.getNewInstanceOf(assetClass);
+        return supply(asset, parent, arguments);
+    }
+
+    public <T extends Asset<A, C>, A extends AssetArgument, C extends RenderAssetContext> T supplyCommon(final Class<T> assetClass, final Entity parent, final A arguments) {
+        T asset = puppeteer.getInstanceOf(assetClass);
+        return supply(asset, parent, arguments);
+    }
+
+    private  <T extends Asset<A, C>, A extends AssetArgument, C extends RenderAssetContext> T supply(final T asset, final Entity parent, final A arguments) {
         if (arguments != null) {
             asset.passArguments(arguments);
         }

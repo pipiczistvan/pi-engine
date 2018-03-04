@@ -18,7 +18,11 @@ public class AssetManager {
         this.assetService = assetService;
     }
 
-    public <T extends Asset<A, C>, A extends AssetArgument, C extends RenderAssetContext> T supply(final Class<T> assetClass, final Entity parent, final A arguments) {
-        return assetService.supply(assetClass, parent, arguments);
+    public <T extends Asset<A, C>, A extends AssetArgument, C extends RenderAssetContext> T supplyNew(final Class<T> assetClass, final Entity parent, final A arguments) {
+        return assetService.supplyNew(assetClass, parent, arguments);
+    }
+
+    public <T extends Asset<A, C>, A extends AssetArgument, C extends RenderAssetContext> T supplyCommon(final Class<T> assetClass, final Entity parent, final A arguments) {
+        return assetService.supplyCommon(assetClass, parent, arguments);
     }
 }
