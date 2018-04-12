@@ -10,9 +10,11 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.net.URLDecoder;
 import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
@@ -28,7 +30,15 @@ import static piengine.core.base.type.property.PropertyKeys.RESOURCES_LOCATION;
 
 public class ResourceLoader {
 
-    private static final String USER_DIR = Objects.requireNonNull(ResourceLoader.class.getClassLoader().getResource("")).getPath();
+    private static String USER_DIR;
+
+    static {
+        try {
+            USER_DIR = URLDecoder.decode(Objects.requireNonNull(ResourceLoader.class.getClassLoader().getResource("")).getPath(), "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            throw new PIEngineException(e);
+        }
+    }
 
     private final String root;
     private final String extension;
