@@ -1,8 +1,8 @@
 package piengine.core.base.type.property;
 
-class FloatProperty extends Property<Float> {
+public class FloatProperty extends Property<Float> {
 
-    FloatProperty(final String key) {
+    public FloatProperty(final String key) {
         super(key);
     }
 
@@ -10,5 +10,4 @@ class FloatProperty extends Property<Float> {
     Float parseValue(final String property) {
         return Float.parseFloat(property);
     }
-
 }

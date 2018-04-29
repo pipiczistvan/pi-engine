@@ -1,8 +1,8 @@
 package piengine.core.base.type.property;
 
-class IntegerProperty extends Property<Integer> {
+public class IntegerProperty extends Property<Integer> {
 
-    IntegerProperty(final String key) {
+    public IntegerProperty(final String key) {
         super(key);
     }
 
@@ -10,5 +10,4 @@ class IntegerProperty extends Property<Integer> {
     Integer parseValue(final String property) {
         return Integer.parseInt(property);
     }
-
 }

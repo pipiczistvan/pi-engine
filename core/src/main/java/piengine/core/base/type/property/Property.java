@@ -4,11 +4,11 @@ import piengine.core.base.exception.PIEngineException;
 
 import java.util.Properties;
 
-abstract class Property<T> {
+public abstract class Property<T> {
 
     private final String key;
 
-    Property(final String key) {
+    public Property(final String key) {
         this.key = key;
         PropertyKeys.KEYS.add(key);
     }

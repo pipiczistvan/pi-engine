@@ -1,8 +1,8 @@
 package piengine.core.base.type.property;
 
-class StringProperty extends Property<String> {
+public class StringProperty extends Property<String> {
 
-    StringProperty(final String key) {
+    public StringProperty(final String key) {
         super(key);
     }
 
@@ -10,5 +10,4 @@ class StringProperty extends Property<String> {
     String parseValue(final String property) {
         return property;
     }
-
 }
